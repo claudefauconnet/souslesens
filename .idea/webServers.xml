@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="WebServers">
+    <option name="servers">
+      <webServer id="af7b976c-f031-4b91-bd02-99e57e619664" name="souslesensVPS" url="http://vps254642.ovh.net/souslesens">
+        <fileTransfer host="vps254642.ovh.net" port="22" rootFolder="/var/lib/nodejs/souslesens" accessType="SFTP">
+          <advancedOptions>
+            <advancedOptions dataProtectionLevel="Private" />
+          </advancedOptions>
+          <option name="port" value="22" />
+        </fileTransfer>
+      </webServer>
+    </option>
+  </component>
+</project>

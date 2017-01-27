@@ -1,0 +1,45 @@
+{
+  "name": "souslesens",
+  "version": "1.0.0",
+  "description": "Souslesens is a tool to visualize and manipulate graphs. It is based on Neo4j, D3js and Nodejs",
+  "main": "node_modules",
+  "bin": {
+    "souslesens": "www"
+  },
+  "dependencies": {
+    "body-parser": "^1.15.2",
+    "jsonfile": "^2.4.0",
+    "mongodb": "^2.2.19",
+    "neo4j": "^2.0.0-RC2",
+    "neo4j-driver": "^1.0.5",
+	"async":"^2.1.4",
+    "multer": "^1.2.1",
+    "socket.io": "^1.7.2",
+    "body-parser": "^1.15.2",
+    "cookie-parser": "^1.4.3",
+    "debug": "^2.2.0",
+    "jade":"^1.11.0",
+    "express": "^4.14.0",
+    "morgan": "^1.7.0",
+    "serve-favicon": "^2.3.0"
+   
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/claudefauconnet/souslesens.git"
+  },
+  "keywords": [
+    "graph",
+    "visualization"
+  ],
+  "author": "Claude Fauconnet",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/claudefauconnet/souslesens/issues"
+  },
+  "homepage": "https://github.com/claudefauconnet/souslesens#readme"
+}

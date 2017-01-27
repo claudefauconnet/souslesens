@@ -1,0 +1,22 @@
+subGraph : javatheque, Node label : document , { "result" : "Imported 1259lines"}
+subGraph : javatheque, Node label : dusun , { "result" : "Imported 106lines"}
+subGraph : javatheque, Node label : javatheque , { "result" : "Imported 1lines"}
+subGraph : javatheque, Node label : kabupaten , { "result" : "Imported 18lines"}
+subGraph : javatheque, Node label : kecamatan , { "result" : "Imported 81lines"}
+subGraph : javatheque, Node label : kelurahan , { "result" : "Imported 132lines"}
+subGraph : javatheque, Node label : level1 , { "result" : "Imported 87lines"}
+subGraph : javatheque, Node label : level2 , { "result" : "Imported 2535lines"}
+subGraph : javatheque, Node label : level3 , { "result" : "Imported 7337lines"}
+subGraph : javatheque, Node label : level4 , { "result" : "Imported 2776lines"}
+subGraph : javatheque, Node label : level5 , { "result" : "Imported 1118lines"}
+subGraph : javatheque, Node label : level6 , { "result" : "Imported 151lines"}
+subGraph : javatheque, Node label : level7 , { "result" : "Imported 1lines"}
+subGraph : javatheque, Node label : level_1 , { "result" : "Imported 1lines"}
+subGraph : javatheque, Node label : perusahaan , { "result" : "Imported 8lines"}
+subGraph : javatheque, Node label : photo , { "result" : "Imported 11365lines"}
+subGraph : javatheque, Node label : propinsi , { "result" : "Imported 5lines"}
+subGraph : javatheque, Node label : thematique , { "result" : "Imported 87lines"}
+
+
+
+mklink /j  D:\nodeJSdata\neoProxy\public\JAVATHEQUE D:\JFM\TERRAIN\JAVATHEQUE

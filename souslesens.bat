@@ -1,0 +1,2 @@
+node ./bin/www
+pause
