@@ -1,0 +1,448 @@
+var restServletUrl = "../restapi"
+var paths = [];
+var isInPathGraphAction = false;
+var graphPathDebugInfo = "";
+var graphPathTargetId;
+var currentDepth=-1;
+
+
+/*
+ *     ->setPruneEvaluator('javascript', "position.endNode().getProperty('name').toLowerCase().contains('t')")
+    ->setReturnFilter('javascript', "position.length() > 3");
+    
+    
+    http://neo4j.rubyforge.org/guides/traverser.html
+    
+    
+ */
+function testPath() {
+
+	getAllSimplePaths(15448, 15288, 4)
+}
+
+function drawGraphPath() {
+	$('#tabs-radarRight').tabs({
+		active : 0
+	});
+	$("#graphDiv").html("");
+	$("#graphLegendDiv").html("aucun resultat a representer : modififiez vos criteres...");
+	var targetId = graphPathTargetId;
+	var depth = parseInt($("#depth").val());
+	currentDepth=depth;
+	var algo=$("#graphPathsAlgorithm").val();
+	getAllSimplePaths(currentObjId, graphPathTargetId, depth,algo);
+
+}
+
+function startPathGraphAction() {
+	isInPathGraphAction = true;
+	$("#graphPathPanel").css("visibility", "visible");
+	selectLeftTab("#radarFiltersTab");
+}
+
+function getAllSimplePaths(startId, endId, depth,algo) {
+
+	// var url=http://localhost:7474/db/data/node/15448/paths
+	var body = '{ "to":"' + endId + '","max_depth":' + depth
+			+ ',"algorithm":"'+algo+'"}';
+	var urlSuffix = "db/data/node/" + startId + "/paths";
+	var paramsObj = {
+		mode : "POST",
+		urlSuffix : urlSuffix,
+		payload : body,
+	}
+// graphPathDebugInfo = url + "\n\n" + body;
+	$("#neoQueriesTextArea").val(body);
+	$("#neoUrlTextArea").val(urlSuffix);
+	$("#neoQueriesHistoryId").prepend(urlSuffix+"<br>"+body+"<br><br>");
+	
+	/*
+	 * console.log(url); console.log(body);
+	 */
+
+	
+	
+	
+	
+	$.ajax({
+		type : "POST",
+		url : Gparams.neo4jProxyUrl,
+		data : paramsObj,
+		dataType : "json",
+		success : function(data, textStatus, jqXHR) {
+
+			if (!data || data.length == 0) {
+				setMessage("No results", blue);
+				var more=confirm("Aucun chemin trouve, voulez vous  augmenter la profondeur de la recherche (actuellement "+currentDepth+")?");
+				if(more===true){
+						$("#depth").val(++currentDepth);
+						drawGraphGeneral()
+					
+				}
+				
+				return;
+
+			}
+			if (data.length >Gparams.MaxResults) {
+				currentGraphPanel="";
+				alert("trop de resultats "+data.length+" pour dessiner le graphe.Modifiez les parametres");
+				return;
+
+			}
+			processPathResults(data);
+		},
+		error : function(xhr, err, msg) {
+			console.log(xhr);
+			console.log(err);
+			console.log(msg);
+		},
+
+	});
+
+}
+
+function processPathResults(data) {
+	/* graphPathDebugInfo += "\n---------result------------\n" */
+	
+	var normalRelIds = [];
+	var inversRelIds = [];
+	for (var i = 0; i < data.length; i++) {
+		data[i].relationIds = []
+		for (var j = 0; j < data[i].relationships.length; j++) {
+			var isInverseDirection = data[i].directions[j] == "<-";
+			var str = data[i].relationships[j];
+			var id = parseInt(str.substring(str.lastIndexOf("/") + 1));
+			data[i].relationIds.push(id);
+			if (isInverseDirection && inversRelIds.indexOf(id) < 0)
+				inversRelIds.push(id);
+			if (!isInverseDirection && normalRelIds.indexOf(id) < 0)
+				normalRelIds.push(id);
+
+		}
+	}
+	getRelationsByIds(normalRelIds, inversRelIds, data);
+
+}
+
+function getRelationsByIds(normalRelIds, inversRelIds, rawData) {
+	var query = "MATCH (n)-[r]->(m) WHERE ID(r) IN "+ JSON.stringify(normalRelIds)+ " RETURN n,m,r,labels(n),labels(m),ID(n),ID(m),type(r),ID(r) ";
+	executeQuery(QUERY_TYPE_MATCH,query,function(result) {
+
+				var dataNormal = result[0].data;
+				var query = "MATCH (n)<-[r]-(m) WHERE ID(r) IN "+ JSON.stringify(inversRelIds)+ " RETURN n,m,r,labels(n),labels(m),ID(n),ID(m),type(r),ID(r) ";
+				executeQuery(QUERY_TYPE_MATCH, query, function(result) {
+					var dataInverse = result[0].data;
+					
+					var data = dataNormal.concat(dataInverse);
+					
+					
+					var date
+					var relationsMap = {}
+					for (var i = 0; i < data.length; i++) {
+
+						var startNode = data[i].row[0];
+						var endNode = data[i].row[1];
+						startNode.label = data[i].row[3][0];
+						endNode.label = data[i].row[4][0];
+						startNode.id = data[i].row[5];
+						endNode.id = data[i].row[6];
+						var rel = data[i].row[2];
+						rel.label = data[i].row[7];
+						rel.id = data[i].row[8];
+
+						var pathElt = {
+							startNode : startNode,
+							rel : rel,
+							endNode : endNode
+						}
+						relationsMap[rel.id] = pathElt;
+					}
+
+					bulidPathTree(relationsMap, rawData)
+
+				});
+			});
+
+}
+
+function bulidPathTree(relationsMap, rawData) {
+	var nodesMap = {}
+	var rootNode ;
+	var targetNode;
+	graphPathDebugInfo += "\n---------Paths------------\n";
+	for (var i = 0; i < rawData.length; i++) {
+		for (var j = 0; j < rawData[i].relationIds.length; j++) {
+			var relObj = relationsMap[rawData[i].relationIds[j]];
+			var direction = rawData[i].directions[j];
+
+			var node;
+			if (j == 0 && !rootNode) {
+				node = relObj.startNode;
+				node.children = [];
+				node.parent = -999;
+				node.isRoot = true;
+				rootNode = node;
+				node.children = [];
+			} 
+			
+				node = relObj.endNode;
+			/*
+			 * if ( j == (rawData[i].relationIds.length-1) ) { node.relType =
+			 * relObj.rel.label; node.name= node.name+"_"+i;
+			 * node.id=Math.random()*1000000 //node.isLeaf=true; }
+			 */
+				
+				node.relType = relObj.rel.label;
+				node.children = [];
+				node.parent = relObj.startNode.id;
+				nodesMap[node.id] = node;
+				graphPathDebugInfo += node.id + " " + JSON.stringify(relObj)
+						+ "\n";
+			
+
+		}
+
+	}
+
+	maxEffectiveLevels = 1;
+	addChildRecursive(rootNode, nodesMap, 1);
+	// setTargetLeaf(rootNode,targetNode);
+	var xx = rootNode;
+	displayGraph(rootNode)
+// $("#neoQueriesTextArea").val(graphPathDebugInfo);
+}
+
+
+
+
+/*
+ * https://neo4j.com/docs/java-reference/current/javadocs/org/neo4j/graphdb/traversal/Evaluators.html
+ * 
+ * http://neo4j.com/docs/stable/rest-api-traverse.html
+ * http://www.ekino.com/optimization-strategies-traversals-neo4j/
+ */
+function drawGraphTraversal(){
+	var graphTravReturnType=$("#graphTravReturnType").val();
+	var graphTravPriority=$("#graphTravPriority").val();
+	var graphTravUnicity=$("#graphTravUnicity").val();
+	var graphTravPruneEvaluator=$("#graphTravPruneEvaluator").val();
+	var graphTravReturnEvaluator=$("#graphTravReturnEvaluator").val();
+	var graphTravReturnFilter=$("#graphTravReturnFilter").val();
+	var graphTravDepth=parseInt($("#depth").val());
+	var graphTravRelTypes=$("#graphTravRelTypes").val();
+	
+	
+	var json={
+			
+			max_depth:graphTravDepth,
+			uniqueness:graphTravUnicity,
+			order:graphTravPriority,
+			
+			
+
+	}
+	/*
+	 * if(graphTravPruneEvaluator.indexOf('{')>-1)
+	 * json.prune_evaluator=graphTravPruneEvaluator;
+	 */
+	if(graphTravPruneEvaluator.indexOf('position')>-1){
+		graphTravPruneEvaluator=graphTravPruneEvaluator.replace(/\t/g,"").replace(/\n/g,"");
+		json["prune_evaluator"]={
+			"language" :"javascript",
+			"body" :graphTravPruneEvaluator
+	}
+	
+}
+	
+	if(graphTravReturnEvaluator.indexOf('position')>-1){
+		graphTravReturnEvaluator=graphTravReturnEvaluator.replace(/\t/g,"").replace(/\n/g,"");
+		json["return_filter"]={
+			"language" :"javascript",
+			"body" :graphTravReturnEvaluator
+	}
+		
+	
+}
+	if(graphTravRelTypes.length>0){
+		json["relationships"]=JSON.parse(graphTravRelTypes);
+	}
+	/*
+	 * {"max_depth":2,"uniqueness":"node_global","order":"breadth_first","prune-evaluator":{"langage"
+	 * :"javascript","body":"position.length()<4};"} }
+	 * {"max_depth":2,"uniqueness":"node_global","order":"breadth_first","prune-evaluator":{"langage"
+	 * :"javascript","body":"position.nodes();"} }
+	 * 
+	 * {"max_depth":4,"uniqueness":"node_global","order":"breadth_first","prune-evaluator":{"langage":"javascript","body":"position.length()<3}"}}
+	 */
+	
+	
+	if(false)
+		json.return_filter=graphTravReturnFilter;
+	
+	var body=JSON.stringify(json);
+	var urlSuffix = "db/data/node/" + currentObjId + "/traverse/"+graphTravReturnType;
+	var paramsObj = {
+			mode : "POST",
+			urlSuffix : urlSuffix,
+			payload : body,
+		}
+	
+	$("#neoQueriesTextArea").val(body);
+	$("#neoUrlTextArea").val(urlSuffix);
+	$("#neoQueriesHistoryId").prepend(urlSuffix+"<br>"+body+"<br><br>");
+
+	
+	$.ajax({
+		type : "POST",
+		url : Gparams.neo4jProxyUrl,
+		data : paramsObj,
+		dataType : "json",
+		success : function(data, textStatus, jqXHR) {
+
+			if (!data || data.length == 0) {
+				setMessage("No results", blue);
+				var more=confirm("Aucun chemin trouve, voulez vous  augmenter la profondeur de la recherche (actuellement "+currentDepth+")?");
+				if(more===true){
+						$("#depth").val(++currentDepth);
+						drawGraphGeneral()
+					
+				}
+				
+				return;
+
+			}
+			if (data.length >Gparams.MaxResults) {
+				currentGraphPanel="";
+				alert("trop de resultats "+data.length+" pour dessiner le graphe.Modifiez les parametres");
+				return;
+
+			}
+			processPathResults(data);
+		},
+		error : function(xhr, err, msg) {
+			console.log(xhr);
+			console.log(err);
+			console.log(msg);
+		},
+
+	});
+	
+	
+
+	
+	
+}
+
+
+function graphTravOnFilterSelect(select){
+	var str="";
+	var type=$(select).val();
+
+	var condition="";
+
+	var selectId=$(select).attr("id");
+	var returnId="";
+	if(selectId.indexOf("Return")>-1)
+	 returnId='graphReturnNodeProperty';
+	else if(selectId.indexOf("Prune")>-1)
+		 returnId='graphPruneNodeProperty';
+
+	
+	if( true || type=="none"){
+		if(selectId.indexOf("Return")>-1)
+			$("#graphTravReturnEvaluator").val("");
+		else if(selectId.indexOf("Prune")>-1)
+			$("#graphTravPruneEvaluator").val("");
+		//return;
+	
+	}
+	if(type=="label"){
+	var value="";
+	$("#dialog").dialog( "option", "title","type de label" );
+	condition="position.endNode().hasLabel('"+value+"') ";
+	str="pas encore implementé , c'est pour bientot...";
+	}
+	
+else if(type=="nodeProperty"){
+	// $("#dialog").detach($("#graphTravReturnEvaluator"));
+	$("#dialog").dialog( "option", "title","valeur d'une propriete" );
+str=getAllpropertiesDialogContent("setGraphTravReturnFilterVal('"+returnId+"')");
+}
+
+else if(type=="RelationType"){
+	$("#dialog").dialog( "option", "title","type de  relation" );
+	str=getAllRelationsDialogContent("setGraphTravReturnFilterVal('graphRelationType')");
+		
+}
+$("#dialog").html(str);
+$("#dialog").dialog( "open" );
+
+
+	
+}
+
+function setGraphTravReturnFilterVal(type){
+	$("#dialog").dialog( "close" );
+	if(type.indexOf('NodeProperty')>-1){
+		var propertyType=$("#propertyType").val();
+		var propertyValue=$("#propertyValue").val().toLowerCase();
+		condition="position.endNode().hasProperty('"+propertyType+"') && position.endNode().getProperty('"+propertyType+"').toLowerCase().contains('"+propertyValue+"')"
+	}
+	
+	if(type.indexOf('graphRelationType')>-1){
+		var relType=$("#relType").val();
+		var relDir=$("#relDir").val();
+	var relationships =[ {
+		    "direction" :relDir,
+		    "type" : relType
+		  } ];
+	$("#graphTravRelTypes").val(JSON.stringify(relationships));
+	return;
+	}
+
+	
+	var str=	$("#graphTravReturnEvaluator").val();
+	if(str && str.length>0) 
+		str+=" && ";
+	
+	str+=condition;
+	if(type.indexOf('Return')>-1){
+	$("#graphTravReturnEvaluator").val(str);
+	}
+	if(type.indexOf('Prune')>-1){
+		$("#graphTravPruneEvaluator").val(str);
+	}
+	
+
+}
+
+function showGraphTravFilterJson(type){
+	$("#dialog").dialog( "option", "title","fitre" );
+	var inputId="";
+	var input;
+	if(type=='return'){
+	 input=$("#graphTravReturnEvaluator");
+	 inputId="graphTravReturnEvaluator";
+	}
+	if(type=='prune'){
+		input=	$("#graphTravReturnEvaluator")
+		 inputId="graphTravReturnEvaluator";
+	}
+		
+	var str="<textarea rows='10', cols='50' id='graphTravJsonTA'>"+input.val()+"</textArea>";
+	str+="</table><button onclick='graphTravJsonOnOk(\""+inputId+"\")'>OK</button>";
+
+	$("#dialog").html(str);
+	$("#dialog").dialog( "open" );
+}
+
+
+function graphTravJsonOnOk(inputId){
+	var value=$("#graphTravJsonTA").val();
+ $("#"+inputId).val(value);
+	$("#dialog").dialog( "close" );
+
+}
+
+
+

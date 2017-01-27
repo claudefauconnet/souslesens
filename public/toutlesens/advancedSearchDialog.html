@@ -1,0 +1,322 @@
+<!-- *******************************************************************************
+ * SOUSLESENS LICENSE************************
+ *
+ * The MIT License (MIT)
+ *
+ * Copyright (c) 2016-2017 Claude Fauconnet claude.fauconnet@neuf.fr
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ *
+ ******************************************************************************-->
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="ISO-8859-1">
+    <title>Insert title here</title>
+
+    <link rel="stylesheet" type="text/css" title="Design"
+          href="../common/js/jquery/theme_humanity/jquery-ui.min.css"/>
+
+    <link rel="stylesheet" type="text/css"
+          href="js/jquery/jquery.splitter.css"/>
+
+    <link rel="stylesheet" href="js/jsTree/themes/default/style.min.css"/>
+    <link rel="stylesheet" type="text/css" href="css/index.css"/>
+
+
+    <script src="../common/js/jquery/jquery.min.js"></script>
+    <script src="../common/js/jquery/theme_humanity/jquery-ui.min.js "></script>
+
+    <script src="../common/js/common.js"></script>
+    <script src="../common/js/neo4jDataModel.js"></script>
+    <script src="../common/js/common.js"></script>
+
+    <script src="js/toutlesensController.js"></script>
+    <script src="js/toutlesensData.js"></script>
+    <script src="resources/params.js"></script>
+    <script src="js/advancedSearch.js"></script>
+    <script src="js/graphTraversalQueries.js"></script>
+    <script src="js/toutlesensDialogsController.js"></script>
+
+    <script src="resources/help.js"></script>
+    <script src="resources/lang.js"></script>
+    <script src="resources/lang_FR.js"></script>
+    <script src="resources/lang_EN.js"></script>
+    <script src="resources/params.js"></script>
+
+
+    <style type="text/css">
+        body {
+            font-family: verdana;
+            font-size: 12px;
+        }
+
+
+
+        #requestTabsDiv {
+            position: absolute;
+            left: 10px;
+            top: 0px;
+        }
+
+        .cypherQueryTextArea {
+            width: 300px;
+            height: 50px;
+        }
+        #searchAlgo{
+            visibility: hidden;
+        }
+    </style>
+
+
+    <script>
+        $(function () {
+            var types={0:"pathes",1:"cypher"}
+            currentActionObj={type:types[0], subGraph:subGraph};
+            initNeoModel(subGraph, initLabels);
+
+            $("#requestTabsDiv").tabs({
+                activate: function (event, ui) {
+                    currentTabIndex = ui.newTab.index();
+                    currentActionObj={type:types[currentTabIndex], subGraph:subGraph};
+
+                }
+            });
+
+            $("#requestTabsDiv").tabs("option", "disabled", [2]);
+
+            $("#dialog").dialog({
+                autoOpen: false,
+                height: 400,
+                width: 350,
+                modal: true
+
+            });
+
+        });
+    </script>
+
+
+</head>
+<body>
+
+
+
+<div id="requestTabsDiv">
+    <ul>
+
+        <li><a href="#graphPathDiv"><span id='lang_103'>Chemin entre deux noeuds</span></a></li>
+        <li><a href="#cypherQueryDiv"><span id='lang_101'>Cypher query</span></a></li>
+        <!--  <li><a href="#graphTraversalDiv"><span id='lang_102'>Traversee de graphe</span></a></li>-->
+        <li><a href="#graphSavedRequestsDiv"><span id='lang_162'>requetes enregistr�es</span></a></li>
+
+    </ul>
+
+    <div id="graphPathDiv">
+        <span class="help"><span id='lang_132'>calcule les chemins entre deux noeuds</span></span><br>
+        <table border="0">
+            <tr>
+                <td><span id='lang_109'>noeud source</span></td>
+                <td><input
+                        id="graphPathSourceNode" value=" ?" onclick="onSourceNodeClick()">
+                    <button onclick="$('#graphPathSourceNode').val('?');">X</button>
+                    </input></td>
+
+            </tr>
+            <tr>
+
+                <td><span id='lang_133'>noeud cible</span>
+
+                <td><input onclick="onTargetNodeClick()"   id="graphPathTargetNode" value=" ?">
+                    <button onclick="$('#graphPathTargetNode').val('?');">X</button>
+                    </input></td>
+            <tr>
+            <tr>
+
+                <td><span id='lang_134'>distance maximum entre les noeuds</span></td>
+                <td><input id="graphPathMaxDistance" value="3"></input></td>
+            </tr>
+
+
+
+
+        </table>
+    </div>
+
+    <div id="cypherQueryDiv">
+        <table>
+            <tr>
+
+
+                <td>
+                    <table>
+
+                        <tr>
+                            <td><span id='lang_104'>Match</span></td>
+                            <td><textArea id="cypherQueryMatchTextArea"
+                                          ondblclick="showLabelSelectionDialog('setCypherqueryMatch()')"
+                                          class="cypherQueryTextArea"></textArea></td>
+
+
+                        </tr>
+                        <tr>
+                            <td><span id='lang_105'>Where</span></td>
+                            <td><textArea id="cypherQueryWhereTextArea"
+                                          class="cypherQueryTextArea"></textArea></td>
+
+
+
+                        </tr>
+                      <!--  <tr>
+                            <td><span id='lang_106'>GroupBy</span></td>
+                            <td><textArea id="cypherQueryGroupByTextArea"
+                                          onclick="onClickCypherQueryMatchTextArea(this)"
+                                          class="cypherQueryTextArea"></textArea></td>
+
+
+                        </tr>
+                        <tr>
+                            <td><span id='lang_107'>Return</span></td>
+                            <td><textArea id="cypherQueryReturnTextArea"
+                                          class="cypherQueryTextArea"> </textArea></td>
+
+
+                        </tr>-->
+                        <tr>
+                            <td><span id='lang_108'>Limite</span></td>
+                            <td><input id="cypherQueryLimitInput" size="5" value="400">
+                            </td>
+
+
+                        </tr>
+
+                    </table>
+            </tr>
+
+
+        </table>
+
+
+    </div>
+
+    <div id="graphSavedRequestsDiv">
+
+    </div>
+    <div>
+        <button oncLick="execute()"><span id='lang_152'>Executer</span></button>
+        <button oncLick="window.parent.hideAdvancedSearch()"><span id='lang_153'>Annuler</span></button>
+    </div>
+
+</div>
+<!--   <div id="graphTraversalDiv">
+           <span class="help">calcule les chemins avec des criteres de
+               parcours du graphe</span>
+       <table border="0">
+           <tr>
+               <td><span id='lang_109'>noeud source</span></td>
+               <td><input type="hidden" id="graphTravSourceNodeVal"><input
+                       id="graphTravSourceNodeText" value=" ?">
+                   <button onclick="$('#graphTravSourceNodeText').val('?');"><span id='lang_110'>X</span></button>
+                   </input></td>
+
+           </tr>
+
+           <tr>
+               <td><span id='lang_111'>Type du filtre de retour</span></td>
+
+               <td><select id="graphTravReturnTypeSelect"
+                           onchange="graphTravOnFilterSelect(this)">
+                   <option value="none"><span id='lang_148'>aucun</span></option>
+                   <option value="label"><span id='lang_115'>label du noeud</span></option>
+                   <option value="nodeProperty"><span id='lang_112'>propriete du noeud</span></option>
+                   <option value="RelationType"><span id='lang_113'>type de relation</span></option>
+               </select>
+           </tr>
+           <tr>
+               <td colspan="2"><input id="graphTravReturnEvaluator" value=""
+                                      size="50"></td>
+           <tr>
+           <tr>
+               <td><span id='lang_156'>Filtre d'arret</span></td>
+               <td><select id="graphTravPruneTypeSelect"
+                           onchange="onSearchPropertyDialog()">
+                   <option value="none"><span id='lang_148'>aucun</span></option>
+                   <option value="label"><span id='lang_115'>label du noeud</span></option>
+                   <option value="nodeProperty"><span id='lang_112'>propriete du noeud</span></option>
+
+               </select></td>
+           </tr>
+           <tr>
+
+               <td colspan="2"><input id="graphTravPruneEvaluator" value=""
+                                      size="50"></td>
+           <tr>
+           <tr>
+
+               <td><span id='lang_116'>Profondeur maximum de recherche</span></td>
+               <td><input id="graphTravMaxDepth" value="6"></input></td>
+           <tr>
+           <tr>
+
+               <td><span id='lang_117'>Unicite</span></td>
+               <td><select id="graphTravUnicity" onchange="">
+                   <option value="node_global"><span id='lang_118'>noeud sur tous les chemins</span></option>
+                   <option value="node_path"><span id='lang_119'>noeud sur chaque chemin</span></option>
+                   <option value="none"><span id='lang_120'>aucune</span></option>
+                   <option value="<span id='lang_127'>relations</span>hip_global">relation sur tous
+                       les chemins
+                   </option>
+                   <option value="relationship_path">relation sur chaque
+                       chemin
+                   </option>
+
+               </select></td>
+           </tr>
+           <tr>
+           <tr>
+
+               <td><span id='lang_121'>Priorite</span></td>
+               <td><select id="graphTravPriority" onchange="">
+
+                   <option value="depth_first"><span id='lang_122'>En profondeur</span></option>
+                   <option value="breadth_first"><span id='lang_123'>En surface</span></option>
+
+               </select></td>
+           <tr>
+
+               <td><span id='lang_124'>Type de retour</span></td>
+               <td><select id="graphTravReturnType" onchange="">
+                   <option value="path"><span id='lang_125'>url</span></option>
+
+
+                   <option value="fullpath"><span id='lang_128'>chemin complet</span></option>
+               </select></td>
+
+           </tr>
+
+
+
+       </table>
+   </div>
+-->
+
+<div id="dialog" title="dialog"></div>
+</body>
+</html>

@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="ISO-8859-1">
+<title>Insert title here</title>
+<link rel="stylesheet" type="text/css"
+	href="js/jquery/jquery-ui.min.css" />
+
+<link rel="stylesheet" type="text/css"
+	href="js/jquery/jquery.splitter.css" />
+
+<link rel="stylesheet" href="js/jsTree/themes/default/style.min.css" />
+<link rel="stylesheet" type="text/css" href="css/index.css" />
+
+
+<script src="../common/js/jquery/jquery.min.js"></script>
+<script src="../common/js/jquery/jquery-ui.min.js"></script>
+
+<script src="../common/js/common.js"></script>^
+<script src="../common/js/others/jscolor.min.js"></script>
+<script src="../common/js/neo4jDataModel.js"></script>
+<script src="../common/js/common.js"></script>
+
+<script src="js/toutlesensController.js"></script>
+<script src="js/toutlesensData.js"></script>
+<script src="resources/params.js"></script>
+<script src="js/graphDecorationObjs.js"></script>
+
+<script src="resources/help.js"></script>
+<script src="resources/lang.js"></script>
+<script src="resources/lang_FR.js"></script>
+<script src="resources/lang_EN.js"></script>
+<script src="resources/params.js"></script>
+
+
+<style type="text/css">
+body {
+	font-family: verdana;
+	font-size: 12px;
+}
+
+#graphDecorationDiv {
+	position: absolute;
+	left: 0px;
+	top: 0px;
+	width: 200px,
+}
+
+#graphDecorationTabsDiv {
+	position: absolute;
+	left: 200px;
+	top: 0px;
+}
+</style>
+
+
+
+
+
+
+
+
+<script>
+	$(function() {
+		$("#graphDecorationTabsDiv").tabs({
+			activate : function(event, ui) {
+				currentTabIndex = ui.newTab.index();
+
+			}
+		});
+
+		$("#dialog").dialog({
+			autoOpen : false,
+			height : 400,
+			width : 350,
+			modal : true
+
+		});
+		 $("#graphDecorationSizeSlider" ).slider({
+		      min: 5,
+		      max: 100,
+		      range: "min",
+		      value:  20,
+		      slide: function( event, ui ) {
+		    	  $( "#graphDecorationSize").val(ui.value);
+		    	  drawGraphGeneral();
+		      }
+		    });
+
+	});
+</script>
+
+
+
+</head>
+<body>
+	<div id="graphDecorationDiv">
+		<table border="0">
+
+			<tr>
+				<td><span id='lang_100'><span id='lang_140'>Labels</span></span></td>
+			</tr>
+
+			<tr>
+				<td><select id="nodesLabelsSelect" size="10"
+					onclick="onLabelClick(this)" ></select></td>
+
+			</tr>
+
+		
+			<tr>
+				<td><span id='lang_141'>Proprietes</span></td>
+			</tr>
+
+			<tr>
+			
+			<td><select id="nodesLabelsPropertiesSelect" size="10"
+					onclick="onPropertyClick(this)" ><option><span id='lang_139'>------</span>----</option></select></td>
+				
+			</tr>
+
+
+
+
+
+
+
+
+
+
+
+		</table>
+	</div>
+
+	<div id="graphDecorationTabsDiv">
+		<ul>
+			<li><a href="graphDecorationNodeVal"><span id='lang_142'>proprietes</span></a></li>
+
+
+		</ul>
+
+		<div id="graphDecorationNodeVal">
+			<span class="help">Representer la valeur d'un parametre</span>
+			<table border="0">
+			
+			<tr>
+					<td><span id='lang_144'>Valeur</span></td>
+
+					<td><select id="graphDecorationValues" size="5">
+							
+					</select>
+				</tr>
+			
+				
+				<tr>
+					<td><span id='lang_145'>Couleur</span></td>
+						
+					<td><input  id="graphDecorationColor" class="jscolor" value="ab2567">
+					</td>
+				</tr>
+				<tr>
+					<td><span id='lang_146'>Taille</span> <input id="graphDecorationSize" size="3"></td>
+
+					<td>
+					
+					<div id="graphDecorationSizeSlider" style="width: 130px;"></div>
+					
+					
+						 </td>
+				</tr>
+				<tr>
+					<td><span id='lang_147'>Symbole</span></td>
+
+					<td><select id="graphDecorationShape">
+							<option value="none"><span id='lang_148'>aucun</span></option>
+							<option value="square"><span id='lang_154'>carre</</span>option>
+							<option value="<span id='lang_149'>triangle</span>Up">triangle</option>
+							<option value="triangleDown"><span id='lang_150'>triangle inverse</span></option>
+					</select>
+				</tr>
+				<tr>
+					<td><button onclick="setPropertyValueAttr()" ><span id='lang_151'>Ajouter</span></button></td>
+
+					<td>
+					
+							<select id="graphDecorationDoneValues" size=5>
+							</select>
+					
+					
+						 </td>
+				</tr>
+
+
+			</table>
+
+
+
+			<div>
+				<button oncLick="execute()"><span id='lang_152'>Executer</span></button>
+				<button oncLick="enregistrer()"><span id='lang_155'>Executer</span></button>
+				<button oncLick="window.parent.hideAdvancedSearch()"><span id='lang_153'>Annuler</span></button>
+			</div>
+
+		</div>
+
+</div>
+
+		<div id="dialog" title="dialog"></div>
+</body>
+</html>

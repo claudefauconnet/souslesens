@@ -1,0 +1,63 @@
+.node {
+	cursor: pointer;
+}
+
+.overlay {
+	background-color: #EEE;
+}
+
+.node circle {
+	fill: #fff;
+	stroke: steelblue;
+	stroke-width: 1.5px;
+}
+
+
+
+.nodeCircle:before, .nodeCircle:after {
+	-webkit-box-sizing: content-box;
+	-moz-box-sizing: content-box;
+	box-sizing: content-box;
+}
+
+.node text {
+	font-size: 14px;
+	font-family: sans-serif;
+}
+
+.link {
+	fill: none;
+	stroke: #ccc;
+	stroke-width: 1.5px;
+}
+
+
+.link2 {
+	fill: none;
+	stroke: #888;
+	stroke-width: 0.5px;
+}
+
+.templink {
+	fill: none;
+	stroke: red;
+	stroke-width: 3px;
+}
+
+.ghostCircle.show {
+	display: block;
+}
+
+.ghostCircle, .activeDrag .ghostCircle {
+	display: none;
+}
+#tree-container{
+	width :800px;
+	hight :800px;
+}
+/*
+*, *:before, *:after {
+	-webkit-box-sizing: content-box !important; 
+	-moz-box-sizing: content-box !important;
+	box-sizing: content-box !important;
+}*/

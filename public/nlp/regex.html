@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Regex</title>
+
+    <style>
+        #regex{
+            font-size: 18px;
+            font-family: sans-serif Verdana;
+            color:darkslateblue;
+            padding:5px;
+        }
+    </style>
+</head>
+<script src="../common/js/jquery/jquery.min.js"></script>
+<script>
+function analyze(){
+    $("#result").val("");
+    try {
+        var regex = new RegExp($("#regex").val(), "g");
+    }
+    catch(e){
+        $("#result").val(e);
+    }
+    var text=$("#text").val();
+
+    if(text.length==0)
+        return;
+ var str="";
+ var result;
+ var i=0;
+ while(i++<1000 && (result=regex.exec(text))!=null) {
+ //    str += JSON.stringify(result);
+     var str2="";
+     for (var j=1;j<result.length;j++){
+        str2+=""+i+" : "+result[j]+"\n";
+     }
+     str+=str2+'\n__________________________________\n';
+
+     $("#result").val(str);
+ }
+}
+
+
+</script>
+<body>regex <input id="regex" size="50" onkeyup="analyze()">
+<br>
+text <textarea rows="40"cols="50" id="text"  onkeyup="analyze()"></textarea>
+
+result <textarea rows="40"cols="50" id="result"></textarea>
+</body>
+</html>

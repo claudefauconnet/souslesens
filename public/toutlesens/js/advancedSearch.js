@@ -1,0 +1,632 @@
+/*******************************************************************************
+ * TOUTLESENS LICENCE************************
+ *
+ * The MIT License (MIT)
+ *
+ * Copyright (c) 2016 Claude Fauconnet claude.fauconnet@neuf.fr
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ *
+ ******************************************************************************/var currentCypherQueryTextArea = "";
+var currentNodeRole;
+var matchIndex = 0;
+var currentTabIndex = 0;
+var currentActionObj;
+var currentLabel;
+
+var limit=300;
+
+var returnStr = "EXTRACT(rel IN relationships(path) | type(rel))as rels,nodes(path)as nodes, EXTRACT(node IN nodes(path) | ID(node)) AS ids, EXTRACT(node IN nodes(path) | labels(node)) as labels ";// ,
+// EXTRACT(rel
+// IN
+// relationships(path))";
+
+
+function onSourceNodeClick() {
+    currentActionObj.currentTarget = "graphPathSourceNode";// initialisé dans page html
+    currentActionObj.graphPathSourceNode = {};
+    showLabelSelectionDialog("setTargetNodeLabel()");
+}
+
+function onTargetNodeClick() {
+
+    currentActionObj.currentTarget = "graphPathTargetNode";// initialisé dans page html
+    currentActionObj.graphPathTargetNode = {};
+    showLabelSelectionDialog("setTargetNodeLabel()");
+}
+
+
+function closeDialog() {
+    $("#dialog").dialog("close")
+}
+
+function showLabelSelectionDialog(callback) {
+
+    var str = '<div id="Labeldialog"><table border="0"><tr>' +
+        '<td><span id="lang_100">Labels</span></td>' +
+        '</tr>' +
+        '<tr>' +
+        '<td><select id="nodesLabelsSelect" size="15" class="ui-widget-content" ondblclick="' + callback + '(this)"></select></td><td>';
+    if (callback) {
+        str += '<button onclick="' + callback + '(this)">OK</button>';
+    }
+
+    str += '<button onclick=" closeDialog()">Cancel</button><br>';
+    if (currentActionObj.currentTarget != "customQueryMatch") {
+        str += '<button onclick="showSearchPropertyDialog()">add property filter</button><br>';
+        str += '<button onclick="showNodeSelectionDialog()"> select a node</button>';
+    }
+    str += '</td></tr></table>'
+
+    $("#dialog").html(str);
+    initLabels();
+    $("#dialog").dialog("open");
+}
+
+
+function showSearchPropertyDialog() {
+    var value = $("#nodesLabelsSelect option:selected").val();
+    currentActionObj[currentActionObj.currentTarget].label = value;
+    $("#dialog").dialog("option", "title", "valeur d'une propriete");
+    str = getAllpropertiesDialogContent("setTargetNodeProperty()");
+    str += '<button onclick=" closeDialog()">Cancel</button><br>';
+    str += "<button onclick='showNodeSelectionDialog()'>Select a node</button>";
+    $("#dialog").html(str);
+    $("#dialog").dialog("open");
+    if (currentActionObj.currentTarget == "graphPathSourceNode")
+        $("#getAllpropertiesDialogOkBtn").css("visibility", "hidden");
+
+
+}
+
+
+
+function showNodeSelectionDialog(value) {
+    var value = $("#nodesLabelsSelect option:selected").val();
+    if (value)
+        currentActionObj[currentActionObj.currentTarget].label = value;
+    value = setSearchNodeReturnFilterVal();
+    if (value)
+        currentActionObj[currentActionObj.currentTarget].property = value;
+    var type = "";
+
+    $("#dialog").dialog("option", "title", "Selectionner un Noeud " + type);
+    dialogStr = "	<table><tr><td><div id='startNodePageNavigation'></div></td></tr><tr><td ><select size='20' id='wordsSelect'"
+        + "onclick='setNode(this)'><option>----------</option></select></td>";
+    dialogStr += '<button onclick=" closeDialog()">Cancel</button><br>';
+    $("#dialog").html(dialogStr);
+    searchNodes(currentActionObj[currentActionObj.currentTarget].subGraph, currentActionObj[currentActionObj.currentTarget].label, currentActionObj[currentActionObj.currentTarget].property, "displayStartNodesPage", 100, 0);
+    $("#dialog").dialog("open");
+
+
+}
+
+
+function setTargetNodeLabel() {
+
+    var value = $("#nodesLabelsSelect option:selected").val();
+
+    currentActionObj[currentActionObj.currentTarget].label = value;
+    //  $("#graphPathTargetNode").val(":" + value);
+    $("#" + currentActionObj.currentTarget).val("[" + value + "]");
+    $("#dialog").dialog("close");
+
+
+}
+function setTargetNodeProperty() {
+    var value = setSearchNodeReturnFilterVal();
+    currentActionObj[currentActionObj.currentTarget].property = value;
+    $("#graphPathTargetNode").val(value);
+    $("#dialog").dialog("close");
+
+
+}
+function setSearchNodeReturnFilterVal(execSearch) {
+    $("#dialog").dialog("close");
+
+    var propertyType = $("#propertyType").val();
+    if (!propertyType || propertyType == "")
+        propertyType = "any"
+
+    var operators = {
+        Contains: "~",
+        Equals: "=",
+        Greater: ">",
+        Lower: "<"
+    }
+    for (var key in operators) {
+
+        var value = $("#property" + key).val();
+
+        if (value && value != "") {
+
+            var str = propertyType + ":" + operators[key] + " " + value;
+
+            if (execSearch) {
+                $("#word").val(str);
+                searchNodesUI("count");
+            }
+            return str;
+        }
+    }
+
+
+}
+
+function setNode() {
+    var valueText = $("#wordsSelect option:selected").text();
+    var valueId = $("#wordsSelect option:selected").val();
+
+    currentActionObj[currentActionObj.currentTarget].nodeId = valueId;
+    currentActionObj[currentActionObj.currentTarget].nodeText = valueText;
+    $("#dialog").dialog("close");
+
+    $("#" + currentActionObj.currentTarget).val(valueText);
+
+
+}
+
+
+function onQueryMatchTextAreaClick() {
+    currentActionObj.currentTarget = "customQueryMatch";// initialisé dans page html
+    currentActionObj.customQueryMatch = {}
+
+}
+
+
+function setCustomMatchQueryLabel(select) {
+    var value = $("#nodesLabelsSelect option:selected").val();
+    $("#dialog").dialog("close");
+    currentActionObj.label = value;
+
+    $("#cypherQueryReturnTextArea").val(returnStr);
+
+
+    var p = getCaretPosition(currentCypherQueryTextArea);
+    var str = $(currentCypherQueryTextArea).val();
+    if (true) {
+        if (str == "") {
+            str = "(n:" + value + ")";
+            $(currentCypherQueryTextArea).val(str);
+        } else {
+
+            $("#dialog").dialog("option", "title", "distance de la relation");
+            dialogStr = "<input  name='matchMode'type='radio' checked='checked' value='replace' > Remplacer"
+                + "<input  name='matchMode'type='radio' value='add' onclick='$(\"#distanceDiv\").css(\"visibility\",\"visible\")'; > Ajouter<br>"
+                + "<div style='visibility:hidden;' id='distanceDiv'> <hr>distance entre les noeuds :"
+                + "<table><tr><td> Minimum</td><td><input id='matchMinRdistance' size='2' value='1'></td>"
+                + "<table><tr><td> Maximum</td><td><input id='matchMaxRdistance' size='2' value='1'></td></tr></table></div>"
+                +
+
+                " <button onclick='setManualqueryMatch()'>OK</button>";
+            $("#dialog").html(dialogStr);
+            $("#dialog").dialog("open");
+
+        }
+
+    }
+
+}
+
+function getCaretPosition(ctrl) {
+    var CaretPos = 0; // IE Support
+    if (document.selection) {
+        ctrl.focus();
+        var Sel = document.selection.createRange();
+        Sel.moveStart('character', -ctrl.value.length);
+        CaretPos = Sel.text.length;
+    }
+    // Firefox support
+    else if (ctrl.selectionStart || ctrl.selectionStart == '0')
+        CaretPos = ctrl.selectionStart;
+    return (CaretPos);
+}
+
+
+//********************************************************execute*****************************************
+
+function execute() {
+    if (currentActionObj.type == "pathes") {
+        if (currentActionObj.graphPathSourceNode.nodeId && currentActionObj.graphPathTargetNode.nodeId) {
+            executePathQuery();
+        }
+        else {
+            buildCypherQuery();
+        }
+
+    }
+    if (currentActionObj.type == "cypher") {
+        buildCypherQueryUI();
+    }
+
+
+}
+
+
+function executePathQuery() {
+    var maxDistance = parseInt($("#graphPathMaxDistance").val());
+    var algo = "allSimplePaths"// $("#graphPathsAlgorithm").val();
+    getAllSimplePaths(currentActionObj.graphPathSourceNode.nodeId, currentActionObj.graphPathTargetNode.nodeId, maxDistance, algo);
+
+}
+
+
+function buildCypherQuery() {
+    var maxDistance = parseInt($("#graphPathMaxDistance").val());
+    var str = ""
+
+    var matchStr = "(n"
+    if (currentActionObj.graphPathSourceNode.label)
+        matchStr += ":" + currentActionObj.graphPathSourceNode.label;
+    matchStr += ")-[r" + "*.."
+        + maxDistance
+        + "]-(m";
+    if (currentActionObj.graphPathTargetNode && currentActionObj.graphPathTargetNode.label)
+        matchStr += ":" + currentActionObj.graphPathTargetNode.label;
+    matchStr += ")";
+
+    var whereStr = ""
+    if (currentActionObj.graphPathSourceNode.property)
+        whereStr += "n." + getWhereProperty(currentActionObj.graphPathSourceNode.property);
+
+    if ( currentActionObj.graphPathTargetNode && currentActionObj.graphPathTargetNode.property) {
+        if (whereStr.length > 0)
+            whereStr += "  and ";
+        whereStr += "m." + getWhereProperty(currentActionObj.graphPathTargetNode.property);
+    }
+    if (currentActionObj.graphPathSourceNode.nodeId) {
+        if (whereStr.length > 0)
+            whereStr += "  and ";
+        whereStr += "ID(n)=" + currentActionObj.graphPathSourceNode.nodeId;
+    }
+
+    if (currentActionObj.graphPathTargetNode.nodeId) {
+        if (whereStr.length > 0)
+            whereStr += "  and ";
+        whereStr += "ID(m)=" + currentActionObj.graphPathTargetNode.nodeId;
+    }
+
+
+    var query = "Match path=" + matchStr;
+    if (whereStr.length > 0)
+        query += " WHERE " + whereStr;
+
+  /*  if (groupBy.length > 0)
+        query += "groupBy " + groupBy;*/
+
+    query += " RETURN  " + returnStr;
+
+    query += " LIMIT " + limit;
+    console.log(query);
+    window.parent.executeCypherAndDisplayGraph(query,currentActionObj);
+
+}
+
+
+function getWhereProperty(str){
+    var property = "nom";
+    var p = str.indexOf(":");
+    var operator;
+    if (p > -1) {
+        property = str.substring(0, p);
+        str = str.substring(p + 1);
+        var q = str.indexOf(" ");
+        operator = str.substring(0, q);
+        str = str.substring(q + 1);
+    }
+    else {
+        operator = "~";
+
+    }
+
+    if(operator!="~"){
+        if((/[\s\S]+/).test(str))
+            str="\""+str+"\"";
+    }
+    var propStr = "";
+    if (property == "any")
+        propStr = '(any(prop in keys(n) where n[prop] =~ ".*' + str.trim() + '*"))';
+    else if (operator == "~") {
+        propStr =  property + " =~ '(?i).*" + str.trim() + ".*'";
+    }
+    else {
+        propStr =  property + operator + str.trim();
+    }
+    return  propStr;
+}
+
+
+
+function buildCypherQueryUI() {
+
+    var match = $("#cypherQueryMatchTextArea").val();
+    var where = $("#cypherQueryWhereTextArea").val();
+    var groupBy = $("#cypherQueryGroupByTextArea").val();
+//    var returnClause = $("#cypherQueryReturnTextArea").val();
+    var limit = $("#cypherQueryLimitInput").val();
+    if (match == "") {
+        alert("la clause Match ne peut être vide");
+        return;
+    }
+
+    if (match.indexOf("-[") < 0) {
+        match += "-[r]-(x)"
+    }
+    var query = "Match path=" + match;
+    if (where.length > 0)
+        query += "WHERE " + where;
+
+    if (groupBy && groupBy.length > 0)
+        query += "groupBy " + groupBy;
+
+    query += " RETURN  " + returnStr;
+
+    query += " LIMIT " + limit;
+    console.log(query);
+    window.parent.executeCypherAndDisplayGraph(query);
+
+
+}
+function executeCypherAndDisplayGraph(query,_currentActionObj) {
+    $("#tabs-radarLeft").tabs("enable");
+    $("#tabs-radarRight").tabs("enable");
+    currentActionObj=_currentActionObj;
+    $("#graphForceDistance").val(20);
+    hideAdvancedSearch();
+    $("#tabs-radarLeft").tabs("enable");
+    hideAdvancedSearch();
+    executeQuery(QUERY_TYPE_MATCH, query, function (data) {
+        currentDisplayType = "SIMPLE_FORCE_GRAPH";
+        cachedResultArray = data;
+        displayGraph(data, "SIMPLE_FORCE_GRAPH", null)
+    });
+}
+
+
+function showCypherMatchDialog(){
+    var p = getCaretPosition(currentCypherQueryTextArea);
+    var str = $("#cypherQueryMatchTextArea").val();
+
+
+
+            $("#dialog").dialog("option", "title", "distance de la relation");
+            dialogStr = "<input  name='matchMode'type='radio' checked='checked' value='replace' > Remplacer"
+                + "<input  name='matchMode'type='radio' value='add' onclick='$(\"#distanceDiv\").css(\"visibility\",\"visible\")'; > Ajouter<br>"
+                + "<div style='visibility:hidden;' id='distanceDiv'> <hr>distance entre les noeuds :"
+                + "<table><tr><td> Minimum</td><td><input id='matchMinRdistance' size='2' value='1'></td>"
+                + "<table><tr><td> Maximum</td><td><input id='matchMaxRdistance' size='2' value='1'></td></tr></table></div>"
+                +
+
+                " <button onclick='setCypherqueryMatch(\"done\")'>OK</button>";
+            $("#dialog").html(dialogStr);
+            $("#dialog").dialog("open");
+
+
+
+
+}
+function setCypherqueryMatch(done) {
+    $("#dialog").dialog("close");
+    var label = $("#nodesLabelsSelect").val();
+    if (label && label != "")
+        currentLabel=label;
+
+ var str=$("#cypherQueryMatchTextArea").val();
+    if (str == "") {
+        str = "(n:" + label + ")";
+        $("#cypherQueryMatchTextArea").val(str);
+    } else if(!done) {
+        showCypherMatchDialog();
+    }
+    else{
+        matchIndex++;
+        var distanceMin = $("#matchMinRdistance").val();
+        var distanceMax = $("#matchMaxRdistance").val();
+        distanceMin = ""
+        str += "-[r" + matchIndex + "*" + distanceMin + ".." + distanceMax
+            + "]-(n" + matchIndex +":"+ currentLabel + ")";
+        $("#cypherQueryMatchTextArea").val(str);
+    }
+
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//********************************************************old*****************************************
+function onPathGraphSelectNodeCallback() {
+    $("#dialog").dialog("close");
+    var value = $("#wordsSelect").val();
+    var text = wordsSelect.options[wordsSelect.selectedIndex].text;
+    // var text=$("#wordsSelect").text();
+    if (value == "")
+        return;
+
+    if (currentTabIndex == 2) {// path
+        var xx = $("#graphPathSourceNodeVal").val();
+        if (xx == "" || xx.indexOf("?") > 0) {
+            $("#graphPathSourceNode").val(text);
+            $("#graphPathSourceNodeVal").val(value);
+
+        } else {
+            $("#graphPathTargetNode").val(text);
+            $("#graphPathTargetNodeVal").val(value);
+        }
+    }
+    if (currentTabIndex == 1) {// traversal
+        $("#graphTravSourceNodeText").val(text);
+        $("#graphTravSourceNodeVal").val(value);
+    }
+
+}
+
+
+
+
+/*function setWhereClause() {
+ currentCypherQueryTextArea = cypherQueryWhereTextArea
+ var p = getCaretPosition(currentCypherQueryTextArea);
+ var str = $(currentCypherQueryTextArea).val();
+
+ $("#dialog").dialog("close");
+ var propertyType = $("#propertyType").val();
+ if()
+ var propertyValue = $("#propertyValue").val().toLowerCase();
+
+ var where = "n." + propertyType + "=" + propertyValue;
+
+ if (str == "")
+ str = where;
+ else {
+ str += " and " + where;
+ }
+ $(currentCypherQueryTextArea).val(str);
+
+ }*/
+
+
+function onClickCypherQueryMatchTextArea(textArea) {
+
+    currentCypherQueryTextArea = textArea;
+}
+
+
+function graphTravOnFilterSelect(select) {
+    var str = "";
+    var type = $(select).val();
+
+    var condition = "";
+
+    var selectId = $(select).attr("id");
+    var returnId = "";
+    if (selectId.indexOf("Return") > -1)
+        returnId = 'graphReturnNodeProperty';
+    else if (selectId.indexOf("Prune") > -1)
+        returnId = 'graphPruneNodeProperty';
+
+
+    if (true || type == "none") {
+        if (selectId.indexOf("Return") > -1)
+            $("#graphTravReturnEvaluator").val("");
+        else if (selectId.indexOf("Prune") > -1)
+            $("#graphTravPruneEvaluator").val("");
+        //return;
+
+    }
+    if (type == "label") {
+        var value = "";
+        $("#dialog").dialog("option", "title", "type de label");
+        condition = "position.endNode().hasLabel('" + value + "') ";
+        str = "pas encore implemente, c'est pour bientot...";
+    }
+
+    else if (type == "nodeProperty") {
+        // $("#dialog").detach($("#graphTravReturnEvaluator"));
+        $("#dialog").dialog("option", "title", "valeur d'une propriete");
+        str = getAllpropertiesDialogContent("setGraphTravReturnFilterVal('" + returnId + "')");
+    }
+
+    else if (type == "RelationType") {
+        $("#dialog").dialog("option", "title", "type de  relation");
+        str = getAllRelationsDialogContent("setGraphTravReturnFilterVal('graphRelationType')");
+
+    }
+    $("#dialog").html(str);
+    $("#dialog").dialog("open");
+
+
+}
+
+function setGraphTravReturnFilterVal(type) {
+    $("#dialog").dialog("close");
+    if (type.indexOf('NodeProperty') > -1) {
+        var propertyType = $("#propertyType").val();
+        var propertyValue = $("#propertyValue").val().toLowerCase();
+        condition = "position.endNode().hasProperty('" + propertyType + "') && position.endNode().getProperty('" + propertyType + "').toLowerCase().contains('" + propertyValue + "')"
+    }
+
+    if (type.indexOf('graphRelationType') > -1) {
+        var relType = $("#relType").val();
+        var relDir = $("#relDir").val();
+        var relationships = [{
+            "direction": relDir,
+            "type": relType
+        }];
+        $("#graphTravRelTypes").val(JSON.stringify(relationships));
+        return;
+    }
+
+
+    var str = $("#graphTravReturnEvaluator").val();
+    if (str && str.length > 0)
+        str += " && ";
+
+    str += condition;
+    if (type.indexOf('Return') > -1) {
+        $("#graphTravReturnEvaluator").val(str);
+    }
+    if (type.indexOf('Prune') > -1) {
+        $("#graphTravPruneEvaluator").val(str);
+    }
+
+
+}
+
+
+function onExecuteTraversalQuery() {
+    var startNodeId = $("#graphTravSourceNodeVal").val();
+    var graphTravReturnType = $("#graphTravReturnType").val();
+    var graphTravPriority = $("#graphTravPriority").val();
+    var graphTravUnicity = $("#graphTravUnicity").val();
+    var graphTravPruneEvaluator = $("#graphTravPruneEvaluator").val();
+    var graphTravReturnEvaluator = $("#graphTravReturnEvaluator").val();
+    var graphTravReturnFilter = $("#graphTravReturnFilter").val();
+    var graphTravDepth = parseInt($("#graphTravMaxDepth").val());
+    var graphTravRelTypes = $("#graphTravRelTypes").val();
+    drawGraphTraversal(startNodeId, graphTravReturnType, graphTravPriority,
+        graphTravUnicity, graphTravPruneEvaluator,
+        graphTravReturnEvaluator, graphTravReturnFilter, graphTravDepth,
+        graphTravRelTypes);
+
+}
