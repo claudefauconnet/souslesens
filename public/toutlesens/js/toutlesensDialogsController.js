@@ -84,6 +84,7 @@ function setPopupMenuNodeInfoContent() {
         "<input type='image' height='15px'  alt='set as rootNode' onclick='dispatchAction(\"setAsRootNode\")' src='images/squareRoot.png'/>" + "&nbsp;" +
         "<B><span style='color:" + nodeColors[currentObject.label] + "'> [" + currentObject.label + "]<span>" +name+"</B>"
 
+
     if (currentObject.hiddenChildren) {
         str += "<ul>";
         currentHiddenChildren = {};

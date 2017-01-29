@@ -98,6 +98,7 @@ function showSearchPropertyDialog() {
 
 
 function showNodeSelectionDialog(value) {
+
     var value = $("#nodesLabelsSelect option:selected").val();
     if (value)
         currentActionObj[currentActionObj.currentTarget].label = value;
@@ -107,7 +108,7 @@ function showNodeSelectionDialog(value) {
     var type = "";
 
     $("#dialog").dialog("option", "title", "Selectionner un Noeud " + type);
-    dialogStr = "	<table><tr><td><div id='startNodePageNavigation'></div></td></tr><tr><td ><select size='20' id='wordsSelect'"
+    dialogStr = "	<table><tr><td><div id='startNodePageNavigation'></div></td></tr><tr><td ><select size='15' id='wordsSelect'"
         + "onclick='setNode(this)'><option>----------</option></select></td>";
     dialogStr += '<button onclick=" closeDialog()">Cancel</button><br>';
     $("#dialog").html(dialogStr);
@@ -170,8 +171,9 @@ function setSearchNodeReturnFilterVal(execSearch) {
 }
 
 function setNode() {
-    var valueText = $("#wordsSelect option:selected").text();
-    var valueId = $("#wordsSelect option:selected").val();
+    var index=wordsSelect.selectedIndex;
+    var valueText = wordsSelect.options[wordsSelect.selectedIndex].text;
+    var valueId = $("#wordsSelect").val();
 
     currentActionObj[currentActionObj.currentTarget].nodeId = valueId;
     currentActionObj[currentActionObj.currentTarget].nodeText = valueText;

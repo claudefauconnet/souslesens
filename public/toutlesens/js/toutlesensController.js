@@ -727,18 +727,18 @@ function getGraphDataAroundNode(id, callbackFunction) {
         getNodeAllRelations(id, mode);
         return;
     }
-    else if (currentDataStructure == "tree") {
-        if (cachedReslultTree)
-            listTreeResultToHtml(cachedReslultTree, Gparams.htmlOutputWithAttrs)
-        else
-            getNodeAllRelations(id, mode);
-    }
+
     else if (mode == "TREEMAP") {
         getNodeAllRelations(id, mode);
     }
     else if (mode == "listTree") {
+     if (currentDataStructure == "tree") {
+            if (cachedReslultTree)
+                listTreeResultToHtml(cachedReslultTree, Gparams.htmlOutputWithAttrs)
+            else
+                getNodeAllRelations(id, mode);
+        }
 
-        getNodeAllRelations(id, mode);
     }
     /*  if (!callbackFunction) {
      if (mode == "GRAPH")
@@ -1835,33 +1835,21 @@ function displayGraph(json, output, labels) {
 
     } else if (output == "FORCE_COLLAPSE") {
         drawForceCollapse(json, null, null, distance, currentGraphCharge);
-    } else if (output == "TREEMAP") {
-        var jsonTreeMap = jsonToHierarchyTree(json, "label");
-        // setValues(jsonTreeMap)
-        drawTreeMap2(jsonTreeMap);
+    }
+    else if (output == "TREEMAP") {
+       var jsonTreeMap = jsonToHierarchyTree(json, "label");
+      // setValues(jsonTreeMap)
+        testTreemap(jsonTreeMap);
+      //  drawTreeMap2(jsonTreeMap);
         // drawTreeMap(jsonTest);
 
     } else if (output == "SIMPLE_FORCE_GRAPH") {
         var forceJson = json;
-        if (json.children && json.children.length > 0)// maladroit à revoir dans flower
+        if (!json || json.children && json.children.length > 0)// maladroit à revoir dans flower
             forceJson = cachedResultArray;
         drawsimpleForce(forceJson);
     }
-    /*    if (output == "CSV") {
-     drawCSV(json, output);
-     // $("#tabs-radarRight").tabs("option", "active", 1);
-     return;
-     }
 
-     else if (output == "HTML") {
-     var jsonHtml = json;
-     if ($("#groupByLabelsCbx").prop("checked"))
-     jsonHtml = jsonToHierarchyTree(json, "label");
-     listResultToHtml(jsonHtml, true);
-     // $("#tabs-radarRight").tabs("option", "active", 1);
-     return;
-
-     }*/
 
 
     if (labels)

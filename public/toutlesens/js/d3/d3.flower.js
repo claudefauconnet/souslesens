@@ -168,8 +168,8 @@ CodeFlower.prototype.update = function (json) {
             })
             .style("opacity", function (d) {
                 if (d.target.decoration)
-                    return .2;
-                return .4
+                    return .6;
+                return .6
             });
 
     });
@@ -202,7 +202,7 @@ CodeFlower.prototype.update = function (json) {
             })
             .style("opacity", function (d) {
                 if (d.target.decoration)
-                    return .2;
+                    return .4;
                 return .6
             });
 

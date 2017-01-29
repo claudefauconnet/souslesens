@@ -128,7 +128,7 @@ function getNodeAllRelations(id, output, addToExistingTree, cacheNewResult) {
 
     var numberOfLevelsVal = $("#depth").val();
     numberOfLevelsVal = parseInt(numberOfLevelsVal);
-    if( !currentDisplayType || currentDisplayType=="FLOWER" || currentDisplayType=="TREE" || currentDisplayType=="SIMPLE_FORCE_GRAPH")
+    if( !currentDisplayType || currentDisplayType=="FLOWER" || currentDisplayType=="TREE" || currentDisplayType=="SIMPLE_FORCE_GRAPH" || currentDisplayType=="TREEMAP")
     numberOfLevelsVal += 1;// pour les count des feuilles
     // var statement = "MATCH path=(node1:"
     // + currentLabel
@@ -424,7 +424,7 @@ function addChildRecursive(node, nodesMap, level, maxLevels) {
                 if (!nodesMap[key].visited) {
                     aNode.level = level;
                     if (level > maxLevels) {
-                        if (node.decoration) {// on dessine les noeuds avec des decorations meme s'ils sont au dernier niveau
+                        if (false && node.decoration) {// on dessine les noeuds avec des decorations meme s'ils sont au dernier niveau
                             node.children.push(aNode);
                             totalNodesToDraw += 1;
                         } else {

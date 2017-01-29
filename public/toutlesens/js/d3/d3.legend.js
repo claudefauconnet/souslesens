@@ -29,9 +29,6 @@ function drawLegend() {
     var legWidth = $("#graphLegendDiv").width() - 10;
 
 
-
-
-
     var relations = []
 
     for (type in legendRelTypes) {
@@ -112,39 +109,36 @@ function drawLegend() {
     }).style("fill-opacity", 1).style("font-size", "12px");
 
 
-
     //lien vers les decorations
-    yLeg += 30;
-    visLeg.append("text").attr("x", 0)
-       // .attr("dy", ".50em")
-        .attr('class', 'legendText')
-        .attr("transform", function (d) {
-            return "translate(" + xLeg + "," + (yLeg +10) + ")"
-        })
-        .style("fill", function (d) {
-            return "purple";
-        }).attr("text-anchor", function (d) {
-        return "start";
-    }).text(function (d) {
+
+
+    var decoButton = visLeg.append("g").on("click", showGraphDecorationObjsDialog).attr("transform", function (d) {
+        return "translate(" + xLeg + "," + (yLeg + 10) + ")"
+    })
+
+    decoButton.append("rect").attr("width", 90).attr("height", 23).attr("rx", 0).attr("ry", 0)
+        .style("fill", "#ca842e");
+    decoButton.append("text").text(function (d) {
         if (Gparams.lang == "FR")
-            return "Representer les proprietes...";
+            return "Montrer...";
         else
-            return "Paint properties...";
-    }).style("fill-opacity", 1).style("font-size", "14px").style("font-weight", "bold")
-        .on("click", showGraphDecorationObjsDialog);
+            return "Show...";
+    })
+        .attr('class', 'legendText')
+        .attr("fill","white")
+        .attr("text-anchor", "start")
+        .attr("y", 15).attr("x", 5);
 
     yLeg += 20;
-
-
 }
 
 
 function drawDecorationLegend(_decorationObjs) {
     var decorationObjs = _decorationObjs;
-    if(decorationObjs.length==0)
+    if (decorationObjs.length == 0)
         return;
 
-    var title="["+decorationObjs[0].label+"]"+decorationObjs[0].property
+    var title = "[" + decorationObjs[0].label + "]" + decorationObjs[0].property
 
     yDecoLeg = 0;
     var decorationLegend = visLeg.append("g").attr("x", 0)
@@ -153,24 +147,24 @@ function drawDecorationLegend(_decorationObjs) {
             return "translate(" + 0 + "," + (yLeg) + ")"
         })
 // bounding retangle
-    var bBox = {x: 2, y: 10, height: totalHeight-50, width: Gparams.legendWidth-4};
+    var bBox = {x: 2, y: 10, height: totalHeight - 50, width: Gparams.legendWidth - 4};
     decorationLegend.append("rect")
         .attr("x", bBox.x).attr("width", bBox.width).attr("height", bBox.height).attr("y", (bBox.y ))
-        .style("stroke",null)
+        .style("stroke", null)
         .attr('fill-opacity', 1)
-        .style("fill",  "#efe6d5");
+        .style("fill", "#efe6d5");
 // title
-    decorationLegend.append("text").attr("x", 30).attr("y",30)
+    decorationLegend.append("text").attr("x", 30).attr("y", 30)
         .attr("dy", 20).attr('class', 'legendText')
         .style("fill", function (d) {
             return "purple";
         }).attr("text-anchor", function (d) {
         return "start";
     }).text(function (d) {
-            return title;
+        return title;
     }).style("fill-opacity", 1).style("font-size", "14px");
 
-    yDecoLeg+=40
+    yDecoLeg += 40
 
     // decorations elts
 
@@ -182,7 +176,7 @@ function drawDecorationLegend(_decorationObjs) {
                 if (d.size)
                     vOffset += d.size + 10;
                 yDecoLeg += vOffset;
-                return "translate(" + (xLeg+10) + "," + yDecoLeg + ")"
+                return "translate(" + (xLeg + 10) + "," + yDecoLeg + ")"
             })
         ;
 

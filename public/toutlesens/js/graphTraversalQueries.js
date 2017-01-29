@@ -102,15 +102,18 @@ function getRelationsByIds(RelIds, rawData, startNodeId, endNodeId) {
     var query = "MATCH path=(n)-[r]->(m) WHERE ID(r) IN "
         + JSON.stringify(RelIds)
         + " RETURN EXTRACT(rel IN relationships(path) | type(rel))as rels,nodes(path)as nodes, EXTRACT(node IN nodes(path) | ID(node)) AS ids, EXTRACT(node IN nodes(path) | labels(node)) "
-        + ", EXTRACT(rel IN relationships(path) | labels(startNode(rel))) as startLabel";
+        + ", EXTRACT(rel IN relationships(path) | labels(startNode(rel))) as startLabels, EXTRACT(rel IN relationships(path) | labels(endNode(rel))) as endLabels";
     executeQuery(QUERY_TYPE_MATCH, query, function (data) {
 
         for (var i = 0; i < data.length; i++) {// marquage des
             // noeuds source et
             // cible
             var nodes = data[i].nodes;
+            data[i].relProperties=[]
             var ids = data[i].ids;
+             data[i].labels=[ data[i].startLabels, data[i].endLabels];
             for (var j = 0; j < ids.length; j++) {
+                data[i].relProperties.push("");
                 var nodeId = ids[j];
                 if (startNodeId == nodeId)
                     data[i].nodes[j].isSource = true;
@@ -119,7 +122,10 @@ function getRelationsByIds(RelIds, rawData, startNodeId, endNodeId) {
             }
 
         }
+        window.parent. cachedResultArray=data;
         window.parent.hideAdvancedSearch();
+        window.parent.currentDisplayType= "SIMPLE_FORCE_GRAPH";
+        window.parent.currentDataStructure = "flat";
         window.parent.displayGraph(data, "SIMPLE_FORCE_GRAPH", null);
 
     });

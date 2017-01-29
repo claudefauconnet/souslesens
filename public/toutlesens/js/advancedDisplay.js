@@ -215,7 +215,7 @@ function buildRangeClasses(propertyRange, n) {
     for (var i = 0; i < n; i++) {
         var min = Math.round(propertyRange.min + ((size / n) * i));
         var max = Math.round(propertyRange.min + ((size / n) * (i + 1)));
-        var aClass = min + "_" + max;
+        var aClass = min +  "~" + max;
         if (max - min >= 1)
             classes.push(aClass);
     }
@@ -280,11 +280,11 @@ function setAutoRangeSize() {
 
 
 function setAutoAllColors() {
-    var color = $("#graphDecorationColor").val();
+    var color = "#" + $("#colorInput").val();
     var i = 0;
     $("#graphDecorationValues option").each(function () {
         var value = $(this).val();
-        $("#graphDecorationValues option:eq(" + i + ")").css("backgroundColor", color);
+        $("#graphDecorationValues option:eq(" + (i++) + ")").css("backgroundColor", color);
         setPropertyValueAttr(value, color, "none", "none");
     });
     showGraphDecorationObjs();
@@ -348,7 +348,7 @@ function setPropertyValueAttr(value, color, size, shape) {
     }
 
     if (type == "range") {
-        var p = decorationObj.value.indexOf("_");
+        var p = decorationObj.value.indexOf( "~");
         decorationObj.RangeMin = parseInt(decorationObj.value.substring(0, p));
         decorationObj.RangeMax = parseInt(decorationObj.value.substring(p + 1));
     }

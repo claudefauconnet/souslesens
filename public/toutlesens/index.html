@@ -43,6 +43,9 @@
 <!--<link rel="stylesheet" type="text/css"
 	href="../common/js/others/jquery.handsontable.full.min.css" />-->
 
+<link rel="stylesheet" type="text/css" href="css/treemap.css"/>
+
+
 
 <script src="../common/js/jquery/jquery.min.js"></script>
 <script src="../common/js/jquery/theme_humanity/jquery-ui.min.js "></script>
@@ -52,7 +55,7 @@
 
 
 <script src="../common/js/d3/d3.js"></script>
-
+<!--<script src="https://d3js.org/d3.v4.min.js"></script>-->
 
 <script src="resources/params.js"></script>
 
@@ -81,7 +84,7 @@
 <script src="js/d3/d3.flower.js"></script>
 <script src="js/d3/d3.modifiableGraph.js"></script>
 <script src="js/d3/d3.simpleForce.js"></script>
-<script src="js/d3/d3.treemap2.js"></script>
+<script src="js/d3/d3.treemap.js"></script>
 <script src="js/d3/d3.gantt.js.js"></script>
 <script src="js/d3/gant-chart-d3v2.js.js"></script>
 <script type="text/javascript" src="js/d3/gant-chart-d3v2.js"></script>
@@ -530,7 +533,7 @@
                                                            onclick="onVisButton('TREE')" id="treeButton"
                                                            src="images/tree.png"/></td>
 
-                                              <!--  <td><input type="image" height="30px" alt="carte"
+                                              <--  <td><input type="image" height="30px" alt="carte"
                                                            onclick="onVisButton('TREEMAP')" id="treemapButton"
                                                            src="images/treemap.png"/></td>
 
@@ -707,9 +710,6 @@
             <div id="center">
 
                 <div id="graphLegendDiv"></div>
-                <a href="javascript:showGraphDecorationObjsDialog()"><b><span
-                        id='lang_62'>Peindre des proprietes...</span></b></a>
-
 
                 <div id="graphDiv"></div>
                 <div id="popupMenuWrite" class="popupmenuDiv">

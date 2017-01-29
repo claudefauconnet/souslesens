@@ -1,107 +1,102 @@
-body{
-	   font-family: verdana, sans-serif;
-	    background-color: #f3edef;
-	     background-color: #eee;
-	      background-color: #eee;
-}
-body { overflow:auto;
-	font-size: 14px;
-	font-family: sans-serif, verdana;
-	vertical-align: top;
- height: 1000px;
+body {
+    font-family: verdana, sans-serif;
+    background-color: #f3edef;
+    background-color: #eee;
+    background-color: #eee;
 }
 
-#tabs-radarLeft{
-	  font-size: 12px;
-	  font-weight: bold;
-	  width: 100%;
-	height: 100%;
-	  background-color: #eee;
-}
-}
-#main{
-	left: 5px;
-
-	
+body {
+    overflow: auto;
+    font-size: 14px;
+    font-family: sans-serif, verdana;
+    vertical-align: top;
+    height: 1000px;
 }
 
-#center{
-	width: 100%;
-	height: 100%;
-		overflow: hidden;
-	
+#tabs-radarLeft {
+    font-size: 12px;
+    font-weight: bold;
+    width: 100%;
+    height: 100%;
+    background-color: #eee;
 }
 
+#main {
+    left: 5px;
 
-
-
-#left{
-	width: 300px;
-	height: 100%;
-	overflow: hidden;
-	
 }
 
-#radarFiltersDiv  {
-	width: 300px;
-	height: 100%;
-	
+#center {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+
 }
 
+#left {
+    width: 300px;
+    height: 100%;
+    overflow: hidden;
 
+}
+
+#radarFiltersDiv {
+    width: 300px;
+    height: 100%;
+
+}
 
 #attrsIframe {
-	width: 450px;
-	//height: 500px;
-	
+    width: 450px;
+/ / height: 500 px;
+
 }
 
-
-#stateDisplay{
-	visibility: visible;
-	 font-size: 10px;
-	  font-weight: normal;
-	  font-style: italic;
-	  background-color:  #eee;
-	  width:100%;
-	  height: 10px;
+#stateDisplay {
+    visibility: visible;
+    font-size: 10px;
+    font-weight: normal;
+    font-style: italic;
+    background-color: #eee;
+    width: 100%;
+    height: 10px;
 }
-
-
-
 
 #tabs {
-	background-color: #ffc;
+    background-color: #ffc;
 }
 
 #topPanel {
-	width: 100%;
-	height: 100px;
-	background-color: #eee;
-	overflow: none;
-	java-script background-color: #eed;
+    width: 100%;
+    height: 100px;
+    background-color: #eee;
+    overflow: hidden;
+    background-color: #eed;
 }
 
 #bottomPanel {
-	width: 100%;
+    width: 100%;
 
-	height: 100%;
-	background-color: #fff;s
-	overflow: none;
-	border-color: #eee;
-	border-style: solid;
-	border: thin;
-	visibility: hidden;
+    height: 100%;
+    background-color: #fff;
+    overflow: hidden;
+    border-color: #eee;
+    border-style: solid;
+    border: thin;
+    visibility: hidden;
 }
-th.ui-state-default{
-	height: 50px;
+
+th.ui-state-default {
+    height: 50px;
 }
-table.dataTable tbody td  {
+
+table.dataTable tbody td {
     max-height: 30px;
 }
+
 .dataTables_wrapper {
-  height: 50px;
-  
+    height: 50px;
+
 }
-}
+
 

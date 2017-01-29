@@ -497,5 +497,12 @@ table.dataTable thead th div.DataTables_sort_wrapper {
     margin: 5px;
 }
 
+.legendText{
+    color: white;
+    font-weight: bold;
+    font-size: 14px;
+
+}
+
 
 

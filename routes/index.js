@@ -23,7 +23,7 @@ router.post('/neo', function (req, res, next) {
         neoProxy.match(req.body.match, res);
     if (req.body && req.body.urlSuffix) {
         var payload=JSON.parse(req.body.payload)
-        neoProxy.cypher("",req.body.urlSuffix,payload,function(result){
+        neoProxy.cypher("",req.body.urlSuffix,payload,function(err,result){
             res.setHeader('Content-Type', 'application/json');
             res.send(JSON.stringify(result));
             res.end();
