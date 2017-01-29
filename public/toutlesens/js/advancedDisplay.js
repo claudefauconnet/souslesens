@@ -35,7 +35,7 @@ var propertyRange = {
 };
 
 var intPattern = /-?[0-9]+/
-var rangePattern = /-?[0-9]+_-?[0-9]+/
+var rangePattern = /-?[0-9]+~-?[0-9]+/
 var decorationObjs = [];
 var storedDecorationObjs = {};
 function loadStoredDecorationObjs() {
