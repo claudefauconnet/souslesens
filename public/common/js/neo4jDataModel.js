@@ -44,7 +44,7 @@ function initNeoModel(subGraph, callback) {
         allLabels: [""]
     }
     var where = "";
-    if (subGraph)
+    if (subGraph && subGraph!="undefined")
         where = " where n.subGraph='" + subGraph + "'";
     var query = "MATCH (n) OPTIONAL MATCH(n)-[r]-(m) "
         + where
