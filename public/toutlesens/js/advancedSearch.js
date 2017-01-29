@@ -30,7 +30,7 @@ var currentTabIndex = 0;
 var currentActionObj;
 var currentLabel;
 
-var limit=300;
+var limit = 300;
 
 var returnStr = "EXTRACT(rel IN relationships(path) | type(rel))as rels,nodes(path)as nodes, EXTRACT(node IN nodes(path) | ID(node)) AS ids, EXTRACT(node IN nodes(path) | labels(node)) as labels ";// ,
 // EXTRACT(rel
@@ -89,12 +89,11 @@ function showSearchPropertyDialog() {
     str += "<button onclick='showNodeSelectionDialog()'>Select a node</button>";
     $("#dialog").html(str);
     $("#dialog").dialog("open");
-  /*  if (currentActionObj.currentTarget == "graphPathSourceNode")
-        $("#getAllpropertiesDialogOkBtn").css("visibility", "hidden");*/
+    /*  if (currentActionObj.currentTarget == "graphPathSourceNode")
+     $("#getAllpropertiesDialogOkBtn").css("visibility", "hidden");*/
 
 
 }
-
 
 
 function showNodeSelectionDialog(value) {
@@ -171,7 +170,7 @@ function setSearchNodeReturnFilterVal(execSearch) {
 }
 
 function setNode() {
-    var index=wordsSelect.selectedIndex;
+    var index = wordsSelect.selectedIndex;
     var valueText = wordsSelect.options[wordsSelect.selectedIndex].text;
     var valueId = $("#wordsSelect").val();
 
@@ -245,7 +244,7 @@ function getCaretPosition(ctrl) {
 
 function execute() {
     if (currentActionObj.type == "pathes") {
-        if (currentActionObj.graphPathSourceNode.nodeId && currentActionObj.graphPathTargetNode.nodeId) {
+        if (currentActionObj.graphPathSourceNode && currentActionObj.graphPathSourceNode.nodeId && currentActionObj.graphPathTargetNode && currentActionObj.graphPathTargetNode.nodeId) {
             executePathQuery();
         }
         else {
@@ -285,12 +284,12 @@ function buildCypherQuery() {
 
     var whereStr = ""
     if (currentActionObj.graphPathSourceNode.property)
-        whereStr += getWhereProperty(currentActionObj.graphPathSourceNode.property,"n");
+        whereStr += getWhereProperty(currentActionObj.graphPathSourceNode.property, "n");
 
-    if ( currentActionObj.graphPathTargetNode && currentActionObj.graphPathTargetNode.property) {
+    if (currentActionObj.graphPathTargetNode && currentActionObj.graphPathTargetNode.property) {
         if (whereStr.length > 0)
             whereStr += "  and ";
-        whereStr +=  getWhereProperty(currentActionObj.graphPathTargetNode.property,"m");
+        whereStr += getWhereProperty(currentActionObj.graphPathTargetNode.property, "m");
     }
     if (currentActionObj.graphPathSourceNode.nodeId) {
         if (whereStr.length > 0)
@@ -309,19 +308,19 @@ function buildCypherQuery() {
     if (whereStr.length > 0)
         query += " WHERE " + whereStr;
 
-  /*  if (groupBy.length > 0)
-        query += "groupBy " + groupBy;*/
+    /*  if (groupBy.length > 0)
+     query += "groupBy " + groupBy;*/
 
     query += " RETURN  " + returnStr;
 
     query += " LIMIT " + limit;
     console.log(query);
-    window.parent.executeCypherAndDisplayGraph(query,currentActionObj);
+    window.parent.executeCypherAndDisplayGraph(query, currentActionObj);
 
 }
 
 
-function    getWhereProperty(str,nodeAlias){
+function getWhereProperty(str, nodeAlias) {
     var property = "nom";
     var p = str.indexOf(":");
     var operator;
@@ -338,25 +337,24 @@ function    getWhereProperty(str,nodeAlias){
         return;
     }
 
-    if(operator=="~") {
-        operator="=~"
-       // value = "'.*" + value.trim() + ".*'";
-        value =  "'"+value.trim() + ".*'";
+    if (operator == "~") {
+        operator = "=~"
+        // value = "'.*" + value.trim() + ".*'";
+        value = "'" + value.trim() + ".*'";
     }
-    else{
-        if((/[\s\S]+/).test(str))
-            value="\""+value+"\"";
+    else {
+        if ((/[\s\S]+/).test(str))
+            value = "\"" + value + "\"";
     }
-    var propStr="";
+    var propStr = "";
     if (property == "any")
-        propStr = "(any(prop in keys(n) where n[prop]" +operator +value+"))";
+        propStr = "(any(prop in keys(n) where n[prop]" + operator + value + "))";
 
     else {
-        propStr = nodeAlias+"."+ property + operator + value.trim();
+        propStr = nodeAlias + "." + property + operator + value.trim();
     }
-    return  propStr;
+    return propStr;
 }
-
 
 
 function buildCypherQueryUI() {
@@ -389,10 +387,10 @@ function buildCypherQueryUI() {
 
 
 }
-function executeCypherAndDisplayGraph(query,_currentActionObj) {
+function executeCypherAndDisplayGraph(query, _currentActionObj) {
     $("#tabs-radarLeft").tabs("enable");
     $("#tabs-radarRight").tabs("enable");
-    currentActionObj=_currentActionObj;
+    currentActionObj = _currentActionObj;
     $("#graphForceDistance").val(20);
     hideAdvancedSearch();
     $("#tabs-radarLeft").tabs("enable");
@@ -400,30 +398,29 @@ function executeCypherAndDisplayGraph(query,_currentActionObj) {
     executeQuery(QUERY_TYPE_MATCH, query, function (data) {
         currentDisplayType = "SIMPLE_FORCE_GRAPH";
         cachedResultArray = data;
+        currentDataStructure = "flat";
+
         displayGraph(data, "SIMPLE_FORCE_GRAPH", null)
     });
 }
 
 
-function showCypherMatchDialog(){
+function showCypherMatchDialog() {
     var p = getCaretPosition(currentCypherQueryTextArea);
     var str = $("#cypherQueryMatchTextArea").val();
 
 
+    $("#dialog").dialog("option", "title", "distance de la relation");
+    dialogStr = "<input  name='matchMode'type='radio' checked='checked' value='replace' > Remplacer"
+        + "<input  name='matchMode'type='radio' value='add' onclick='$(\"#distanceDiv\").css(\"visibility\",\"visible\")'; > Ajouter<br>"
+        + "<div style='visibility:hidden;' id='distanceDiv'> <hr>distance entre les noeuds :"
+        + "<table><tr><td> Minimum</td><td><input id='matchMinRdistance' size='2' value='1'></td>"
+        + "<table><tr><td> Maximum</td><td><input id='matchMaxRdistance' size='2' value='1'></td></tr></table></div>"
+        +
 
-            $("#dialog").dialog("option", "title", "distance de la relation");
-            dialogStr = "<input  name='matchMode'type='radio' checked='checked' value='replace' > Remplacer"
-                + "<input  name='matchMode'type='radio' value='add' onclick='$(\"#distanceDiv\").css(\"visibility\",\"visible\")'; > Ajouter<br>"
-                + "<div style='visibility:hidden;' id='distanceDiv'> <hr>distance entre les noeuds :"
-                + "<table><tr><td> Minimum</td><td><input id='matchMinRdistance' size='2' value='1'></td>"
-                + "<table><tr><td> Maximum</td><td><input id='matchMaxRdistance' size='2' value='1'></td></tr></table></div>"
-                +
-
-                " <button onclick='setCypherqueryMatch(\"done\")'>OK</button>";
-            $("#dialog").html(dialogStr);
-            $("#dialog").dialog("open");
-
-
+        " <button onclick='setCypherqueryMatch(\"done\")'>OK</button>";
+    $("#dialog").html(dialogStr);
+    $("#dialog").dialog("open");
 
 
 }
@@ -431,53 +428,27 @@ function setCypherqueryMatch(done) {
     $("#dialog").dialog("close");
     var label = $("#nodesLabelsSelect").val();
     if (label && label != "")
-        currentLabel=label;
+        currentLabel = label;
 
- var str=$("#cypherQueryMatchTextArea").val();
+    var str = $("#cypherQueryMatchTextArea").val();
     if (str == "") {
         str = "(n:" + label + ")";
         $("#cypherQueryMatchTextArea").val(str);
-    } else if(!done) {
+    } else if (!done) {
         showCypherMatchDialog();
     }
-    else{
+    else {
         matchIndex++;
         var distanceMin = $("#matchMinRdistance").val();
         var distanceMax = $("#matchMaxRdistance").val();
         distanceMin = ""
         str += "-[r" + matchIndex + "*" + distanceMin + ".." + distanceMax
-            + "]-(n" + matchIndex +":"+ currentLabel + ")";
+            + "]-(n" + matchIndex + ":" + currentLabel + ")";
         $("#cypherQueryMatchTextArea").val(str);
     }
 
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 //********************************************************old*****************************************
@@ -506,8 +477,6 @@ function onPathGraphSelectNodeCallback() {
     }
 
 }
-
-
 
 
 /*function setWhereClause() {

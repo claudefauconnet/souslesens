@@ -68,8 +68,6 @@
             font-size: 12px;
         }
 
-
-
         #requestTabsDiv {
             position: absolute;
             left: 10px;
@@ -80,7 +78,8 @@
             width: 300px;
             height: 50px;
         }
-        #searchAlgo{
+
+        #searchAlgo {
             visibility: hidden;
         }
     </style>
@@ -88,14 +87,14 @@
 
     <script>
         $(function () {
-            var types={0:"pathes",1:"cypher"}
-            currentActionObj={type:types[0], subGraph:subGraph};
+            var types = {0: "pathes", 1: "cypher"}
+            currentActionObj = {type: types[0], subGraph: subGraph};
             initNeoModel(subGraph, initLabels);
 
             $("#requestTabsDiv").tabs({
                 activate: function (event, ui) {
                     currentTabIndex = ui.newTab.index();
-                    currentActionObj={type:types[currentTabIndex], subGraph:subGraph};
+                    currentActionObj = {type: types[currentTabIndex], subGraph: subGraph};
 
                 }
             });
@@ -116,7 +115,6 @@
 
 </head>
 <body>
-
 
 
 <div id="requestTabsDiv">
@@ -144,7 +142,7 @@
 
                 <td><span id='lang_133'>noeud cible</span>
 
-                <td><input onclick="onTargetNodeClick()"   id="graphPathTargetNode" value=" ?">
+                <td><input onclick="onTargetNodeClick()" id="graphPathTargetNode" value=" ?">
                     <button onclick="$('#graphPathTargetNode').val('?');">X</button>
                     </input></td>
             <tr>
@@ -153,8 +151,6 @@
                 <td><span id='lang_134'>distance maximum entre les noeuds</span></td>
                 <td><input id="graphPathMaxDistance" value="3"></input></td>
             </tr>
-
-
 
 
         </table>
@@ -182,30 +178,23 @@
                                           class="cypherQueryTextArea"></textArea></td>
 
 
-
                         </tr>
-                      <!--  <tr>
-                            <td><span id='lang_106'>GroupBy</span></td>
-                            <td><textArea id="cypherQueryGroupByTextArea"
-                                          onclick="onClickCypherQueryMatchTextArea(this)"
-                                          class="cypherQueryTextArea"></textArea></td>
+                        <!--  <tr>
+                              <td><span id='lang_106'>GroupBy</span></td>
+                              <td><textArea id="cypherQueryGroupByTextArea"
+                                            onclick="onClickCypherQueryMatchTextArea(this)"
+                                            class="cypherQueryTextArea"></textArea></td>
 
 
-                        </tr>
-                        <tr>
-                            <td><span id='lang_107'>Return</span></td>
-                            <td><textArea id="cypherQueryReturnTextArea"
-                                          class="cypherQueryTextArea"> </textArea></td>
+                          </tr>
+                          <tr>
+                              <td><span id='lang_107'>Return</span></td>
+                              <td><textArea id="cypherQueryReturnTextArea"
+                                            class="cypherQueryTextArea"> </textArea></td>
 
 
-                        </tr>-->
-                        <tr>
-                            <td><span id='lang_108'>Limite</span></td>
-                            <td><input id="cypherQueryLimitInput" size="5" value="400">
-                            </td>
+                          </tr>-->
 
-
-                        </tr>
 
                     </table>
             </tr>
@@ -221,6 +210,8 @@
     </div>
     <div>
         <button oncLick="execute()"><span id='lang_152'>Executer</span></button>
+        <span id='lang_108'>Limite</span></td>
+        <input id="cypherQueryLimitInput" size="5" value="2000">&nbsp;
         <button oncLick="window.parent.hideAdvancedSearch()"><span id='lang_153'>Annuler</span></button>
     </div>
 

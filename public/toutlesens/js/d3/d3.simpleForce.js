@@ -46,7 +46,7 @@ function buildNodesAndLinks(resultArray) {
             if (nodes[j].decoration)
                 nodeObj.decoration = nodes[j].decoration;
 
-            if (j > maxLevels ) {// noeud cachés au dernier niveau
+            if (!isAdvancedSearchDialogInitialized && j > maxLevels ) {// noeud cachés au dernier niveau
                 if(!nodesMap[previousId].hiddenChildren)
                     nodesMap[previousId].hiddenChildren=[]
                 nodesMap[previousId].hiddenChildren.push(nodeObj);
