@@ -1,7 +1,7 @@
 function getAllpropertiesDialogContent(onclickAction) {
     var str = "<table><tr><td>type de propriete</td><td><select id='propertyType'></select></td></tr>"
-    str += "<tr><td align='right'>valeur (contient)</td><td><input id='propertyContains'></input></td></tr>"
     str += "<tr><td align='right'>= </td><td><input id='propertyEquals'></input></td></tr>"
+    str += "<tr><td align='right'>startsWith</td><td><input id='propertyStarts'></input></td></tr>"
     str += "<tr><td align='right'>&gt;</td><td><input id='propertyGreater'></input></td></tr>"
     str += "<tr><td align='right'>&lt; </td><td><input id='propertyLower'></input></td></tr>"
     str += "</table><button id='getAllpropertiesDialogOkBtn' onclick=" + onclickAction + ";>OK</button>";

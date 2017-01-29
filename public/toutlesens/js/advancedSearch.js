@@ -89,8 +89,8 @@ function showSearchPropertyDialog() {
     str += "<button onclick='showNodeSelectionDialog()'>Select a node</button>";
     $("#dialog").html(str);
     $("#dialog").dialog("open");
-    if (currentActionObj.currentTarget == "graphPathSourceNode")
-        $("#getAllpropertiesDialogOkBtn").css("visibility", "hidden");
+  /*  if (currentActionObj.currentTarget == "graphPathSourceNode")
+        $("#getAllpropertiesDialogOkBtn").css("visibility", "hidden");*/
 
 
 }
@@ -133,7 +133,7 @@ function setTargetNodeLabel() {
 function setTargetNodeProperty() {
     var value = setSearchNodeReturnFilterVal();
     currentActionObj[currentActionObj.currentTarget].property = value;
-    $("#graphPathTargetNode").val(value);
+    $("#" + currentActionObj.currentTarget).val(value);
     $("#dialog").dialog("close");
 
 
@@ -146,7 +146,7 @@ function setSearchNodeReturnFilterVal(execSearch) {
         propertyType = "any"
 
     var operators = {
-        Contains: "~",
+        Starts: "~",
         Equals: "=",
         Greater: ">",
         Lower: "<"
@@ -285,12 +285,12 @@ function buildCypherQuery() {
 
     var whereStr = ""
     if (currentActionObj.graphPathSourceNode.property)
-        whereStr += "n." + getWhereProperty(currentActionObj.graphPathSourceNode.property);
+        whereStr += getWhereProperty(currentActionObj.graphPathSourceNode.property,"n");
 
     if ( currentActionObj.graphPathTargetNode && currentActionObj.graphPathTargetNode.property) {
         if (whereStr.length > 0)
             whereStr += "  and ";
-        whereStr += "m." + getWhereProperty(currentActionObj.graphPathTargetNode.property);
+        whereStr +=  getWhereProperty(currentActionObj.graphPathTargetNode.property,"m");
     }
     if (currentActionObj.graphPathSourceNode.nodeId) {
         if (whereStr.length > 0)
@@ -298,7 +298,7 @@ function buildCypherQuery() {
         whereStr += "ID(n)=" + currentActionObj.graphPathSourceNode.nodeId;
     }
 
-    if (currentActionObj.graphPathTargetNode.nodeId) {
+    if (currentActionObj.graphPathTargetNode && currentActionObj.graphPathTargetNode.nodeId) {
         if (whereStr.length > 0)
             whereStr += "  and ";
         whereStr += "ID(m)=" + currentActionObj.graphPathTargetNode.nodeId;
@@ -321,34 +321,38 @@ function buildCypherQuery() {
 }
 
 
-function getWhereProperty(str){
+function    getWhereProperty(str,nodeAlias){
     var property = "nom";
     var p = str.indexOf(":");
     var operator;
+    var value;
     if (p > -1) {
         property = str.substring(0, p);
         str = str.substring(p + 1);
         var q = str.indexOf(" ");
         operator = str.substring(0, q);
-        str = str.substring(q + 1);
+        value = str.substring(q + 1);
     }
     else {
-        operator = "~";
-
+        console.log("!!!!invalid query");
+        return;
     }
 
-    if(operator!="~"){
+    if(operator=="~") {
+        operator="=~"
+       // value = "'.*" + value.trim() + ".*'";
+        value =  "'"+value.trim() + ".*'";
+    }
+    else{
         if((/[\s\S]+/).test(str))
-            str="\""+str+"\"";
+            value="\""+value+"\"";
     }
-    var propStr = "";
+    var propStr="";
     if (property == "any")
-        propStr = '(any(prop in keys(n) where n[prop] =~ ".*' + str.trim() + '*"))';
-    else if (operator == "~") {
-        propStr =  property + " =~ '(?i).*" + str.trim() + ".*'";
-    }
+        propStr = "(any(prop in keys(n) where n[prop]" +operator +value+"))";
+
     else {
-        propStr =  property + operator + str.trim();
+        propStr = nodeAlias+"."+ property + operator + value.trim();
     }
     return  propStr;
 }
