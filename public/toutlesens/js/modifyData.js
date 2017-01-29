@@ -143,6 +143,9 @@ function addPropertyToNode() {
 function onModifyNodeButton(){
 	isNewNode=false
 	var str=drawFieldInputs(currentObject);
+    $("#accordionModifyPanel").accordion({
+        active: 0
+    });
 	$("#nodeInputDiv").html(str);
 	//saveNodeInput(currentObject===null?true:false);
 }
@@ -403,8 +406,14 @@ function onCreateNodeButton(label, json) {
 	}
 	str += "</select>"
 	str += "<button onclick=addLabelType()>+</button>";
+    $("#nodeInputDiv").html(str);
+    $("#accordionModifyPanel").accordion({
+        active: 1
+    });
+    $("#accordionModifyPanel").accordion({
+        active: 0
+    });
 
-	$("#nodeInputDiv").html(str);
 }
 
 function addLabelType() {
