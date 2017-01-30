@@ -302,7 +302,7 @@ var exportMongoToNeo = {
                 mongoQuery[mongoSourceField] = {$exists: true};
                 mongoQuery[mongoTargetField] = {$exists: true};
                 // mongoProxy.find(dbName, mongoCollection, mongoQuery, null, function (error, data) {
-                mongoProxy.pagedFind(500, dbName, mongoCollection, mongoQuery, function (err, data) {
+                mongoProxy.pagedFind(10, dbName, mongoCollection, mongoQuery, function (err, data) {
                     if (err) {
                         console.log(error);
                         var result = {result: err};
@@ -386,9 +386,9 @@ var exportMongoToNeo = {
                                 response.end();
 
                             }
-                            else {
-                                callback(result);
-                            }
+                         /*   else {
+                                callback(err);
+                            }*/
                             return;
                         }
                         if (result.errors && result.errors.length > 0) {
@@ -402,9 +402,9 @@ var exportMongoToNeo = {
                                 response.end();
 
                             }
-                            else {
+                           /* else {
                                 callback(result);
-                            }
+                            }*/
                             return;
 
                         }

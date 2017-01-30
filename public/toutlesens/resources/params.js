@@ -8,7 +8,7 @@ var Gparams = {
     neo4jProxyUrl : "/neo",
     mongoProxyUrl : "/mongo",
     storedParamsUrl:"/storedParams",
-    imagesRootPath:"",
+    imagesRootPath:"/files/albumPhotos/",
 	forceAnimationDuration : 2000,
 	maxDepthExplorationAroundNode : 3,
 	// forceGraph

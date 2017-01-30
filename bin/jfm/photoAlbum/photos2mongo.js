@@ -1,7 +1,7 @@
 var ExifImage = require('exif').ExifImage;
 var fs = require('fs');
 var Path = require("path");
-var async=require("async");
+var async = require("async");
 var mongoProxy = require("../../mongoProxy.js")
 
 
@@ -14,6 +14,7 @@ var photoAlbumProcessor = {
     scanDir: function (rootPath) {
 
         var pathes = []
+        var index = 0;
 
         function recurse(obj, path) {
 
@@ -21,7 +22,7 @@ var photoAlbumProcessor = {
                 obj.children = [];
                 var files = fs.readdirSync(path, 'utf8');
 
-                level++;
+
                 files.forEach(function (childName) {
                     if (childName.indexOf(".JPG") > -1) {
                         var childPath = path + "/" + childName
@@ -47,77 +48,62 @@ var photoAlbumProcessor = {
 
         }
 
-
-
-        var level = 0;
-        var dbName = "albumPhoto"
-        var collection = "famille";
+        var regexDate = /([0-9]{4}):*([0-9]{2}):([0-9]{2}) (.*)/g
         var rootObj = {name: Path.basename(rootPath), children: []};
         recurse(rootObj, rootPath);
+     //  pathes.length=100;
+
 
         var objs = [];
-        var max = 5000;
-        max = Math.min(pathes.length, max);
-
-        var subsets=[];
-        var aSubset=[];
-        var subsetSize=100;
-        for (var i = 0; i < max; i++) {
-            if(i%subsetSize==0){
-                subsets.push(aSubset);
-                aSubset=[];
-            }
-            aSubset.push(pathes[i]);
-
-        }
-        subsets.push(aSubset);;
+        async.concat(pathes, readMetadata, function (err, objs) {
 
 
+            var xxx = objs;
+            var dbName = "albumPhoto"
+            var collection = "famille";
+            mongoProxy.insert(dbName, collection, objs, null, function (err, result) {
+                if (err)
+                    console.log(err);
+                console.log("DONE " + objs.length);
+            });
+        });
 
 
-        async.eachSeries(subsets, function (aSubset, callback) {
+        function readMetadata(path, callback) {
+            try {
+                new ExifImage({image: path}, function (err, exifData) {
+
+                    var regex = /([0-9]{4}):*([0-9]{2}):([0-9]{2}) (.*)/g
 
 
-            for (var i = 0; i < max; i++) {
-
-                try {
-                    new ExifImage({image: aSubset[i]}, function (error, exifData) {
-
-                        if (error)
-                            console.log('Error: ' + error.message);
+                    if (err)
+                        return callback({error: true});
+                    var date = new Date(1900, 0, 0, 0, 0, 0);
+                    var array = regexDate.exec(exifData.exif.DateTimeOriginal);
+                    if (array) {
+                        if (array[1] == "0000")
+                            date = new Date(1900,0,0)
                         else {
-                            var obj = {
-                                path: aSubset[i],
-                                time: exifData.exif.DateTimeOriginal,
-                            }
-
-                            objs.push(obj);
-                            //    console.log(objs.length)
-                            if (objs.length > 100) {
-
-                                mongoProxy.insert(dbName, collection, objs, null, function (err, result) {
-                                    if (err)
-                                        console.log(err);
-                                    console.log("DONE " + objs.length);
-
-
-                                });
-
-
-                            }
-
-
+                            var str = array[1] + "-" + array[2] + "-" + array[3] + "T" + array[4]+"Z"
+                            date = new Date(str);
                         }
-                    })
+                    }
+                    var obj = {
+                        date: date,
+                        path: path,
+                        index: index++
+                    }
+                    return callback(null, obj);
+                });
 
-                } catch (error) {
 
-                    console.log('Error: ' + error.message);
-                }
+            } catch (error) {
+                return callback({error: true});
+                console.log('Error: ' + error.message);
             }
+        }
 
 
-        })
     }
 }
 var rootPath = "D:/photosCF/Pictures/photos2016/"

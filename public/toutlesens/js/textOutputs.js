@@ -1,7 +1,6 @@
 var jsonHtml = "";
 
 
-
 function listTreeResultToHtml(jsonTree, withAttrs) {
 
     jsonHtml = jsonTree;
@@ -28,7 +27,7 @@ function listTreeResultToHtml(jsonTree, withAttrs) {
     html += '<div id="htmlListDiv" style="overflow: scroll;width:' + (totalWidth / 3 * 2) + 'px;height:' + (totalHeight - 100) + 'px;background-color:\'white\' ">' + str + '</div>'
 
     $("#textDiv").html(str);
-        // $("#tabs-radarRight").tabs("option", "active", 1);
+    // $("#tabs-radarRight").tabs("option", "active", 1);
 
 
 }
@@ -38,7 +37,7 @@ function printNode(node, withAttrs) {
     var str = "";
     var label = "";
     var color = "black";
-    if (true){//node.nodeType && node.nodeType == "node" && node.parentNodeType && node.parentNodeType != "label") {
+    if (true) {//node.nodeType && node.nodeType == "node" && node.parentNodeType && node.parentNodeType != "label") {
         label = "" + node.label + ".";
         color = nodeColors[node.label];
         label = "<span style='color:" + color + "'>" + label + "</span>";
@@ -69,18 +68,18 @@ function printNode(node, withAttrs) {
         name = "<span style='font-size:18px;color:" + color + ";font-weight:bold'>" + name + "</span>";
     }
 
-    var deco="";
-    if(node.decoration && node.decoration.value){
-        var color="red";
-        if(node.decoration.color)
-            color=node.decoration.color
-        deco="<span style='font-size:18px;color:" + color + ";font-weight:bold'>" + node.decoration.property+"="+node.decoration.value + "</span>";
+    var deco = "";
+    if (node.decoration && node.decoration.value) {
+        var color = "red";
+        if (node.decoration.color)
+            color = node.decoration.color
+        deco = "<span style='font-size:18px;color:" + color + ";font-weight:bold'>" + node.decoration.property + "=" + node.decoration.value + "</span>";
     }
     var attrs = "";
     if (withAttrs)
         attrs = getNodeAttrsInfo(node);
     var anchor = "<a href='javascript:onLinkClick(" + node.id + ")'>";
-    str += "<li>" + rel + label + anchor + name + "</a>"+ deco+ attrs + "</li>";
+    str += "<li>" + rel + label + anchor + name + "</a>" + deco + attrs + "</li>";
 
 
     return str;
@@ -398,8 +397,8 @@ function formatNodeInfo(obj) {
 
     for (var key in obj) {
         if (key == "path") {
-
-            obj[key] = "<a href='javascript:showImage(\"" + encodeURI(Gparams.imagesRootPath + obj[key]) + "\")'>voir <a/>";
+            var str = obj[key].replace("--", "/");
+            obj[key] = "<a href='javascript:showImage(\"" + encodeURI(Gparams.imagesRootPath + str) + "\")'>voir <a/>";
         }
         if (obj[key] && ("" + obj[key]).toLowerCase().indexOf("http") == 0)
             obj[key] = "<a href='" + obj[key]

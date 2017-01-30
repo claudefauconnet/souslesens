@@ -286,7 +286,8 @@ CodeFlower.prototype.update = function (json) {
                     //   console.log(d.neoAttrs.path);
 
                     //return "http://127.0.0.1:3002/JAVATHEQUE"+encodeURIComponent(d.neoAttrs.path);
-                    return encodeURI(Gparams.imagesRootPath + d.neoAttrs.path);
+                    var str =  d.neoAttrs.path.replace("--", "/");
+                    return encodeURI(Gparams.imagesRootPath +str);
                     //   return encodeURI(d.neoAttrs.path);
 
                 })
