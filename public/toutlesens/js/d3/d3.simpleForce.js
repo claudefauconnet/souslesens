@@ -365,20 +365,18 @@ function drawSimpleForce(nodes, links) {
                             return Gparams.circleR * 1.2;
                         if (d.decoration && d.decoration.size)
                             return d.decoration.size;
-                        var r0 = Gparams.circleR;
+
+                        var r0 = Gparams.circleR/3;
                         if (d.isRoot == true || d.isTarget == true) {
                             return r0 * 2;
                         }
                         if (d.rels) {
-                            var r= r0 +((r0*d.rels.length) / 4)
-                            return Math.min(r,Gparams.circleR *4);
+                            var r= r0 +(r0*Math.log(d.rels.length) )
+                            return r;
+                            // return Math.min(r,Gparams.circleR *4);
                         }
-
-
                         return r0;
-                        if (!d.nLinks || d.nLinks == 0)
-                            return r0;
-                        return r0 * d.nLinks;
+
                     })
 
 

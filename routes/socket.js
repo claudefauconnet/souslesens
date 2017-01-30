@@ -7,5 +7,6 @@ socket.stuff = function(_client, io){
     client=_client;
 };
 socket.message=function (message){
+    if(client && client.emit)
     client.emit('messages', message);
 }

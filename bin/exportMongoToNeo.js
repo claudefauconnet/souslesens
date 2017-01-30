@@ -479,8 +479,8 @@ var exportMongoToNeo = {
                         totalImported = totalImported + result.results.length;
                         var message = "totalImportedtotal :" + (totalImported);
                         console.log(message);
-                        if (socket)
-                            socket.message(message);
+                      //  if (socket)
+                         //   socket.message(message);
                         callback(null);
                     }
                 });
