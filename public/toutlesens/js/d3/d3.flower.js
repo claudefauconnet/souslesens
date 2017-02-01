@@ -1,5 +1,6 @@
 var myFlower;
 var flowerHiddenNodes = {};
+var flowerNodes = [];
 function drawFlower(json) {
     w = $("#graphDiv").width();
     h = $("#graphDiv").height() - 10;
@@ -30,11 +31,11 @@ var CodeFlower = function (selector, w, h) {
     this.h = h;
     this.isDragging = false;
 
-   CodeFlower.imgOpacityWeak = 0.7
+    CodeFlower.imgOpacityWeak = 0.7
     CodeFlower.imgOpacityStrong = 1.0
 
-    var graphParams=  Gparams.d3ForceParams;
-    this.distance =  Gparams.d3ForceParams.distance*distCoef;
+    var graphParams = Gparams.d3ForceParams;
+    this.distance = Gparams.d3ForceParams.distance * distCoef;
     var charge = {
         min: Gparams.d3ForceParams.charge,
         max: Gparams.d3ForceParams.charge
@@ -44,8 +45,8 @@ var CodeFlower = function (selector, w, h) {
     if ($("#groupByLabelsCbx").prop("checked"))
         distCoef = 1;
     var linkDistance = {
-        min:  Gparams.d3ForceParams.distance*distCoef,
-        max:  Gparams.d3ForceParams.distance*distCoef
+        min: Gparams.d3ForceParams.distance * distCoef,
+        max: Gparams.d3ForceParams.distance * distCoef
 
     }
     // this.gravity=   Math.atan(total / 50) / Math.PI * 0.4;  //Gparams.d3ForceParams.gravity;
@@ -67,10 +68,66 @@ var CodeFlower = function (selector, w, h) {
 
     this.force = d3.layout.force()
         .on("tick", this.tick.bind(this))
+        .on("end", function (d) {
+            var nodes = flowerNodes;
+            for (var i = 0; i < nodes.length; i++) {
+                var node = nodes[i][0][0];
+                var nodeData = node.__data__;
+                var position = {x: nodeData.x, y: nodeData.y};
+                if (nodeData.neoAttrs && nodeData.neoAttrs.path) {
+                    var xxx = d3.select(node);
+                    d3.select(node).append("svg:image")
+                        .on("mouseover", function (d) {
+
+                            d3.select(this).attr("width", 200).style('opacity', CodeFlower.imgOpacityStrong)
+                                .attr("x", function (d) {
+                                    return 0;
+                                })
+                                .attr("y", function (d) {
+                                    return 0;
+                                });
+                            d3.select(this).moveToFront();
+                        })
+                        .on("mouseout", function (d) {
+                            d3.select(this).attr("width", 60).style('opacity', CodeFlower.imgOpacityWeak)
+                                .attr("x", function (d) {
+                                    return 0
+                                })
+                                .attr("y", function (d) {
+                                    return 0
+                                });
+                            d3.select(this).moveToBack();
+                        })
+                        .attr("xlink:href", function (d) {
+                            //   console.log(d.neoAttrs.path);
+
+                            //return "http://127.0.0.1:3002/JAVATHEQUE"+encodeURIComponent(d.neoAttrs.path);
+                            var str = nodeData.neoAttrs.path.replace("--", "/");
+                            return encodeURI(Gparams.imagesRootPath + str);
+                            //   return encodeURI(d.neoAttrs.path);
+
+                        })
+                        .attr("x", function (d) {
+                            return -30
+                        })
+                        .attr("y", function (d) {
+                            return -25
+                        }).on("click", function (d) {
+                        d3.select(this).attr("transform", function (d) {
+                            return "rotate(-90)";
+                        })
+
+                    })
+                        .style('opacity', CodeFlower.imgOpacityStrong)
+                        .attr("class", "d3NodeImage")
+                        .attr("width", "60")
+                }
+            }
+        })
 
         .linkDistance(function (d) {
             if (d.source && d.source.isRoot == true)
-                return linkDistance.max/1.5;
+                return linkDistance.max / 1.5;
             return linkDistance.min;
 
         })
@@ -130,7 +187,7 @@ CodeFlower.prototype.update = function (json) {
         });
 
 
-    this.link.enter().insert("svg:g", ".node")  .on("mouseover", function(d){
+    this.link.enter().insert("svg:g", ".node").on("mouseover", function (d) {
         hidePopupMenu();
     }).attr("class", "link");
     // Exit any old links.
@@ -149,8 +206,8 @@ CodeFlower.prototype.update = function (json) {
                 return str;
             })
             .on("click", function (d) {
-                 currentRelation=d;
-               dispatchAction('relationInfos');
+                currentRelation = d;
+                dispatchAction('relationInfos');
             })
             .attr("stroke-width", Gparams.relStrokeWidth)
             .attr("stroke", "#65dbf1").attr("fill", "none")
@@ -215,6 +272,7 @@ CodeFlower.prototype.update = function (json) {
     this.node = this.svg.selectAll("circle.node")
         .data(nodes, function (d) {
             return d.name;
+
         })
         .classed("collapsed", function (d) {
             return d._children ? 1 : 0;
@@ -236,70 +294,22 @@ CodeFlower.prototype.update = function (json) {
         .on("dblclick", d3CommonDblclick)
 
         .on("mouseover", d3CommonMouseover)
-        .on("mouseout",d3CommonMouseout)
-      /*  .on("click", this.click.bind(this))
-        .on("dblclick", this.dblclick.bind(this))
+        .on("mouseout", d3CommonMouseout)
+        /*  .on("click", this.click.bind(this))
+         .on("dblclick", this.dblclick.bind(this))
 
-        .on("mouseover", this.mouseover.bind(this))
-        .on("mouseout", this.mouseout.bind(this))*/
+         .on("mouseover", this.mouseover.bind(this))
+         .on("mouseout", this.mouseout.bind(this))*/
         .attr("class", "pointsRadar").attr("id", function (d) {
         return "P_" + d.id;
     });
-
-    var imgData = [];
-    for (var i = 0; i < nodes.length; i++) {
-        if (nodes[i].neoAttrs && nodes[i].neoAttrs.path) {
-            imgData.push(nodes[i])
-        }
-    }
 
 
     this.node.each(function (d) {
 
         var anode = d3.select(this);
         var ashape;
-        if (d.neoAttrs && d.neoAttrs.path && !/.*([0-9]{4})([0-9]{2})([0-9]{2})[A-Z]..*/.test(d.neoAttrs.path)) {
 
-            anode.append("svg:image")
-                .on("mouseover", function (d) {
-
-                    d3.select(this).attr("width", 200).style('opacity', CodeFlower.imgOpacityStrong)
-                        .attr("x", function (d) {
-                            return -100
-                        })
-                        .attr("y", function (d) {
-                            return -70
-                        });
-                    d3.select(this).moveToFront();
-                })
-                .on("mouseout", function (d) {
-                    d3.select(this).attr("width", 60).style('opacity', CodeFlower.imgOpacityWeak)
-                        .attr("x", function (d) {
-                            return -30
-                        })
-                        .attr("y", function (d) {
-                            return -25
-                        });
-                    d3.select(this).moveToBack();
-                })
-                .attr("xlink:href", function (d) {
-                    //   console.log(d.neoAttrs.path);
-
-                    //return "http://127.0.0.1:3002/JAVATHEQUE"+encodeURIComponent(d.neoAttrs.path);
-                    var str =  d.neoAttrs.path.replace("--", "/");
-                    return encodeURI(Gparams.imagesRootPath +str);
-                    //   return encodeURI(d.neoAttrs.path);
-
-                })
-                .attr("x", function (d) {
-                    return -30
-                })
-                .attr("y", function (d) {
-                    return -25
-                })
-                .attr("class", "d3NodeImage")
-                .attr("width", "60")
-        }
 
         if (d.shape && d.shape == "textBox") {
             shape = anode.append('rect')
@@ -386,12 +396,7 @@ CodeFlower.prototype.update = function (json) {
                 return "start";
             return "start";
         }).text(function (d) {
-            var match = /_[0-9]*/.exec(d.name);
-            if (match) {
-                var p = match.index;
-                if (p > -1)
-                    return d.name.substring(0, p);
-            }
+          d=formatNode(d);
             if (d.name && d.name.length > Gparams.nodeMaxTextLength)
                 return d.name.substring(0, Gparams.nodeMaxTextLength - 1) + "...";
             return d.name;
@@ -417,6 +422,7 @@ CodeFlower.prototype.update = function (json) {
 
 
     this.node.each(function (d) {
+        flowerNodes.push(d3.select(this))
         if (d.shape == "textBox") {
 
             var bBox = d3.select(this).select("text").node().getBBox();
@@ -455,7 +461,6 @@ CodeFlower.prototype.flatten = function (root) {
     root.size = recurse(root);
     return nodes;
 };
-
 
 
 CodeFlower.prototype.tick = function () {

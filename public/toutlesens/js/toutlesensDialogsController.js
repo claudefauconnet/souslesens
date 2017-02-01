@@ -72,13 +72,8 @@ function saveStoredDecorationObjsDialog() {
 
 
 function setPopupMenuNodeInfoContent() {
-    var name = currentObject.name
-    var match = /_[0-9]*/.exec(name);
-    if (match) {
-        var p = match.index;
-        if (p > -1)
-            name= name.substring(0, p);
-    }
+    var name = formatNode(currentObject).name;
+
     var str =
         "<input type='image' height='15px' alt='infos'  onclick='dispatchAction(\"nodeInfosPopup\")' src='images/infos.png'/>" +
         "<input type='image' height='15px'  alt='set as rootNode' onclick='dispatchAction(\"setAsRootNode\")' src='images/squareRoot.png'/>" + "&nbsp;" +
@@ -93,13 +88,7 @@ function setPopupMenuNodeInfoContent() {
         for (var i = 0; i < currentObject.hiddenChildren.length; i++) {
             var child=currentObject.hiddenChildren[i];
             currentHiddenChildren[child.id]=child;
-            var name=child.name;
-            var match = /_[0-9]*/.exec(name);
-            if (match) {
-                var p = match.index;
-                if (p > -1)
-                    name= name.substring(0, p);
-            }
+            var name=formatNode(child).name;
 
             var child = currentObject.hiddenChildren[i];
 

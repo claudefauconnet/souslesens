@@ -8,12 +8,7 @@ function testTreemap(jsonTree) {
 
 function setTreMapValues(jsonTree) {
     function recurse(node) {
-        var match = /_[0-9]*/.exec(node.name);
-        if (match) {
-            var p = match.index;
-            if (p > -1)
-                node.name = node.name.substring(0, p);
-        }
+        node=formatNode(node);
         if (node.children && node.children.length > 0) {
             node.value = node.children.length * 1;
             for (var i = 0; i < node.children.length; i++) {

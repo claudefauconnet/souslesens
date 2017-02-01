@@ -605,12 +605,7 @@ function D3Tree2(_graphDiv, _nodesData, distance) {
                 })/*.attr("text-anchor", function(d) {
                  return d.children || d._children ? "end" : "start";
                  })*/.text(function (d) {
-                var match = /_[0-9]*/.exec(d.name);
-                if (match) {
-                    var p = match.index;
-                    if (p > -1)
-                        return d.name.substring(0, p);
-                }
+                d=formatNode(d);
                 if (d.name && d.name.length > Gparams.nodeMaxTextLength)
                     return d.name.substring(0, Gparams.nodeMaxTextLength - 1) + "...";
                 return d.name;

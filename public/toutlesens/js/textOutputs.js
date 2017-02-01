@@ -225,7 +225,8 @@ function drawCSV(json) {
     for (var i = 0; i < spreadSheetData.length; i++) {
         str += "<tr>";
         for (var j = 0; j < header.length; j++) {
-            str += "<td>" + spreadSheetData[i][j] + "</td>";
+           name= formatNodeName(spreadSheetData[i][j]);
+            str += "<td>" + name + "</td>";
         }
         str += "</tr>";
     }
@@ -458,4 +459,21 @@ String.prototype.sansAccent = function () {
     }
 
     return str;
+}
+
+function formatNode(node) {
+    if(node.name)
+       node.name= formatNodeName(node.name);
+
+    return node;
+}
+
+function formatNodeName(name) {
+    var match = /_[0-9]*/.exec(name);// on enleve le suffixe des names ajoutés pour l'unicité des noeuds dans d3js
+    if (match) {
+        var p = match.index;
+        if (p > -1)
+            name = name.substring(0, p);
+    }
+    return name;
 }

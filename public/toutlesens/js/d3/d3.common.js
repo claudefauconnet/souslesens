@@ -41,6 +41,11 @@ function d3CommonDblclick(d) {
 
 
 function d3CommonMouseover(d) {
+
+
+    if(d.neoAttrs && d.neoAttrs.path) {
+        return;
+    }
     var e = d3.event;
     var x = e.offsetX + 30 //+ 10;
     var y = e.offsetY// + 100;
@@ -59,6 +64,9 @@ function d3CommonMouseover(d) {
 };
 
 function d3CommonMouseout(d) {
+    if(d.neoAttrs && d.neoAttrs.path) {
+        return;
+    }
     var popupSize = {
         w: $("#popupMenuNodeInfoDiv").width(),
         h: $("#popupMenuNodeInfoDiv").height(),

@@ -1,18 +1,9 @@
-var profiles = {};
-profiles.minimum = {
-    hide: ["lang_52", "lang_62","listDownloadButton"],
-    disable: ["listDownloadButton"]
 
-}
-profiles.all = {
-    hide: [],
-    disable: []
-}
-$(function () {
-    var profile=profiles[Gparams.currentProfile];
+function initFunctionalities(){
+    var profile=Gparams.profiles[Gparams.currentProfile];
     hideFunctionalities(profile);
     disableFunctionalities(profile)
-})
+}
 
 function hideFunctionalities(profile) {
     if (!profile)
