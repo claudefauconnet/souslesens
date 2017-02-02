@@ -21,6 +21,7 @@ var graphQueryRelFilters = "";
 var graphQueryTargetFilter = "";
 var graphQueryExcludeNodeFilters = "";
 var graphQueryExcludeRelFilters = "";
+var currentQueryParams;
 
 var totalNodesToDraw = 0;
 function executeQuery(queryType, str, successFunction) {
@@ -106,7 +107,7 @@ function executeQuery(queryType, str, successFunction) {
 
 }
 
-function getNodeAllRelations(id, output, addToExistingTree, cacheNewResult) {
+function getNodeAllRelations(id, output, addToExistingTree, callback) {
 
     id = parseInt("" + id);
     if (addToExistingTree)
@@ -128,8 +129,8 @@ function getNodeAllRelations(id, output, addToExistingTree, cacheNewResult) {
 
     var numberOfLevelsVal = $("#depth").val();
     numberOfLevelsVal = parseInt(numberOfLevelsVal);
-    if( !currentDisplayType || currentDisplayType=="FLOWER" || currentDisplayType=="TREE" || currentDisplayType=="SIMPLE_FORCE_GRAPH" || currentDisplayType=="TREEMAP")
-    numberOfLevelsVal += 1;// pour les count des feuilles
+    if (!currentDisplayType || currentDisplayType == "FLOWER" || currentDisplayType == "TREE" || currentDisplayType == "SIMPLE_FORCE_GRAPH" || currentDisplayType == "TREEMAP")
+        numberOfLevelsVal += 1;// pour les count des feuilles
     // var statement = "MATCH path=(node1:"
     // + currentLabel
     var statement = "MATCH path=(node1"
@@ -184,7 +185,8 @@ function getNodeAllRelations(id, output, addToExistingTree, cacheNewResult) {
 
             }
             cachedResultArray = resultArray;
-            prepareRawDataAndDisplay(resultArray, addToExistingTree, output);
+
+            prepareRawDataAndDisplay(resultArray, addToExistingTree, output, callback);
         },
         error: function (xhr, err, msg) {
             console.log(xhr);
@@ -197,7 +199,7 @@ function getNodeAllRelations(id, output, addToExistingTree, cacheNewResult) {
 }
 
 
-function prepareRawDataAndDisplay(resultArray, addToExistingTree, output) {
+function prepareRawDataAndDisplay(resultArray, addToExistingTree, output, callback) {
     if (!output)
         output = currentDisplayType;
     var json;
@@ -217,7 +219,7 @@ function prepareRawDataAndDisplay(resultArray, addToExistingTree, output) {
         exploredTree = json;
     else
         exploredTree = null;
-    var currentLabels = []
+    var currentLabels = [];
     for (i = 0; i < resultArray.length; i++) {
         for (j = 0; j < resultArray[i].labels.length; j++) {
             var label = resultArray[i].labels[j][0];
@@ -226,7 +228,10 @@ function prepareRawDataAndDisplay(resultArray, addToExistingTree, output) {
 
         }
     }
-    displayGraph(json, output, currentLabels);
+    if (callback)
+        callback(json, currentLabels);
+    else
+        displayGraph(json, output, currentLabels);
 
 }
 
@@ -361,7 +366,7 @@ function toFlareJson(resultArray, addToExistingTree) {
 
 
     // console.log (JSON.stringify(root));
-    cachedReslultTree = root;
+    cachedResultTree = root;
     return root;
 }
 
@@ -846,8 +851,8 @@ function flatResultToTree(data, withAttrs) {
 
             if (!nodes[node.id]) {
                 node.neoAttrs = data[i].nodes[j].properties;
-                if(!node.neoAttrs.name)
-                    node.neoAttrs.name=node.neoAttrs.nom;
+                if (!node.neoAttrs.name)
+                    node.neoAttrs.name = node.neoAttrs.nom;
                 node.name = node.neoAttrs.name;
                 node.label = data[i].labels[j][0]
 
@@ -863,16 +868,16 @@ function flatResultToTree(data, withAttrs) {
 
                     var previousId = data[i].ids[j - 1];
                     if (nodes[previousId]) {
-                      /*  var add = true;
-                        for (var k = 0; k < nodes[previousId].children.length; k++) {
-                            if (nodes[previousId].children[k] == node.id) {
-                                add = false;
-                                break;
-                            }
+                        /*  var add = true;
+                         for (var k = 0; k < nodes[previousId].children.length; k++) {
+                         if (nodes[previousId].children[k] == node.id) {
+                         add = false;
+                         break;
+                         }
 
-                        }
-                        if (add)*/
-                            nodes[previousId].children.push(node);
+                         }
+                         if (add)*/
+                        nodes[previousId].children.push(node);
                     }
 
                 }
@@ -903,6 +908,9 @@ function flatResultToTree(data, withAttrs) {
 
 }
 function searchNodes(subGraph, label, word, resultType, limit, from) {
+    currentQueryParams = {
+        subGraph: subGraph, label: label, word: word, resultType: resultType, limit: limit, from: from
+    }
     var str = "";
     var subGraphWhere = "";
     if (!word)

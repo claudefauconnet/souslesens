@@ -111,7 +111,8 @@ function showNodeSelectionDialog(value) {
         + "onclick='setNode(this)'><option>----------</option></select></td>";
     dialogStr += '<button onclick=" closeDialog()">Cancel</button><br>';
     $("#dialog").html(dialogStr);
-    searchNodes(currentActionObj[currentActionObj.currentTarget].subGraph, currentActionObj[currentActionObj.currentTarget].label, currentActionObj[currentActionObj.currentTarget].property, "displayStartNodesPage", 100, 0);
+
+    searchNodes(currentActionObj.subGraph, currentActionObj[currentActionObj.currentTarget].label, currentActionObj[currentActionObj.currentTarget].property, "count");// 10000, 0);
     $("#dialog").dialog("open");
 
 
@@ -145,7 +146,7 @@ function setSearchNodeReturnFilterVal(execSearch) {
         propertyType = "any"
 
     var operators = {
-        Starts: "~",
+        Contains: "~",
         Equals: "=",
         Greater: ">",
         Lower: "<"
@@ -340,7 +341,7 @@ function getWhereProperty(str, nodeAlias) {
     if (operator == "~") {
         operator = "=~"
         // value = "'.*" + value.trim() + ".*'";
-        value = "'" + value.trim() + ".*'";
+        value = "'.*" + value.trim() + ".*'";
     }
     else {
         if ((/[\s\S]+/).test(str))

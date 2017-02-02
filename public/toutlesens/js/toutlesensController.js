@@ -68,7 +68,7 @@ var currentObjId;
 var currentLabel;
 var currentRelation;
 var currentMode;
-var cachedReslultTree;
+var cachedResultTree;
 var currentHiddenChildren = {};
 var currentRelationActionTargetNode;
 var startSearchNodesTime;
@@ -542,13 +542,14 @@ function initResultPagination(count) {
     if (count > MaxNodesInWordsSelect) {
         currentPageIndex = 0;
         var from = currentPageIndex * MaxNodesInPage;
-
-        searchNodesUI("displayStartNodesPage",
-            MaxNodesInPage, from);
+        searchNodes( currentQueryParams.subGraph, currentQueryParams.label, currentQueryParams.word, "displayStartNodesPage", MaxNodesInPage, from);
+       /* searchNodesUI("displayStartNodesPage",
+            MaxNodesInPage, from);*/
 
     } else
-        searchNodesUI("displayStartNodesPage",
-            MaxNodesInPage, from);
+        searchNodes( currentQueryParams.subGraph, currentQueryParams.label, currentQueryParams.word, "displayStartNodesPage", MaxNodesInPage, from);
+     /*   searchNodesUI("displayStartNodesPage",
+            MaxNodesInPage, from);*/
     // fillWordsSelect(data.results);
 
 }
@@ -597,12 +598,14 @@ function fillLabelsPage(neoResult) {
 function goToNextPage() {
     currentPageIndex++;
     var from = currentPageIndex * MaxNodesInPage;
-    searchNodesUI("displayStartNodesPage", MaxNodesInPage, from);
+    searchNodes( currentQueryParams.subGraph, currentQueryParams.label, currentQueryParams.word, "displayStartNodesPage", MaxNodesInPage, from);
+  //  searchNodesUI("displayStartNodesPage", MaxNodesInPage, from);
 }
 function goToPreviousPage() {
     currentPageIndex--;
     var from = currentPageIndex * MaxNodesInPage;
-    searchNodesUI("displayStartNodesPage", MaxNodesInPage, from);
+    searchNodes( currentQueryParams.subGraph, currentQueryParams.label, currentQueryParams.word, "displayStartNodesPage", MaxNodesInPage, from);
+  //  searchNodesUI("displayStartNodesPage", MaxNodesInPage, from);
 }
 
 function fillWordsSelect(neoResult) {
@@ -733,8 +736,8 @@ function getGraphDataAroundNode(id, callbackFunction) {
     }
     else if (mode == "listTree") {
      if (currentDataStructure == "tree") {
-            if (cachedReslultTree)
-                listTreeResultToHtml(cachedReslultTree, Gparams.htmlOutputWithAttrs)
+            if (cachedResultTree)
+                listTreeResultToHtml(cachedResultTree, Gparams.htmlOutputWithAttrs)
             else
                 getNodeAllRelations(id, mode);
         }
@@ -1398,7 +1401,7 @@ function dispatchAction(action, objectId) {
 
     if (action == "unfoldNode") {
 
-        getNodeAllRelations(currentObject.id, mode, true, false);
+        getNodeAllRelations(currentObject.id, mode, true);
     } else if (action == "setAsRootNode") {
         initGraphFilters(currentObject.label);
         getNodeAllRelations(currentObject.id, mode);
@@ -1533,17 +1536,7 @@ function zeroRelationsForNodeAction(data) {
 
 }
 
-function onLinkClick(linkObj) {
-    /*
-     * if (confirm("detruire le lien " + linkObj.target.relType)) { query =
-     * "Match (n)-[r:" + linkObj.target.relType + "]-(m) where id(m)=" +
-     * linkObj.target.id + " DELETE r"; executeQuery(QUERY_TYPE_MATCH, query,
-     * function() { setMessage("Lien supprime !", "green"); currentobject =
-     * linkObj.source; $("#graphDiv").html("");
-     * d3.select(".graphSVG").selectAll("*").remove();
-     * dispatchAction('setAsRootNode'); }); }
-     */
-}
+
 
 function changeLinkType(linkObj) {// afinir
     var newRelType = prompt(" entrez le nouveau type de relation ")
@@ -1790,7 +1783,7 @@ function displayGraph(json, output, labels) {
         if (output == "SIMPLE_FORCE_GRAPH")
             json = cachedResultArray;
         else
-            json = cachedReslultTree;
+            json = cachedResultTree;
     }
     setGraphActionsHelp();
     $("#tabs-radarLeft").tabs({
@@ -1873,15 +1866,15 @@ function onVisButton(value) {
 
 function onTextVisButton(mode) {
     if (mode == "HTML") {
-        if (!cachedResultArray && !cachedReslultTree)
+        if (!cachedResultArray && !cachedResultTree)
             getNodeAllRelations(id, mode);
         if (currentDataStructure == "flat") {
             var treeJon = flatResultToTree(cachedResultArray);
             listTreeResultToHtml(treeJon, Gparams.htmlOutputWithAttrs)
         }
         else if (currentDataStructure == "tree") {
-            if (cachedReslultTree)
-                listTreeResultToHtml(cachedReslultTree, Gparams.htmlOutputWithAttrs)
+            if (cachedResultTree)
+                listTreeResultToHtml(cachedResultTree, Gparams.htmlOutputWithAttrs)
         }
     }
     else if (mode == "CSV") {
@@ -1891,8 +1884,8 @@ function onTextVisButton(mode) {
             var treeJon = flatResultToTree(cachedResultArray);
             drawCSV(treeJon, Gparams.htmlOutputWithAttrs)
         } else if (currentDataStructure == "tree") {
-            if (cachedReslultTree)
-                drawCSV(cachedReslultTree, Gparams.htmlOutputWithAttrs)
+            if (cachedResultTree)
+                drawCSV(cachedResultTree, Gparams.htmlOutputWithAttrs)
             else
                 getNodeAllRelations(id, mode);
         }
@@ -1985,6 +1978,7 @@ function showGantt() {
 }
 
 function onLinkClick(id) {
+
     showInfos2(id, function (d) {
         currentObject = d[0].n.properties;
         currentObject.id = d[0].n._id;
@@ -1992,7 +1986,15 @@ function onLinkClick(id) {
         if (currentObject.path)
             showImage(Gparams.imagesRootPath + currentObject.path)
         dispatchAction('nodeInfos');
-        $("#tabs-radarRight").tabs("option", "active", 2);
+      // $("#tabs-radarRight").tabs("option", "active", 2);
+        getNodeAllRelations(id, null, false, function(json, labels) {
+
+            listTreeResultToHtml(cachedResultTree, Gparams.htmlOutputWithAttrs)
+        });
+
+      /*  getGraphDataAroundNode(id, false);
+        currentDataStructure = "tree";
+        onTextVisButton('HTML');*/
     });
 
 }
