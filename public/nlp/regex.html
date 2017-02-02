@@ -18,7 +18,7 @@
 function analyze(){
     $("#result").val("");
     try {
-        var regex = new RegExp($("#regex").val(), "g");
+        var regex = new RegExp($("#regex").val(), "gm");
     }
     catch(e){
         $("#result").val(e);
