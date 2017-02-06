@@ -399,6 +399,12 @@ function formatNodeInfo(obj) {
     for (var key in obj) {
         if (key == "path") {
             var str = obj[key].replace("--", "/");
+            showThumbnail(str);
+
+
+
+
+
             obj[key] = "<a href='javascript:showImage(\"" + encodeURI(Gparams.imagesRootPath + str) + "\")'>voir <a/>";
         }
         if (obj[key] && ("" + obj[key]).toLowerCase().indexOf("http") == 0)
@@ -439,6 +445,13 @@ function formatNodeInfo(obj) {
     return str;
 
 
+}
+
+function resizeImg(img, height, width) {
+    if(height)
+    img.height = height;
+    if(width)
+    img.width = width;
 }
 
 String.prototype.sansAccent = function () {

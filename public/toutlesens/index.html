@@ -46,7 +46,6 @@
 <link rel="stylesheet" type="text/css" href="css/treemap.css"/>
 
 
-
 <script src="../common/js/jquery/jquery.min.js"></script>
 <script src="../common/js/jquery/theme_humanity/jquery-ui.min.js "></script>
 
@@ -153,6 +152,7 @@
 
         totalWidth = $(window).width();
         totalHeight = $(window).height();
+        var bigDialogSize = {w: 800, h: 600};
 
 
         $("body").height(totalHeight - 20);
@@ -186,8 +186,11 @@
         $("#linkActionDiv").height(totalHeight - 150).width((totalWidth / 4) - 35);
 
 
-        $("#advancedSearchIframe").height(totalHeight / 3 * 2).width(totalWidth / 3 * 2);
-        $("#advancedDisplayIframe").height(totalHeight / 3 * 2).width(totalWidth / 3 * 2);
+        //  $("#advancedSearchIframe").height(totalHeight / 3 * 2).width(totalWidth / 3 * 2);
+        //   $("#advancedDisplayIframe").height(totalHeight / 3 * 2).width(totalWidth / 3 * 2);
+
+        $("#advancedSearchIframe").height(bigDialogSize.h-100).width(bigDialogSize.w-40);
+        $("#advancedDisplayIframe").height(bigDialogSize.h-100).width(bigDialogSize.w-40);
 
         $('#main').width("100%").height("100%").split({
             orientation: 'vertical',
@@ -327,7 +330,7 @@
                  var h = $("#graphDiv").height();
                  distance = h / (10 * depth) / (200 / distance);
                  }*/
-                Gparams.d3ForceParams.distance=ui.value;
+                Gparams.d3ForceParams.distance = ui.value;
                 displayGraph();
             }
         });
@@ -338,7 +341,7 @@
             range: "min",
             value: -500,
             slide: function (event, ui) {
-                Gparams.d3ForceParams.charge=ui.value;
+                Gparams.d3ForceParams.charge = ui.value;
                 displayGraph();
             }
         });
@@ -357,16 +360,16 @@
 
         $("#dialog").dialog({
             autoOpen: false,
-            height: 400,
-            width: 350,
+            height: bigDialogSize.h,
+            width: bigDialogSize.w,
             modal: true
 
         });
 
         $("#dialogAdvancedSearch").dialog({
             autoOpen: false,
-            height: totalHeight / 3 * 2,
-            width: totalWidth / 3 * 2,
+            height: bigDialogSize.h,
+            width: bigDialogSize.w,
 
             appendTo: "#tabs-radarRight",
             modal: true,
@@ -374,18 +377,16 @@
         });
         $("#dialogAdvancedDisplay").dialog({
             autoOpen: false,
-            height: totalHeight / 3 * 2,
-            width: totalWidth / 3 * 2,
-
+            height: bigDialogSize.h,
+            width: bigDialogSize.w,
             appendTo: "#tabs-radarRight",
             modal: true,
 
         });
 
-        $("#popupMenuNodeInfoDiv").mouseleave(function(){
+        $("#popupMenuNodeInfoDiv").mouseleave(function () {
             $(this).hide();
         });
-
 
 
     })
@@ -431,8 +432,12 @@
 
                                </tr>-->
                             <tr>
-                                <td colspan="2"><span id='lang_61'> Selectionner un
-											noeud de depart</span></td>
+                               <!-- <td colspan="2"><span id='lang_61'> Selectionner un
+											noeud de depart</span></td> -->
+                                <td colspan="2" valign="center"> <span id='lang_61'> Advanced Search</span><input type="image"
+                                       alt="<span id='lang_XX'>search</span>" height="20px"
+                                       onclick="showAdvancedSearchDialog()" id="searchButton" src="images/advancedSearch.png"/></td>
+
 
                             </tr>
                             <tr>
@@ -452,8 +457,9 @@
                                     <!-- <button  onclick="showAdvancedSearchDialog()">+</button>-->
                                     <input type="image"
                                            alt="<span id='lang_XX'>search</span>" height="20px"
-                                           onclick="showAdvancedSearchDialog()" id="searchButton"
+                                           onclick="showSimpleSearchDialog()" id="searchButton"
                                            src="images/search.png"/>
+
                                 </td>
 
                             </tr>
@@ -534,11 +540,9 @@
                                                            onclick="onVisButton('TREE')" id="treeButton"
                                                            src="images/tree.png"/></td>
 
-                                              <td><input type="image" height="30px" alt="carte"
+                                                <td><input type="image" height="30px" alt="carte"
                                                            onclick="onVisButton('TREEMAP')" id="treemapButton"
                                                            src="images/treemap.png"/></td>
-
-
 
 
                                                 <!--    <td><input type="image" height="30px" alt="carte"
@@ -601,7 +605,6 @@
                                 </tr>
 
 
-
                                 <tr>
                                     <td><B> <span id='lang_17'>charge</span></B></td>
                                     <td>
@@ -654,6 +657,13 @@
                     <div class="title">proprietes</div>
                     <div id="infoPanel"></div>
                     <hr>
+                    <div id="imagePanel"></div>
+                    <button onclick="previousImage()">previous</button>
+                    image
+                    <button onclick="nextImage()">next</button>
+                    <input type="checkbox" id="largeImage"> grandFormat
+                    <button onclick="rotateImage(true)">rotate-</button>
+                    <button onclick="rotateImage()">rotate+</button>
                     <div id="div_externalRessources">
                         <div class="title">
                             <span id='lang_23'>Ressources externes</span>
@@ -671,8 +681,6 @@
                         <div id="externalInfoPanel"></div>
                         <div id="chronoParams"></div>
 
-
-                        <div id="imagePanel"></div>
 
                     </div>
 
@@ -798,8 +806,8 @@
 
 
                 </div>
-                <div id="popupMenuNodeInfoDiv" class="popupmenuDiv" >
-                    <div id="popupMenuNodeInfo"  >//onblur="hidePopupMenu()" >
+                <div id="popupMenuNodeInfoDiv" class="popupmenuDiv">
+                    <div id="popupMenuNodeInfo">//onblur="hidePopupMenu()" >
                     </div>
                 </div>
 
@@ -971,7 +979,7 @@
                 cette page au noeud courant
             </button>
             <br>
-            <iframe id="nodeDetailsIframe"></iframe>
+            <div id="nodeDetailsIframe"></div>
 
         </div>
 

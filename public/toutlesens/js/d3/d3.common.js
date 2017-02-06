@@ -3,7 +3,7 @@
  */
 
 var currentMouseOverCoords;
-
+var dragListener;
 
 function d3CommonClick(d) {
     if (d.nodeType && d.nodeType == "label")
@@ -90,4 +90,100 @@ function d3CommonMouseout(d) {
     //  $("#popupMenuNodeInfoDiv").style('display', 'none');
 
 
-};
+}
+
+function commonDnD(){
+    dragListener = d3.behavior.drag().on("dragstart", function (d) {
+     var xxx=d3.select(this);
+        var e = d3.event;
+
+        if (e.ctrlKey) {
+            // eventFactory.showNodeInfo(d);
+            return;
+        }
+
+
+    }).on("drag", function (d) {
+        var xxx=d3.select(this);
+
+
+    }).on("dragend", function (d) {
+        var xxx=d3.select(this);
+        return;
+
+    });
+
+}
+
+
+function showThumbnails(nodes){
+
+    for (var i = 0; i < nodes.length; i++) {
+        var node = nodes[i][0][0];
+        var nodeData = node.__data__;
+        var position = {x: nodeData.x, y: nodeData.y};
+        if (nodeData.neoAttrs && nodeData.neoAttrs.path) {
+            var xxx = d3.select(node);
+            d3.select(node).append("svg:image")
+                .on("mouseover", function (d) {
+
+                    d3.select(this).attr("width", 200).style('opacity', CodeFlower.imgOpacityStrong)
+                        .attr("x", function (d) {
+                            return 0;
+                        })
+                        .attr("y", function (d) {
+                            return 0;
+                        });
+                    d3.select(this).moveToFront();
+                })
+                .on("mouseout", function (d) {
+                    d3.select(this).attr("width", 60).style('opacity', CodeFlower.imgOpacityWeak)
+                        .attr("x", function (d) {
+                            return 0
+                        })
+                        .attr("y", function (d) {
+                            return 0
+                        });
+                    d3.select(this).moveToBack();
+                })
+                .attr("xlink:href", function (d) {
+                    //   console.log(d.neoAttrs.path);
+
+                    //return "http://127.0.0.1:3002/JAVATHEQUE"+encodeURIComponent(d.neoAttrs.path);
+                    var str = nodeData.neoAttrs.path.replace("--", "/");
+                    return encodeURI(Gparams.imagesRootPath + str);
+                    //   return encodeURI(d.neoAttrs.path);
+
+                })
+                .attr("x", function (d) {
+                    return -30
+                })
+                .attr("y", function (d) {
+                    return -25
+                }).on("click", function (d) {
+                d3.select(this).attr("transform", function (d) {
+                    return "rotate(-90)";
+                })
+
+            })
+                .style('opacity', CodeFlower.imgOpacityStrong)
+                .attr("class", "d3NodeImage")
+                .attr("width", "60")
+        }
+    }
+}
+function highlightNode(id ) {
+    var www=  d3.selectAll("#P_" + id);
+    d3.selectAll("#P_" + id).each(function (d) {
+
+        d3.select(this).select("circle").style("stroke-width","3px").style("stroke","red")
+
+        //console.log(JSON.stringify(d))
+        /*if (d.__data__.id == id) {
+            var xx = "a"
+        }*/
+    })
+}
+
+
+

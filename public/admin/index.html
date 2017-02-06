@@ -28,187 +28,193 @@
 <!DOCTYPE html>
 <html>
 <head>
-<link rel="stylesheet" type="text/css" title="Design"
-      href="../common/js/jquery/jquery-ui.min.css"/>
-<link rel="stylesheet" type="text/css" title="Design"
-      href="../common/js/jquery/jquery.splitter.css"/>
-<link rel="stylesheet" type="text/css"
-      href="../common/js/others/jquery.datatables.min.css"/>
+    <link rel="stylesheet" type="text/css" title="Design"
+          href="../common/js/jquery/jquery-ui.min.css"/>
+    <link rel="stylesheet" type="text/css" title="Design"
+          href="../common/js/jquery/jquery.splitter.css"/>
+    <link rel="stylesheet" type="text/css"
+          href="../common/js/others/jquery.datatables.min.css"/>
 
 
-<link rel="stylesheet" type="text/css" href="css/index.css"/>
+    <link rel="stylesheet" type="text/css" href="css/index.css"/>
 
 
-<script src="../common/js/jquery/jquery.min.js"></script>
-<script src="../common/js/jquery/jquery-ui.min.js"></script>
-<script src="../common/js/jquery/jquery.splitter.js"></script>
-<script src="../common/js/common.js"></script>
-<script src="../common/js/devisuProxy.js"></script>
-<script src="js/download.js"></script>
-<script src="js/socket.io.js"></script>
+    <script src="../common/js/jquery/jquery.min.js"></script>
+    <script src="../common/js/jquery/jquery-ui.min.js"></script>
+    <script src="../common/js/jquery/jquery.splitter.js"></script>
+    <script src="../common/js/common.js"></script>
+    <script src="../common/js/devisuProxy.js"></script>
+    <script src="js/download.js"></script>
+    <script src="js/socket.io.js"></script>
 
 
-<!-- script src="js/adminMongo.js"></script> -->
-<script src="js/admin.js"></script>
-<script src=js/graphD3.js></script>
-<script src=js/params.js></script>
-<script src="js/export.js"></script>
-<script src="../common/js/d3/d3.js"></script>
+    <!-- script src="js/adminMongo.js"></script> -->
+    <script src="js/admin.js"></script>
+    <script src=js/graphD3.js></script>
+    <script src=js/params.js></script>
+    <script src="js/export.js"></script>
+    <script src="../common/js/d3/d3.js"></script>
 
-<script src="../common/js/neo4jDataModel.js"></script>
+    <script src="../common/js/neo4jDataModel.js"></script>
 
-<!--  
+    <!--
 
-<script src="js/toutlesens2.js"></script>
+    <script src="js/toutlesens2.js"></script>
 
-<script src="js/toutlesensOld.js"></script>
+    <script src="js/toutlesensOld.js"></script>
 
-<script src="js/devisuProxy.js" charset="UTF-8"></script>-->
-<style>
-    body {
-        font-family: verdana, sans-serif;
-        background-color: #f3edef;
-        background-color: #eee;
-        background-color: #eee;
-        overflow: auto;
-        font-size: 14px;
-        vertical-align: top;
-        height: 1000px;
-    }
+    <script src="js/devisuProxy.js" charset="UTF-8"></script>-->
+    <style>
+        body {
+            font-family: verdana, sans-serif;
+            background-color: #f3edef;
+            background-color: #eee;
+            background-color: #eee;
+            overflow: auto;
+            font-size: 14px;
+            vertical-align: top;
+            height: 1000px;
+        }
 
-    td {
-        padding: 2px;
-    }
+        td {
+            padding: 2px;
+        }
 
-    textarea {
-        font-size: 12px !important;
-        font-family: verdana, sans-serif !important;
-    }
+        textarea {
+            font-size: 12px !important;
+            font-family: verdana, sans-serif !important;
+        }
 
-    button {
-        color: white;
-        font-size: 14px;
-        font-family: verdana, sans-serif;
-        background-color: #e78f08;
-        background-color: #ca842e;
-        margin: 1px;
-        padding: 4px;
-    }
+        button {
+            color: white;
+            font-size: 14px;
+            font-family: verdana, sans-serif;
+            background-color: #e78f08;
+            background-color: #ca842e;
+            margin: 1px;
+            padding: 4px;
+        }
 
-    select {
-        font-size: 14px;
-        font-family: verdana, sans-serif;
-        margin: 2px;
-        padding: 2px;
-    }
+        select {
+            font-size: 14px;
+            font-family: verdana, sans-serif;
+            margin: 2px;
+            padding: 2px;
+        }
 
-    option {
-        margin: 3px;
-    }
+        option {
+            margin: 3px;
+        }
 
-    input {
-        padding: 2px;
-    }
+        input {
+            padding: 2px;
+        }
 
-    .help {
-        font-style: italic;
-        font-stretch: semi-condensed;
-        color: olive;
-    }
+        .help {
+            font-style: italic;
+            font-stretch: semi-condensed;
+            color: olive;
+        }
 
-    #tabs-left input {
-        width: 200px;
-    }
+        #tabs-left input {
+            width: 200px;
+        }
 
-    #tabs-left select {
-        width: 200px;
-    }
+        #tabs-left select {
+            width: 200px;
+        }
 
-    #tabs-center input {
-        width: 400px;
-    }
+        #tabs-center input {
+            width: 400px;
+        }
 
-    #tabs-center select {
-        width: 300px;
-    }
+        #tabs-center select {
+            width: 400px;
+        }
 
-    #labelsDiv0000 {
-        width: 250px;
-    }
+        #labelsDiv0000 {
+            width: 250px;
+        }
 
-    .comment {
-        font-size: 10px;
-        font-family: sans-serif, verdana;
-    }
+        .comment {
+            font-size: 10px;
+            font-family: sans-serif, verdana;
+        }
 
-    #tabs-center .exportNeo {
-        width: 100px;
+        #tabs-center .exportNeo {
+            width: 100px;
 
-    }
+        }
 
-    .exportParams {
-        width: 400px;
-        height: 150px;
-    }
+        .exportParams {
+            width: 400px;
+            height: 150px;
+        }
 
-    .message {
-        color: green;
-        font-size: 18px;
-       text-align: center;
-    }
+        .message {
+            color: green;
+            font-size: 18px;
+            text-align: center;
+            min-height: 50px;
+            width: 100%;
+        }
 
-</style>
-
-
-<script>
-    processDataBeforeDrawingCallback = null;
-    $(function () {
-        var socket = io.connect('http://localhost:3002');
-        socket.on('connect', function (data) {
-            socket.emit('join', 'Hello World from client');
-        });
-        socket.on('messages', function (message) {
-            $("#message").html(message);
-        })
+    </style>
 
 
-        var totalWidth = $(window).width();
-        var totalHeight = $(window).height();
-        var split = 250;
-        $("#left").width(2300).height(totalHeight - 10);
-        $("#tabs-radarLeft").width(split).height(totalHeight - 10);
-        $("#info_panel").width(totalWidth - 30).height(totalHeight - 10);
-        $("#graphDiv").width(totalWidth - split).height(totalHeight - 100);
-        $("#center").width((totalWidth - split)).height(totalHeight - 10);
+    <script>
+        processDataBeforeDrawingCallback = null;
+        $(function () {
+            var socket = io.connect('http://localhost:3002');
+            socket.on('connect', function (data) {
+                socket.emit('join', 'Hello World from client');
+            });
+            socket.on('messages', function (message) {
+                var color = "green";
+                if (message.toLowerCase().indexOf("error") > -1)
+                    color = "red";
+                $("#message").css("color", color);
+                $("#message").html(message);
+            })
 
-        $(".splitter_panel").width(totalWidth - split).height(totalHeight - 10);
-        $("#graphLegendDiv").width(totalWidth - split).height(50);
 
-        $('#main').width("100%").height("100%").split({
-            orientation: 'vertical',
-            limit: 100,
-            position: (split) + 5
-        });
+            var totalWidth = $(window).width();
+            var totalHeight = $(window).height();
+            var split = 250;
+            $("#left").width(2300).height(totalHeight - 10);
+            $("#tabs-radarLeft").width(split).height(totalHeight - 10);
+            $("#info_panel").width(totalWidth - 30).height(totalHeight - 10);
+            $("#graphDiv").width(totalWidth - split).height(totalHeight - 100);
+            $("#center").width((totalWidth - split)).height(totalHeight - 10);
 
-        $("#tabs-center").tabs({
-            activate: function (event, ui) {
-                var index = ui.newTab.index();
-                if (index == 3) {
-                    onSubGraphSelect();
+            $(".splitter_panel").width(totalWidth - split).height(totalHeight - 10);
+            $("#graphLegendDiv").width(totalWidth - split).height(50);
+
+            $('#main').width("100%").height("100%").split({
+                orientation: 'vertical',
+                limit: 100,
+                position: (split) + 5
+            });
+
+            $("#tabs-center").tabs({
+                activate: function (event, ui) {
+                    var index = ui.newTab.index();
+                    if (index == 3) {
+                        onSubGraphSelect();
+                    }
                 }
-            }
+            });
+
+            var queryParams = getQueryParams(document.location.search);
+            var radarModelName = queryParams.radarModelName;
+
+            filterDiv = "radarFiltersDiv";
+            bcsTreeDiv = "#bcsTreeDiv";
+            radarDiv = "#radarDiv";
+            attrsIFrame = "#attrsIframe";
+
         });
-
-        var queryParams = getQueryParams(document.location.search);
-        var radarModelName = queryParams.radarModelName;
-
-        filterDiv = "radarFiltersDiv";
-        bcsTreeDiv = "#bcsTreeDiv";
-        radarDiv = "#radarDiv";
-        attrsIFrame = "#attrsIframe";
-
-    });
-</script>
+    </script>
 <body>
 <input type="hidden" id="mongoDB">
 <input type="hidden" id="subGraph">
@@ -336,53 +342,30 @@
             <table>
 
 
-                <tr>
-                    <td align="right">Saved Requests</td>
-                    <td><select size="10" id="requests" onchange="loadRequest(null,true)">
+                <tr valign="top">
+                    <td align="left">Saved Requests
+                   <br>
+                    <select size="10" id="requests" onchange="loadRequest(null,true)">
                         <option>----------</option>
-                    </select></td>
+                    </select>
 
+                    <br>
 
-                    <!--	<tr>
-                    <td>request</td>
-
-                    <td colspan="2">
-                         <button onclick="saveRequest()">save request</button> <br>
-
-
-
+                        <button onclick="deleteRequest()">Delete</button>
                     </td>
-
-
-                </tr> -->
-
-
-                    <td colspan="2">
+                    <td>
                         <button onclick="initBatchNeoRefresh('Nodes');">Refresh
                             Neo4j Nodes
                         </button>
-                        <br>
                         <button onclick="initBatchNeoRefresh('Rels');">Refresh
                             Neo4j Relations
                         </button>
+                        <br>
 
-
-                </tr>
-
-
-                <tr>
-                    <td>refresh</td>
-
-                    <td colspan="2">
                         <div id="exportNamesDiv"></div>
 
 
-                    </td>
 
-
-                </tr>
-                <tr>
-                    <td>
                         <button onclick="refreshNeo()">Start Refresh</button>
                     </td>
 
@@ -562,13 +545,20 @@
                     <td>Import</td>
                     <td>
                         <form enctype="multipart/form-data" action="/uploadToNeo" method="post" target="votar">
-                            <input type="file" name="photo"  class='exportNeo'/>
+                            <input type="file" name="photo" class='exportNeo'/>
                             <input type="submit" value="upload" name="submit" class='exportNeo'/>
                         </form>
                     </td>
-                  <!--  <td>
-                        import file located on  server<input id="importPathOnServer" size="30"><button onclick="importOnServer()">Importer</button>
-                    </td>-->
+
+                    <!--   <td>ImportCSV</td><td>
+                         <form enctype="multipart/form-data" action="/csvToNeo" method="post" target="votar">
+                             <input type="file" name="csv" class='exportNeo'/>
+                             <input type="submit" value="upload" name="submit" class='exportNeo'/>
+                         </form>
+                     </td>
+                     <td>
+                           import file located on  server<input id="importPathOnServer" size="30"><button onclick="importOnServer()">Importer</button>
+                       </td>-->
                 </tr>
                 <tr>
                     <td>Export</td>

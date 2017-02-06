@@ -1,5 +1,6 @@
 var Gparams = {
     readOnly: true,
+    modifyMode:'onList',//''onList'
     MaxResults: 2000,
     lang: "EN",
 

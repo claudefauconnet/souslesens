@@ -165,6 +165,7 @@ function onDBselect() {
         data.sort();
         for (var i = 0; i < data.length; i++) {
             var str = data[i];
+            var str = data[i];
             $("#collSelect").append($('<option/>', {
                 value: str,
                 text: str
@@ -305,8 +306,10 @@ function exportNeoNodes(execute, save) {
     $("#exportParams").val(JSON.stringify(data).replace(/,/, ",\n"));
     if (save)
         saveRequest(JSON.stringify(data).replace(/,/, ",\n"));
-    if (execute)
+    if (execute){
+        $("#exportResultDiv").html("");
         callExportToNeo("node", data);
+    }
 
 
 }
@@ -356,8 +359,11 @@ function exportNeoLinks(execute, save) {
 
     if (save)
         saveRequest(JSON.stringify(data).replace(/,/, ",\n"));
-    if (execute)
+    if (execute){
+        $("#exportResultDiv").html("");
         callExportToNeo("relation", data);
+    }
+
 
 
 }
@@ -412,8 +418,25 @@ function loadSubgraphs(defaultSubGraph) {
 
 };
 
-function saveRequest(json) {
 
+
+function deleteRequest(){
+    var request=$("#requests").val();
+    if(confirm ("delete request :"+request)) {
+        callMongo("", {
+            delete: 1,
+            dbName: $("#dbSelect").val(),
+            collectionName: "requests_" + $("#subGraphSelect").val(),
+            query: {name: request},
+        }, function (result) {
+            $("#requests option:contains("+request+")").remove();
+        });
+    }
+}
+
+
+function saveRequest(json) {
+ var subGraph=$("#subGraphSelect").val();
     var query = "action=saveQuery";
     var mongoDB = $("#dbSelect").val();
     var mongoDB = $("#dbSelect").val();
@@ -426,18 +449,18 @@ function saveRequest(json) {
     }
 
     json = json.replace('"mongoDB":"' + mongoDB + '",', "");// on ne stoke pas la base
-
+var jsonObj=JSON.parse(json);
     var name = "";
     var type = "";
     if (json.indexOf("relationType") > -1) {
         type = "relation";
-        name = "Rels_" + $("#subGraph").val() + "." + $("#neoSourceLabel").val()
-            + "->" + $("#neoTargetLabel").val();
+        name = "Rels_" + $("#subGraphSelect").val() + "." + $("#neoSourceLabel").val()
+            + "->" + $("#neoTargetLabel").val()+":"+jsonObj.relationType;
 
     }
     if (json.indexOf("label") > -1) {
         type = "node";
-        name += "Nodes_" + $("#subGraph").val() + "." + $("#label").val();
+        name += "Nodes_" + $("#subGraphSelect").val() + "." + $("#label").val();
     }
 
 
@@ -453,7 +476,7 @@ function saveRequest(json) {
     callMongo("", {
         updateOrCreate: 1,
         dbName: mongoDB,
-        collectionName: "requests",
+        collectionName: "requests_"+subGraph,
         query: JSON.stringify(query),
         data: JSON.stringify(data)
     }, function (result) {
@@ -465,8 +488,8 @@ function saveRequest(json) {
 
 function loadRequests() {
     var dbName = $("#dbSelect").val();
-
-    callMongo("", {find: 1, dbName: dbName, collectionName: "requests", mongoQuery: "{}"}, function (data) {
+    var subGraph=$("#subGraphSelect").val();
+    callMongo("", {find: 1, dbName: dbName, collectionName: "requests_"+subGraph, mongoQuery: "{}"}, function (data) {
 
 
         data.sort(function (a, b) {
@@ -572,7 +595,15 @@ function refreshNeo() {
         }
 
     }
-    callExportToNeo("batch", requestsToExcecute);
+    callExportToNeo("batch", requestsToExcecute,function(error, result){
+        var str="<B>IMPORT SUMMARY</B>:<br><ul>"
+        for(var i=0;i<result.result.length;i++){
+            str+="<li>"+result.result[i]+"</li>";
+
+        }
+        str+="</ul>"
+        $("#exportResultDiv").html(str);
+    });
 
    /* var xx = currentRequests;
     for (var i = 0; i < requestFilters.length; i++) {

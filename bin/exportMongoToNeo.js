@@ -15,8 +15,8 @@ var serverParams = require("./serverParams.js");
 var exportMongoToNeo = {
 
 
-    exportNodes: function (params, response, callback) {
-        //  var xxx= JSON.parse("{photo:{$exists:true}}");
+    exportNodes: function (params, callback) {
+        var totalImported = 0;
         var dbName = params.mongoDB;
         var collection = params.mongoCollection;
         var exportedFields = params.exportedFields;
@@ -29,26 +29,11 @@ var exportMongoToNeo = {
         else {
             try {
                 query = eval('(' + query + ')');
-                //   query = JSON.parse(query);
             }
             catch (error) {
-
-                console.log(error);
-                var result = {result: error};
-                if (response && !response.finished) {
-                    response.setHeader('Content-Type', 'application/json');
-                    response.send(JSON.stringify(result));
-                    response.end();
-                    return;
-                }
-                else {
-                    callback(messageObj);
-                }
-
-
+                callback(error);
+                return;
             }
-
-
         }
         var nameMongoField = params.mongoField;
         var idMongoField = params.mongoIdField;
@@ -66,12 +51,15 @@ var exportMongoToNeo = {
         var distinctNames = [];
         if (label == null)
             label = collection;
-        // mongoProxy.find(dbName, collection, query, null, function (err, data) {
-        mongoProxy.delete(dbName, "neomappings", {label: label}, null, function () {
-            mongoProxy.pagedFind(500, dbName, collection, query, function (err, data) {
+        mongoProxy.delete(dbName, "neomappings", {label: label}, function () {
+            mongoProxy.pagedFind(serverParams.mongoFetchSize, dbName, collection, query, function (err, data) {
 
                 if (err) {
                     console.log(err);
+                    return;
+                }
+                if (data.length == 0) {
+                    callback(null,"Imported " + totalImported + " lines with label " + label);
                     return;
                 }
                 var objs = [];
@@ -83,12 +71,11 @@ var exportMongoToNeo = {
                         continue;
                     if (obj[idMongoField]) {// on stocke dans neo et neoMappings dans id la valeur de mongoIdField
                         obj.id = obj[idMongoField];
-                        //  delete  obj[idMongoField];
                     } else {
                         continue;
                     }
+                    totalImported+=1;
                     distinctNames.push(nameMongoFieldValue);
-
                     if (!obj.nom)
                         obj.nom = nameMongoFieldValue;
                     obj.subGraph = subGraph;
@@ -103,10 +90,7 @@ var exportMongoToNeo = {
 
                     }
                     var keysToSolve = {};
-                    for (var key in obj) {// le schamps neo ne doivent pas
-                        // commencer par un chiffre
-                        // (norme json) , on met un _
-                        // devant
+                    for (var key in obj) {// le schamps neo ne doivent pascommencer par un chiffre (norme json) , on met un _devant
                         if (/[0-9]+.*/.test(key)) {
                             keysToSolve[key] = obj[key];
 
@@ -124,22 +108,11 @@ var exportMongoToNeo = {
                 var nodeMappings = writeNodesToNeoNodes(label, objs, function (_result) {
                     var result = _result;
 
-                    mongoProxy.insert(dbName, "neomappings", result, null, function () {
-                        var message = "Imported " + result.length + "lines with label " + label;
+                    mongoProxy.insert(dbName, "neomappings", result, function () {
+                        var message = "Imported " + totalImported + " lines with label " + label;
                         socket.message(message);
                         console.log(message);
-                        var messageObj = {result: message};
-                        if (callback) {
-                            callback(null, messageObj);
-                            return;
-                        }
-                        else if (response && !response.finished) {
-                            response.setHeader('Content-Type', 'application/json');
-                            response.send(JSON.stringify(messageObj));
-                            response.end();
-                        }
-
-
+                        //   callback(null,  message);
                     });
 
 
@@ -154,8 +127,6 @@ var exportMongoToNeo = {
                     var statements = [];
                     for (var i = 0; i < objs.length; i++) {
                         var obj = objs[i];
-                        if (("" + obj.BC_id) == "218")
-                            var xxx = "aa";
                         obj = cleanFieldsForNeo(obj);
 
                         var labelFieldValue = obj._labelField;
@@ -170,25 +141,14 @@ var exportMongoToNeo = {
                     }
 
 
-                    payload = {statements: statements};
-                    //  httpProxy.post(neo4jUrl, neoPort, path, payload, null, function (result) {
-                    // neoProxy.post( "",payload, null, function (result) {
+                    var payload = {statements: statements};
                     var neo4jUrl = serverParams.neo4jUrl;
                     neoProxy.cypher(neo4jUrl, path, payload, function (err, result) {
                         if (err) {
-                            console.log(err);
-                            socket.message("Error : " + err);
-                            var result = {result: err};
-                            if (response && !response.finished) {
-                                response.setHeader('Content-Type', 'application/json');
-                                response.send(JSON.stringify(result));
 
-
-                            }
-                            else {
-                                callback(err);
-                            }
+                            callback(err);
                             return;
+
                         }
 
                         var nodeMappings = [];
@@ -216,7 +176,8 @@ var exportMongoToNeo = {
     ,
 
 
-    exportRelations: function (params, response, callback) {
+    exportRelations: function (params, callback) {
+        var totalImported = 0;
         var dbName = params.mongoDB;
         var mongoCollection = params.mongoCollection;
         var mongoSourceField = params.mongoSourceField;
@@ -230,40 +191,18 @@ var exportMongoToNeo = {
 
         var mongoNeoSourceIdsMap = {};
         var mongoNeoTargetIdsMap = {};
-        mongoProxy.find(dbName, "neomappings", {"label": neoSourceLabel}, null, function (err, result) {
-
-
+        mongoProxy.find(dbName, "neomappings", {"label": neoSourceLabel}, function (err, result) {
             if (err) {
-                console.log(error);
-                var result = {result: err};
-                if (response && !response.finished) {
-                    response.setHeader('Content-Type', 'application/json');
-                    response.send(JSON.stringify(result));
-                    response.end();
-
-                }
-                else {
-                    callback(result);
-                }
+                callback(error);
                 return;
             }
             for (var i = 0; i < result.length; i++) {
                 mongoNeoSourceIdsMap[result[i].mongoId] = result[i].neoId;
             }
-            mongoProxy.find(dbName, "neomappings", {"label": neoTargetLabel}, null, function (err, result) {
+            mongoProxy.find(dbName, "neomappings", {"label": neoTargetLabel}, function (err, result) {
 
                 if (err) {
-                    console.log(error);
-                    var result = {result: err};
-                    if (response && !response.finished) {
-                        response.setHeader('Content-Type', 'application/json');
-                        response.send(JSON.stringify(result));
-                        response.end();
-
-                    }
-                    else {
-                        callback(result);
-                    }
+                    callback(error);
                     return;
                 }
 
@@ -278,40 +217,27 @@ var exportMongoToNeo = {
                 else {
                     try {
                         mongoQuery = eval('(' + mongoQuery + ')');
-                        //   query = JSON.parse(query);
+
                     }
                     catch (error) {
-
-                        console.log(error);
-                        var result = {result: error};
-                        if (response && !response.finished) {
-                            response.setHeader('Content-Type', 'application/json');
-                            response.send(JSON.stringify(result));
-                            response.end();
-                            return;
-                        }
-                        else {
-                            callback(messageObj);
-                        }
-
-
+                        callback(error);
+                        return;
                     }
 
 
                 }
                 mongoQuery[mongoSourceField] = {$exists: true};
                 mongoQuery[mongoTargetField] = {$exists: true};
-                // mongoProxy.find(dbName, mongoCollection, mongoQuery, null, function (error, data) {
-                mongoProxy.pagedFind(10, dbName, mongoCollection, mongoQuery, function (err, data) {
+                mongoProxy.pagedFind(serverParams.mongoFetchSize, dbName, mongoCollection, mongoQuery, function (error, data) {
                     if (err) {
-                        console.log(error);
-                        var result = {result: err};
-                        response.setHeader('Content-Type', 'application/json');
-                        response.send(JSON.stringify(result));
-                        response.end();
+                        callback(error);
                         return;
                     }
                     var relations = [];
+                    if (data.length == 0) {
+                        callback(null, " Imported " + totalImported + "relations  with type " + relationType);
+                        return;
+                    }
 
 
                     for (var i = 0; i < data.length; i++) {
@@ -356,6 +282,7 @@ var exportMongoToNeo = {
                     var path = "/db/data/batch";
                     var payload = [];
                     for (var i = 0; i < relations.length; i++) {
+                        totalImported += 1;
 
 
                         var neoObj = {
@@ -368,7 +295,6 @@ var exportMongoToNeo = {
                                 type: relations[i].type
                             }
                         }
-                        // console.log(JSON.stringify(neoObj));
                         payload.push(neoObj);
 
                     }
@@ -377,59 +303,29 @@ var exportMongoToNeo = {
                     neoProxy.cypher(neo4jUrl, path, payload, function (err, result) {
 
                         if (err) {
-                            socket.message("Error : " + err);
-                            console.log(err);
-                            var result = {result: err};
-                            if (response && !response.finished) {
-                                response.setHeader('Content-Type', 'application/json');
-                                response.send(JSON.stringify(result));
-                                response.end();
 
-                            }
-                         /*   else {
-                                callback(err);
-                            }*/
+                            callback(err);
                             return;
                         }
                         if (result.errors && result.errors.length > 0) {
-                            for (var i = 0; i < result.errors.length; i++) {
-                                console.log(result.errors[i]);
-                            }
-                            var result = {errors: result.errors};
-                            if (response && !response.finished) {
-                                response.setHeader('Content-Type', 'application/json');
-                                response.send(JSON.stringify(result));
-                                response.end();
-
-                            }
-                           /* else {
-                                callback(result);
-                            }*/
+                            callback(JSON.stringify(result));
                             return;
 
                         }
-                        var message = "Imported " + result.length + "relations  with type " + relationType;
+
+                        var message = "Imported " + totalImported + "relations  with type " + relationType;
                         socket.message(message);
-                        var messageObj = {result: message};
-                        if (callback) {
-                            callback(null, messageObj);
-                            return;
-                        }
-                        else if (response && !response.finished) {
-                            response.setHeader('Content-Type', 'application/json');
-                            response.send(JSON.stringify(messageObj));
-                            response.end();
-                        }
 
                     })
 
 
                 });
+
             });
         });
 
     },
-    copyNodes: function (data, response) {
+    copyNodes: function (data, callback) {
         var path = "/db/data/transaction/commit";
         var neoCopyMappings = {}
 
@@ -439,7 +335,6 @@ var exportMongoToNeo = {
         for (var i = 0; i < data.length; i++) {
             var obj = data[i];
             var label = obj.n.labels[0];
-            //  var properties = cleanFieldsForNeo(obj.n.properties);
             var properties = obj.n.properties;
             oldIds.push(obj.n._id);
 
@@ -451,8 +346,6 @@ var exportMongoToNeo = {
 
 
         payload = {statements: statements};
-        //  httpProxy.post(neo4jUrl, neoPort, path, payload, null, function (result) {
-        // neoProxy.post( "",payload, null, function (result) {
 
 
         var subsets = [payload];
@@ -477,10 +370,10 @@ var exportMongoToNeo = {
 
 
                         totalImported = totalImported + result.results.length;
-                        var message = "totalImportedtotal :" + (totalImported);
+                        var message = "Imported :" + (result.results.length);
                         console.log(message);
-                      //  if (socket)
-                         //   socket.message(message);
+                        if (socket)
+                            socket.message(message);
                         callback(null);
                     }
                 });
@@ -489,18 +382,19 @@ var exportMongoToNeo = {
                 fs.writeFile("./uploads/neoCopyMappings.js", JSON.stringify(neoCopyMappings));
                 totalImported = totalImported;
                 var message = "total nodes importedtotal :" + (totalImported);
-                if (socket)
-                    socket.message(message);
-                if (socket)
-                    socket.message(message);
-                response.end("message");
 
+                if (err)
+                    callback(err)
+                else {
+                    socket.message(message);
+                    callback(null, message);
+                }
             })
 
 
     },
 
-    copyRelations: function (data, response) {
+    copyRelations: function (data, callback) {
         var neoCopyMappings = fs.readFileSync("./uploads/neoCopyMappings.js");
         neoCopyMappings = JSON.parse("" + neoCopyMappings);
         var path = "/db/data/batch";
@@ -532,15 +426,11 @@ var exportMongoToNeo = {
             }
 
 
-            // console.log(JSON.stringify(neoObj));
             aSubset.push(neoObj);
 
         }
         var totalImported = 0;
         async.eachSeries(subsets, function (aSubset, callback) {
-            var length = aSubset.length;
-            console.log(JSON.stringify(aSubset[0]))
-
             var neo4jUrl = serverParams.neo4jUrl;
             neoProxy.cypher(neo4jUrl, path, aSubset, function (err, result) {
 
@@ -549,7 +439,7 @@ var exportMongoToNeo = {
                     }
                     else {
                         totalImported = totalImported + result.length;
-                        var message = "total relations Importedtotal :" + (totalImported);
+                        var message = " relations Imported :" + (result.length);
                         console.log(message);
                         if (socket)
                             socket.message(message);
@@ -558,12 +448,91 @@ var exportMongoToNeo = {
                 },
                 function (err, done) {
 
-                    var message = "total nodes importedtotal :" + (totalImported);
-                    if (socket)
+                    if (err)
+                        callback(err)
+                    else {
+                        var message = " relations Imported :" + totalImported;
                         socket.message(message);
-                    response.end("message");
+                        callback(null, message);
+
+                    }
+                });
+        })
+
+    },
+    exportBatch: function (dbName, subGraph, requestNames, callbackG) {
+
+
+        var globalMessage = [];
+        mongoProxy.find(dbName, "requests_" + subGraph, {}, function (err, data) {
+            var requestsToExecute = [];
+            for (var i = 0; i < data.length; i++) {
+
+                if (requestNames.indexOf(data[i].name) > -1) {
+                    requestsToExecute.push(data[i])
+                }
+            }
+            var totalImported = 0;
+            async.eachSeries(requestsToExecute, function (request, callbackBatch) {
+                    var message = request.name + " executing";
+                    console.log(message);
+                    socket.message(message);
+                    var requestStr = request.request.replace(/\n/g, "");
+                    var requestObj = JSON.parse(requestStr);
+                    requestObj.mongoDB = dbName;
+                    if (subGraph)
+                        requestObj.subGraph = subGraph;
+                    //  requestObj={params:requestObj};
+
+                    if (request.name.indexOf("Nodes_") == 0) {
+                        requestObj.mongoCollection = requestObj.mongoCollectionNode;
+                        exportMongoToNeo.exportNodes(requestObj, function (err, result) {
+                            if (err) {
+                                console.log(err);
+                                callbackBatch(null);
+                                globalMessage.push(err);
+                                return;
+                            }
+                            globalMessage.push(result);
+                            callbackBatch(null);
+                        });
+                    }
+                    else if (request.name.indexOf("Rels_") == 0) {
+                        console.log("--importing--" + requestObj.name);
+                        requestObj.mongoCollection = requestObj.mongoCollectionRel;
+                        exportMongoToNeo.exportRelations(requestObj, function (err, result) {
+                            if (err) {
+                                console.log(err);
+                                globalMessage.push(err);
+                             //  callbackBatch(null);
+
+                            }
+                            else {
+                                console.log("--imported--" + result);
+                                globalMessage.push(result);
+                              callbackBatch(null);
+                            }
+                        });
+                    }
+                }
+                ,
+                function (err, done) {
+
+
+                    if (err) {
+
+                        callbackG(err);
+                    }
+                    else {
+                       socket.message(JSON.stringify(globalMessage));
+                        callbackG(null, {result:globalMessage});
+
+                    }
+
 
                 });
+
+
         })
 
     }

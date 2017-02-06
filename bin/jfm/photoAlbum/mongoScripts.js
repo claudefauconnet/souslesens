@@ -51,6 +51,67 @@ db.famille.find({}).forEach(function(doc2){
 
 
 
+var regex=/([0-9]{4})-([0-9]{2})-([0-9]{2}).*/g
+
+db.famille.find({}).forEach(function(doc){
+
+
+    var date=doc.date.toJSON();
+    print(date);
+    if(date){
+
+        var array=regex.exec(date)
+
+        if(array && array.length>1){
+            doc.year=parseInt(array[1])
+            doc.month=parseInt(array[2])
+            doc.day=parseInt(array[3])
+            db.famille.save(doc);
+
+        }
+    }
+
+
+
+
+
+    db.synsets.find({}).forEach(function(doc){
+        if(doc.synonyms){
+            var synonyms=doc.synonyms.split(";");
+            if(synonyms){
+                for(var i=1;i<synonyms.length;i++){
+                    if(synonyms[i]&&synonyms[i].length>0){
+                        var doc={lang:'FR',
+                            nameA:synonyms[0],
+                            nameB:synonyms[i],
+                            thesaurus:doc.category
+                        }
+                        db.synonyms.save(doc);
+                    }
+                }
+            }
+
+        }
+
+    })
+
+    db.synonyms.find({}).forEach(function(doc){
+        db.node_words.find({keyWord:doc.nameA}).forEach(function(doc2){
+            doc.conceptId=doc2.node_id;
+            db.synonyms.save(doc);
+        })
+
+    })
+    db.synonyms.find({}).forEach(function(doc){
+        if(doc.conceptId){
+            db.nodes2.find({id:doc.conceptId}).forEach(function(doc2){
+                doc.concept=doc2.name;
+                db.synonyms.save(doc);
+            })
+        }
+
+    })
+
 
 
 

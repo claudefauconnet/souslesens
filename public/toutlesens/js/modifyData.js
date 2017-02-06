@@ -50,8 +50,10 @@ function drawFieldInputs(obj, label) {
 			+ subGraph + ">subGraph</td></tr>";
 		
 	}
-	str += "<tr><td><font color='blue'>LABEL</font></td><td><input  class='inputFieldNode' id='field_label' value="
-			+ currentLabel + "></td></tr>";
+
+
+	str += "<tr><td>LABEL</td><td><select  class='inputFieldNode' id='field_label' value="
+			+ currentLabel + "></select>></td></tr>";
 	if (!obj &&  dataModel.labels[currentLabel].indexOf("nom")<0) {
 		str += "<tr><td>nom</td><td><input  class='inputFieldNode' id='field_nom' value=''></td></tr>";
 		
@@ -82,6 +84,8 @@ function drawFieldInputs(obj, label) {
 	str += "</div>"
 		
 	$("#nodeInputDiv").append(str);
+	initLabels(subGraph,"field_label");
+	$("#field_label").val(currentLabel);
 	
 }
 

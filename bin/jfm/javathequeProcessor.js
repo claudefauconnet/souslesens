@@ -136,10 +136,10 @@ var JavathequeProcessor = {
             }
             data.push(obj);
         }
-        mongo.delete("chaudron", "javatheque", {},null, function (err, result) {
+        mongo.delete("chaudron", "javatheque", {}, function (err, result) {
             if (err)
                 return err;
-            mongo.insert("chaudron", "javatheque", data, null,function (err, result) {
+            mongo.insert("chaudron", "javatheque", data,function (err, result) {
                 if (err)
                     return err;
             });

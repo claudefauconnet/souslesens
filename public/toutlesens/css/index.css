@@ -114,6 +114,7 @@ input {
 #dialogAdvancedSearch, #dialogAdvancedDisplay {
     z-index: 1000;
     overflow: hidden;
+
 }
 
 #ModifyNodeActionDiv, #linkActionDiv {

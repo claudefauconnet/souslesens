@@ -4,29 +4,39 @@ var drag;
 var svgGroup;
 var yLeg = 30;
 var xLeg = 10;
-var circleLegR = 6;
+var circleLegR = Gparams.circleR / 1.5;
 var yDecoLeg;
-function drawLegend() {
+function drawLegend(legendDivId) {
+    var legendDiv;
 
-    yLeg = 30;
-    if (visLeg) {
-        $("#graphLegendDiv").html("");
-        d3.select(".legendSVG").selectAll("*").remove();
+    var visLeg;
+    if (!legendDivId) {
+        legendDiv = $("#graphLegendDiv");
+        if (visLeg) {
+            legendDiv.html("");
+            d3.select(".legendSVG").selectAll("*").remove();
+        }
+
+        var w = legendDiv.width();
+        var h = legendDiv.height();
+
+        visLeg = d3.select("#graphLegendDiv").append("svg:svg").attr("width", w).attr(
+            "height", h).attr("class", "legendSVG");
+
 
     }
-    var w = $("#graphLegendDiv").width();
-    var h = $("#graphLegendDiv").height();
 
+    else {
+        legendDiv = $("#" + legendDivId);
 
-    visLeg = d3.select("#graphLegendDiv").append("svg:svg").attr("width", w).attr(
-        "height", h).attr("class", "legendSVG");
+        var xxx = myFlower;
+        visLeg = d3.selectAll("svg");
+    }
+    yLeg = 30;
+
 
     var labels = new Array;
     // 230;
-
-
-    var legHeight = $("#graphLegendDiv").height();
-    var legWidth = $("#graphLegendDiv").width() - 10;
 
 
     var relations = []
@@ -57,7 +67,7 @@ function drawLegend() {
             yLeg += 20;
         }
     }
-    yLeg += 30;
+    yLeg += 40;
 
 
     var legend = visLeg.data([{
@@ -70,7 +80,7 @@ function drawLegend() {
     })
         .attr("y", function (d) {
             return d.y
-        })
+        }).call(commonDnD);
 
     /*  legend.append("rect").attr("class", "legendRect").attr("x", 0).attr("y", 0).attr("width", legWidth)
      .attr("height", legHeight).style("stroke", null).style("stroke-widh", "1px").style("fill",
@@ -125,7 +135,7 @@ function drawLegend() {
             return "Show...";
     })
         .attr('class', 'legendText')
-        .attr("fill","white")
+        .attr("fill", "white")
         .attr("text-anchor", "start")
         .attr("y", 15).attr("x", 5);
 

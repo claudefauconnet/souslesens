@@ -104,7 +104,7 @@ var labelsPositions = {};
 var initialQuery = "";
 //var currentVariables = [];
 var currentVariable = "";
-var currentDisplayType="FLOWER";
+var currentDisplayType = "FLOWER";
 var selectedObject = {};
 var subGraph;
 var d3tree;
@@ -113,6 +113,8 @@ var isAdvancedSearchDialogInitialized = false;
 
 var popupMenuNodeInfoCache;
 var currentDataStructure;  //tree or flat
+var currentThumbnails = [];
+currentThumbnails.currentIndex = -1;
 
 $(document).ready(function () {
     var queryParams = getQueryParams(document.location.search);
@@ -135,13 +137,15 @@ function getQueryParams(qs) {
     return params;
 }
 
-function initLabels() {
-
+function initLabels(subGraph, selectId) {
+    var select = "#nodesLabelsSelect";
+    if (selectId)
+        select = "#" + selectId;
     setLabelsColor();
 
     for (var i = 0; i < dataModel.allLabels.length; i++) {
         var label = dataModel.allLabels[i];
-        $("#nodesLabelsSelect").append($('<option>', {
+        $(select).append($('<option>', {
             text: label,
             value: label
         }).css("color", nodeColors[label]));
@@ -535,21 +539,20 @@ function searchNodesUI(resultType, limit, from) {
 }
 
 
-
 function initResultPagination(count) {
 
     currentRequestCount = count;
     if (count > MaxNodesInWordsSelect) {
         currentPageIndex = 0;
         var from = currentPageIndex * MaxNodesInPage;
-        searchNodes( currentQueryParams.subGraph, currentQueryParams.label, currentQueryParams.word, "displayStartNodesPage", MaxNodesInPage, from);
-       /* searchNodesUI("displayStartNodesPage",
-            MaxNodesInPage, from);*/
+        searchNodes(currentQueryParams.subGraph, currentQueryParams.label, currentQueryParams.word, "displayStartNodesPage", MaxNodesInPage, from);
+        /* searchNodesUI("displayStartNodesPage",
+         MaxNodesInPage, from);*/
 
     } else
-        searchNodes( currentQueryParams.subGraph, currentQueryParams.label, currentQueryParams.word, "displayStartNodesPage", MaxNodesInPage, from);
-     /*   searchNodesUI("displayStartNodesPage",
-            MaxNodesInPage, from);*/
+        searchNodes(currentQueryParams.subGraph, currentQueryParams.label, currentQueryParams.word, "displayStartNodesPage", MaxNodesInPage, from);
+    /*   searchNodesUI("displayStartNodesPage",
+     MaxNodesInPage, from);*/
     // fillWordsSelect(data.results);
 
 }
@@ -598,14 +601,14 @@ function fillLabelsPage(neoResult) {
 function goToNextPage() {
     currentPageIndex++;
     var from = currentPageIndex * MaxNodesInPage;
-    searchNodes( currentQueryParams.subGraph, currentQueryParams.label, currentQueryParams.word, "displayStartNodesPage", MaxNodesInPage, from);
-  //  searchNodesUI("displayStartNodesPage", MaxNodesInPage, from);
+    searchNodes(currentQueryParams.subGraph, currentQueryParams.label, currentQueryParams.word, "displayStartNodesPage", MaxNodesInPage, from);
+    //  searchNodesUI("displayStartNodesPage", MaxNodesInPage, from);
 }
 function goToPreviousPage() {
     currentPageIndex--;
     var from = currentPageIndex * MaxNodesInPage;
-    searchNodes( currentQueryParams.subGraph, currentQueryParams.label, currentQueryParams.word, "displayStartNodesPage", MaxNodesInPage, from);
-  //  searchNodesUI("displayStartNodesPage", MaxNodesInPage, from);
+    searchNodes(currentQueryParams.subGraph, currentQueryParams.label, currentQueryParams.word, "displayStartNodesPage", MaxNodesInPage, from);
+    //  searchNodesUI("displayStartNodesPage", MaxNodesInPage, from);
 }
 
 function fillWordsSelect(neoResult) {
@@ -652,7 +655,7 @@ function onWordSelect(draw) {
     $("#tabs-radarRight").tabs("enable");
     $("#currentNodeSpan").html("Noeud central : " + text);
 
-    if (currentMode == "write") {
+    if (Gparams.modifyMode=='onList' && currentMode == "write") {
         var index = $('#tabs-radarRight a[href="#modifyTab"]').parent().index();
         $("#tabs-radarRight").tabs("option", "active", index);
 
@@ -735,7 +738,7 @@ function getGraphDataAroundNode(id, callbackFunction) {
         getNodeAllRelations(id, mode);
     }
     else if (mode == "listTree") {
-     if (currentDataStructure == "tree") {
+        if (currentDataStructure == "tree") {
             if (cachedResultTree)
                 listTreeResultToHtml(cachedResultTree, Gparams.htmlOutputWithAttrs)
             else
@@ -1333,7 +1336,7 @@ function onRadarLeftActivate(index) {
 function onRadarRightActivate(index) {
 
     if (index == 1) {
-      //  onVisButton('HTML');
+        //  onVisButton('HTML');
         //  listNodesAndAttrs();
         /*
          * if (exploredTree && exploredTree != null) displayGraph(exploredTree,
@@ -1376,6 +1379,7 @@ function dispatchAction(action, objectId) {
         }
         return;
     }
+
     hidePopupMenu();
     $("#ModifyNodeActionDiv").html("");
     $("#ModifyNodeActionDiv").css("visibility", "hidden");
@@ -1429,6 +1433,7 @@ function dispatchAction(action, objectId) {
         $("#linkTargetNode").val(targetNode.name);
         $("#linkTargetNode").css("color", nodeColors[targetNode.label]);
         $("#linkTargetLabel").html(targetNode.label);
+        $("#tabs-radarRight").tabs("option", "active", 3);
         $("#accordionModifyPanel").accordion("option", "active", 1);
         currentRelationData.targetNode = targetNode;
         setLinkTypes();
@@ -1455,6 +1460,13 @@ function dispatchAction(action, objectId) {
             });
         }
 
+    } else if (action == "newNode") {
+        $("#ModifyNodeActionDiv").css("visibility", "visible");
+        $("#accordionModifyPanel").accordion("option", "active", 0);
+        // var index = $('#tabs-radarRight
+        // a[href="li_modify"]').parent().index();
+        $("#tabs-radarRight").tabs("option", "active", 3);
+        onCreateNodeButton();
     } else if (action == "switchNodesVisibilityFromLabel") {
         var action2 = "";
         if (currentObject.children && currentObject.children.length > 0)
@@ -1535,7 +1547,6 @@ function zeroRelationsForNodeAction(data) {
     // }
 
 }
-
 
 
 function changeLinkType(linkObj) {// afinir
@@ -1777,9 +1788,9 @@ function drawGraphGeneral(useCache) {
 }
 function displayGraph(json, output, labels) {
     $("#textDiv").html("");
-    $("#tabs-radarRight").tabs("option", "active",0);
+    $("#tabs-radarRight").tabs("option", "active", 0);
 
-    if (!json  ) {
+    if (!json) {
         if (output == "SIMPLE_FORCE_GRAPH")
             json = cachedResultArray;
         else
@@ -1807,7 +1818,7 @@ function displayGraph(json, output, labels) {
     if (!output) {
         output = $("#representationSelect").val();
     }
-   else if (output == "FLOWER") {
+    else if (output == "FLOWER") {
         var jsonFlower = json;
         if ($("#groupByLabelsCbx").prop("checked"))
             jsonFlower = jsonToHierarchyTree(json, "label");
@@ -1830,10 +1841,10 @@ function displayGraph(json, output, labels) {
         drawForceCollapse(json, null, null, distance, currentGraphCharge);
     }
     else if (output == "TREEMAP") {
-       var jsonTreeMap = jsonToHierarchyTree(json, "label");
-      // setValues(jsonTreeMap)
+        var jsonTreeMap = jsonToHierarchyTree(json, "label");
+        // setValues(jsonTreeMap)
         testTreemap(jsonTreeMap);
-      //  drawTreeMap2(jsonTreeMap);
+        //  drawTreeMap2(jsonTreeMap);
         // drawTreeMap(jsonTest);
 
     } else if (output == "SIMPLE_FORCE_GRAPH") {
@@ -1844,10 +1855,9 @@ function displayGraph(json, output, labels) {
     }
 
 
-
     if (labels)
         initGraphFilters(labels);
-    drawLegend();
+    drawLegend();//"graphDiv");
     var scrollLeft = ($("#graphDiv").parent().width() / 2) + 100;
     var scrollTop = ($("#graphDiv").parent().height() / 2);
     // d3tree.centerNode(100, 100, .9);
@@ -1954,7 +1964,6 @@ function execNeoQuery() {
 }
 
 
-
 function onFilterCbxClik() {
     drawGraphGeneral();
 }
@@ -1986,24 +1995,75 @@ function onLinkClick(id) {
         if (currentObject.path)
             showImage(Gparams.imagesRootPath + currentObject.path)
         dispatchAction('nodeInfos');
-      // $("#tabs-radarRight").tabs("option", "active", 2);
-        getNodeAllRelations(id, null, false, function(json, labels) {
+        // $("#tabs-radarRight").tabs("option", "active", 2);
+        getNodeAllRelations(id, null, false, function (json, labels) {
 
             listTreeResultToHtml(cachedResultTree, Gparams.htmlOutputWithAttrs)
         });
 
-      /*  getGraphDataAroundNode(id, false);
-        currentDataStructure = "tree";
-        onTextVisButton('HTML');*/
+        /*  getGraphDataAroundNode(id, false);
+         currentDataStructure = "tree";
+         onTextVisButton('HTML');*/
     });
 
 }
 function showImage(url) {
-    $("#nodeDetailsIframe").prop("src", url);
+    // $("#nodeDetailsIframe").prop("src", url);
+    var w = $("#nodeDetailsIframe").width();
+    $("#nodeDetailsIframe").html('<img id="largeImage" src="' + url + '" border="0" height="real_height" width="real_width" onload="resizeImg(this, null, ' + w + ');">')
     $("#tabs-radarRight").tabs("option", "active", 2);
 }
 function restorePopupMenuNodeInfo() {
     $("#popupMenuNodeInfo").html(popupMenuNodeInfoCache);
+}
+
+function showThumbnail(relativePath) {
+    var url = Gparams.imagesRootPath + relativePath.replace("--", "/");
+    var str2 = ' <img id="thumbnailImage" src="' + url + '" border="0" height="real_height" width="real_width"  onclick="showImage(\'' + url + '\')" onload="resizeImg(this, null, 300);">'
+    if ($("#largeImage").prop("checked")) {
+        showImage(url);
+    }
+    $("#imagePanel").html(str2);
+
+}
+
+function nextImage() {
+
+    if (currentThumbnails.currentIndex < currentThumbnails.length - 1) {
+        currentThumbnails.currentIndex++;
+        showThumbnail(currentThumbnails[currentThumbnails.currentIndex].path)
+        highlightNode(currentThumbnails[currentThumbnails.currentIndex].id)
+    }
+}
+function previousImage() {
+    if (currentThumbnails.currentIndex > 0) {
+        currentThumbnails.currentIndex--;
+        showThumbnail(currentThumbnails[currentThumbnails.currentIndex].path)
+        highlightNode(currentThumbnails[currentThumbnails.currentIndex].id)
+    }
+
+}
+
+function rotateImage(negative){
+    function rotate(divId,angle) {
+        var deg = $("#"+divId).data('rotate') || 0;
+        var rotate = 'rotate(' + angle + 'deg)';
+        $("#"+divId).css({
+            '-webkit-transform': rotate,
+            '-moz-transform': rotate,
+            '-o-transform': rotate,
+            '-ms-transform': rotate,
+            'transform': rotate
+        });
+
+    }
+    var angle=90;
+    if(negative)
+        angle=-90;
+    rotate("thumbnailImage",angle);
+        rotate("largeImage",angle);
+
+
 }
 
 

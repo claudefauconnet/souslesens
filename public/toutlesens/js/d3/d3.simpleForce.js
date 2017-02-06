@@ -370,7 +370,7 @@ function drawSimpleForce(nodes, links) {
                         if (d.isRoot == true || d.isTarget == true) {
                             return r0 * 2;
                         }
-                        if (d.rels) {
+                        if (d.rels && d.rels.length>0) {
                             var r= r0 +(r0*Math.log(d.rels.length) )
                             return r;
                             // return Math.min(r,Gparams.circleR *4);

@@ -424,7 +424,7 @@ function initDecorationDiv() {
 function execute() {
     var groupByClass = $("#groupByClassCBx").prop("checked");
     setDataDecoration(groupByClass);
-    if($("#crossLabel").prop("checked"))
+    if(false && $("#crossLabel").prop("checked"))
     $('#groupByLabelsCbx', window.parent.document).prop("checked","checked");
 
     window.parent.hideAdvancedDisplay();

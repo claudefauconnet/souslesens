@@ -69,60 +69,7 @@ var CodeFlower = function (selector, w, h) {
     this.force = d3.layout.force()
         .on("tick", this.tick.bind(this))
         .on("end", function (d) {
-            var nodes = flowerNodes;
-            for (var i = 0; i < nodes.length; i++) {
-                var node = nodes[i][0][0];
-                var nodeData = node.__data__;
-                var position = {x: nodeData.x, y: nodeData.y};
-                if (nodeData.neoAttrs && nodeData.neoAttrs.path) {
-                    var xxx = d3.select(node);
-                    d3.select(node).append("svg:image")
-                        .on("mouseover", function (d) {
-
-                            d3.select(this).attr("width", 200).style('opacity', CodeFlower.imgOpacityStrong)
-                                .attr("x", function (d) {
-                                    return 0;
-                                })
-                                .attr("y", function (d) {
-                                    return 0;
-                                });
-                            d3.select(this).moveToFront();
-                        })
-                        .on("mouseout", function (d) {
-                            d3.select(this).attr("width", 60).style('opacity', CodeFlower.imgOpacityWeak)
-                                .attr("x", function (d) {
-                                    return 0
-                                })
-                                .attr("y", function (d) {
-                                    return 0
-                                });
-                            d3.select(this).moveToBack();
-                        })
-                        .attr("xlink:href", function (d) {
-                            //   console.log(d.neoAttrs.path);
-
-                            //return "http://127.0.0.1:3002/JAVATHEQUE"+encodeURIComponent(d.neoAttrs.path);
-                            var str = nodeData.neoAttrs.path.replace("--", "/");
-                            return encodeURI(Gparams.imagesRootPath + str);
-                            //   return encodeURI(d.neoAttrs.path);
-
-                        })
-                        .attr("x", function (d) {
-                            return -30
-                        })
-                        .attr("y", function (d) {
-                            return -25
-                        }).on("click", function (d) {
-                        d3.select(this).attr("transform", function (d) {
-                            return "rotate(-90)";
-                        })
-
-                    })
-                        .style('opacity', CodeFlower.imgOpacityStrong)
-                        .attr("class", "d3NodeImage")
-                        .attr("width", "60")
-                }
-            }
+        //showThumbnails(flowerNodes);
         })
 
         .linkDistance(function (d) {
@@ -532,5 +479,6 @@ CodeFlower.prototype.showNodesWithLabel = function (label) {
 
 
 }
+
 
 

@@ -18,7 +18,7 @@ function setTreMapValues(jsonTree) {
         else {
             if (node.children == 0)
                 delete (node.children);
-            if (node.neoAttrs.businessValue)
+            if (node.neoAttrs && node.neoAttrs.businessValue)
                 node.value = node.neoAttrs.businessValue;
             else
                 node.value = 1;

@@ -61,7 +61,7 @@ var photoAlbumProcessor = {
             var xxx = objs;
             var dbName = "albumPhoto"
             var collection = "famille";
-            mongoProxy.insert(dbName, collection, objs, null, function (err, result) {
+            mongoProxy.insert(dbName, collection, objs, function (err, result) {
                 if (err)
                     console.log(err);
                 console.log("DONE " + objs.length);

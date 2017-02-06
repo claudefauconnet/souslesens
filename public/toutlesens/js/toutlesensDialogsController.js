@@ -1,11 +1,17 @@
+
+
 function getAllpropertiesDialogContent(onclickAction) {
+  var label=$("#nodesLabelsSelect").val();
     var str = "<table><tr><td>type de propriete</td><td><select id='propertyType'></select></td></tr>"
     str += "<tr><td align='right'>= </td><td><input id='propertyEquals'></input></td></tr>"
     str += "<tr><td align='right'>contains</td><td><input id='propertyContains'></input></td></tr>"
     str += "<tr><td align='right'>&gt;</td><td><input id='propertyGreater'></input></td></tr>"
     str += "<tr><td align='right'>&lt; </td><td><input id='propertyLower'></input></td></tr>"
     str += "</table><button id='getAllpropertiesDialogOkBtn' onclick=" + onclickAction + ";>OK</button>";
-    str += "<script>fillSelectOptionsWithStringArray($('#propertyType')[0],dataModel.allProperties);</script>";
+    if(label && label.length>0)
+        str += "<script>fillSelectOptionsWithStringArray($('#propertyType')[0],dataModel.labels['"+label+"']);</script>";
+    else
+     str += "<script>fillSelectOptionsWithStringArray($('#propertyType')[0],dataModel.allProperties);</script>";
 //	str += "<script>fillSelectOptionsWithStringArray($('#propertyType')[0],dataModel.allProperties);$('#propertyType').val(\'nom\');</script>";
     return str;
 }
@@ -74,10 +80,23 @@ function saveStoredDecorationObjsDialog() {
 function setPopupMenuNodeInfoContent() {
     var name = formatNode(currentObject).name;
 
-    var str =
+  /*  var str =
         "<input type='image' height='15px' alt='infos'  onclick='dispatchAction(\"nodeInfosPopup\")' src='images/infos.png'/>" +
         "<input type='image' height='15px'  alt='set as rootNode' onclick='dispatchAction(\"setAsRootNode\")' src='images/squareRoot.png'/>" + "&nbsp;" +
-        "<B><span style='color:" + nodeColors[currentObject.label] + "'> [" + currentObject.label + "]<span>" +name+"</B>"
+        "<B><span style='color:" + nodeColors[currentObject.label] + "'> [" + currentObject.label + "]<span>" +name+"</B>"*/
+
+    var str="<table> <tr>" +
+        "<td> <input type='image' height='20px' alt='infos'  onclick='dispatchAction(\"nodeInfosPopup\")' src='images/infos.png'/></td>"+
+        "<td><input type='image' height='15px'  alt='set as rootNode' onclick='dispatchAction(\"setAsRootNode\")' src='images/squareRoot.png'/></td>"
+    if(Gparams.readOnly ==false){
+        str+="<td> <input type='image' height='20px' alt='infos'  onclick='dispatchAction(\"modifyNode\")' src='images/modify.png'/></td>"+
+        "<td><input type='image' height='20px'  alt='set as rootNode' onclick='dispatchAction(\"linkSource\")' src='images/sourceLink.png'/></td>"+
+            "<td><input type='image' height='20px'  alt='set as rootNode' onclick='dispatchAction(\"linkTarget\")' src='images/targetLink.png'/></td>"+
+        "<td><input type='image' height='20px'  alt='set as rootNode' onclick='dispatchAction(\"newNode\")' src='images/new.jpg'/></td>"
+    }
+    str+="</tr></table>";
+
+    str+=   "<B><span style='color:" + nodeColors[currentObject.label] + "'> [" + currentObject.label + "]<span>" +name+"</B>"
 
 
     if (currentObject.hiddenChildren) {

@@ -52,6 +52,18 @@ function onTargetNodeClick() {
 }
 
 
+
+
+function showSimpleSearchDialog(){
+    $("#dialog").dialog("option", "title", "valeur d'une propriete");
+    str = getAllpropertiesDialogContent("setSearchNodeReturnFilterVal(true)");
+    str += '<button onclick=" closeDialog()">Cancel</button><br>';
+    $("#dialog").html(str);
+    $("#dialog").dialog("open");
+
+
+}
+
 function closeDialog() {
     $("#dialog").dialog("close")
 }
@@ -119,10 +131,17 @@ function showNodeSelectionDialog(value) {
 }
 
 
+function setTargetNodeVisibility(hide){
+    if(hide || $("#graphPathSourceNode").val()=="")
+    $(".targetNode").css("visibility","hidden");
+   else
+        $(".targetNode").css("visibility","visible");
+}
+
 function setTargetNodeLabel() {
 
     var value = $("#nodesLabelsSelect option:selected").val();
-
+    setTargetNodeVisibility()
     currentActionObj[currentActionObj.currentTarget].label = value;
     //  $("#graphPathTargetNode").val(":" + value);
     $("#" + currentActionObj.currentTarget).val("[" + value + "]");
@@ -132,6 +151,7 @@ function setTargetNodeLabel() {
 }
 function setTargetNodeProperty() {
     var value = setSearchNodeReturnFilterVal();
+    setTargetNodeVisibility()
     currentActionObj[currentActionObj.currentTarget].property = value;
     $("#" + currentActionObj.currentTarget).val(value);
     $("#dialog").dialog("close");
@@ -174,7 +194,7 @@ function setNode() {
     var index = wordsSelect.selectedIndex;
     var valueText = wordsSelect.options[wordsSelect.selectedIndex].text;
     var valueId = $("#wordsSelect").val();
-
+    setTargetNodeVisibility()
     currentActionObj[currentActionObj.currentTarget].nodeId = valueId;
     currentActionObj[currentActionObj.currentTarget].nodeText = valueText;
     $("#dialog").dialog("close");
@@ -335,7 +355,7 @@ function getWhereProperty(str, nodeAlias) {
     }
     else {
         console.log("!!!!invalid query");
-        return;
+        return "";
     }
 
     if (operator == "~") {
@@ -389,19 +409,26 @@ function buildCypherQueryUI() {
 
 }
 function executeCypherAndDisplayGraph(query, _currentActionObj) {
+    hideAdvancedSearch();
     $("#tabs-radarLeft").tabs("enable");
     $("#tabs-radarRight").tabs("enable");
     currentActionObj = _currentActionObj;
-    $("#graphForceDistance").val(20);
-    hideAdvancedSearch();
-    $("#tabs-radarLeft").tabs("enable");
-    hideAdvancedSearch();
-    executeQuery(QUERY_TYPE_MATCH, query, function (data) {
-        currentDisplayType = "SIMPLE_FORCE_GRAPH";
-        cachedResultArray = data;
+    if(true || currentActionObj.graphPathTargetNode) {
         currentDataStructure = "flat";
+        currentDisplayType = "SIMPLE_FORCE_GRAPH";
+        $("#graphForceDistance").val(20);
+    }
+    else {
+        currentDataStructure = "tree";
+        currentDisplayType = "FLOWER";
+        $("#graphForceDistance").val(20);
+    }
 
-        displayGraph(data, "SIMPLE_FORCE_GRAPH", null)
+    $("#tabs-radarLeft").tabs("enable");
+    executeQuery(QUERY_TYPE_MATCH, query, function (data) {
+        cachedResultArray = data;
+
+        displayGraph(data, currentDisplayType, null)
     });
 }
 

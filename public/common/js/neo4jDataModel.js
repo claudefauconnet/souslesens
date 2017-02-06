@@ -44,27 +44,17 @@ function initNeoModel(subGraph, callback) {
         allLabels: [""]
     }
     var where = "";
-    if (subGraph && subGraph!="undefined")
+    if (subGraph && subGraph != "undefined")
         where = " where n.subGraph='" + subGraph + "'";
+
+
     var query = "MATCH (n) OPTIONAL MATCH(n)-[r]-(m) "
         + where
-        + " RETURN distinct labels(n)[0] as label_n, type(r) as type_r,labels(m)[0] as label_m, labels(startNode(r))[0] as label_startNode,count(n) as count_n,count(r) as count_r,count(m) as count_m";
-    console.log(query);
+        + " RETURN distinct labels(n) as labels_n, type(r) as type_r,labels(m)[0] as label_m, labels(startNode(r))[0] as label_startNode,count(n) as count_n,count(r) as count_r,count(m) as count_m";
+
     var payload = {
         match: query
     }
-    /*var payload = {
-     "statements" : [ {
-     "statement" : query
-     } ]
-     };
-     paramsObj = {
-     mode : "POST",
-     urlSuffix : "db/data/transaction/commit",
-     payload : JSON.stringify(payload)
-     }*/
-
-    // console.log("QUERY----" + JSON.stringify(payload));
     $.ajax({
         type: "POST",
         url: Gparams.neo4jProxyUrl,
@@ -73,26 +63,20 @@ function initNeoModel(subGraph, callback) {
         dataType: "json",
         success: function (data, textStatus, jqXHR) {
 
-            if (!data || data.length == 0) {
-                // setMessage("No results", blue);
-                return;
-            }
-            var errors = data.errors;
-
-            if (errors && errors.length > 0) {
-                return;
-            }
-
             //	var data = data.results[0].data;
 
             for (var i = 0; i < data.length; i++) {
                 var obj = {
+                    label1: data[i].labels_n[0],
+                    labels: data[i].labels_n,
+                    labels2: data[i].labels_m,
                     label1: data[i].label_n,
                     relType: data[i].type_r,
                     label2: data[i].label_m,
                     count1: data[i].count_n,
                     count2: data[i].count_m,
                 }
+
 
                 if (obj.label1 == data[i].label_startNode)
                     obj.direction = "normal";
@@ -117,7 +101,8 @@ function initNeoModel(subGraph, callback) {
             }
             // fields
             query = "MATCH (n) " + where
-                + " return distinct labels(n)[0] as label_n,keys(n) as keys_n,count(n) as count_n";
+                + " return distinct labels(n) as labels_n,keys(n) as keys_n,count(n) as count_n";
+            //  + " return distinct labels(n)[0] as label_n,keys(n) as keys_n,count(n) as count_n";
 
             payload = {match: query};
 
@@ -132,24 +117,32 @@ function initNeoModel(subGraph, callback) {
                     success: function (data, textStatus, jqXHR) {
                         for (var i = 0; i < data.length; i++) {
 
-                            var label = data[i].label_n;
-                            if (dataModel.allLabels.indexOf(label) < 0)
-                                dataModel.allLabels.push(label);
-                            var fields = data[i].keys_n;
-                            if (!dataModel.labels[label])
-                                dataModel.labels[label] = [];
+                            var labels = data[i].labels_n;
 
-                            for (var j = 0; j < fields.length; j++) {
-                                if (dataModel.allProperties
-                                        .indexOf(fields[j]) < 0)
-                                    dataModel.allProperties
-                                        .push(fields[j]);
-                                if (dataModel.labels[label]
-                                        .indexOf(fields[j]) < 0) {
-                                    dataModel.labels[label]
-                                        .push(fields[j]);
+                            for (var k = 0; k < labels.length; k++) {
+if(k==1)
+    var xx="qqq"
+
+                                var label = labels[k];
+
+                                if (dataModel.allLabels.indexOf(label) < 0)
+                                    dataModel.allLabels.push(label);
+                                var fields = data[i].keys_n;
+                                if (!dataModel.labels[label])
+                                    dataModel.labels[label] = [];
+
+                                for (var j = 0; j < fields.length; j++) {
+                                    if (dataModel.allProperties
+                                            .indexOf(fields[j]) < 0)
+                                        dataModel.allProperties
+                                            .push(fields[j]);
+                                    if (dataModel.labels[label]
+                                            .indexOf(fields[j]) < 0) {
+                                        dataModel.labels[label]
+                                            .push(fields[j]);
+                                    }
+
                                 }
-
                             }
                         }
 
@@ -175,9 +168,10 @@ function initNeoModel(subGraph, callback) {
         }
 
     });
+
 }
 
-function drawDataModel(){
+function drawDataModel() {
 
     drawNeoModel(subGraph);
 }
@@ -199,12 +193,12 @@ function callMongo(urlSuffix, payload, callback) {
         }
     });
 }
-function callNeoMatch( match,url, callback) {
+function callNeoMatch(match, url, callback) {
     payload = {
         match: match
     };
-    if(!url)
-        url=Gparams.neo4jProxyUrl;
+    if (!url)
+        url = Gparams.neo4jProxyUrl;
 
     $.ajax({
         type: "POST",

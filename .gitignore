@@ -4,7 +4,10 @@
 .idea
 node_modules
 .gitignore
-
+./bin/jfm/
+./bin/jfm/trump
+./public/files
+.npm-debug.log
 
 #############
 ## Windows detritus

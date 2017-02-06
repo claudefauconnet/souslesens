@@ -1,9 +1,9 @@
 var MongoClient = require('mongodb').MongoClient
 var async = require('async');
-var serverParams=require("./serverParams.js");
+var serverParams = require("./serverParams.js");
 
 var connexions = {};
-var urlBase=serverParams.mongoUrl;
+var urlBase = serverParams.mongoUrl;
 
 function getDb(dbName, callback) {
     if (connexions[dbName]) {
@@ -31,19 +31,19 @@ var MongoProxy = {
         function recurse(db, query, startIndex, pageSize) {
             var collection = db.collection(collectionName);
             collection.find(query, {
-                "limit": pageSize ,
+                "limit": pageSize,
                 "skip": startIndex
             }).toArray(function (err, data) {
                 if (err) {
                     callback0(err, null);
                 }
                 else {
-                    if (data.length <1)
-                        return;
+                    if (data.length < 1)
+                        callback0(null, []);
                     else {
                         async.series([
                                 function (callback) {
-                                   // console.log("startIndex"+startIndex);
+                                    // console.log("startIndex"+startIndex);
                                     callback0(null, data);
                                     callback(null, 'one');
                                 },
@@ -54,7 +54,7 @@ var MongoProxy = {
                                 }
                             ],
                             function (err, results) {
-                              //  console.log("allDone")// results is now equal to ['one', 'two']
+
                             });
                     }
                 }
@@ -63,53 +63,43 @@ var MongoProxy = {
             });
         }
 
-        getDb(dbName, function (err, db) {
+        getDb(dbName, function (err, db,callbackDB) {
             if (err) {
-                callback(err, null);
+                callbackDB(err, null);
             }
             recurse(db, query, 0, pageSize);
 
         });
 
     },
-    find: function (dbName, collectionName, query, response, callback) {
+    find: function (dbName, collectionName, query, callback) {
 
-        getDb(dbName, function (err, db) {
+        getDb(dbName, function (err, db,callbackDB) {
             if (err) {
-                callback(err, null);
+                callbackDB(err, null);
             }
             //   const bulk = db.collection(collectionName).initializeUnorderedBulkOp();
             var collection = db.collection(collectionName);
             collection.find(query).toArray(function (err, data) {
                 if (err) {
-                    if (response) {
-                        response.setHeader('Content-Type', 'application/json');
-                        response.send(JSON.stringify({ERROR: err}));
-                        return response.end();
-                        // db.close();
-                    } else if (callback) {
-                        callback(err, null);
-                    }
+                    callback(err, null);
+                    return;
                 }
-                else if (response && !response.finished) {
-                    response.setHeader('Content-Type', 'application/json');
-                    response.send(JSON.stringify(data));
-                    return response.end();
-                    // db.close();
-                } else if (callback) {
+                else
                     callback(err, data);
-                    // db.close();
-                }
             });
         });
 
     }
 
     ,
-    insert: function (dbName, collectionName, data, response, callback) {
-        var url = urlBase + dbName;
+    insert: function (dbName, collectionName, data, _callback) {
+        var callback=_callback;
 
-        getDb(dbName, function (err, db) {
+        getDb(dbName, function (err, db,callbackDB) {
+            if (err) {
+                callbackDB(err, null);
+            }
 
             // Get the collection and bulk api artefacts
             var collection = db.collection(collectionName),
@@ -118,25 +108,12 @@ var MongoProxy = {
 
             var bulkCallBack = function (err, result) {
                 if (err) {
-                    if (response) {
-                        response.setHeader('Content-Type', 'application/json');
-                        response.send(JSON.stringify({ERROR: err}));
-                        return response.end();
-                        // db.close();
-                    } else if (callback) {
-                        callback(err, null);
-                    }
+                    callback(err);
+                    return;
                 }
-
-                if (response) {
-                    response.setHeader('Content-Type', 'application/json');
-                    response.send(JSON.stringify(result));
-                    return response.end();
-                    //// db.close();
-                } else if (callback) {
+                else
                     callback(err, result);
-                    //// db.close();
-                }
+
             }
             // Execute the forEach method, triggers for each entry in the array
             data.forEach(function (obj) {
@@ -144,7 +121,7 @@ var MongoProxy = {
                 bulk.insert(obj);
                 counter++;
 
-                if (counter % 1000 == 0) {
+                if (counter % serverParams.mongoFetchSize == 0) {
                     // Execute the operation
                     bulk.execute(function (err, result) {
                         // re-initialise batch operation
@@ -154,42 +131,21 @@ var MongoProxy = {
                 }
             });
 
-            if (counter % 1000 != 0) {
+            if (counter % serverParams.mongoFetchSize != 0) {
                 bulk.execute(function (err, result) {
-                    // do something with result
-                    bulkCallBack();
+                    bulkCallBack(err, result,callback);
                 });
             }
-
-
-            // setTimeout(function (){var isWaiting=true},3000);
-            /*   MongoClient.connect(url, function (err, db) {
-             if (err) {
-             callback(err, null);
-             }
-             var collection = db.collection(collectionName);
-
-             collection.insertMany(data, function (err, result) {
-
-             });*/
         });
 
     }
     ,
-    updateOrCreate: function (dbName, collectionName, query, data, response, callback) {// query et data doivent etre synchironisés
+    updateOrCreate: function (dbName, collectionName, query, data, callback) {// query et data doivent etre synchironisés
         var url = urlBase + dbName;
-        getDb(dbName, function (err, db) {
+        getDb(dbName, function (err, db,callbackDB) {
             if (err) {
-
-                if (response) {
-                    response.setHeader('Content-Type', 'application/json');
-                    response.send(JSON.stringify({ERROR: err}));
-                    return response.end();
-                    // db.close();
-
-                } else if (callback) {
-                    callback(err, null);
-                }
+                callbackDB(err, null);
+                return;
 
             }
             var collection = db.collection(collectionName);
@@ -201,36 +157,16 @@ var MongoProxy = {
             for (var i = 0; i < data.length; i++) {
                 var dataObj = JSON.parse(data[i]);
                 if (!query || query.length == 0) {
-                    insert(dbName, collectionName, dataObj, response);
+                    insert(dbName, collectionName, dataObj, callback);
 
                 } else {
                     var aquery = JSON.parse(query[i]);
                     collection.update(aquery, dataObj, {upsert: true}, function (err, result) {
                         if (err) {
-                            if (response) {
-                                response.setHeader('Content-Type', 'application/json');
-                                response.send(JSON.stringify({ERROR: err}));
-                                return response.end();
-                                // db.close();
-
-                            } else if (callback) {
-                                callback(err, null);
-                            }
-
+                            callback(err, null);
+                            return;
                         }
-                        if (response) {
-                            results.push(results);
-                            if (results.length == query.length - 1) {
-
-                                response.setHeader('Content-Type', 'application/json');
-                                response.send(JSON.stringify(results));
-                                return response.end();
-                                // db.close();
-                            } else if (callback) {
-                                callback(err, results);
-                                // db.close();
-                            }
-                        }
+                        callback(err, results);
                     });
                 }
             }
@@ -239,33 +175,21 @@ var MongoProxy = {
 
 
     ,
-    delete: function (dbName, collectionName, query, response, callback) {
+    delete: function (dbName, collectionName, query, callback) {
         var url = urlBase + dbName;
-        getDb(dbName, function (err, db) {
+        getDb(dbName, function (err, db,callbackDB) {
             if (err) {
-                callback(err, null);
+                callbackDB(err, null);
             }
             var collection = db.collection(collectionName);
             collection.deleteMany(query, function (err, result) {
                 if (err) {
-                    if (response) {
-                        response.setHeader('Content-Type', 'application/json');
-                        response.send(JSON.stringify({ERROR: err}));
-                        return response.end();
-                        // db.close();
-                    } else if (callback) {
-                        callback(err, null);
-                    }
+                    callback(err, null);
+                    return;
                 }
-                if (response) {
-                    response.setHeader('Content-Type', 'application/json');
-                    response.send(JSON.stringify(result));
-                    return response.end();
-                    // db.close();
-                } else if (callback) {
+                else
                     callback(err, result);
-                    // db.close();
-                }
+
             });
         });
 
@@ -273,16 +197,16 @@ var MongoProxy = {
 
     ,
 
-    listDatabases: function (response) {
+    listDatabases: function (callback) {
         getDb("admin", function (err, db) {
             if (err) {
-                response.send(err);
+                callback(err, null);
+                return;
             }
+            else
+
             db.admin().listDatabases(function (err, dbs) {
-                response.setHeader('Content-Type', 'application/json');
-                response.send(JSON.stringify(dbs));
-                return response.end();
-                // db.close();
+                callback(err, dbs);
             });
 
 
@@ -290,22 +214,19 @@ var MongoProxy = {
 
     }
     ,
-    listCollections: function (dbName, response) {
+    listCollections: function (dbName, callback) {
         var url = urlBase + dbName;
-        getDb(dbName, function (err, db) {
+        getDb(dbName, function (err, db,callbackDB) {
             if (err) {
-                response.send(err);
+                callbackDB(err);
+                return;
             }
             db.collections(function (err, colls) {
                 var colNames = []
                 for (var i = 0; i < colls.length; i++) {
                     colNames.push(colls[i].s.name)
                 }
-                response.setHeader('Content-Type', 'application/json');
-                response.send(JSON.stringify(colNames));
-                return response.end();
-                // db.close();
-
+                callback(null,colNames)
             });
 
 
@@ -314,12 +235,13 @@ var MongoProxy = {
     }
     ,
 
-    listFields: function (dbName, collectionName, response) {
+    listFields: function (dbName, collectionName, callback) {
 
         var url = urlBase + dbName;
-        getDb(dbName, function (err, db) {
+        getDb(dbName, function (err, db,callbackDB) {
             if (err) {
-                response.send(err);
+                callbackDB(err);
+                return;
             }
             var collection = db.collection(collectionName);
             var map = function () {
@@ -342,10 +264,8 @@ var MongoProxy = {
                     for (var i = 0; i < results.length; i++) {
                         fieldNames.push(results[i].value)
                     }
-                    response.setHeader('Content-Type', 'application/json');
-                    response.send(JSON.stringify(fieldNames));
-                    return response.end();
-                    // db.close();
+                  callback(null,fieldNames);
+
                 }
             );
         })

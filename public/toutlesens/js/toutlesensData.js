@@ -248,7 +248,9 @@ function showInfos2(id, callback) {
 
 function toFlareJson(resultArray, addToExistingTree) {
     currentDataStructure = "tree";
-
+    currentThumbnails = [];
+    currentThumbnails.ids = [];
+    currentThumbnails.currentIndex = 1;
     var distinctNodeName = {};
 
     var rootId;
@@ -289,6 +291,18 @@ function toFlareJson(resultArray, addToExistingTree) {
                 children: [],
                 hiddenChildren: [],
                 neoAttrs: nodeNeo
+            }
+            if (nodeNeo.path) {
+                if (currentThumbnails.ids.indexOf(nodeObj.id) < 0) {
+                    currentThumbnails.ids.push(nodeObj.id);
+                    var objT = {id: nodeObj.id, path: nodeNeo.path};
+                    if (nodeNeo.date)
+                        objT.date = nodeNeo.date;
+
+
+                    currentThumbnails.push(objT);
+
+                }
             }
             if (nodes[j].decoration) {
                 nodeObj.decoration = nodes[j].decoration
@@ -364,7 +378,7 @@ function toFlareJson(resultArray, addToExistingTree) {
 
     addChildRecursive(root, nodesMap, 1, maxLevels);
 
-
+    initThumbnails();
     // console.log (JSON.stringify(root));
     cachedResultTree = root;
     return root;
@@ -928,7 +942,7 @@ function searchNodes(subGraph, label, word, resultType, limit, from) {
 
 
     var property = "nom";
-    var p = word.indexOf(":");
+  /*  var p = word.indexOf(":");
     var operator
     if (p > -1) {
 
@@ -946,14 +960,17 @@ function searchNodes(subGraph, label, word, resultType, limit, from) {
         operator = "~";
 
     }
+
+    var whereStr = "";*/
+
     var labelStr = "";
     if (label && label.length > 0)
         labelStr = ":" + label;
-    var whereStr = "";
 
+    var whereStr= getWhereProperty(word,"n")
 
     //  var searchInAll='match (m) where (any(prop in keys(m) where m[prop] =~ ".*'+word+'*")) return m'
-    if (property == "any")
+   /* if (property == "any")
         whereStr = '(any(prop in keys(n) where n[prop] =~ ".*' + word.trim() + '*"))';
     else if (operator == "~") {
         whereStr = "n." + property + " =~ '(?i).*" + word.trim() + ".*'";
@@ -961,9 +978,11 @@ function searchNodes(subGraph, label, word, resultType, limit, from) {
     else {
         whereStr = "n." + property + operator + word.trim();
     }
+    */
 
     if (whereStr.length > 0)
         whereStr = " WHERE " + whereStr;
+
     if (subGraph) {
         if (whereStr.length == 0)
             subGraphWhere += " where  n.subGraph='" + subGraph + "' ";
@@ -1029,3 +1048,20 @@ function searchNodes(subGraph, label, word, resultType, limit, from) {
 
 }
 
+
+function initThumbnails() {
+
+    if (currentThumbnails.length > 0) {
+        currentThumbnails.currentIndex = 0;
+        currentThumbnails.sort(function (a, b) {
+            if (a.date && b.date) {
+                return a.date > b.date;
+            }
+            return a > b;
+
+        });
+
+    } else {
+        currentThumbnails.currentIndex = 1;
+    }
+}

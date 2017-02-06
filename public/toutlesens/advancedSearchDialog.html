@@ -82,6 +82,16 @@
         #searchAlgo {
             visibility: hidden;
         }
+
+        .targetNode {
+            visibility: hidden;
+        }
+
+        .executeDiv {
+            position: absolute;
+            left: 10px;
+            top: 200px;
+        }
     </style>
 
 
@@ -120,101 +130,92 @@
 <div id="requestTabsDiv">
     <ul>
 
-        <li><a href="#graphPathDiv"><span id='lang_103'>Chemin entre deux noeuds</span></a></li>
-        <li><a href="#cypherQueryDiv"><span id='lang_101'>Cypher query</span></a></li>
+        <li><a href="#graphPathDiv"><span id='lang_103'>Chemin entre  noeuds</span></a></li>
+        <li><a href="#cypherQueryDivX"><span id='lang_101'>Cypher query</span></a></li>
         <!--  <li><a href="#graphTraversalDiv"><span id='lang_102'>Traversee de graphe</span></a></li>-->
-        <li><a href="#graphSavedRequestsDiv"><span id='lang_162'>requetes enregistr�es</span></a></li>
+        <li><a href="#graphSavedRequestsDiv"><span id='lang_162'>requetes enregistrees</span></a></li>
 
     </ul>
 
     <div id="graphPathDiv">
-        <span class="help"><span id='lang_132'>calcule les chemins entre deux noeuds</span></span><br>
-        <table border="0">
-            <tr>
-                <td><span id='lang_109'>noeud source</span></td>
-                <td><input
-                        id="graphPathSourceNode" value=" ?" onclick="onSourceNodeClick()">
-                    <button onclick="$('#graphPathSourceNode').val('?');">X</button>
-                    </input></td>
 
-            </tr>
-            <tr>
+    <br>
+    <table border="0">
+        <tr>
+            <td><span id='lang_109'>noeud source</span></td>
+            <td><input id="graphPathSourceNode" value=" ?" onclick="onSourceNodeClick()">
+                <button onclick="$('#graphPathSourceNode').val('?');setTargetNodeVisibility(true)">X</button>
+                </input></td>
 
-                <td><span id='lang_133'>noeud cible</span>
+        </tr>
+        <tr>
 
-                <td><input onclick="onTargetNodeClick()" id="graphPathTargetNode" value=" ?">
-                    <button onclick="$('#graphPathTargetNode').val('?');">X</button>
-                    </input></td>
-            <tr>
-            <tr>
+            <td><span id='lang_133' class="targetNode">noeud cible</span></td>
 
-                <td><span id='lang_134'>distance maximum entre les noeuds</span></td>
-                <td><input id="graphPathMaxDistance" value="3"></input></td>
-            </tr>
+            <td><span class="targetNode"><input onclick="onTargetNodeClick()" id="graphPathTargetNode" value=" ?">
+                    <button onclick="$('#graphPathTargetNode').val('?'); ">X</button>
+                </input></span></td>
+        <tr>
+        <tr>
 
-
-        </table>
-    </div>
-
-    <div id="cypherQueryDiv">
-        <table>
-            <tr>
+            <td><span id='lang_134' class='targetNode'>>distance maximum entre les noeuds</span></td>
+            <td><span class="targetNode"><input id="graphPathMaxDistance" value="3"/></span></td>
+        </tr>
 
 
-                <td>
-                    <table>
+    </table>
+</div>
 
-                        <tr>
-                            <td><span id='lang_104'>Match</span></td>
-                            <td><textArea id="cypherQueryMatchTextArea"
-                                          ondblclick="showLabelSelectionDialog('setCypherqueryMatch()')"
-                                          class="cypherQueryTextArea"></textArea></td>
+<div id="cypherQueryDivX">
+    <table>
+        <tr>
 
-
-                        </tr>
-                        <tr>
-                            <td><span id='lang_105'>Where</span></td>
-                            <td><textArea id="cypherQueryWhereTextArea"
-                                          class="cypherQueryTextArea"></textArea></td>
+            <td><span id='lang_104'>Match</span></td>
+            <td><textArea id="cypherQueryMatchTextArea"
+                          ondblclick="showLabelSelectionDialog('setCypherqueryMatch()')"
+                          class="cypherQueryTextArea"></textArea></td>
 
 
-                        </tr>
-                        <!--  <tr>
-                              <td><span id='lang_106'>GroupBy</span></td>
-                              <td><textArea id="cypherQueryGroupByTextArea"
-                                            onclick="onClickCypherQueryMatchTextArea(this)"
-                                            class="cypherQueryTextArea"></textArea></td>
+        </tr>
+        <tr>
+            <td><span id='lang_105'>Where</span></td>
+            <td><textArea id="cypherQueryWhereTextArea"
+                          class="cypherQueryTextArea"></textArea></td>
 
 
-                          </tr>
-                          <tr>
-                              <td><span id='lang_107'>Return</span></td>
-                              <td><textArea id="cypherQueryReturnTextArea"
-                                            class="cypherQueryTextArea"> </textArea></td>
+        </tr>
+        <!--  <tr>
+              <td><span id='lang_106'>GroupBy</span></td>
+              <td><textArea id="cypherQueryGroupByTextArea"
+                            onclick="onClickCypherQueryMatchTextArea(this)"
+                            class="cypherQueryTextArea"></textArea></td>
 
 
-                          </tr>-->
+          </tr>
+          <tr>
+              <td><span id='lang_107'>Return</span></td>
+              <td><textArea id="cypherQueryReturnTextArea"
+                            class="cypherQueryTextArea"> </textArea></td>
 
 
-                    </table>
-            </tr>
+          </tr>-->
 
 
-        </table>
+    </table>
+</div>
 
 
-    </div>
+<div id="graphSavedRequestsDiv">
 
-    <div id="graphSavedRequestsDiv">
+</div>
 
-    </div>
-    <div>
-        <button oncLick="execute()"><span id='lang_152'>Executer</span></button>
-        <span id='lang_108'>Limite</span></td>
-        <input id="cypherQueryLimitInput" size="5" value="2000">&nbsp;
-        <button oncLick="window.parent.hideAdvancedSearch()"><span id='lang_153'>Annuler</span></button>
-    </div>
 
+</div>
+<div class="executeDiv">
+    <button oncLick="execute()"><span id='lang_152'>Executer</span></button>
+    <span id='lang_108'>Limite</span></td>
+    <input id="cypherQueryLimitInput" size="5" value="2000">&nbsp;
+    <button oncLick="window.parent.hideAdvancedSearch()"><span id='lang_153'>Annuler</span></button>
 </div>
 <!--   <div id="graphTraversalDiv">
            <span class="help">calcule les chemins avec des criteres de

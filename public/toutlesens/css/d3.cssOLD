@@ -18,7 +18,6 @@
 
 
 
-
 .nodeCircle:before, .nodeCircle:after {
 	-webkit-box-sizing: content-box;
 	-moz-box-sizing: content-box;
