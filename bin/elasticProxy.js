@@ -2,8 +2,13 @@
  * Created by claud on 04/02/2017.
  */
 var elasticsearch = require('elasticsearch');
+var serverParams=require('./serverParams.js');
+var mongoProxy=require('./mongoProxy.js');
+var fs=require('fs');
+
+
 var client = new elasticsearch.Client({
-    host: 'localhost:9200',
+    host: serverParams.elasticUrl,
     log: 'trace'
 });
 
@@ -36,12 +41,12 @@ var elasticProy= {
     , search: function (index, type, query,callback) {
 
         client.search({
-            index: 'twitter',
-            type: 'tweets',
+            index: index,
+            type: type,
             body: {
                 query: {
                     match: {
-                        body: 'elasticsearch'
+                        body: query
                     }
                 }
             }
@@ -81,7 +86,7 @@ var elasticProy= {
      { delete: { _index: 'myindex', _type: 'mytype', _id: 3 } },
      // no document needed for this delete
      ]*/
-    bulk:function(index,payload,callback){
+    bulk:function(payload,callback){
         client.bulk({
             body:payload
         }, function (err, resp) {
@@ -92,10 +97,62 @@ var elasticProy= {
                 callback(null, resp);
             }
         });
+    },
+    importMongoToNeo:function (mongoDB,mongoCollection,mongoQuery,elasticIndex,elasticFields,elasticType,callback){
+        mongoQuery=JSON.parse(mongoQuery);
+        elasticFields=JSON.parse(elasticFields);
+        mongoProxy.pagedFind(serverParams.mongoFetchSize,mongoDB,mongoCollection,mongoQuery, function(err,result){
+            if(err){
+                callback(err);
+                return;
+            }
+            var startId=Math.round(Math.random()*10000000);
+            var elasticPayload=[];
+
+            for(var i=0;i<result.length;i++){
+                elasticPayload.push( { index:  { _index: elasticIndex, _type: elasticType, _id: "_"+(startId++) } })
+                var payload={};
+                for(var j=0;j<elasticFields.length;j++){
+                    var value=result[i][elasticFields[j]];
+                    if(value){
+                        payload[elasticFields[j]]=value;
+                    }
+
+                }
+                    elasticPayload.push(payload);
+
+            }
+            client.bulk({
+                body:elasticPayload
+            }, function (err, resp) {
+                if (err) {
+                    callback(err);
+
+                } else {
+                    callback(null, resp);
+                }
+            });
+
+
+        });
     }
 }
 
+function indexJsonFile(filePath,ealasticUrl){
+    var payload=fs.readFileSync(filePath);
+    payload=""+payload,
+    client.bulk({
+        body:payload
+    }, function (err, resp) {
+        if (err) {
+            callback(err);
 
+        } else {
+            callback(null, resp);
+        }
+    });
+
+}
 
 //elasticProy.searchWordAll("obama");
 

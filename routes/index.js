@@ -58,10 +58,10 @@ router.post('/mongo', function (req, response) {
 router.post('/elastic', function (req, response) {
     if (req.body && req.body.searchWordAll)
         elasticProxy.searchWordAll(req.body.searchWordAll,function(error,result){processResponse(response,error,result)});
-    else if (req.body && req.body.search)
-        elasticProxy.search (req.body.index, req.body.type,req.body.payload,function(error,result){processResponse(response,error,result)});
-    else if (req.body && req.body.index)
-        elasticProxy.index (req.body.index, req.body.type,req.body.payload,function(error,result){processResponse(response,error,result)});
+    else if (req.body && req.body.searchDo)
+        elasticProxy.search (req.body.indexName, req.body.type,req.body.payload,function(error,result){processResponse(response,error,result)});
+    else if (req.body && req.body.indexDo)
+        elasticProxy.index (req.body.indexName, req.body.type,req.body.payload,function(error,result){processResponse(response,error,result)});
 
 });
 
@@ -110,20 +110,18 @@ router.post('/upload', function(req, response) {
 });
 
 router.post('/uploadToNeo', function(req, response) {
-    uploadToNeo.uploadAndImport(req.body.serverPath,function(error,result){processResponse(response,error,result)});
+    uploadToNeo.uploadAndImport(req,function(error,result){processResponse(response,error,result)});
 });
+
 
 router.post('/csvToNeo', function(req, response) {
-    fileUpload.upload(req,function(error,result){
-        if(err)
-            ;
-        else
-        csvToNeo.import(result,function(error,result){
-            processResponse(response,error,result)
-        });
-    });
-
+    csvToNeo.import(req,function(error,result){processResponse(response,error,result)});
 });
+
+router.post('/importMongoToNeo', function(req, response) {
+   elasticProxy.importMongoToNeo( req.body.mongoDB,req.body.mongoCollection,req.body.mongoQuery,req.body.elasticIndex,req.body.elasticFields,req.body.elasticType,function(error,result){processResponse(response,error,result)});
+});
+
 
 function processResponse(response,error,result){
     if (response && !response.finished) {
@@ -134,13 +132,17 @@ function processResponse(response,error,result){
           //  response.send({ERROR: error});
 
         }
-        else{
-            var resultObj=result;
-            if( typeof result =="string"){
-                  resultObj={result:result}
+        else if(!result) {
+            ;
+        } else{
+                var resultObj=result;
+                if( typeof result =="string"){
+                    resultObj={result:result}
+                }
+                socket.message(resultObj);
+                response.send(JSON.stringify(resultObj));
             }
-           response.send(JSON.stringify(resultObj));
-        }
+
 
         response.end();
 

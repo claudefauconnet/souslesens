@@ -391,6 +391,9 @@ a:link, a:visited .chronoSheet {
     color: purple;
 }
 
+.emptyAccodionDiv{
+    min-width: 300px;
+}
 /*********************** force Collapse******************/
 circle.node {
     cursor: pointer;

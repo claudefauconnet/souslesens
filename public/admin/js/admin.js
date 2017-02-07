@@ -35,6 +35,25 @@ $(function () {
     initDBs();
     loadSubgraphs("hist-antiq");
 
+
+        $('form[name=new_post]').submit(function(){
+            $.ajax({
+                url: $(this).attr('action'),
+                type: "post",
+                data : $(this).serialize(),
+                dataType: "Document",
+                success: function (data, textStatus, jqXHR) {
+                    callback(data);
+                },
+                error: function (xhr, err, msg) {
+                    console.log(xhr);
+                    console.log(err);
+                    console.log(msg);
+                }
+            });
+        });
+
+
 });
 
 function callMongo(urlSuffix, payload, callback) {
@@ -70,7 +89,7 @@ function callExportToNeo(type, data, callback) {
         type: type,
         subGraph:subGraph,
         data: JSON.stringify(data),
-        dbName: $("#mongoDB").val()
+        dbName: $("#dbSelect").val()
     };
     $.ajax({
         type: "POST",
@@ -171,7 +190,7 @@ function onDBselect() {
                 text: str
             }));
         }
-        $("#mongoDB").val(dbName);
+        $("#dbSelect").val(dbName);
         loadRequests();
     });
 }
@@ -262,7 +281,7 @@ function validateMongoQuery(mongoQuery) {
 }
 function exportNeoNodes(execute, save) {
     importType = "NODE";
-    var mongoDB = $("#mongoDB").val();
+    var mongoDB = $("#dbSelect").val();
     var mongoCollectionNode = $("#mongoCollectionNode").val();
     var exportedFields = $("#exportedFields").val();
     var mongoField = $("#mongoField").val();
@@ -315,7 +334,7 @@ function exportNeoNodes(execute, save) {
 }
 function exportNeoLinks(execute, save) {
     importType = "LINK";
-    var mongoDB = $("#mongoDB").val();
+    var mongoDB = $("#dbSelect").val();
     var mongoCollectionRel = $("#mongoCollectionRel").val();
     var mongoSourceField = $("#mongoSourceField").val();
     var neoSourceLabel = $("#neoSourceLabel").val();
@@ -758,10 +777,31 @@ function clearInputs(name) {
 
 }
 
+function submitCsvForm(){
+
+        $.ajax({
+            url: $('#uploadCcvForm').attr('action'),
+            type: "post",
+            data : $('#uploadCcvForm').serialize(),
+            dataType: "Document",
+            success: function (data, textStatus, jqXHR) {
+                callback(data);
+            },
+            error: function (xhr, err, msg) {
+                console.log(xhr);
+                console.log(err);
+                console.log(msg);
+            }
+        });
+
+}
+
+
+
 
 /*function createForeignKey() {
 
- var mongoDB = $("#mongoDB").val();
+ var mongoDB = $("#dbSelect").val();
  var createKeyInCollection1 = $("#createKeyInCollection1").val();
  var newKeyFieldName = $("#newKeyFieldName").val();
  var joinFieldIncollection1 = $("#joinFieldIncollection1").val();

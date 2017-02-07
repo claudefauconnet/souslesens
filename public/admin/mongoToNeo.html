@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>mongoToNeo</title>
+</head>
+<body>
+
+<B> Index</B>
+<form action="../importMongoToNeo" method="post">
+
+    <table>
+        <tr>
+            <td>
+                mongoDB
+            </td>
+            <td>
+                <input name="mongoDB" value="thesaurus">
+            </td>
+        </tr>
+        <tr>
+            <td>
+                mongoCollection
+            </td>
+            <td>
+                <input name="mongoCollection"  value="refMS">
+            </td>
+        </tr>
+        <tr>
+            <td>
+                mongoQuery
+            </td>
+            <td>
+                <input name="mongoQuery" value="{}">
+            </td>
+        </tr>
+
+        <tr>
+            <td>
+                elasticIndex
+            </td>
+            <td>
+                <input name="elasticIndex"  value="testnode">
+            </td>
+        </tr>
+        <tr>
+            <td>
+                elasticFields
+            </td>
+            <td>
+                <input name="elasticFields" value='["path","text"]'>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                elasticType
+            </td>
+            <td>
+                <input name="elasticType" value="refms">
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <button type="submit"> Import</button>
+            </td>
+
+        </tr>
+    </table>
+
+
+</form>
+
+
+
+<B>SEARCH</B>
+<form action="../elastic" method="post">
+    <input type="hidden" name="searchDo" value="go">
+       <table>
+        <tr>
+            <td>
+                index
+            </td>
+            <td>
+                <input name="indexName" value="testnode">
+            </td>
+        </tr>
+        <tr>
+            <td>
+                type
+            </td>
+            <td>
+                <input name="type"  value="refMS">
+            </td>
+        </tr>
+        <tr>
+            <td>
+                payload
+            </td>
+            <td>
+                <input name="payload" value="{}">
+            </td>
+        </tr>
+           <tr>
+               <td>
+                   <button type="submit"> Search</button>
+               </td>
+
+           </tr>
+
+    </table>
+
+
+</form>
+
+{
+"query": { "match": { "text": "DIRECTION" } }
+}
+
+
+</body>
+</html>

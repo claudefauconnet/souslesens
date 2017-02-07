@@ -6,7 +6,8 @@
 var serverParams={
    neo4jUrl: 'http://neo4j:souslesens@localhost:7474',
      mongoUrl : "mongodb://127.0.0.1:27017/",
-    mongoFetchSize:50
+    mongoFetchSize:50,
+    elasticUrl:'localhost:9200'
 }
 
 module.exports = serverParams;

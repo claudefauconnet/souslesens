@@ -50,6 +50,7 @@
 
     <!-- script src="js/adminMongo.js"></script> -->
     <script src="js/admin.js"></script>
+    <script src="js/csvToNeo.js"></script>
     <script src=js/graphD3.js></script>
     <script src=js/params.js></script>
     <script src="js/export.js"></script>
@@ -170,11 +171,19 @@
                 socket.emit('join', 'Hello World from client');
             });
             socket.on('messages', function (message) {
-                var color = "green";
-                if (message.toLowerCase().indexOf("error") > -1)
-                    color = "red";
-                $("#message").css("color", color);
-                $("#message").html(message);
+                if (!message || message.length == 0)
+                    return;
+                if(typeof message=='string') {
+                    if (message.indexOf("listCsvFields") > 0) {
+                        setCsvImportFields(JSON.parse(message));
+                        return;
+                    }
+                    var color = "green";
+                    if (message.toLowerCase().indexOf("error") > -1)
+                        color = "red";
+                    $("#message").css("color", color);
+                    $("#message").html(message);
+                }
             })
 
 
@@ -216,8 +225,7 @@
         });
     </script>
 <body>
-<input type="hidden" id="mongoDB">
-<input type="hidden" id="subGraph">
+
 <input type="hidden" id="exportParams">
 
 <div id="main">
@@ -275,9 +283,15 @@
                     </tr>-->
 
                     <tr>
-                        <td>
-                            <hr>
+                        <td>ImportCSV<br>
+                            <form name="uploadCcvForm" enctype="multipart/form-data" action="/csvToNeo" method="post"
+                                  target="votar">
+                                <input type="file" name="csv" class='exportNeo'/>
+                                <input type="submit" value="upload" name="submit" class='exportNeo'/>
+                                <!--    <button onclick="submitCsvForm()">upload</button>-->
+                            </form>
                         </td>
+
                     </tr>
 
                     <tr>
@@ -344,12 +358,12 @@
 
                 <tr valign="top">
                     <td align="left">Saved Requests
-                   <br>
-                    <select size="10" id="requests" onchange="loadRequest(null,true)">
-                        <option>----------</option>
-                    </select>
+                        <br>
+                        <select size="10" id="requests" onchange="loadRequest(null,true)">
+                            <option>----------</option>
+                        </select>
 
-                    <br>
+                        <br>
 
                         <button onclick="deleteRequest()">Delete</button>
                     </td>
@@ -363,7 +377,6 @@
                         <br>
 
                         <div id="exportNamesDiv"></div>
-
 
 
                         <button onclick="refreshNeo()">Start Refresh</button>
@@ -545,20 +558,15 @@
                     <td>Import</td>
                     <td>
                         <form enctype="multipart/form-data" action="/uploadToNeo" method="post" target="votar">
-                            <input type="file" name="photo" class='exportNeo'/>
+                            <input type="file" name="cypher" class='exportNeo'/>
                             <input type="submit" value="upload" name="submit" class='exportNeo'/>
                         </form>
                     </td>
 
-                    <!--   <td>ImportCSV</td><td>
-                         <form enctype="multipart/form-data" action="/csvToNeo" method="post" target="votar">
-                             <input type="file" name="csv" class='exportNeo'/>
-                             <input type="submit" value="upload" name="submit" class='exportNeo'/>
-                         </form>
-                     </td>
-                     <td>
-                           import file located on  server<input id="importPathOnServer" size="30"><button onclick="importOnServer()">Importer</button>
-                       </td>-->
+
+                    <!--   <td>
+                             import file located on  server<input id="importPathOnServer" size="30"><button onclick="importOnServer()">Importer</button>
+                         </td>-->
                 </tr>
                 <tr>
                     <td>Export</td>

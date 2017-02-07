@@ -56,7 +56,7 @@ langResources['FR'] = {
 	"lang_57" : "X",
 	"lang_59" : "Vue",
 	"lang_60" : "Selection",
-	"lang_61" : "Selectionner un noeud de depart",
+	"lang_61" : "Recherche avancee",
 	"lang_62" : "Peindre des proprietes...",
 	"lang_63" : "affiche tous les autour du noeud dedepart (sans filtres)",
 	"lang_64" : "Source d'un lien",

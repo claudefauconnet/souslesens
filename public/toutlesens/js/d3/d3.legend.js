@@ -6,10 +6,11 @@ var yLeg = 30;
 var xLeg = 10;
 var circleLegR = Gparams.circleR / 1.5;
 var yDecoLeg;
+var visLeg;
 function drawLegend(legendDivId) {
     var legendDiv;
 
-    var visLeg;
+
     if (!legendDivId) {
         legendDiv = $("#graphLegendDiv");
         if (visLeg) {

@@ -4,6 +4,7 @@ var multer = require('multer');
 
 
 
+
 var diskStorage = multer.diskStorage({
     destination: function (request, file, callback) {
         callback(null, '/uploads');
@@ -19,17 +20,17 @@ var memStorage = multer.memoryStorage()
 
 
 var fileUpload = {
-    upload: function (req, callback) {
+    upload: function (req,fieldName, callback) {
         var storage = diskStorage;
-      if (callback)
+    if (callback)
             storage = memStorage;
-        var upload = multer({storage: storage}).single('photo');
-        upload(req, res, function (err) {
+        var upload = multer({storage: storage}).single(fieldName);
+        upload(req, null, function (err) {
             if (err) {
                 callback('Error Occured' + err);
                 return;
             }
-            callback(null, req.file.buffer)
+            callback(null, req)
 
         })
 

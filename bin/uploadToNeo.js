@@ -7,7 +7,7 @@ var fileUpload= require('../bin/fileUpload.js');
 
 var uploadToNeo = {
 
-    uploadAndImport: function (serverPath, callback) {
+    uploadAndImport: function (req, callback) {
         if (req.body.serverPath) {
             var data = fs.readFileSync(req.body.serverPath);
             if (!data) {
@@ -35,7 +35,9 @@ var uploadToNeo = {
 
         }
         else {
-            fileUpload.upload(req, function (err, data) {
+            fileUpload.upload(req,'cypher', function (err, req) {
+                var data=req.file.buffer;
+                var fileName=req.file.fileName;
                 try {
                     data = JSON.parse("" + data);
                 }

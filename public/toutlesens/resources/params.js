@@ -36,6 +36,7 @@ var Gparams = {
     htmlOutputWithAttrs: true,
     showRelationNames: false,
     treeGraphVertSpacing: 35,
+    bigDialogSize :{w: 800, h: 450},
     gantt: {
         name: "nom",
         startField: "datedebut",

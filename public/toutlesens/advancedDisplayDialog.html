@@ -86,6 +86,9 @@
         #graphDecorationValues {
             width: 250px;
         }
+        body{
+            overflow: hidden;
+        }
     </style>
 
 
@@ -135,14 +138,14 @@
 </head>
 <body>
 <div id="graphDecorationDiv">
-    <table border="0">
+    <table border="0" align="center">
 
         <tr>
             <td><span id='lang_100'><span id='lang_140'>Labels</span></span></td>
         </tr>
 
-        <tr>
-            <td><select id="nodesLabelsSelect" size="10"
+        <tr >
+            <td><select id="nodesLabelsSelect" size="8"
                         onclick="onLabelClick(this)"></select></td>
 
         </tr>
@@ -154,7 +157,7 @@
 
         <tr>
 
-            <td><select id="nodesLabelsPropertiesSelect" size="10"
+            <td><select id="nodesLabelsPropertiesSelect" size="8"
                         onclick="onPropertyClick(this)">
                 <option><span id='lang_139'>------</span>----</option>
             </select></td>
