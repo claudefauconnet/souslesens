@@ -78,8 +78,8 @@ function callMongo(urlSuffix, payload, callback) {
 
 function callExportToNeo(type, data, callback) {
     var subGraph = $("#subGraphSelect").val();
-    var db=$("#dbSelect").val();
-    var importSourceType=$("#importSourceType").val();
+    var db = $("#dbSelect").val();
+    var importSourceType = $("#importSourceType").val();
     if (!subGraph || subGraph.length == 0)
         subGraph = prompt("pas de subGraph selectionné , en céer un ? (necesaaire à l'export)");
     else if (!confirm("Export data to subGraph " + subGraph))
@@ -88,7 +88,7 @@ function callExportToNeo(type, data, callback) {
         return;
     var payload = {
         type: type,
-        sourceType:importSourceType,
+        sourceType: importSourceType,
         subGraph: subGraph,
         data: JSON.stringify(data),
         dbName: db
@@ -404,7 +404,6 @@ function loadLabels(subGraphName) {// not used
     return;
 
 
-
     var match = "Match (n) where n.subGraph=\"" + subGraphName
         + "\" return distinct labels(n)[0] as label";
     callNeoMatch(match, null, function (data) {
@@ -417,7 +416,7 @@ function loadLabels(subGraphName) {// not used
 
             }
             labels.splice(0, 0, "");
-       //     fillSelectOptionsWithStringArray(labelsSelect, labels)
+            //     fillSelectOptionsWithStringArray(labelsSelect, labels)
 
         }
     });
@@ -547,7 +546,7 @@ function loadRequests() {
     var dbName = $("#dbSelect").val();
     var subGraph = $("#subGraphSelect").val();
 
-    if ($("#importSourceType").val()=="CSV") {
+    if ($("#importSourceType").val() == "CSV") {
         var path = "./uploads/requests_" + $("#collSelect").val() + ".json";
         var paramsObj = {
             path: path,
@@ -570,10 +569,10 @@ function loadRequests() {
                     requestsArray.push(data[key]);
 
                 }
-                 currentRequests=[];
-                for (var key in currentRequestsObj){
+                currentRequests = [];
+                for (var key in currentRequestsObj) {
 
-                 var obj=currentRequestsObj[key];
+                    var obj = currentRequestsObj[key];
                     currentRequests.push(obj);
                 }
                 fillSelectOptions(requests, requestsArray, "name", "name");
@@ -847,7 +846,7 @@ function initBatchNeoRefresh(type) {
 
     str += "</table>"
     $("#exportNamesDiv").html(str);
-$("#refreshNeoButton").css("visibility", "visible");
+    $("#refreshNeoButton").css("visibility", "visible");
     $("#exportNamesDiv").css("visibility", "visible");
 
 }
@@ -869,7 +868,7 @@ function comuteAllFilters(caller) {
 
 }
 
-function onSubGraphSelect(select) {
+function onSubGraphSelect(select, showgraph) {
 
     var value = $("#subGraphSelect").val();
     $('#subGraph').val(value);
@@ -877,11 +876,12 @@ function onSubGraphSelect(select) {
         return;
     loadLabels($('#subGraphSelect').val());
     var subGraph = $("#subGraphSelect").val();
-
-/*    drawNeoModel(subGraph);
-    $("#tabs-center").tabs({
-        active: 3
-    });*/
+    if (showgraph) {
+        drawNeoModel(subGraph);
+        $("#tabs-center").tabs({
+            active: 3
+        });
+    }
 }
 
 function onLabelSelect(select) {

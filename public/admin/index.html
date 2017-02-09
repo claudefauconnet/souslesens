@@ -217,7 +217,7 @@
                 activate: function (event, ui) {
                     var index = ui.newTab.index();
                     if (index == 3) {
-                        onSubGraphSelect();
+                        onSubGraphSelect(null,true);
                     }
                 }
             });
@@ -250,7 +250,7 @@
                         <td>Neo4j subGraph&nbsp;
 
                             <br>
-                            <select id="subGraphSelect" onchange="onSubGraphSelect(this)"></select>
+                            <select id="subGraphSelect" onchange="onSubGraphSelect(this,false)"></select>
                             <button onclick="addSubGraph()">New</button>
                             <br>
                             <button onclick="eraseNeoSubgraph()">Remove subgraph</button>

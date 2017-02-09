@@ -96,6 +96,7 @@ function drawNeoModel2(subGraph) {
     var x = 100;
     var id = 0;
     var i = 0;
+
     for (var key in dataModel.labels) {
         var label = key;
         var color = palette[i];
@@ -104,6 +105,7 @@ function drawNeoModel2(subGraph) {
             var obj = {
                 id: id++,
                 label: label,
+                name: label,
                 w: 100,
                 h: 30,
                 x: x,
@@ -125,27 +127,41 @@ function drawNeoModel2(subGraph) {
 
     }
     loadLabelsCoordinates(subGraph, labelsMap, function (result) {
-        for (var key in dataModel.allRelations) {
-            for (var i = 0; i < dataModel.allRelations[key].length; i++) {
-                id++;
-                var startLabel = labelsMap[dataModel.allRelations[key][i].startLabel];
-                var endLabel = labelsMap[dataModel.allRelations[key][i].endLabel];
-                var direction = dataModel.allRelations[key][i].direction;
-                if (startLabel && endLabel) {
-                    // console.log(key+" "+startLabel.label+" "+endLabel.label);
+
+     for (var key in dataModel.allRelations) {
+          var rel=dataModel.allRelations[key];
+            for (var i = 0; i < rel.length; i++) {
+                if (rel[0] && rel[1] && rel[1].endLabel && rel[0].endLabel) {
                     var obj = {
                         id: id,
-                        source: startLabel,
-                        target: endLabel,
+                        source: labelsMap[rel[0].endLabel],
+                        target: labelsMap[rel[1].endLabel],
                         type: key,
-                        direction: direction
+                        direction: "normal"
                     }
+                    labelsMap[rel[0].endLabel].relsOut.push(obj);
+                    labelsMap[rel[1].endLabel].relsIn.push(obj);
+
+
+                    id++;
+                    /*  var startLabel = labelsMap[dataModel.allRelations[key][i].startLabel];
+                     var endLabel = labelsMap[dataModel.allRelations[key][i].endLabel];
+                     var direction = dataModel.allRelations[key][i].direction;
+                     if (startLabel && endLabel) {
+                     // console.log(key+" "+startLabel.label+" "+endLabel.label);
+                     var obj = {
+                     id: id,
+                     source: startLabel,
+                     target: endLabel,
+                     type: key,
+                     direction: direction
+                     }*/
 
                     dataRels.push(obj);
 
-                    startLabel.count = dataModel.allRelations[key][i].count1;
-                    startLabel.relsOut.push(obj);
-                    endLabel.relsIn.push(obj);
+                    //   startLabel.count = dataModel.allRelations[key][i].count1;
+                    // startLabel.relsOut.push(obj);
+                    // endLabel.relsIn.push(obj);
                 }
             }
 
