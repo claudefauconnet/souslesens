@@ -32,26 +32,26 @@ var importType = "LINK";
 // messageDivId=document.getElementById("message");
 
 $(function () {
-    initDBs();
+
     loadSubgraphs("hist-antiq");
 
 
-        $('form[name=new_post]').submit(function(){
-            $.ajax({
-                url: $(this).attr('action'),
-                type: "post",
-                data : $(this).serialize(),
-                dataType: "Document",
-                success: function (data, textStatus, jqXHR) {
-                    callback(data);
-                },
-                error: function (xhr, err, msg) {
-                    console.log(xhr);
-                    console.log(err);
-                    console.log(msg);
-                }
-            });
+    $('form[name=new_post]').submit(function () {
+        $.ajax({
+            url: $(this).attr('action'),
+            type: "post",
+            data: $(this).serialize(),
+            dataType: "Document",
+            success: function (data, textStatus, jqXHR) {
+                callback(data);
+            },
+            error: function (xhr, err, msg) {
+                console.log(xhr);
+                console.log(err);
+                console.log(msg);
+            }
         });
+    });
 
 
 });
@@ -80,14 +80,13 @@ function callExportToNeo(type, data, callback) {
     var subGraph = $("#subGraphSelect").val();
     if (!subGraph || subGraph.length == 0)
         subGraph = prompt("pas de subGraph selectionné , en céer un ? (necesaaire à l'export)");
-    else
-        if(!confirm ("Export data to subGraph "+subGraph))
-            return;
+    else if (!confirm("Export data to subGraph " + subGraph))
+        return;
     if (!subGraph || subGraph.length == 0)
         return;
     var payload = {
         type: type,
-        subGraph:subGraph,
+        subGraph: subGraph,
         data: JSON.stringify(data),
         dbName: $("#dbSelect").val()
     };
@@ -101,7 +100,7 @@ function callExportToNeo(type, data, callback) {
             $("#message").html(data.result);
             $("#message").css("color", "green");
             if (callback)
-                callback(null,data);
+                callback(null, data);
         },
         error: function (xhr, err, msg) {
 
@@ -119,17 +118,17 @@ function callExportToNeo(type, data, callback) {
 
             }
             if (callback)
-                callback(err,data);
+                callback(err, data);
         }
     });
 
 }
-function callNeoMatch( match,url, callback) {
+function callNeoMatch(match, url, callback) {
     payload = {
         match: match
     };
-    if(!url)
-        url=Gparams.neo4jProxyUrl;
+    if (!url)
+        url = Gparams.neo4jProxyUrl;
 
     $.ajax({
         type: "POST",
@@ -159,10 +158,10 @@ function callNeoMatch( match,url, callback) {
 function initDBs() {
 
     callMongo("", {listDatabases: 1,}, function (data) {
-        data.databases.sort(function(a,b){
-            if(a.name>b.name)
+        data.databases.sort(function (a, b) {
+            if (a.name > b.name)
                 return 1;
-            if(a.name<b.name)
+            if (a.name < b.name)
                 return -1;
             return 0;
 
@@ -175,7 +174,7 @@ function initDBs() {
             }));
         }
     });
-    }
+}
 function onDBselect() {
     var dbName = $("#dbSelect").val();
     clearInputs('nodeInput');
@@ -270,7 +269,7 @@ function validateMongoQuery(mongoQuery) {
         try {
 
             mongoQuery = eval('(' + mongoQuery + ')');
-         //  mongoQuery = JSON.stringify(mongoQuery);
+            //  mongoQuery = JSON.stringify(mongoQuery);
             return JSON.stringify(mongoQuery);
         }
         catch (e) {
@@ -291,9 +290,9 @@ function exportNeoNodes(execute, save) {
     var distinctValues = $("#distinctValues").prop('checked');
     var mongoIdField = $("#mongoIdField").val();
 
-  mongoQuery=validateMongoQuery(mongoQuery);
-  if(!mongoQuery)
-      return;
+    mongoQuery = validateMongoQuery(mongoQuery);
+    if (!mongoQuery)
+        return;
 
 
     var query = "action=exportMongo2NeoNodes";
@@ -325,7 +324,7 @@ function exportNeoNodes(execute, save) {
     $("#exportParams").val(JSON.stringify(data).replace(/,/, ",\n"));
     if (save)
         saveRequest(JSON.stringify(data).replace(/,/, ",\n"));
-    if (execute){
+    if (execute) {
         $("#exportResultDiv").html("");
         callExportToNeo("node", data);
     }
@@ -345,7 +344,7 @@ function exportNeoLinks(execute, save) {
     var mongoQueryR = $("#mongoQueryR").val();
     var subGraph = $("#subGraphSelect").val();
 
-    mongoQueryR=validateMongoQuery(mongoQueryR);
+    mongoQueryR = validateMongoQuery(mongoQueryR);
 
     var data = {
         mongoDB: mongoDB,
@@ -378,11 +377,10 @@ function exportNeoLinks(execute, save) {
 
     if (save)
         saveRequest(JSON.stringify(data).replace(/,/, ",\n"));
-    if (execute){
+    if (execute) {
         $("#exportResultDiv").html("");
         callExportToNeo("relation", data);
     }
-
 
 
 }
@@ -401,7 +399,7 @@ function afterImport(data) {
 function loadLabels(subGraphName) {
     var match = "Match (n) where n.subGraph=\"" + subGraphName
         + "\" return distinct labels(n)[0] as label";
-    callNeoMatch(match,null, function (data) {
+    callNeoMatch(match, null, function (data) {
 
         if (data && data.length > 0) {// } && results[0].data.length >
             var labels = []
@@ -420,7 +418,7 @@ function loadLabels(subGraphName) {
 
 function loadSubgraphs(defaultSubGraph) {
     var match = "Match (n)  return distinct n.subGraph as subGraph";
-    callNeoMatch(match,null, function (data) {
+    callNeoMatch(match, null, function (data) {
         if (data && data.length > 0) {// } && results[0].data.length >
             var subgraphs = []
             for (var i = 0; i < data.length; i++) {
@@ -429,7 +427,7 @@ function loadSubgraphs(defaultSubGraph) {
             }
             subgraphs.splice(0, 0, "");
             fillSelectOptionsWithStringArray(subGraphSelect, subgraphs);
-            if(subGraphSelect)
+            if (subGraphSelect)
                 fillSelectOptionsWithStringArray(subGraphExportSelect, subgraphs)
         }
     });
@@ -438,24 +436,23 @@ function loadSubgraphs(defaultSubGraph) {
 };
 
 
-
-function deleteRequest(){
-    var request=$("#requests").val();
-    if(confirm ("delete request :"+request)) {
+function deleteRequest() {
+    var request = $("#requests").val();
+    if (confirm("delete request :" + request)) {
         callMongo("", {
             delete: 1,
             dbName: $("#dbSelect").val(),
             collectionName: "requests_" + $("#subGraphSelect").val(),
             query: {name: request},
         }, function (result) {
-            $("#requests option:contains("+request+")").remove();
+            $("#requests option:contains(" + request + ")").remove();
         });
     }
 }
 
 
 function saveRequest(json) {
- var subGraph=$("#subGraphSelect").val();
+    var subGraph = $("#subGraphSelect").val();
     var query = "action=saveQuery";
     var mongoDB = $("#dbSelect").val();
     var mongoDB = $("#dbSelect").val();
@@ -468,13 +465,13 @@ function saveRequest(json) {
     }
 
     json = json.replace('"mongoDB":"' + mongoDB + '",', "");// on ne stoke pas la base
-var jsonObj=JSON.parse(json);
+    var jsonObj = JSON.parse(json);
     var name = "";
     var type = "";
     if (json.indexOf("relationType") > -1) {
         type = "relation";
         name = "Rels_" + $("#subGraphSelect").val() + "." + $("#neoSourceLabel").val()
-            + "->" + $("#neoTargetLabel").val()+":"+jsonObj.relationType;
+            + "->" + $("#neoTargetLabel").val() + ":" + jsonObj.relationType;
 
     }
     if (json.indexOf("label") > -1) {
@@ -491,39 +488,113 @@ var jsonObj=JSON.parse(json);
         date: new Date()
     }
     var query = {name: name};
+    if (mongoDB == "csv") {
+        if (!currentRequests)
+            currentRequests = {};
+        data.name = data.name + ".json";
+        currentRequests[name] = data;
+        var path = "./uploads/requests_" + $("#collSelect").val() + "_" + $("#subGraphSelect").val() + ".json";
+        var paramsObj = {
 
-    callMongo("", {
-        updateOrCreate: 1,
-        dbName: mongoDB,
-        collectionName: "requests_"+subGraph,
-        query: JSON.stringify(query),
-        data: JSON.stringify(data)
-    }, function (result) {
 
-        loadRequests()
-    });
+            path: path,
+            store: true,
+            data: currentRequests
+        }
+        $.ajax({
+            type: "POST",
+            url: "/jsonFileStorage",
+            data: paramsObj,
+            dataType: "json",
+            success: function (data, textStatus, jqXHR) {
+                setMessage(data.result, "green");
+                return;
+            },
 
+            error: function (xhr, err, msg) {
+                console.log(xhr);
+                console.log(err);
+                console.log(msg);
+            },
+
+        });
+
+
+    } else {
+        callMongo("", {
+            updateOrCreate: 1,
+            dbName: mongoDB,
+            collectionName: "requests",
+            query: JSON.stringify(query),
+            data: JSON.stringify(data)
+        }, function (result) {
+
+            loadRequests()
+        });
+
+    }
 }
 
 function loadRequests() {
     var dbName = $("#dbSelect").val();
-    var subGraph=$("#subGraphSelect").val();
-    callMongo("", {find: 1, dbName: dbName, collectionName: "requests_"+subGraph, mongoQuery: "{}"}, function (data) {
+    var subGraph = $("#subGraphSelect").val();
 
+    if (dbName == "csv") {
+        var path = "./uploads/requests_" + $("#collSelect").val() + "_" + $("#subGraphSelect").val() + ".json";
+        var paramsObj = {
+            path: path,
+            retreive: true,
 
-        data.sort(function (a, b) {
-            if (a.name > b.name)
-                return 1;
-            if (a.name < b.name)
-                return -1;
-            return 0;
+        }
+        $.ajax({
+            type: "POST",
+            url: "/jsonFileStorage",
+            data: paramsObj,
+            dataType: "json",
+            success: function (data, textStatus, jqXHR) {
+                if (!data)
+                    return;
+                currentRequests = data;
+                var requestsArray = [];
+                for (var key in data) {
+                    requestsArray.push(data[key]);
+                }
+
+                requestsArray.splice(0, 0, "-------");
+                fillSelectOptions(requests, requestsArray, "name", "name");
+            },
+
+            error: function (xhr, err, msg) {
+                console.log(xhr);
+                console.log(err);
+                console.log(msg);
+            },
+
         });
-        currentRequests = data;
-        data.splice(0, 0, "-------");
-        fillSelectOptions(requests, currentRequests, "name", "name");
+    }
+    else {
+        callMongo("", {
+            find: 1,
+            dbName: dbName,
+            collectionName: "requests",
+            mongoQuery: "{}"
+        }, function (data) {
 
 
-    });
+            data.sort(function (a, b) {
+                if (a.name > b.name)
+                    return 1;
+                if (a.name < b.name)
+                    return -1;
+                return 0;
+            });
+            currentRequests = data;
+            data.splice(0, 0, "-------");
+            fillSelectOptions(requests, currentRequests, "name", "name");
+
+
+        });
+    }
 
 }
 
@@ -535,11 +606,21 @@ function loadRequest(requestName, changeTab) {
         clearInputs("nodeInput");
     if (requestName.startsWith("Rel"))
         clearInputs("linkInput");
-    for (var i = 0; i < currentRequests.length; i++) {
-        if (currentRequests[i].name == requestName) {
-            var obj = JSON.parse(currentRequests[i].request);
+    var requests = [];
+
+    if (Array.isArray(currentRequests))// case Mongo
+        requests = currentRequests
+    else {// case CSV
+        for (var key in currentRequests) {
+            requests.push(currentRequests[key]);
+        }
+    }
+
+    for (var i = 0; i < requests.length; i++) {
+        if (requests[i].name == requestName) {
+            var obj = JSON.parse(requests[i].request);
             $("#exportParams").val(
-                currentRequests[i].request.replace(/,/g, ",\n"));
+                requests[i].request.replace(/,/g, ",\n"));
             for (var key in obj) {
 
                 $("#" + key).val(obj[key]);
@@ -572,18 +653,18 @@ function eraseNeoSubgraph(subGraph) {
 
     var match = 'MATCH (n)-[r]-(m) where n.subGraph="' + subGraph + '" delete  r';
 
-    callNeoMatch(match,null, function (data) {
+    callNeoMatch(match, null, function (data) {
         var match = 'MATCH (n)where n.subGraph="' + subGraph + '" delete n';
-        callNeoMatch(match,null, function (data) {
-        $("#message").html("subGraph=" + subGraph + "deleted");
-        $("#message").css("color", "red");
+        callNeoMatch(match, null, function (data) {
+            $("#message").html("subGraph=" + subGraph + "deleted");
+            $("#message").css("color", "red");
             $(graphDiv).html("");
             $('#labelsSelect')
                 .find('option')
                 .remove()
                 .end()
 
-    });
+        });
     });
 }
 
@@ -605,7 +686,7 @@ function refreshNeo() {
     }
 
     var xx = currentRequests;
-    var requestsToExcecute=[];
+    var requestsToExcecute = [];
     for (var i = 0; i < requestFilters.length; i++) {
         for (var j = 0; j < currentRequests.length; j++) {
             if (currentRequests[j].name == requestFilters[i]) {
@@ -614,33 +695,33 @@ function refreshNeo() {
         }
 
     }
-    callExportToNeo("batch", requestsToExcecute,function(error, result){
-        var str="<B>IMPORT SUMMARY</B>:<br><ul>"
-        for(var i=0;i<result.result.length;i++){
-            str+="<li>"+result.result[i]+"</li>";
+    callExportToNeo("batch", requestsToExcecute, function (error, result) {
+        var str = "<B>IMPORT SUMMARY</B>:<br><ul>"
+        for (var i = 0; i < result.result.length; i++) {
+            str += "<li>" + result.result[i] + "</li>";
 
         }
-        str+="</ul>"
+        str += "</ul>"
         $("#exportResultDiv").html(str);
     });
 
-   /* var xx = currentRequests;
-    for (var i = 0; i < requestFilters.length; i++) {
-        for (var j = 0; j < currentRequests.length; j++) {
-            if (currentRequests[j].name == requestFilters[i]) {
-                loadRequest(requestFilters[i], false)
-                if (requestFilters[i].startsWith("Nodes_")) {
-                    exportNeoNodes(true, false);
-                }
-                if (requestFilters[i].startsWith("Rels_")) {
-                    exportNeoLinks(true, false);
-                }
+    /* var xx = currentRequests;
+     for (var i = 0; i < requestFilters.length; i++) {
+     for (var j = 0; j < currentRequests.length; j++) {
+     if (currentRequests[j].name == requestFilters[i]) {
+     loadRequest(requestFilters[i], false)
+     if (requestFilters[i].startsWith("Nodes_")) {
+     exportNeoNodes(true, false);
+     }
+     if (requestFilters[i].startsWith("Rels_")) {
+     exportNeoLinks(true, false);
+     }
 
-            }
+     }
 
-        }
+     }
 
-    }*/
+     }*/
 
 
 }
@@ -777,52 +858,35 @@ function clearInputs(name) {
 
 }
 
-function submitCsvForm(){
+function submitCsvForm() {
 
-        $.ajax({
-            url: $('#uploadCcvForm').attr('action'),
-            type: "post",
-            data : $('#uploadCcvForm').serialize(),
-            dataType: "Document",
-            success: function (data, textStatus, jqXHR) {
-                callback(data);
-            },
-            error: function (xhr, err, msg) {
-                console.log(xhr);
-                console.log(err);
-                console.log(msg);
-            }
-        });
+    $.ajax({
+        url: $('#uploadCcvForm').attr('action'),
+        type: "post",
+        data: $('#uploadCcvForm').serialize(),
+        dataType: "Document",
+        success: function (data, textStatus, jqXHR) {
+            callback(data);
+        },
+        error: function (xhr, err, msg) {
+            console.log(xhr);
+            console.log(err);
+            console.log(msg);
+        }
+    });
 
 }
 
 
+function setImportSourceType() {
+    var type = $("#importSourceType").val();
+    if (type == "CSV")
+        $("#importCSVdiv").css("visibility", "visible");
+    else if (type == "MongoDB") {
+        initDBs();
+        $("#importMongoDiv").css("visibility", "visible");
+        $(".dbInfos").css("visibility", "visible");
 
+    }
 
-/*function createForeignKey() {
-
- var mongoDB = $("#dbSelect").val();
- var createKeyInCollection1 = $("#createKeyInCollection1").val();
- var newKeyFieldName = $("#newKeyFieldName").val();
- var joinFieldIncollection1 = $("#joinFieldIncollection1").val();
- var createKeyFromCollection2 = $("#createKeyFromCollection2").val();
- var joinFieldIncollection2 = $("#joinFieldIncollection2").val();
- var keyFieldInCollection2 = $("#keyFieldInCollection2").val();
-
- var query = "action=createForeignKey";
-
- var data = {
- mongoDB : mongoDB,
- createKeyInCollection1 : createKeyInCollection1,
- newKeyFieldName : newKeyFieldName,
- joinFieldIncollection1 : joinFieldIncollection1,
- createKeyFromCollection2 : createKeyFromCollection2,
- joinFieldIncollection2 : joinFieldIncollection2,
- keyFieldInCollection2 : keyFieldInCollection2
-
- };
-
- $("#exportParams").val(JSON.stringify(data).replace(/,/, ",\n"));
- submitMongo(query, data);
- }
- */
+}

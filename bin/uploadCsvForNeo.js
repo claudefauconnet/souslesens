@@ -8,9 +8,9 @@ var fs=require("fs");
 var csv=require('csvtojson');
 var socket = require('../routes/socket.js');
 
-var csvToNeo={
+var uploadCsvForNeo={
 
-    import:function (req,callback){
+    upload:function (req,callback){
         fileUpload.upload(req,'csv', function (err, req) {
             if(err) {
                 console.log(err);
@@ -38,7 +38,7 @@ var csvToNeo={
                         jsonArray.push(json)
                     })
                     .on('done', function () {
-                        var path = "./public/uploads/" + fileName + ".json";
+                        var path = "./uploads/" + fileName + ".json";
                         fs.writeFileSync(path,JSON.stringify(jsonArray));
                         var result = {message:"listCsvFields",remoteJsonPath: path,name:fileName, header: header};
                        socket.message(JSON.stringify(result));
@@ -54,7 +54,7 @@ var csvToNeo={
 
 }
 
-module.exports = csvToNeo;
+module.exports = uploadCsvForNeo;
 
 
 

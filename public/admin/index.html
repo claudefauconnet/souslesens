@@ -160,6 +160,11 @@
             width: 100%;
         }
 
+        #importMongoDiv, #importCSVdiv, .dbInfos {
+            visibility: hidden;
+        }
+
+
     </style>
 
 
@@ -173,7 +178,7 @@
             socket.on('messages', function (message) {
                 if (!message || message.length == 0)
                     return;
-                if(typeof message=='string') {
+                if (typeof message == 'string') {
                     if (message.indexOf("listCsvFields") > 0) {
                         setCsvImportFields(JSON.parse(message));
                         return;
@@ -272,58 +277,57 @@
                                     size="5"></select></td>
                     </tr>
 
-                    <!--  	<tr>
-                        <td>DB</td>
+                    <tr>
+                        <td>Choose import source <br><select id="importSourceType" onchange="setImportSourceType()">
+                            <option></option>
+                            <option>MongoDB</option>
+                            <option>CSV</option>
+                        </select>
+                        </td>
+                    </tr>
+
+                    <tr>
                         <td>
-                            <form action="../radarUpload" method="post"  enctype="multipart/form-data">
-                                <input type="file" name="csvUpload" > <input
-                                    type="submit">
-                            </form>
-                        </td>
-                    </tr>-->
 
-                    <tr>
-                        <td>ImportCSV<br>
-                            <form name="uploadCcvForm" enctype="multipart/form-data" action="/csvToNeo" method="post"
-                                  target="votar">
-                                <input type="file" name="csv" class='exportNeo'/>
-                                <input type="submit" value="upload" name="submit" class='exportNeo'/>
-                                <!--    <button onclick="submitCsvForm()">upload</button>-->
-                            </form>
+                            <div id="importCSVdiv">
+                                ImportCSV<br>
+                                <form name="uploadCcvForm" enctype="multipart/form-data" action="/uploadCsvForNeo"
+                                      method="post"
+                                      target="votar">
+                                    <input type="file" name="csv" class='exportNeo'/>
+                                    <input type="submit" value="upload" name="submit" class='exportNeo'/>
+                                    <!--    <button onclick="submitCsvForm()">upload</button>-->
+                                </form>
+                            </div>
                         </td>
 
                     </tr>
 
-                    <tr>
-                        <td>Mongo Database</td>
-                    </tr>
-                    <tr>
-                        <td><select id="dbSelect" onchange="onDBselect()">
-                            <option>-------------</option>
-
-
-                        </select></td>
-                    </tr>
-                    <tr>
-                        <td>collections</td>
-                    </tr>
-                    <tr>
-                        <td><select size="5" id="collSelect"
-                                    onchange='onCollSelect()'>
-                            <option>-------------</option>
-                        </select> <br></td>
-                    </tr>
 
                     <tr>
-                        <td>fields</td>
-                    </tr>
-                    <tr>
-                        <td><select size="10" id="fieldSelect"
-                                    onchange='onFieldSelect()'>
-                            <option>-------------</option>
-                        </select> <br> <input id="currentField"></td>
+                        <td>
+                        <div id="importMongoDiv">
+                           Mongo Database<br>
+                                <select id="dbSelect" onchange="onDBselect()">
+                                    <option>-------------</option>
 
+
+                                </select>
+
+                                <br>
+                                <div class="dbInfos">collections<br>
+                                    <select size="5" id="collSelect"
+                                            onchange='onCollSelect()'>
+                                        <option>-------------</option>
+                                    </select> <br></div>
+                                <br>
+                                <div class="dbInfos">fields<br><select size="10" id="fieldSelect" onchange='onFieldSelect()'>
+                                    <option>-------------</option>
+                                </select> <br> <input id="currentField"></div>
+                            </td>
+                        </div>
                     </tr>
+
 
                 </table>
 

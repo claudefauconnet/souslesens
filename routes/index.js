@@ -8,13 +8,15 @@ var neoProxy = require('../bin/neoProxy.js');
 var mongoProxy = require('../bin/mongoProxy.js');
 var elasticProxy = require('../bin/elasticProxy.js');
 var httpProxy = require('../bin/httpProxy.js');
-var jsonFileProxy = require('../bin/jsonFileProxy.js');
 var fileUpload= require('../bin/fileUpload.js');
-
+var jsonFileStorage=require('../bin/jsonFileStorage.js');
 var exportMongoToNeo= require('../bin/exportMongoToNeo.js');
+var exportToNeoBatch= require('../bin/exportToNeoBatch.js');
 var uploadToNeo= require('../bin/uploadToNeo.js');
-var csvToNeo= require('../bin/csvToNeo.js');
+var uploadCsvForNeo= require('../bin/uploadCsvForNeo.js');
 var socket=require('./socket.js');
+
+
 
 
 
@@ -68,7 +70,7 @@ router.post('/elastic', function (req, response) {
 
 router.post('/exportMongoToNeo', function (req, response) {
     if ( req.body.type=="batch")
-        exportMongoToNeo.exportBatch(req.body.dbName,req.body.subGraph,JSON.parse(req.body.data), function(error,result){processResponse(response,error,result)});
+        exportToNeoBatch.exportBatch(req.body.dbName,req.body.subGraph,JSON.parse(req.body.data), function(error,result){processResponse(response,error,result)});
     if ( req.body.type=="node")
         exportMongoToNeo.exportNodes(JSON.parse(req.body.data), function(error,result){processResponse(response,error,result)});
     if ( req.body.type=="relation")
@@ -114,13 +116,22 @@ router.post('/uploadToNeo', function(req, response) {
 });
 
 
-router.post('/csvToNeo', function(req, response) {
-    csvToNeo.import(req,function(error,result){processResponse(response,error,result)});
+router.post('/uploadCsvForNeo', function(req, response) {
+    uploadCsvForNeo.upload(req,function(error,result){processResponse(response,error,result)});
 });
 
-router.post('/importMongoToNeo', function(req, response) {
-   elasticProxy.importMongoToNeo( req.body.mongoDB,req.body.mongoCollection,req.body.mongoQuery,req.body.elasticIndex,req.body.elasticFields,req.body.elasticType,function(error,result){processResponse(response,error,result)});
+router.post('/exportMongoToElastic', function(req, response) {
+   elasticProxy.exportMongoToElastic( req.body.mongoDB,req.body.mongoCollection,req.body.mongoQuery,req.body.elasticIndex,req.body.elasticFields,req.body.elasticType,function(error,result){processResponse(response,error,result)});
 });
+
+
+router.post('/jsonFileStorage', function(req, response) {
+    if(req.body.store)
+        jsonFileStorage.store( req.body.path,req.body.data,function(error,result){processResponse(response,error,result)});
+    if(req.body.retreive)
+        jsonFileStorage.retreive( req.body.path,function(error,result){processResponse(response,error,result)});
+});
+
 
 
 function processResponse(response,error,result){

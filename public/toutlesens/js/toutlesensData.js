@@ -54,7 +54,7 @@ function executeQuery(queryType, str, successFunction) {
             currentDataStructure = "flat";
             cachedResultArray = data;
             if (!data || data.length == 0) {
-                setMessage("No results", blue);
+                setMessage("No results", "green");
                 return;
             }
             var errors = data.errors;

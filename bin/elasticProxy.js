@@ -98,10 +98,10 @@ var elasticProy= {
             }
         });
     },
-    importMongoToNeo:function (mongoDB,mongoCollection,mongoQuery,elasticIndex,elasticFields,elasticType,callback){
+    exportMongoToElastic:function (mongoDB,mongoCollection,mongoQuery,elasticIndex,elasticFields,elasticType,callback){
         mongoQuery=JSON.parse(mongoQuery);
         elasticFields=JSON.parse(elasticFields);
-        mongoProxy.pagedFind(serverParams.mongoFetchSize,mongoDB,mongoCollection,mongoQuery, function(err,result){
+        mongoProxy.pagedFind(serverParams.mongoFetchSize,mongoDB,mongoCollection,mongoQuery,null, function(err,result){
             if(err){
                 callback(err);
                 return;

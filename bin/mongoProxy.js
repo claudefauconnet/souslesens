@@ -25,12 +25,12 @@ function getDb(dbName, callback) {
 var MongoProxy = {
 
 
-    pagedFind: function (pageSize, dbName, collectionName, query, _callback) {
+    pagedFind: function (pageSize, dbName, collectionName, query,fields, _callback) {
         var callback0 = _callback;
 
         function recurse(db, query, startIndex, pageSize) {
             var collection = db.collection(collectionName);
-            collection.find(query, {
+            collection.find(query,fields, {
                 "limit": pageSize,
                 "skip": startIndex
             }).toArray(function (err, data) {
@@ -63,7 +63,7 @@ var MongoProxy = {
             });
         }
 
-        getDb(dbName, function (err, db,callbackDB) {
+        getDb(dbName, function (err, db, callbackDB) {
             if (err) {
                 callbackDB(err, null);
             }
@@ -74,7 +74,7 @@ var MongoProxy = {
     },
     find: function (dbName, collectionName, query, callback) {
 
-        getDb(dbName, function (err, db,callbackDB) {
+        getDb(dbName, function (err, db, callbackDB) {
             if (err) {
                 callbackDB(err, null);
             }
@@ -94,9 +94,9 @@ var MongoProxy = {
 
     ,
     insert: function (dbName, collectionName, data, _callback) {
-        var callback=_callback;
+        var callback = _callback;
 
-        getDb(dbName, function (err, db,callbackDB) {
+        getDb(dbName, function (err, db, callbackDB) {
             if (err) {
                 callbackDB(err, null);
             }
@@ -133,7 +133,7 @@ var MongoProxy = {
 
             if (counter % serverParams.mongoFetchSize != 0) {
                 bulk.execute(function (err, result) {
-                    bulkCallBack(err, result,callback);
+                    bulkCallBack(err, result, callback);
                 });
             }
         });
@@ -142,7 +142,7 @@ var MongoProxy = {
     ,
     updateOrCreate: function (dbName, collectionName, query, data, callback) {// query et data doivent etre synchironisés
         var url = urlBase + dbName;
-        getDb(dbName, function (err, db,callbackDB) {
+        getDb(dbName, function (err, db, callbackDB) {
             if (err) {
                 callbackDB(err, null);
                 return;
@@ -177,7 +177,7 @@ var MongoProxy = {
     ,
     delete: function (dbName, collectionName, query, callback) {
         var url = urlBase + dbName;
-        getDb(dbName, function (err, db,callbackDB) {
+        getDb(dbName, function (err, db, callbackDB) {
             if (err) {
                 callbackDB(err, null);
             }
@@ -205,9 +205,9 @@ var MongoProxy = {
             }
             else
 
-            db.admin().listDatabases(function (err, dbs) {
-                callback(err, dbs);
-            });
+                db.admin().listDatabases(function (err, dbs) {
+                    callback(err, dbs);
+                });
 
 
         });
@@ -216,7 +216,7 @@ var MongoProxy = {
     ,
     listCollections: function (dbName, callback) {
         var url = urlBase + dbName;
-        getDb(dbName, function (err, db,callbackDB) {
+        getDb(dbName, function (err, db, callbackDB) {
             if (err) {
                 callbackDB(err);
                 return;
@@ -226,7 +226,7 @@ var MongoProxy = {
                 for (var i = 0; i < colls.length; i++) {
                     colNames.push(colls[i].s.name)
                 }
-                callback(null,colNames)
+                callback(null, colNames)
             });
 
 
@@ -238,7 +238,7 @@ var MongoProxy = {
     listFields: function (dbName, collectionName, callback) {
 
         var url = urlBase + dbName;
-        getDb(dbName, function (err, db,callbackDB) {
+        getDb(dbName, function (err, db, callbackDB) {
             if (err) {
                 callbackDB(err);
                 return;
@@ -260,11 +260,12 @@ var MongoProxy = {
                 },
                 function (err, results) {
                     var fieldNames = [];
-
+                    if (!results)
+                        return callback("no result")
                     for (var i = 0; i < results.length; i++) {
                         fieldNames.push(results[i].value)
                     }
-                  callback(null,fieldNames);
+                    callback(null, fieldNames);
 
                 }
             );
