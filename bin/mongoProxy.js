@@ -23,9 +23,31 @@ function getDb(dbName, callback) {
 
 }
 var MongoProxy = {
+    pagedFind: function (startIndex, pageSize,dbName, collectionName, query,fields, callback) {
+
+        getDb(dbName, function (err, db, callbackDB) {
+            if (err) {
+                callbackDB(err, null);
+            }
+            //   const bulk = db.collection(collectionName).initializeUnorderedBulkOp();
+            var collection = db.collection(collectionName);
+            collection.find(query,fields, {
+                "limit": pageSize,
+                "skip": startIndex
+            }).toArray(function (err, data) {
+                if (err) {
+                    callback(err, null);
+                    return;
+                }
+                else
+                    callback(err, data);
+            });
+        });
+
+    },
 
 
-    pagedFind: function (pageSize, dbName, collectionName, query,fields, _callback) {
+    pagedFindXX: function (pageSize, dbName, collectionName, query,fields, _callback) {
         var callback0 = _callback;
 
         function recurse(db, query, startIndex, pageSize) {
@@ -39,18 +61,17 @@ var MongoProxy = {
                 }
                 else {
                     if (data.length < 1)
-                        callback0(null, []);
+                        callback0(null, [],true);
                     else {
                         async.series([
                                 function (callback) {
                                     // console.log("startIndex"+startIndex);
                                     callback0(null, data);
-                                    callback(null, 'one');
+
                                 },
                                 function (callback) {
                                     startIndex += pageSize;
                                     recurse(db, query, startIndex, pageSize);
-                                    callback(null, 'two');
                                 }
                             ],
                             function (err, results) {

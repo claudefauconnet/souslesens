@@ -88,18 +88,18 @@
 
         button {
             color: white;
-            font-size: 14px;
+            font-size: 12px;
             font-family: verdana, sans-serif;
             background-color: #e78f08;
             background-color: #ca842e;
-            margin: 1px;
+            margin: 4px;
             padding: 4px;
         }
 
         select {
             font-size: 14px;
             font-family: verdana, sans-serif;
-            margin: 2px;
+            margin: 4px;
             padding: 2px;
         }
 
@@ -184,6 +184,9 @@
                         return;
                     }
                     var color = "green";
+                    if (message.indexOf("ENOENT") > -1)
+                        return;
+
                     if (message.toLowerCase().indexOf("error") > -1)
                         color = "red";
                     $("#message").css("color", color);
@@ -245,40 +248,28 @@
 
                     <tr>
                         <td>Neo4j subGraph&nbsp;
-                            <button onclick="addSubGraph()">add</button>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td><select id="subGraphSelect"
-                                    onchange="onSubGraphSelect(this)"></select></td>
 
-                    </tr>
-                    <tr>
-                        <td>
+                            <br>
+                            <select id="subGraphSelect" onchange="onSubGraphSelect(this)"></select>
+                            <button onclick="addSubGraph()">New</button>
+                            <br>
+                            <button onclick="eraseNeoSubgraph()">Remove subgraph</button>
+                            <br>
+                            <button onclick="loadSubgraphs($('#subGraphSelect').val())">Reload subGraph</button>
+                            <br>
 
-                            <button onclick="loadSubgraphs($('#subGraphSelect').val())">Reload
-                                subGraphs
-                            </button>
-                            <button onclick="loadLabels($('#subGraphSelect').val())">Reload
-                                labels
-                            </button>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <button onclick="eraseNeoSubgraph()">Effacer
-                                subgraph
-                            </button>
+
                         </td>
                     </tr>
 
-                    <tr>
-                        <td><select id="labelsSelect" onchange="onLabelSelect(this)"
-                                    size="5"></select></td>
-                    </tr>
+                    <!--     <tr>
+                             <button onclick="loadLabels($('#subGraphSelect').val())">Reload labels </button>
+                             <td><select id="labelsSelect" onchange="onLabelSelect(this)"
+                                         size="5"></select></td>
+                         </tr>-->
 
                     <tr>
-                        <td>Choose import source <br><select id="importSourceType" onchange="setImportSourceType()">
+                        <td> Import type <br><select id="importSourceType" onchange="setImportSourceType()">
                             <option></option>
                             <option>MongoDB</option>
                             <option>CSV</option>
@@ -306,8 +297,8 @@
 
                     <tr>
                         <td>
-                        <div id="importMongoDiv">
-                           Mongo Database<br>
+
+                                Source<br>
                                 <select id="dbSelect" onchange="onDBselect()">
                                     <option>-------------</option>
 
@@ -315,17 +306,22 @@
                                 </select>
 
                                 <br>
-                                <div class="dbInfos">collections<br>
+                                <div class="dbInfos">
+                                    collections<br>
                                     <select size="5" id="collSelect"
                                             onchange='onCollSelect()'>
                                         <option>-------------</option>
-                                    </select> <br></div>
-                                <br>
-                                <div class="dbInfos">fields<br><select size="10" id="fieldSelect" onchange='onFieldSelect()'>
-                                    <option>-------------</option>
-                                </select> <br> <input id="currentField"></div>
-                            </td>
-                        </div>
+                                    </select>
+                                    <br>
+                                    fields
+                                    <br><select size="10" id="fieldSelect"
+                                                      onchange='onFieldSelect()'>
+                                        <option>-------------</option>
+                                    </select>
+                                    <br> <input id="currentField">
+                                </div>
+                        </td>
+
                     </tr>
 
 
@@ -363,13 +359,17 @@
                 <tr valign="top">
                     <td align="left">Saved Requests
                         <br>
-                        <select size="10" id="requests" onchange="loadRequest(null,true)">
+                        <select size="10" id="requests" onchange="loadRequest(null,false)" ondblclick="loadRequest(null,true)">
                             <option>----------</option>
                         </select>
 
-                        <br>
 
-                        <button onclick="deleteRequest()">Delete</button>
+                        <br>Filter subgraph <select id="requestsFilter" onchange="filterRequests(this)">
+
+                            <option>----------</option>
+                        </select>
+                        <br>
+                        <button onclick="deleteRequest()">Delete request</button>
                     </td>
                     <td>
                         <button onclick="initBatchNeoRefresh('Nodes');">Refresh
@@ -383,7 +383,7 @@
                         <div id="exportNamesDiv"></div>
 
 
-                        <button onclick="refreshNeo()">Start Refresh</button>
+                        <button id="refreshNeoButton" onclick="refreshNeo()">Start Refresh</button>
                     </td>
 
 

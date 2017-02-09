@@ -78,6 +78,8 @@ function callMongo(urlSuffix, payload, callback) {
 
 function callExportToNeo(type, data, callback) {
     var subGraph = $("#subGraphSelect").val();
+    var db=$("#dbSelect").val();
+    var importSourceType=$("#importSourceType").val();
     if (!subGraph || subGraph.length == 0)
         subGraph = prompt("pas de subGraph selectionné , en céer un ? (necesaaire à l'export)");
     else if (!confirm("Export data to subGraph " + subGraph))
@@ -86,9 +88,10 @@ function callExportToNeo(type, data, callback) {
         return;
     var payload = {
         type: type,
+        sourceType:importSourceType,
         subGraph: subGraph,
         data: JSON.stringify(data),
-        dbName: $("#dbSelect").val()
+        dbName: db
     };
     $.ajax({
         type: "POST",
@@ -396,7 +399,12 @@ function afterImport(data) {
 }
 
 
-function loadLabels(subGraphName) {
+function loadLabels(subGraphName) {// not used
+
+    return;
+
+
+
     var match = "Match (n) where n.subGraph=\"" + subGraphName
         + "\" return distinct labels(n)[0] as label";
     callNeoMatch(match, null, function (data) {
@@ -409,7 +417,7 @@ function loadLabels(subGraphName) {
 
             }
             labels.splice(0, 0, "");
-            fillSelectOptionsWithStringArray(labelsSelect, labels)
+       //     fillSelectOptionsWithStringArray(labelsSelect, labels)
 
         }
     });
@@ -491,9 +499,9 @@ function saveRequest(json) {
     if (mongoDB == "csv") {
         if (!currentRequests)
             currentRequests = {};
-        data.name = data.name + ".json";
+        data.name = data.name;
         currentRequests[name] = data;
-        var path = "./uploads/requests_" + $("#collSelect").val() + "_" + $("#subGraphSelect").val() + ".json";
+        var path = "./uploads/requests_" + $("#collSelect").val() + ".json";
         var paramsObj = {
 
 
@@ -539,8 +547,8 @@ function loadRequests() {
     var dbName = $("#dbSelect").val();
     var subGraph = $("#subGraphSelect").val();
 
-    if (dbName == "csv") {
-        var path = "./uploads/requests_" + $("#collSelect").val() + "_" + $("#subGraphSelect").val() + ".json";
+    if ($("#importSourceType").val()=="CSV") {
+        var path = "./uploads/requests_" + $("#collSelect").val() + ".json";
         var paramsObj = {
             path: path,
             retreive: true,
@@ -554,14 +562,22 @@ function loadRequests() {
             success: function (data, textStatus, jqXHR) {
                 if (!data)
                     return;
-                currentRequests = data;
+                var currentRequestsObj = data;
                 var requestsArray = [];
-                for (var key in data) {
-                    requestsArray.push(data[key]);
-                }
 
-                requestsArray.splice(0, 0, "-------");
+                for (var key in data) {
+
+                    requestsArray.push(data[key]);
+
+                }
+                 currentRequests=[];
+                for (var key in currentRequestsObj){
+
+                 var obj=currentRequestsObj[key];
+                    currentRequests.push(obj);
+                }
                 fillSelectOptions(requests, requestsArray, "name", "name");
+                setRequestSubGraphFilterOptions();
             },
 
             error: function (xhr, err, msg) {
@@ -589,13 +605,46 @@ function loadRequests() {
                 return 0;
             });
             currentRequests = data;
-            data.splice(0, 0, "-------");
+            for (var i = 0; i < currentRequests.length; i++) {
+                if (currentRequests[i].request) {
+                    currentRequests[i].request = JSON.parse(currentRequests[i].request);
+                }
+            }
             fillSelectOptions(requests, currentRequests, "name", "name");
+            setRequestSubGraphFilterOptions();
 
 
         });
     }
 
+
+}
+
+function setRequestSubGraphFilterOptions() {
+    var requestSubGraphs = [];
+    for (var i = 0; i < currentRequests.length; i++) {
+        if (currentRequests[i].request) {
+            var obj = currentRequests[i].request;
+            if (obj && requestSubGraphs.indexOf(obj.subGraph) < 0) {
+                requestSubGraphs.push(obj.subGraph);
+            }
+
+        }
+
+    }
+    requestSubGraphs.splice(0, 0, "")
+    fillSelectOptionsWithStringArray(requestsFilter, requestSubGraphs);
+}
+
+function filterRequests(select) {
+    var subGraph = $(select).val();
+    var filteredRequests = [];
+    for (var i = 0; i < currentRequests.length; i++) {
+        if (subGraph == "" | currentRequests[i].request.subGraph == subGraph) {
+            filteredRequests.push(currentRequests[i]);
+        }
+    }
+    fillSelectOptions(requests, filteredRequests, "name", "name");
 }
 
 function loadRequest(requestName, changeTab) {
@@ -618,9 +667,8 @@ function loadRequest(requestName, changeTab) {
 
     for (var i = 0; i < requests.length; i++) {
         if (requests[i].name == requestName) {
-            var obj = JSON.parse(requests[i].request);
-            $("#exportParams").val(
-                requests[i].request.replace(/,/g, ",\n"));
+            var obj = requests[i].request;
+
             for (var key in obj) {
 
                 $("#" + key).val(obj[key]);
@@ -672,10 +720,12 @@ function eraseNeoSubgraph(subGraph) {
 function refreshNeo() {
     $("#exportResultDiv").html("");
     var subGraph = $("#subGraphSelect").val();
-    if (!subGraph || subGraph.length == 0)
-        subGraph = prompt("pas de subGraph selectionné , en céer un ? (necesaaire à l'export)");
-    if (!subGraph || subGraph.length == 0)
+    if (!subGraph || subGraph.length == 0) {
+        subGraph = alert("pas de subgraph !!");
+
+        // if (!subGraph || subGraph.length == 0)
         return;
+    }
 
     var requestFilters = [];
     var requestCbxes = $("[name=exportNameCbx]");
@@ -685,7 +735,7 @@ function refreshNeo() {
         }
     }
 
-    var xx = currentRequests;
+
     var requestsToExcecute = [];
     for (var i = 0; i < requestFilters.length; i++) {
         for (var j = 0; j < currentRequests.length; j++) {
@@ -772,7 +822,7 @@ function initBatchNeoRefresh(type) {
     var requestNames = [];
     var i = 0;
     $("#requests option").each(function (d) {
-        if (i++ > 0 && this.text.indexOf(type) == 0)
+        if (this.text.indexOf(type) == 0)
             requestNames.push(this.text);
     });
 
@@ -797,7 +847,7 @@ function initBatchNeoRefresh(type) {
 
     str += "</table>"
     $("#exportNamesDiv").html(str);
-
+$("#refreshNeoButton").css("visibility", "visible");
     $("#exportNamesDiv").css("visibility", "visible");
 
 }
@@ -828,10 +878,10 @@ function onSubGraphSelect(select) {
     loadLabels($('#subGraphSelect').val());
     var subGraph = $("#subGraphSelect").val();
 
-    drawNeoModel(subGraph);
+/*    drawNeoModel(subGraph);
     $("#tabs-center").tabs({
         active: 3
-    });
+    });*/
 }
 
 function onLabelSelect(select) {
@@ -879,11 +929,18 @@ function submitCsvForm() {
 
 
 function setImportSourceType() {
+    dbSelect.options = [];
+    collSelect.options = [];
+    fieldSelect.options = [];
     var type = $("#importSourceType").val();
-    if (type == "CSV")
+    if (type == "CSV") {
         $("#importCSVdiv").css("visibility", "visible");
-    else if (type == "MongoDB") {
+        $("#importMongoDiv").css("visibility", "hidden");
+        $(".dbInfos").css("visibility", "visible");
+
+    } else if (type == "MongoDB") {
         initDBs();
+        $("#importCSVdiv").css("visibility", "hidden");
         $("#importMongoDiv").css("visibility", "visible");
         $(".dbInfos").css("visibility", "visible");
 

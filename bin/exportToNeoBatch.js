@@ -6,7 +6,7 @@ var mongoProxy = require("./mongoProxy.js");
 var httpProxy = require("./httpProxy.js");
 var neoProxy = require("./neoProxy.js");
 var socket = require('../routes/socket.js');
-var exportMongoToNeo=require('./exportMongoToNeo.js');
+var exportMongoToNeo = require('./exportMongoToNeo.js');
 var async = require('async');
 var fs = require("fs");
 var serverParams = require("./serverParams.js");
@@ -15,23 +15,54 @@ var serverParams = require("./serverParams.js");
 var exportToNeoBatch = {
 
 
-    exportBatch: function (dbName, subGraph, requestNames, callbackG) {
+    exportBatch: function (sourceType, dbName, subGraph, requestNames, callbackG) {
         var globalMessage = [];
-        mongoProxy.find(dbName, "requests", {}, function (err, data) {
-            var requestsToExecute = [];
-            for (var i = 0; i < data.length; i++) {
+        var requestsToExecute = [];
+        if (sourceType == "CSV") {
+            var requestData = fs.readFileSync("./uploads/requests_" + dbName + ".json");
+            if (requestData) {
+                requestData = JSON.parse("" + requestData);
+                for (var i = 0; i < requestData.length; i++) {
+                    if (requestNames.indexOf(requestData[i].name) > -1)
+                        requestsToExecute.push(requestData[i]);
 
-                if (requestNames.indexOf(data[i].name) > -1) {
-                    requestsToExecute.push(data[i])
                 }
+
             }
-            var totalImported = 0;
+            execSynchRequests(requestsToExecute, dbName, subGraph, callbackG);
+        }
+        else {// MongoDB
+            mongoProxy.find(dbName, "requests", {}, function (err, data) {
+                for (var i = 0; i < data.length; i++) {
+                    if (requestNames.indexOf(data[i].name) > -1) {
+                        requestsToExecute.push(data[i])
+                    }
+                }
+                execSynchRequests(requestsToExecute, dbName, subGraph, callbackG);
+
+            });
+        }
+
+
+        function execSynchRequests(_requestsToExecute, _dbName, _subGraph, _callbackG) {
+            var requestsToExecute = _requestsToExecute;
+            var dbName = _dbName;
+            var subGraph = _subGraph;
+            var callbackG = _callbackG;
+
+
             async.eachSeries(requestsToExecute, function (request, callbackBatch) {
                     var message = request.name + " executing";
                     console.log(message);
                     socket.message(message);
-                    var requestStr = request.request.replace(/\n/g, "");
-                    var requestObj = JSON.parse(requestStr);
+                    var requestObj;
+                    if (typeof request.request == "string") {
+                        var requestStr = request.request.replace(/\n/g, "");
+                        requestObj = JSON.parse(requestStr);
+                    }
+                    else {
+                        requestObj = request.request;
+                    }
                     requestObj.mongoDB = dbName;
                     if (subGraph)
                         requestObj.subGraph = subGraph;
@@ -86,9 +117,8 @@ var exportToNeoBatch = {
                 });
 
 
-        })
-
+        };
     }
 }
 
-module.exports=exportToNeoBatch;
+module.exports = exportToNeoBatch;

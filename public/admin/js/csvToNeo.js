@@ -11,8 +11,8 @@ function setCsvImportFields(json) {
     $("#mongoCollectionRel").val(json.name);
     $("#mongoCollectionNode").val(json.name);
 
-    fillSelectOptionsWithStringArray(dbSelect, ['', 'csv']);
-    $("#dbSelect").val('csv');
+    fillSelectOptionsWithStringArray(dbSelect,  [json.name]);
+//  $("#dbSelect").val('CSV');
     loadRequests();
 
 
