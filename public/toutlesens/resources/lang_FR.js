@@ -138,7 +138,7 @@ langResources['FR'] = {
     "lang_165": "un noeud particulier",
     "lang_166": "type de la relation",
     "lang_167": "propriete de la relation",
-
+    "lang_168": "Requetes standard",
 
 
 

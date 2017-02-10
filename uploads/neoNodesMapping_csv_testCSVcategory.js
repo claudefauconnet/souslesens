@@ -1,0 +1,1 @@
+[{"neoId":342500,"mongoId":"Physical world","label":"testCSVcategory"},{"neoId":342501,"mongoId":"Physical world representation","label":"testCSVcategory"},{"neoId":342502,"mongoId":"Data-info valorization","label":"testCSVcategory"},{"neoId":342503,"mongoId":"IT means","label":"testCSVcategory"},{"neoId":342504,"mongoId":"Communication - social","label":"testCSVcategory"}]

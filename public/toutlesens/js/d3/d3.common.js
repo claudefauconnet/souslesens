@@ -186,4 +186,26 @@ function highlightNode(id ) {
 }
 
 
+function splitTextInLines(g,text, box, fontSize) {
+    var charsByLine = box.w / fontSize;
+    var array = [];
+    var index = 0;
+    var str=""
+    while (index  < text.length) {
+        str+=text[index];
+        index++;
+        if (index >= charsByLine || index>= text.length) {
+            array.push("" + str);
+            str="";
+            index=0;
+        }
+    }
+    console.log(JSON.stringify(array));
+
+
+}
+
+
+
+
 

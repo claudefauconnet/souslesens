@@ -125,15 +125,11 @@ $(document).ready(function () {
 });
 
 function getQueryParams(qs) {
-
     qs = qs.split("+").join(" ");
-
     var params = {}, tokens, re = /[?&]?([^=]+)=([^&]*)/g;
-
     while (tokens = re.exec(qs)) {
         params[decodeURIComponent(tokens[1])] = decodeURIComponent(tokens[2]);
     }
-
     return params;
 }
 
@@ -150,7 +146,6 @@ function initLabels(subGraph, selectId) {
             value: label
         }).css("color", nodeColors[label]));
     }
-
 }
 
 function setLinksColor() {
@@ -159,7 +154,6 @@ function setLinksColor() {
             linkColors[dataModel.allRelationsArray[i]] = Gparams.palette[i];
         else
             linkColors[dataModel.allRelationsArray[i]] = "gray";
-
     }
 }
 function setLabelsColor() {
@@ -169,11 +163,9 @@ function setLabelsColor() {
             nodeColors[label] = Gparams.palette[i];
             // console.log(label+" "+Gparams.palette[i])
         }
-
         else
             nodeColors[label] = "gray";
     }
-
 }
 
 function doLoadRelationshipTypes(labels) {
@@ -183,9 +175,7 @@ function doLoadRelationshipTypes(labels) {
             text: str,
             value: str
         }));
-
     }
-
 }
 
 function onNodesLabelsSelect(select) {
@@ -223,16 +213,13 @@ function onLabelSelect(labelSelect) {
         currentPage = 0;
         searchNodesUI("count");
     }
-
 }
 
 function onMatchGo() {
-
     executeQuery(QUERY_TYPE_MATCH, $("#queryTA").val(), null)
 }
 
 function onTraversalGo(json) {
-
     return executeQue.ry(QUERY_TYPE_GET_ID, json, set)
 }
 
@@ -264,7 +251,6 @@ function toCsv(neoResult) {
 }
 
 function completeResult(neoResult) {
-
     var data = neoResult[0].data;
     for (var i = 0; i < data.length; i++) {
         var row = data[i].row;
@@ -1841,7 +1827,9 @@ function displayGraph(json, output, labels) {
         drawForceCollapse(json, null, null, distance, currentGraphCharge);
     }
     else if (output == "TREEMAP") {
-        var jsonTreeMap = jsonToHierarchyTree(json, "label");
+        var jsonTreeMap=json;
+        if(!json.valueField)
+            jsonTreeMap = jsonToHierarchyTree(json, "label");
         // setValues(jsonTreeMap)
         testTreemap(jsonTreeMap);
         //  drawTreeMap2(jsonTreeMap);

@@ -120,11 +120,7 @@ function initNeoModel(subGraph, callback) {
                             var labels = data[i].labels_n;
 
                             for (var k = 0; k < labels.length; k++) {
-if(k==1)
-    var xx="qqq"
-
                                 var label = labels[k];
-
                                 if (dataModel.allLabels.indexOf(label) < 0)
                                     dataModel.allLabels.push(label);
                                 var fields = data[i].keys_n;
@@ -148,17 +144,26 @@ if(k==1)
 
                         dataModel.allProperties.sort();
                         dataModel.allLabels.sort();
-                        if (callback)
-                            callback(subGraph);
 
-                    },
-                    error: function (xhr, err, msg) {
-                        console.log(xhr);
-                        console.log(err);
-                        console.log(msg);
+                        if (callback) {
+                            if (Array.isArray(callback)) {
+                                for (var i = 0; i < callback.length; i++) {
+                                    callback[i](subGraph);
+                                }
+                            }
+                            else
+                                callback(subGraph);
+                        }
+
                     }
+                   ,
+                        error: function (xhr, err, msg) {
+                            console.log(xhr);
+                            console.log(err);
+                            console.log(msg);
+                        }
 
-                })
+                    })
 
         },
         error: function (xhr, err, msg) {

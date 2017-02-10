@@ -940,45 +940,13 @@ function searchNodes(subGraph, label, word, resultType, limit, from) {
     if (limit)
         cursorStr += " LIMIT " + limit;
 
-
     var property = "nom";
-  /*  var p = word.indexOf(":");
-    var operator
-    if (p > -1) {
-
-        property = word.substring(0, p);
-        word = word.substring(p + 1);
-        var q = word.indexOf(" ");
-        operator = word.substring(0, q);
-        word = word.substring(q + 1);
-
-
-        if (property == "subGraph")
-            subGraphWhere = "";
-    }
-    else {
-        operator = "~";
-
-    }
-
-    var whereStr = "";*/
 
     var labelStr = "";
     if (label && label.length > 0)
         labelStr = ":" + label;
 
-    var whereStr= getWhereProperty(word,"n")
-
-    //  var searchInAll='match (m) where (any(prop in keys(m) where m[prop] =~ ".*'+word+'*")) return m'
-   /* if (property == "any")
-        whereStr = '(any(prop in keys(n) where n[prop] =~ ".*' + word.trim() + '*"))';
-    else if (operator == "~") {
-        whereStr = "n." + property + " =~ '(?i).*" + word.trim() + ".*'";
-    }
-    else {
-        whereStr = "n." + property + operator + word.trim();
-    }
-    */
+    var whereStr = getWhereProperty(word, "n")
 
     if (whereStr.length > 0)
         whereStr = " WHERE " + whereStr;

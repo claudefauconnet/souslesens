@@ -277,8 +277,15 @@ function execute() {
         buildCypherQueryUI();
     }
 
+    if (currentActionObj.type == "frequentQuery") {
+        executeFrequentQuery();
+    }
+
 
 }
+
+
+
 
 
 function executePathQuery() {
@@ -413,6 +420,8 @@ function executeCypherAndDisplayGraph(query, _currentActionObj) {
     $("#tabs-radarLeft").tabs("enable");
     $("#tabs-radarRight").tabs("enable");
     currentActionObj = _currentActionObj;
+
+
     if(true || currentActionObj.graphPathTargetNode) {
         currentDataStructure = "flat";
         currentDisplayType = "SIMPLE_FORCE_GRAPH";
@@ -478,7 +487,19 @@ function setCypherqueryMatch(done) {
 
 }
 
+function searchByNamesList(list) {
 
+    var names=list.split(",");
+    var query="MATCH path=(n)-[r]-(m) where n.nom IN ["
+    for(var i=0;i<names.length;i++){
+        if(i>0)
+            query+=","
+        query+="\'"+names[i]+"\'";
+    }
+    query+="] return "+ returnStr;
+    executeCypherAndDisplayGraph(query);
+
+}
 //********************************************************old*****************************************
 function onPathGraphSelectNodeCallback() {
     $("#dialog").dialog("close");

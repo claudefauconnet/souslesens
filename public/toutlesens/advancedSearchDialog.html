@@ -52,6 +52,7 @@
     <script src="js/toutlesensData.js"></script>
     <script src="resources/params.js"></script>
     <script src="js/advancedSearch.js"></script>
+    <script src="js/statistics.js"></script>
     <script src="js/graphTraversalQueries.js"></script>
     <script src="js/toutlesensDialogsController.js"></script>
 
@@ -69,11 +70,11 @@
         }
 
         #requestTabsDiv {
-          margin: 20px;
+            margin: 20px;
         }
 
         .cypherQueryTextArea {
-            width: 300px;
+            width: 400px;
             height: 50px;
         }
 
@@ -91,7 +92,8 @@
             top: 200px;
             margin: 30px
         }
-        body{
+
+        body {
             overflow: hidden;
         }
     </style>
@@ -101,7 +103,9 @@
         $(function () {
             var types = {0: "pathes", 1: "cypher"}
             currentActionObj = {type: types[0], subGraph: subGraph};
-            initNeoModel(subGraph, initLabels);
+            initNeoModel(subGraph, [initLabels, initLabelsCurrentQueries]);
+            setCurrentQueriesSelect();
+
 
             $("#requestTabsDiv").tabs({
                 activate: function (event, ui) {
@@ -111,7 +115,7 @@
                 }
             });
 
-            $("#requestTabsDiv").tabs("option", "disabled", [2]);
+            $("#requestTabsDiv").tabs("option", "disabled", [3]);
 
             $("#dialog").dialog({
                 autoOpen: false,
@@ -133,6 +137,7 @@
     <ul>
 
         <li><a href="#graphPathDiv"><span id='lang_103'>Chemin entre  noeuds</span></a></li>
+        <li><a href="#currentQueriesDiv"><span id='lang_168'>Current queries</span></a></li>
         <li><a href="#cypherQueryDivX"><span id='lang_101'>Cypher query</span></a></li>
         <!--  <li><a href="#graphTraversalDiv"><span id='lang_102'>Traversee de graphe</span></a></li>-->
         <li><a href="#graphSavedRequestsDiv"><span id='lang_162'>requetes enregistrees</span></a></li>
@@ -141,76 +146,101 @@
 
     <div id="graphPathDiv">
 
-    <br>
-    <table border="0">
-        <tr>
-            <td><span id='lang_109'>noeud source</span></td>
-            <td><input id="graphPathSourceNode" value=" ?" onclick="onSourceNodeClick()">
-                <button onclick="$('#graphPathSourceNode').val('?');setTargetNodeVisibility(true)">X</button>
-                </input></td>
+        <br>
+        <table border="0">
+            <tr>
+                <td><span id='lang_109'>noeud source</span></td>
+                <td><input id="graphPathSourceNode" value=" ?" onclick="onSourceNodeClick()">
+                    <button onclick="$('#graphPathSourceNode').val('?');setTargetNodeVisibility(true)">X</button>
+                    </input></td>
 
-        </tr>
-        <tr>
+            </tr>
+            <tr>
 
-            <td><span id='lang_133' class="targetNode">noeud cible</span></td>
+                <td><span id='lang_133' class="targetNode">noeud cible</span></td>
 
-            <td><span class="targetNode"><input onclick="onTargetNodeClick()" id="graphPathTargetNode" value=" ?">
+                <td><span class="targetNode"><input onclick="onTargetNodeClick()" id="graphPathTargetNode" value=" ?">
                     <button onclick="$('#graphPathTargetNode').val('?'); ">X</button>
-                </input></span></td>
-        <tr>
-        <tr>
+                    </input></span></td>
+            <tr>
+            <tr>
 
-            <td><span id='lang_134' class='targetNode'>>distance maximum entre les noeuds</span></td>
-            <td><span class="targetNode"><input id="graphPathMaxDistance" value="3"/></span></td>
-        </tr>
-
-
-    </table>
-</div>
-
-<div id="cypherQueryDivX">
-    <table>
-        <tr>
-
-            <td><span id='lang_104'>Match</span></td>
-            <td><textArea id="cypherQueryMatchTextArea"
-                          ondblclick="showLabelSelectionDialog('setCypherqueryMatch()')"
-                          class="cypherQueryTextArea"></textArea></td>
+                <td><span id='lang_134' class='targetNode'>>distance maximum entre les noeuds</span></td>
+                <td><span class="targetNode"><input id="graphPathMaxDistance" value="3"/></span></td>
+            </tr>
 
 
-        </tr>
-        <tr>
-            <td><span id='lang_105'>Where</span></td>
-            <td><textArea id="cypherQueryWhereTextArea"
-                          class="cypherQueryTextArea"></textArea></td>
+        </table>
+    </div>
+
+    <div id="cypherQueryDivX">
+        <table>
+            <tr>
+
+                <td><span id='lang_104'>Match</span></td>
+                <td><textArea id="cypherQueryMatchTextArea"
+                              ondblclick="showLabelSelectionDialog('setCypherqueryMatch()')"
+                              class="cypherQueryTextArea"></textArea></td>
 
 
-        </tr>
-        <!--  <tr>
-              <td><span id='lang_106'>GroupBy</span></td>
-              <td><textArea id="cypherQueryGroupByTextArea"
-                            onclick="onClickCypherQueryMatchTextArea(this)"
-                            class="cypherQueryTextArea"></textArea></td>
+            </tr>
+            <tr>
+                <td><span id='lang_105'>Where</span></td>
+                <td><textArea id="cypherQueryWhereTextArea"
+                              class="cypherQueryTextArea"></textArea></td>
 
 
-          </tr>
-          <tr>
-              <td><span id='lang_107'>Return</span></td>
-              <td><textArea id="cypherQueryReturnTextArea"
-                            class="cypherQueryTextArea"> </textArea></td>
+            </tr>
+            <!--  <tr>
+                  <td><span id='lang_106'>GroupBy</span></td>
+                  <td><textArea id="cypherQueryGroupByTextArea"
+                                onclick="onClickCypherQueryMatchTextArea(this)"
+                                class="cypherQueryTextArea"></textArea></td>
 
 
-          </tr>-->
+              </tr>
+              <tr>
+                  <td><span id='lang_107'>Return</span></td>
+                  <td><textArea id="cypherQueryReturnTextArea"
+                                class="cypherQueryTextArea"> </textArea></td>
 
 
-    </table>
-</div>
+              </tr>-->
 
 
-<div id="graphSavedRequestsDiv">
+        </table>
+    </div>
 
-</div>
 
+    <div id="graphSavedRequestsDiv">
+
+    </div>
+
+
+    <div id="currentQueriesDiv">
+        <table>
+            <tr>
+                <td>
+                    Standard queries
+                </td>
+                <td>
+                    <select id="currentQueriesSelect" onchange="onCurrentQueriesSelect()"> </select>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    label
+                </td>
+                <td>
+                    <select id="currentQueriesLabelSelect"> </select>&nbsp;limit<input id="currentQueriesLimit" value="100">
+                </td>
+            </tr>
+
+
+        </table>
+
+
+    </div>
 
 </div>
 <div class="executeDiv">
@@ -219,6 +249,8 @@
     <input id="cypherQueryLimitInput" size="5" value="2000">&nbsp;
     <button oncLick="window.parent.hideAdvancedSearch()"><span id='lang_153'>Annuler</span></button>
 </div>
+
+
 <!--   <div id="graphTraversalDiv">
            <span class="help">calcule les chemins avec des criteres de
                parcours du graphe</span>

@@ -27,6 +27,9 @@ router.get('/', function (req, res) {
     res.render('index', {title: 'Express'});
 });
 
+router.get('/rest', function (req, response) {
+});
+
 
 router.post('/neo', function (req, response) {
     if (req.body && req.body.match)

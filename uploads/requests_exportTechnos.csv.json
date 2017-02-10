@@ -1,0 +1,1 @@
+[{"mongoDB":"csv","type":"node","request":{"mongoCollectionNode":"exportTechnos.csv","exportedFields":"category","mongoField":"name","distinctValues":"false","mongoIdField":"id","label":"technoCSV","mongoQuery":"{}","subGraph":"CSV"},"name":"Nodes_CSV.technoCSV","date":"Thu Feb 09 2017 11:57:21 GMT+0100 (Paris, Madrid)"}]

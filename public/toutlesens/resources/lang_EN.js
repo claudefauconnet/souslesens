@@ -138,5 +138,7 @@ langResources['EN'] = {
     "lang_165": "a particular node",
     "lang_166": "relation type",
     "lang_167": "relation property",
+    "lang_168": "Standard queries",
+
 
 }

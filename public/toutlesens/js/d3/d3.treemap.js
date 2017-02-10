@@ -5,28 +5,32 @@ function testTreemap(jsonTree) {
 }
 
 
-
-function setTreMapValues(jsonTree) {
+function setTreMapValues(jsonTree, valueField) {
     function recurse(node) {
-        node=formatNode(node);
+        node = formatNode(node);
         if (node.children && node.children.length > 0) {
-            node.value = node.children.length * 1;
+            if (valueField && node.neoAttrs  && node.neoAttrs)
+                node.value = node.neoAttrs[valueField];
+            else
+                node.value = node.children.length * 1;
             for (var i = 0; i < node.children.length; i++) {
                 recurse(node.children[i]);
             }
         }
         else {
-            if (node.children == 0)
+            if ( node.children  && node.children.length == 0)
                 delete (node.children);
-            if (node.neoAttrs && node.neoAttrs.businessValue)
-                node.value = node.neoAttrs.businessValue;
+            if (valueField && node.neoAttrs && node.neoAttrs[valueField])
+                node.value = node.neoAttrs[valueField];
             else
                 node.value = 1;
         }
 
     }
-
-    recurse(jsonTree);
+    var valueField;
+if(jsonTree.valueField)
+    valueField=jsonTree.valueField
+    recurse(jsonTree,valueField);
 
 
 }
