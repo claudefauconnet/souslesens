@@ -43,7 +43,7 @@ function d3CommonDblclick(d) {
 function d3CommonMouseover(d) {
 
 
-    if(d.neoAttrs && d.neoAttrs.path) {
+    if (d.neoAttrs && d.neoAttrs.path) {
         return;
     }
     var e = d3.event;
@@ -64,7 +64,7 @@ function d3CommonMouseover(d) {
 };
 
 function d3CommonMouseout(d) {
-    if(d.neoAttrs && d.neoAttrs.path) {
+    if (d.neoAttrs && d.neoAttrs.path) {
         return;
     }
     var popupSize = {
@@ -73,7 +73,7 @@ function d3CommonMouseout(d) {
 
     }
     var e = d3.event;
-    var x = e.offsetX+ 20;
+    var x = e.offsetX + 20;
     var y = e.offsetY;
     if (e.offsetX < 50) {// IE
         var xy0 = $("#graphDiv").offset();
@@ -81,9 +81,9 @@ function d3CommonMouseout(d) {
         var y = e.clientY - xy0.top;
 
     }
-   if (x < currentMouseOverCoords.x -10)
+    if (x < currentMouseOverCoords.x - 10)
         $("#popupMenuNodeInfoDiv").css('display', 'none');
-    if (y < currentMouseOverCoords.y  -10 )
+    if (y < currentMouseOverCoords.y - 10)
         $("#popupMenuNodeInfoDiv").css('display', 'none');
 
 
@@ -92,9 +92,9 @@ function d3CommonMouseout(d) {
 
 }
 
-function commonDnD(){
+function commonDnD() {
     dragListener = d3.behavior.drag().on("dragstart", function (d) {
-     var xxx=d3.select(this);
+        var xxx = d3.select(this);
         var e = d3.event;
 
         if (e.ctrlKey) {
@@ -104,11 +104,11 @@ function commonDnD(){
 
 
     }).on("drag", function (d) {
-        var xxx=d3.select(this);
+        var xxx = d3.select(this);
 
 
     }).on("dragend", function (d) {
-        var xxx=d3.select(this);
+        var xxx = d3.select(this);
         return;
 
     });
@@ -116,7 +116,7 @@ function commonDnD(){
 }
 
 
-function showThumbnails(nodes){
+function showThumbnails(nodes) {
 
     for (var i = 0; i < nodes.length; i++) {
         var node = nodes[i][0][0];
@@ -172,35 +172,79 @@ function showThumbnails(nodes){
         }
     }
 }
-function highlightNode(id ) {
-    var www=  d3.selectAll("#P_" + id);
+function highlightNode(id) {
+    var www = d3.selectAll("#P_" + id);
     d3.selectAll("#P_" + id).each(function (d) {
 
-        d3.select(this).select("circle").style("stroke-width","3px").style("stroke","red")
+        d3.select(this).select("circle").style("stroke-width", "3px").style("stroke", "red")
 
         //console.log(JSON.stringify(d))
         /*if (d.__data__.id == id) {
-            var xx = "a"
-        }*/
+         var xx = "a"
+         }*/
     })
 }
 
 
-function splitTextInLines(g,text, box, fontSize) {
-    var charsByLine = box.w / fontSize;
+function appendSplitText(d3Group, text, fontSize) {
+    var witdh, height;
+    var xxx = d3.select(d3Group).selectAll("rect")[0][0]
+    witdh = xxx.__data__.dx;
+    height = xxx.__data__.dy;
+if(witdh>100)
+    var x="";
+
+    var charsByLine = witdh / fontSize*1.8;
     var array = [];
     var index = 0;
-    var str=""
-    while (index  < text.length) {
-        str+=text[index];
+    var chars = [];
+    var lastSpaceIndex=-1;
+    while (index < text.length) {
+
+        chars.push (text[index]);
+        if(text[index]==" ")
+            lastSpaceIndex=chars.length-1;
         index++;
-        if (index >= charsByLine || index>= text.length) {
-            array.push("" + str);
-            str="";
-            index=0;
+        if (chars.length >= charsByLine || index >= text.length) {
+            var str=chars.join("");
+            if(lastSpaceIndex>-1){
+                str=str.substring(0,lastSpaceIndex);
+                index-=lastSpaceIndex;
+
+            }
+            array.push(str);
+            lastSpaceIndex=-1;
+            chars = [];
+
         }
     }
-    console.log(JSON.stringify(array));
+
+    var x = d3.scale.linear()
+        .domain([0, 500])
+        .range([0, 500]);
+
+    var y = d3.scale.linear()
+        .domain([0, 500])
+        .range([0, 500]);
+    var finish = false;
+    for (var i = 0; i < array.length; i++) {
+      if ((fontSize * (i + 1)) > height) {// troncature des textes si trop hauts
+            array[i] = array[i].substring(0, Math.min(array[i].length, 3)) + "...";
+            finish = true;
+        }
+
+
+        d3.select(d3Group).append('svg:text').text(array[i]).attr("x", function (d) {
+            return x(d.x) + 6;
+        })
+            .attr("y", function (d) {
+                return y(d.y) + (fontSize * (i + 1));
+            });
+        if (finish)
+            break;
+    }
+    return d3Group;
+    // splitTextInLines(null,"dsgvsdvqdfbssfbhdfsgflkdfgqsdf",{w:50},12);
 
 
 }

@@ -185,12 +185,19 @@ function drawTreeMpap(root) {
                 return "";//formatNumber(d.value);
             });
 
-        g.append("text")
+      /*  g.append("text")
             .attr("dy", ".75em")
             .text(function (d) {
-                return d.name;
+                return  d.name;
             })
-            .call(text);
+            .call(text);*/
+
+       var g = g1.selectAll("g").each(function(d){
+
+           appendSplitText(this,d.name,18);
+
+
+        });
 
         function transition(d) {
             if (transitioning || !d) return;
