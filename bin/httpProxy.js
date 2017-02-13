@@ -14,7 +14,7 @@ var httpProxy = {
      * @param url
      * @param httpresponse
      */
-    get: function (url, response) {
+    get: function (url, callback) {
         http.get(url, function (res) {
             const statusCode = res.statusCode;
             const contentType = res.headers['content-type'];
@@ -35,21 +35,53 @@ var httpProxy = {
             }
 
             res.setEncoding('utf8');
+
             var rawData = '';
             res.on('data', function (chunk) {
                 rawData += chunk
             });
             res.on('end', function () {
                 try {
-                    // var parsedData = JSON.parse(rawData);
-                    response.setHeader('Content-Type', 'application/json');
-                    response.send(rawData);
-                    // console.log(parsedData);
-                } catch (e) {
-                    console.log(e.message);
+                    callback(null,rawData);
+
+                } catch (err) {
+                    callback(err);
                 }
             });
         })
+
+    }
+    ,
+    post:function(url,path,payload,callback){
+        var postData = querystring.stringify(payload);
+
+        var options = {
+            hostname: url,
+            port: 80,
+            path: path,
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Content-Length': Buffer.byteLength(postData)
+            }
+        };
+
+         http.request(options, function(res){
+        res.setEncoding('utf8');
+
+             var rawData = '';
+             res.on('data', function (chunk) {
+                 rawData += chunk
+             });
+             res.on('end', function () {
+                 try {
+                     callback(null,rawData);
+
+                 } catch (err) {
+                   callback(err);
+                 }
+             });
+         })
 
     }
 

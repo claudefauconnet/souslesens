@@ -149,9 +149,9 @@ function drawTreeMpap(root) {
         var g = g1.selectAll("g")
             .data(d._children)
             .enter().append("g")
-            .on("click", d3CommonMouseover)
-            // .on("mouseover", d3CommonMouseover)
-            .on("out", d3CommonMouseout)
+           // .on("click", d3CommonMouseover)
+             .on("mouseover", d3CommonMouseover)
+          //  .on("out", d3CommonMouseout)
 
         g.filter(function (d) {
             return d._children;

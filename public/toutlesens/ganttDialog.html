@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+  <!--  <script src="jquery.js"></script>
+    <script src="jquery-ui.custom.js"></script>-->
+    <link rel="stylesheet" href="../common/js/jquery/css/iThing.css" type="text/css" />
+    <script src="../common/js/jquery/jquery.min.js"></script>
+    <script src="../common/js/jquery/theme_humanity/jquery-ui.min.js "></script>
+    <script src="../common/js/jquery/jQDateRangeSlider-min.js"></script>
+
+
+    <style>
+
+#ganttDialogTable{
+    width: 100%;
+}
+
+    </style>
+</head>
+<body>
+<table id="ganttDialogTable">
+    <tr>
+        <td>
+            Date interval
+        </td>
+        <td>
+            <div id="dateSlider"></div>
+        </td>
+
+    </tr>
+    <tr>
+        <td>
+           Date field
+        </td>
+        <td>
+            <input id="ganttDateField">
+        </td>
+
+    </tr>
+    <tr>
+        <td>
+            Date field
+        </td>
+        <td>
+            <select id="ganttDateFieldType">
+                <option>time</option>
+                <option>date</option>
+        </td>
+
+    </tr>
+    <tr>
+        <td>
+           <button onclick="showGantt()">Execute</button>
+        </td>
+        <td>
+           &nbsp;
+        </td>
+
+    </tr>
+
+
+</table>
+
+
+
+
+
+<script>
+    //<!--
+    $("#dateSlider").dateRangeSlider();
+    //-->
+</script>
+</body>
+</html>

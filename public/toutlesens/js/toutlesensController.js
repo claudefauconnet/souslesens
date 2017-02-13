@@ -110,6 +110,7 @@ var subGraph;
 var d3tree;
 var isAdvancedDisplayDialogInitialized = false;
 var isAdvancedSearchDialogInitialized = false;
+var isGanttDialogInitialized=false;
 
 var popupMenuNodeInfoCache;
 var currentDataStructure;  //tree or flat
@@ -1971,7 +1972,7 @@ function backToNonFilteredGraph() {
 }
 
 function showGantt() {
-    drawGant(null, "photo", "date", null, 100);
+    drawGant(null, "photo", "timestamp", null, 10);
 }
 
 function onLinkClick(id) {

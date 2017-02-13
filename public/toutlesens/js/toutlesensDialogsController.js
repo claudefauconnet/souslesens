@@ -41,6 +41,16 @@ function showAdvancedSearchDialog() {
     $("#dialogAdvancedSearch").dialog("open").parent().position({my: 'center', at: 'center', of: '#tabs-radarRight'});
 }
 
+function showGanttDialog() {
+    if (!isGanttDialogInitialized) {
+        isGanttDialogInitialized = true;
+        $("#dialogGanttIframe").prop("src", "./ganttDialog.html?subGraph=" + subGraph);
+    }
+
+    $("#dialogGantt").dialog("open").parent().position({my: 'center', at: 'center', of: '#tabs-radarRight'});
+}
+
+
 
 function showGraphDecorationObjsDialog() {
     if (!isAdvancedDisplayDialogInitialized) {
@@ -63,6 +73,11 @@ function hideAdvancedSearch() {
 
 function hideAdvancedDisplay() {
     $("#dialogAdvancedDisplay").dialog("close");
+
+}
+
+function hideGanttDialog() {
+    $("#dialogGantt").dialog("close");
 
 }
 function saveStoredDecorationObjsDialog() {

@@ -59,7 +59,9 @@ function listDbPediaPerson(obj,target) {
 
 	props["Personne"] = [ "birthDate", "deathDate" ];
 	var propsStr = [];
+	var type=null;
 	if (type && props[type]) {
+
 		for (var i = 0; i < props[label].length; i++) {
 			var prop = props[label][i];
 			propsStr += "prop:" + prop + " ?" + prop + ";"
@@ -118,7 +120,9 @@ function listDbPediaPerson(obj,target) {
 				data : payload,
 				dataType : "json",
 				success : function(_data, textStatus, jqXHR) {
-					var objs = _data.results.bindings;
+					//var objs = _data.result.results.bindings;
+                    var objs = JSON.parse(_data.result);
+                    objs=objs.results.bindings;
 					showExternalressourcesList(objs,target);
 					
 

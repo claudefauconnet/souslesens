@@ -96,12 +96,18 @@
         body {
             overflow: hidden;
         }
+        #message{
+            width: 100%;
+            color: red;
+            font-style: italic;
+            font-size:14px;
+        }
     </style>
 
 
     <script>
         $(function () {
-            var types = {0: "pathes", 1: "cypher"}
+            var types = {0: "pathes", 1: "frequentQuery",2: "cypher"}
             currentActionObj = {type: types[0], subGraph: subGraph};
             initNeoModel(subGraph, [initLabels, initLabelsCurrentQueries]);
             setCurrentQueriesSelect();
@@ -221,10 +227,24 @@
         <table>
             <tr>
                 <td>
-                    label
+                    Source label
                 </td>
                 <td>
-                    <select id="currentQueriesLabelSelect"> </select>&nbsp;limit<input id="currentQueriesLimit" value="100">
+                    <select id="currentQueriesSourceLabelSelect"> </select>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    Target label(optional)
+                </td>
+                <td>
+                    <select id="currentQueriesTargetLabelSelect"> </select>
+
+                   &nbsp;direction <select id="currentQueriesDirectionSelect">
+                <option>any</option>
+                    <option>outgoing</option>
+                    <option>incoming</option>
+                </select>
                 </td>
             </tr>
             <tr>
@@ -232,7 +252,7 @@
                     Standard queries
                 </td>
                 <td>
-                    <select id="currentQueriesSelect" onchange="onCurrentQueriesSelect()"> </select>
+                    <select id="currentQueriesSelect" onchange="onCurrentQueriesSelect()"> </select>&nbsp;limit<input id="currentQueriesLimit" value="100">
                 </td>
             </tr>
 
@@ -249,6 +269,7 @@
     <span id='lang_108'>Limite</span></td>
     <input id="cypherQueryLimitInput" size="5" value="2000">&nbsp;
     <button oncLick="window.parent.hideAdvancedSearch()"><span id='lang_153'>Annuler</span></button>
+    <div id="message"></div>
 </div>
 
 

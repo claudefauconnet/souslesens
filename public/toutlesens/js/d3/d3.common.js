@@ -208,12 +208,15 @@ if(witdh>100)
         if (chars.length >= charsByLine || index >= text.length) {
             var str=chars.join("");
             if(lastSpaceIndex>-1){
+                var str2=str.substring(lastSpaceIndex);
                 str=str.substring(0,lastSpaceIndex);
-                index-=lastSpaceIndex;
 
+                index-= str2.length;//(a cause du index++ plus haut)
+                index++;
+                lastSpaceIndex=-1;//
             }
             array.push(str);
-            lastSpaceIndex=-1;
+
             chars = [];
 
         }
@@ -228,7 +231,7 @@ if(witdh>100)
         .range([0, 500]);
     var finish = false;
     for (var i = 0; i < array.length; i++) {
-      if ((fontSize * (i + 1)) > height) {// troncature des textes si trop hauts
+      if ((fontSize * (i + 2)) > height) {// troncature des textes si trop hauts
             array[i] = array[i].substring(0, Math.min(array[i].length, 3)) + "...";
             finish = true;
         }

@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+
+
+
+<script src="../common/js/jquery/jquery.min.js"></script>
+<script src="../common/js/jquery/jquery-ui.min.js"></script>
+    <script sr="../common/js/jquery/colorPicker/js/bootstrap-colorpicker.js"></script>
+    <script sr="../common/js/jquery/colorPicker/js/bootstrap-colorpicker-plus.js"></script>
+
+</head>
+<body>
+
+
+
+<button type="button" class="btn btn-default" id="demo2">...</button>
+<script>
+    $(function(){
+        var demo2 = $('#demo2');
+        demo2.colorpickerplus();
+        demo2.on('changeColor', function(e){
+            if(e.color==null) {
+                //when select transparent color
+                $('.color-fill-icon', $(this)).addClass('colorpicker-color');
+            } else {
+                $('.color-fill-icon', $(this)).removeClass('colorpicker-color');
+                $('.color-fill-icon', $(this)).css('background-color', e.color);
+            }
+        });
+    });
+</script>
+
+</body>
+</html>

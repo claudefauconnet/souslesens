@@ -38,18 +38,20 @@
 <link rel="stylesheet" type="text/css" title="Design"
       href="js/jquery/jquery.splitter.css"/>
 
-<link rel="stylesheet" href="js/jsTree/themes/default/style.min.css"/>
-<link rel="stylesheet" type="text/css" href="css/index.css"/>
+<!--<link rel="stylesheet" href="js/jsTree/themes/default/style.min.css"/>-->
 <!--<link rel="stylesheet" type="text/css"
 	href="../common/js/others/jquery.handsontable.full.min.css" />-->
 
+
+
+
+<link rel="stylesheet" type="text/css" href="css/index.css"/>
 <link rel="stylesheet" type="text/css" href="css/treemap.css"/>
 
 
+
 <script src="../common/js/jquery/jquery.min.js"></script>
-<script src="../common/js/jquery/theme_humanity/jquery-ui.min.js "></script>
-
-
+<script src="../common/js/jquery/jquery-ui.min.js"></script>
 <script src="../common/js/jquery/jquery.splitter.js"></script>
 
 
@@ -84,8 +86,8 @@
 <script src="js/d3/d3.modifiableGraph.js"></script>
 <script src="js/d3/d3.simpleForce.js"></script>
 <script src="js/d3/d3.treemap.js"></script>
-<script src="js/d3/d3.gantt.js.js"></script>
-<script src="js/d3/gant-chart-d3v2.js.js"></script>
+<script src="js/d3/d3.gantt.js"></script>
+<script src="js/d3/gant-chart-d3v2.js"></script>
 <script type="text/javascript" src="js/d3/gant-chart-d3v2.js"></script>
 <script type="text/javascript" src="js/d3/d3.gantt.js"></script>
 
@@ -383,6 +385,14 @@
             modal: true,
 
         });
+        $("#dialogGantt").dialog({
+            autoOpen: false,
+            height: Gparams.bigDialogSize.h,
+            width: Gparams.bigDialogSize.w,
+            appendTo: "#tabs-radarRight",
+            modal: true,
+
+        });
 
         $("#popupMenuNodeInfoDiv").mouseleave(function () {
             $(this).hide();
@@ -421,7 +431,7 @@
                     <div id="topPanel">
                         <input type="hidden" value="500" id="limitResult">
                         <table border="0">
-                            <!--   <tr>
+                              <tr>
 
 
                                        <a href="javascript:showGantt()"><b> <span
@@ -430,7 +440,7 @@
                                    </td>
 
 
-                               </tr>-->
+                               </tr>
                             <tr align="center">
                                <!-- <td colspan="2"><span id='lang_61'> Selectionner un
 											noeud de depart</span></td> -->
@@ -825,10 +835,16 @@
                                    onclick="onTextVisButton('CSV')" id="csvOutput"
                                    src="images/table.png"/></td>
                         <td>
+
                             <button id="listDownloadButton" onclick="downloadTextOutput()">
                                 <span id='lang_43'>telecharcher</span>
                             </button>
+
                         </td>
+                        <td><input type="image" height="30px" alt="table"
+                                   onclick="showGanttDialog()" id="Gantt"
+                                   src="images/gantt.png"/></td>
+                        <td>
                     </tr>
                 </table>
 
@@ -972,10 +988,7 @@
 
 
         <div id="nodeDetailsTab">
-            <button onclick="associateExternalResourceToNode()">Associer
-                cette page au noeud courant
-            </button>
-            <br>
+
             <div id="nodeDetailsIframe"></div>
 
         </div>
@@ -1023,6 +1036,9 @@
 </div>
 <div id="dialogAdvancedDisplay" title="advancedDisplay">
     <iframe id="advancedDisplayIframe" src="advancedDisplayDialog.html"></iframe>
+</div>
+<div id="dialogGantt" title="Gantt">
+    <iframe id="dialogGanttIframe" src="ganttDialog.html"></iframe>
 </div>
 
 <input type="hidden" id="graphTravReturnEvaluator">

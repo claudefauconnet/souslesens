@@ -6,6 +6,7 @@ function addDaysToDate(date, days) {
 }
 function neoDateToDate(dateStr) {
     //Sat Oct 28 17:00:46 CET 1972
+ //   Sun Dec 31 1899 00:00:00 GMT+0100 (Paris\, Madrid)
     var monthes = {
         Jan: 0,
         Feb: 1,
@@ -20,7 +21,8 @@ function neoDateToDate(dateStr) {
         Nov: 10,
         Dec: 11,
     }
-    var regexDate = /[A-z] ([A-z]{3}) ([0-9]{2}).*([0-9]{4})/
+    var regexDate=/[A-z]{3} ([A-z]{3}) ([0-9]{2}) ([0-9]{4})/
+//    var regexDate = /[A-z] ([A-z]{3}) ([0-9]{2}).*([0-9]{4})/
     var dateArray = regexDate.exec(dateStr);
     var month=monthes[dateArray[1]];
     try {
@@ -60,6 +62,10 @@ if(groupField)
     groupFieldReturn = ",n." +groupField + " as groupField";;
     if (where && where.length > 0)
         whereStr += " and " + where;
+    if(subGraph)
+        whereStr += " and n.subGraph='" + subGraph+"'";
+    if(subGraph)
+        whereStr += " and toInt(n.timestamp)>0"
     var query = "MATCH (n)" + whereStr
         + " return n." + startDateField + " as startDate " + endFieldReturn + ",n." + objectName + " as name "+groupFieldReturn+",id(n) as id, labels(n)  as labels limit 200"
     console.log(query)
@@ -73,12 +79,16 @@ if(groupField)
             "RUNNING": "bar-running",
             "KILLED": "bar-killed"
         };
-        var maxTasks = 25;
+        var maxTasks = 200;
         var distinctLabels = []
         for (var i = 0; i < Math.min(data.length, maxTasks); i++) {
+           var startTime= parseInt(data[i].startDate);
 
-
-            var startDate = neoDateToDate(data[i].startDate);
+    if(data[i].startTime<0)
+        continue;
+            var startDate=new Date(startTime);
+           // var startDate = new Date(data[i].startDate);
+          //  var startDate = neoDateToDate(data[i].startDate);
             var endDate;
             if (!data[i].endDate)
                 endDate = addDaysToDate(startDate, duration)
@@ -119,9 +129,9 @@ if(groupField)
 
         var format = "%H:%M";
         var format = "%Y";
-        var timeDomainString = "50years";
+        var timeDomainString = "1year";
         var height = 15 * tasks.length;
-        var gantt = d3.gantt().taskTypes(taskNames).taskStatus(taskStatus)
+        var gantt = d3.gantt(gantDiv).taskTypes(taskNames).taskStatus(taskStatus)
             .tickFormat(format).height(height).width(800);
 
         gantt.timeDomainMode("fixed");
@@ -166,6 +176,11 @@ function changeTimeDomain(gantt, tasks, timeDomainString) {
         case "45Centuries":
             format = "%Y";
             gantt.timeDomain([d3.time.year.offset(getEndDate(tasks), -4500),
+                getEndDate(tasks)]);
+            break;
+        case "1year":
+            format = "%Y";
+            gantt.timeDomain([d3.time.day.offset(getEndDate(tasks), -100),
                 getEndDate(tasks)]);
             break;
         case "50years":

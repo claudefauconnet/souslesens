@@ -105,7 +105,7 @@ input {
     overflow: hidden;
 }
 
-#advancedSearchIframe, #advancedDisplayIframe {
+#advancedSearchIframe, #advancedDisplayIframe, #dialogGanttIframe {
     height: 100%;
     width: 100%;
     overflow: hidden;
