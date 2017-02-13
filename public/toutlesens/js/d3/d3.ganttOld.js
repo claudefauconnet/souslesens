@@ -1,22 +1,13 @@
 
-function drawGantUI() {
-    var dateBounds = $("#dateSlider").dateRangeSlider("bounds");
-    var startTime=dateBounds.min();
-    var endTime=dateBounds.max();
-    var minDuration=10;// acalculer...
-    var startTimeField = $("#startTimeField").val();
-    var startTimeField = $("#startTimeField").val();
-    var titleField=$("#titleField").val();
-    drawGant(titleField,startTimeField, endTimeField, startTime, endTime, minDuration);
-}
-function drawGant(tilteField,startTimeField,endTimeField,startTime,endTime,minDuration) {
+
+function drawGant(where, groupField, startDateField, endDateField, duration) {
     if (!Gparams.gantt.startField && !startDateField) {
         alert("startField  is null");
         return;
     }
-    if (!titleField)
-        titleField = Gparams.gantt.name;
-    var titleField="nom"
+    if (!objectName)
+        objectName = Gparams.gantt.name;
+    var objectName="nom"
     if (!startDateField) {
         startDateField = Gparams.gantt.startField;
         if (!endDateField)
@@ -40,7 +31,7 @@ if(groupField)
     if(subGraph)
         whereStr += " and toInt(n.timestamp)>0"
     var query = "MATCH (n)" + whereStr
-        + " return n." + startDateField + " as startDate " + endFieldReturn + ",n." + titleField + " as name "+groupFieldReturn+",id(n) as id, labels(n)  as labels limit 200"
+        + " return n." + startDateField + " as startDate " + endFieldReturn + ",n." + objectName + " as name "+groupFieldReturn+",id(n) as id, labels(n)  as labels limit 200"
     console.log(query)
     executeQuery(QUERY_TYPE_MATCH, query, function (data) {
         //	var data = result[0].data;
@@ -224,42 +215,4 @@ function drawFilteretGantt() {
     drawGant(where);
 
 }
-
-    function addDaysToDate(date, days) {
-        var oneDay = 1000 * 60 * 60 * 24;
-        var newDate = new Date(date.getTime() + (oneDay * days));
-//	var newDate = new Date(date.getFullYear(), date.getMonth(), date.getDate() + days);
-        return newDate;
-    }
-    function neoDateToDate(dateStr) {
-        //Sat Oct 28 17:00:46 CET 1972
-        //   Sun Dec 31 1899 00:00:00 GMT+0100 (Paris\, Madrid)
-        var monthes = {
-            Jan: 0,
-            Feb: 1,
-            Mar: 2,
-            Apr: 3,
-            May: 4,
-            Jun: 5,
-            Jul: 6,
-            Aug: 7,
-            Sep: 8,
-            Oct: 9,
-            Nov: 10,
-            Dec: 11,
-        }
-        var regexDate=/[A-z]{3} ([A-z]{3}) ([0-9]{2}) ([0-9]{4})/
-//    var regexDate = /[A-z] ([A-z]{3}) ([0-9]{2}).*([0-9]{4})/
-        var dateArray = regexDate.exec(dateStr);
-        var month=monthes[dateArray[1]];
-        try {
-
-            var date=new Date(dateArray[3], month, dateArray[2]);
-            // console.log(+date+ "  "+dateStr)
-            return date;
-        }
-        catch(e){
-            console.log("bad date "+dateStr)
-        }
-    }
 

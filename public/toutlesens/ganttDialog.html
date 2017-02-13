@@ -9,7 +9,7 @@
     <script src="../common/js/jquery/jquery.min.js"></script>
     <script src="../common/js/jquery/theme_humanity/jquery-ui.min.js "></script>
     <script src="../common/js/jquery/jQDateRangeSlider-min.js"></script>
-
+<script src="./js/d3/d3.gantt.js"></script>
 
     <style>
 
@@ -30,29 +30,44 @@
         </td>
 
     </tr>
+    titleField
     <tr>
         <td>
-           Date field
+            title field
         </td>
         <td>
-            <input id="ganttDateField">
+            <input id="titleField" value="nom">
         </td>
 
     </tr>
     <tr>
         <td>
-            Date field
+           start time field
         </td>
         <td>
-            <select id="ganttDateFieldType">
+            <input id="startTimeField" value="timestamp">
+
+           &nbsp; end time field
+        </td>
+        <td>
+            <input id="endTimeField" value="">
+        </td>
+
+    </tr>
+ <!--   <tr>
+        <td>
+            Date type
+        </td>
+        <td>
+            <select id="timType">
                 <option>time</option>
                 <option>date</option>
         </td>
 
-    </tr>
+    </tr>-->
     <tr>
         <td>
-           <button onclick="showGantt()">Execute</button>
+           <button onclick="drawGantUI()">Execute</button>
         </td>
         <td>
            &nbsp;
