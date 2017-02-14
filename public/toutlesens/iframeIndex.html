@@ -376,13 +376,31 @@
         });
 
 
-        var queryParamsInitialQuery=queryParams.initialQuery;
-        if(queryParamsInitialQuery){
-          //                $(".splitter_panel").width(0).height(totalHeight - 50);
-            $("#left").detach();
-          //  $("#graphDiv").width((totalWidth ) - Gparams.legendWidth).height(totalHeight - 50)
-            searchByNamesList(queryParamsInitialQuery)
+        var text=queryParams.initialQuery;
+
+       var str= "([GS|CR|LI]{2}[- ]MS[- ][A-Z]{3}[- ][0-9]{3})";
+
+        var regex = new RegExp(str, "gm");
+
+    if(text.length>0) {
+        var str = "";
+        var result;
+        var i = 0;
+        var normes=[];
+        while (i++ < 1000 && (result = regex.exec(text)) != null) {
+            for (var j=1;j<result.length;j++){
+                if(normes.indexOf(result[j])<0)
+                    normes.push(result[j]);
+            }
+
         }
+
+            $("#left").detach();
+            //  $("#graphDiv").width((totalWidth ) - Gparams.legendWidth).height(totalHeight - 50)
+            searchByNamesList(normes)
+        }
+
+
 
     })
     ;

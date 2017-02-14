@@ -14,7 +14,7 @@ var Gparams = {
             disable: []
         }
     },
-    currentProfile: "all",//minimum ,all
+    currentProfile: "minimum",//minimum ,all
     navigationStyle: "",// , "jpt" // Jean Paul
     httpProxyUrl: "../http",
     neo4jProxyUrl: "/neo",
@@ -36,7 +36,7 @@ var Gparams = {
     htmlOutputWithAttrs: true,
     showRelationNames: false,
     treeGraphVertSpacing: 35,
-    bigDialogSize :{w: 800, h: 450},
+    bigDialogSize :{w: 800, h: 500},
     gantt: {
         name: "nom",
         startField: "datedebut",

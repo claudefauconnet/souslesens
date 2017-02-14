@@ -8,9 +8,12 @@ function getAllpropertiesDialogContent(onclickAction) {
     str += "<tr><td align='right'>&gt;</td><td><input id='propertyGreater'></input></td></tr>"
     str += "<tr><td align='right'>&lt; </td><td><input id='propertyLower'></input></td></tr>"
     str += "</table><button id='getAllpropertiesDialogOkBtn' onclick=" + onclickAction + ";>OK</button>";
-    if(label && label.length>0)
-        str += "<script>fillSelectOptionsWithStringArray($('#propertyType')[0],dataModel.labels['"+label+"']);</script>";
-    else
+    if(label && label.length>0) {
+        if(dataModel.labels[label].indexOf("")<0)
+        dataModel.labels[label].splice(0,0,"");
+        str += "<script>fillSelectOptionsWithStringArray($('#propertyType')[0],dataModel.labels['" + label + "']);</script>";
+
+    } else
      str += "<script>fillSelectOptionsWithStringArray($('#propertyType')[0],dataModel.allProperties);</script>";
 //	str += "<script>fillSelectOptionsWithStringArray($('#propertyType')[0],dataModel.allProperties);$('#propertyType').val(\'nom\');</script>";
     return str;

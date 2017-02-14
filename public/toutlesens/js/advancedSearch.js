@@ -488,8 +488,11 @@ function setCypherqueryMatch(done) {
 }
 
 function searchByNamesList(list) {
-
-    var names=list.split(",");
+    var names;
+if(typeof list=="string" )
+     names=list.split(",");
+else
+    names=list;
     var query="MATCH path=(n)-[r]-(m) where n.nom IN ["
     for(var i=0;i<names.length;i++){
         if(i>0)

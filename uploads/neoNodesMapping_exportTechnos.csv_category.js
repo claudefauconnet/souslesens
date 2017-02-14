@@ -1,0 +1,1 @@
+[{"neoId":352616,"mongoId":"Physical world","label":"category"},{"neoId":352617,"mongoId":"Physical world representation","label":"category"},{"neoId":352618,"mongoId":"Data-info valorization","label":"category"},{"neoId":352619,"mongoId":"IT means","label":"category"},{"neoId":352620,"mongoId":"Communication - social","label":"category"}]
