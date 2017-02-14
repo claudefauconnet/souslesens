@@ -8,7 +8,7 @@ node_modules
 ./bin/jfm/trump
 ./public/files
 .npm-debug.log
-upload
+upload/*
 
 
 #############
