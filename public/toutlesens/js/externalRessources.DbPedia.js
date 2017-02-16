@@ -83,7 +83,7 @@ function listDbPediaPerson(obj,target) {
 	optionalProps += "OPTIONAL { ?x prop:museum ?museum}\n";
 	optionalProps += "OPTIONAL { ?x prop:subjectTerm ?subjectTerm}\n";
 
-	var query = "PREFIX : <http://dbpedia.org/resource/>PREFIX dbpedia-owl:<http://dbpedia.org/ontology/> PREFIX prop: <http://dbpedia.org/property/>"
+	var query = "PREFIX : <                   > PREFIX prop: <http://dbpedia.org/property/>"
 			+ "SELECT * WHERE {"
 			+ "?x rdfs:label "
 			+ "?label. "

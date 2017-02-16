@@ -495,7 +495,7 @@ function saveRequest(json) {
         date: new Date()
     }
     var query = {name: name};
-    if (mongoDB == "csv") {
+    if (mongoDB.indexOf(".csv")>-1) {
         if (!currentRequests)
             currentRequests = {};
         data.name = data.name;

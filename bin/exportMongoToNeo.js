@@ -408,7 +408,7 @@ var exportMongoToNeo = {
                         console.log(message);
                         if (socket)
                             socket.message(message);
-                        callback(null);
+                        callback(null,message);
                     }
                 })
             }

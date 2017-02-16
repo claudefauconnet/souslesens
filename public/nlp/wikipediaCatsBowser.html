@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Wikipedia Cats Browser</title>
+    <script src="../common/js/jquery/jquery.min.js"></script>
+    <script src="../common/js/common.js"></script>
+
+    <script>
+function searchParent(){
+    var value=$("#word").val();
+    var regEx=new RegExp(value,"i");
+    var query={ parent: { $regex: value}};
+    callMongo(query,function(result){
+        fillSelectOptionsWithStringArray(parentSelect,result);
+
+    })
+
+
+}
+
+function searchChild(){
+    var value=$("#parentSelect").val();
+    var query={ child: value};
+    callMongo(query,function(result){
+        fillSelectOptionsWithStringArray(childSelect,result);
+
+
+    })
+
+
+}
+function setAsParent(){
+    var value=$("#childSelect").val();
+    fillSelectOptionsWithStringArray(parentSelect,[value]);
+    searchChild();
+}
+
+function callMongo(query,callback){
+    var payload= {
+        distinct: 1,
+        field:"parent",
+        dbName: "wikipedia",
+        collectionName: "wiki_taxonomy",
+        mongoQuery: query
+    }
+    $.ajax({
+        url: "../mongo",
+        type: "post",
+        data: payload,
+        dataType: "json",
+        success: function (data, textStatus, jqXHR) {
+            callback(data);
+        },
+        error: function (xhr, err, msg) {
+            console.log(xhr);
+            console.log(err);
+            console.log(msg);
+        }
+    });
+}
+
+
+
+
+    </script>
+<style>
+    body{
+        font-size: 14px;
+    }
+    table{
+        margin: 5px;
+        padding: 5px;
+    }
+    #main{
+      align-self: center;
+    }
+</style>
+
+
+</head>
+<body>
+<div id="main">
+<table>
+<tr>
+    <td>
+        word
+    </td>
+    <td>
+        <input id="word"  value="software"><button onclick="searchParent();">SearchParent</button>
+    </td>
+</tr>
+    <tr>
+        <td>
+            Parent
+        </td>
+        <td>
+            <select id="parentSelect" onchange="searchChild()"></select>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            Child
+        </td>
+        <td>
+            <select id="childSelect"></select><button onclick="setAsParent();">setAsParent</button>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            DBpedia
+        </td>
+        <td>
+           <div id="dbPediaDiv" ></div>
+        </td>
+    </tr>
+</table>
+
+</div>
+</body>
+</html>

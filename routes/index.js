@@ -43,7 +43,9 @@ router.post('/neo', function (req, response) {
 
 router.post('/mongo', function (req, response) {
     if (req.body && req.body.find)
-        mongoProxy.find (req.body.dbName, req.body.collectionName, JSON.parse(req.body.mongoQuery), function(error,result){processResponse(response,error,result)});
+        mongoProxy.find (req.body.dbName, req.body.collectionName, req.body.mongoQuery, function(error,result){processResponse(response,error,result)});
+    if (req.body && req.body.distinct)
+        mongoProxy.distinct (req.body.dbName, req.body.collectionName,  req.body.field,req.body.mongoQuery, function(error,result){processResponse(response,error,result)});
     if (req.body && req.body.insert)
         mongoProxy.insert (req.body.dbName, req.body.collectionName, req.body.data, function(error,result){processResponse(response,error,result)});
     if (req.body && req.body.updateOrCreate)
