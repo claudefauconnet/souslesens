@@ -281,6 +281,10 @@ function execute() {
         executeFrequentQuery();
     }
 
+    if (currentActionObj.type == "pattern") {
+        executePattern()
+    }
+
 
 }
 
@@ -422,9 +426,14 @@ function executeCypherAndDisplayGraph(query, _currentActionObj) {
     currentActionObj = _currentActionObj;
 
 
-    if(true || currentActionObj.graphPathTargetNode) {
+    if( currentActionObj.graphPathTargetNode) {
         currentDataStructure = "flat";
         currentDisplayType = "SIMPLE_FORCE_GRAPH";
+        $("#graphForceDistance").val(20);
+    }
+    else if(currentActionObj.type=="pattern") {
+        currentDataStructure = "flat";
+        currentDisplayType = "SIMPLE_FORCE_GRAPH_BULK";
         $("#graphForceDistance").val(20);
     }
     else {
@@ -656,4 +665,83 @@ function onExecuteTraversalQuery() {
         graphTravReturnEvaluator, graphTravReturnFilter, graphTravDepth,
         graphTravRelTypes);
 
+}
+
+
+
+
+/*********************Patterns***************************/
+function patternInitLabels(){
+  //  initLabels(subGraph,"patternLabelSelect");
+   for(var key in dataModel.labels){
+var value="("+key+")";
+        $('#patternLabelSelect').append($('<option/>', {
+            value: value,
+            text : value
+        }));
+    }
+}
+function patternInitRelTypes(){
+    var array=dataModel.allRelationsArray;
+    for (var i=0;i<array.length;i++){
+        value="-[:"+array[i]+"]-";
+        $('#patternRelTypeSelect').append($('<option/>', {
+            value: value,
+            text : value
+        }));
+    }
+
+}
+
+function setPatternDirectLabelSelect(select){
+    patternDirectRelTypeSelect.options.length=0;
+    var value=$(select).val();
+    value=value.substring(1,value.length-1);
+   var key =dataModel.labelsRelations[value];
+   key.splice(0,0,"");
+    for (var i=0;i<key.length;i++){
+        value="-[:"+key[i]+"]-";
+        $('#patternDirectRelTypeSelect').append($('<option/>', {
+            value: value,
+            text : value
+        }));
+    }
+
+}
+function patternAdd(select){
+    var value=$(select).val();
+    if(value && value.length>0) {
+        $('#patternPatternSelect').append($('<option/>', {
+            value: value,
+            text: value
+        }));
+    }
+
+}
+
+function removeFromPatternSelect(){
+    var val=$('#patternPatternSelect').val()
+    $("#patternPatternSelect option[value='"+val+"']").remove();
+}
+
+
+function executePattern(){
+
+    var match="MATCH path=";
+    $("#patternPatternSelect option").each(function() {
+
+        match+=$(this).val();
+    })
+    if(match.substring(match.length-1)=="-")
+        match+-"()";
+    match+=" return path";
+    console.log(match);
+
+    var matchAll= "MATCH path=(n)-[r]-(m) where n.subGraph='"+subGraph+"' ";
+    matchAll+=" return "+returnStr +"  limit 500";
+    currentActionObj={
+        type:"pattern"
+    };
+    console.log(matchAll);
+    window.parent.executeCypherAndDisplayGraph(matchAll, currentActionObj);
 }

@@ -110,7 +110,7 @@ var subGraph;
 var d3tree;
 var isAdvancedDisplayDialogInitialized = false;
 var isAdvancedSearchDialogInitialized = false;
-var isGanttDialogInitialized=false;
+var isGanttDialogInitialized = false;
 
 var popupMenuNodeInfoCache;
 var currentDataStructure;  //tree or flat
@@ -642,7 +642,7 @@ function onWordSelect(draw) {
     $("#tabs-radarRight").tabs("enable");
     $("#currentNodeSpan").html("Noeud central : " + text);
 
-    if (Gparams.modifyMode=='onList' && currentMode == "write") {
+    if (Gparams.modifyMode == 'onList' && currentMode == "write") {
         var index = $('#tabs-radarRight a[href="#modifyTab"]').parent().index();
         $("#tabs-radarRight").tabs("option", "active", index);
 
@@ -705,6 +705,10 @@ function getGraphDataAroundNode(id, callbackFunction) {
         return;
     }
     if (mode == "SIMPLE_FORCE_GRAPH") {
+        getNodeAllRelations(id, mode);
+        return;
+    }
+    if (mode == "SIMPLE_FORCE_GRAPH_BULK") {
         getNodeAllRelations(id, mode);
         return;
     }
@@ -1778,7 +1782,7 @@ function displayGraph(json, output, labels) {
     $("#tabs-radarRight").tabs("option", "active", 0);
 
     if (!json) {
-        if (output == "SIMPLE_FORCE_GRAPH")
+        if (output == "SIMPLE_FORCE_GRAPH" || output == "SIMPLE_FORCE_GRAPH_BULK")
             json = cachedResultArray;
         else
             json = cachedResultTree;
@@ -1828,8 +1832,8 @@ function displayGraph(json, output, labels) {
         drawForceCollapse(json, null, null, distance, currentGraphCharge);
     }
     else if (output == "TREEMAP") {
-        var jsonTreeMap=json;
-        if(!json.valueField)
+        var jsonTreeMap = json;
+        if (!json.valueField)
             jsonTreeMap = jsonToHierarchyTree(json, "label");
         // setValues(jsonTreeMap)
         testTreemap(jsonTreeMap);
@@ -1841,6 +1845,12 @@ function displayGraph(json, output, labels) {
         if (!json || json.children && json.children.length > 0)// maladroit à revoir dans flower
             forceJson = cachedResultArray;
         drawsimpleForce(forceJson);
+    }
+    else if (output == "SIMPLE_FORCE_GRAPH_BULK") {
+        var forceJson = json;
+        if (!json || json.children && json.children.length > 0)// maladroit à revoir dans flower
+            forceJson = cachedResultArray;
+        drawsimpleForceBulk(forceJson);
     }
 
 
@@ -2033,11 +2043,11 @@ function previousImage() {
 
 }
 
-function rotateImage(negative){
-    function rotate(divId,angle) {
-        var deg = $("#"+divId).data('rotate') || 0;
+function rotateImage(negative) {
+    function rotate(divId, angle) {
+        var deg = $("#" + divId).data('rotate') || 0;
         var rotate = 'rotate(' + angle + 'deg)';
-        $("#"+divId).css({
+        $("#" + divId).css({
             '-webkit-transform': rotate,
             '-moz-transform': rotate,
             '-o-transform': rotate,
@@ -2046,11 +2056,12 @@ function rotateImage(negative){
         });
 
     }
-    var angle=90;
-    if(negative)
-        angle=-90;
-    rotate("thumbnailImage",angle);
-        rotate("largeImage",angle);
+
+    var angle = 90;
+    if (negative)
+        angle = -90;
+    rotate("thumbnailImage", angle);
+    rotate("largeImage", angle);
 
 
 }

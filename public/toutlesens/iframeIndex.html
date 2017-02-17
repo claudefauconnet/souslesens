@@ -171,9 +171,9 @@
         $("#graphDecorationPanel").height(totalHeight / 2);
 
 
-        $("#left").width(0).height(0);
+      //  $("#left").width(0).height(0);
     //    $("#tabs-radarRight").height(totalHeight - 20);
-        $("#graphDiv").width(totalWidth ).height(totalHeight - 50)
+      //  $("#graphDiv").width(totalWidth ).height(totalHeight - 50)
 
         $(".splitter_panel").width(totalWidth / 4 * 3).height(totalHeight - 50);
         //  $("#graphLegendDiv").width(totalWidth / 4 * 3).height(50);
@@ -378,7 +378,7 @@
 
         var text=queryParams.initialQuery;
 
-       var str= "([GS|CR|LI]{2}[- ]MS[- ][A-Z]{3}[- ][0-9]{3})";
+       var str= "([GS|CR|LI]{2}[- ]MS[- ][A-Z]{3,4}[- ][0-9]{2,4})";
 
         var regex = new RegExp(str, "gm");
 
@@ -395,10 +395,11 @@
 
         }
 
-            $("#left").detach();
+    //$("#left").detach();
             //  $("#graphDiv").width((totalWidth ) - Gparams.legendWidth).height(totalHeight - 50)
             searchByNamesList(normes)
         }
+
 
 
 
@@ -413,298 +414,7 @@
 
 <div id="main">
 
-    <div id="left">
 
-        <div id="left-radar">
-
-            <span id="radarTitle"></span>
-            <div id="tabs-radarLeft">
-                <ul>
-                    <li><a href="#radarFiltersTab"><span id='lang_60'>Selection</span></a></li>
-                    <li><a href="#graphQueryFiltersTab"><span id='lang_59'>Vue</span></a></li>
-                    <li><a href="#attrsTab"><span id='lang_37'>Infos.</span></a></li>
-                </ul>
-                <div id="legendTab"></div>
-
-
-                <!--  ****************************************************noeudInitial***************************-->
-
-
-                <div id="radarFiltersTab">
-                    <div id="topPanel">
-                        <input type="hidden" value="500" id="limitResult">
-                        <table border="0">
-                            <!--   <tr>
-
-
-                                       <a href="javascript:showGantt()"><b> <span
-                                               id='lang_52'>Chronologie...</span></b></a>
-
-                                   </td>
-
-
-                               </tr>-->
-                            <tr align="center">
-                                <!-- <td colspan="2"><span id='lang_61'> Selectionner un
-                                             noeud de depart</span></td> -->
-                                <td colspan="2" valign="center"> <button onclick="showAdvancedSearchDialog()"> <span id='lang_61'> Advanced Search</span></button>
-
-                            </tr>
-                            <tr>
-                                <td><B></B> Labels</td>
-                                <td><select id="nodesLabelsSelect"
-                                            onchange=onLabelSelect(this)></select></td>
-
-                            </tr>
-
-                            <tr>
-
-
-                                <td><span id='lang_1'>Chercher</span></td>
-                                <td><input id="word" onkeyup="searchNodesUI(this,null)"
-                                           size="10"></td>
-                                <td>
-                                    <!-- <button  onclick="showAdvancedSearchDialog()">+</button>-->
-                                    <input type="image"
-                                           alt="<span id='lang_XX'>search</span>" height="20px"
-                                           onclick="showSimpleSearchDialog()" id="searchButton"
-                                           src="images/search.png"/>
-
-                                </td>
-
-                            </tr>
-
-
-                            <tr>
-                                <td colspan="3">
-                                    <div id="startNodePageNavigation"></div>
-                                </td>
-                            </tr>
-                            <tr colspan="3" valign="middle">
-                                <td><span id='lang_15'>Profondeur</span>&nbsp;<input
-                                        id="depth" value="1" size="1"></td>
-                                <td colspan="2">
-                                    <div id="depthSlider" style="width: 130px;"></div>
-                                </td>
-
-                            </tr>
-
-                            <tr>
-                                <td colspan="3"><select size="15" id="wordsSelect"
-                                                        onclick="onWordSelect(this)">
-                                    <option>--------------</option>
-                                </select></td>
-
-
-                            </tr>
-
-                            <tr>
-                                <td></td>
-                            </tr>
-
-
-                        </table>
-                    </div>
-                </div>
-
-                <!--  ****************************************************#graphQueryFilters***************************-->
-
-
-                <div id="graphQueryFiltersTab">
-
-                    <div align="center">
-                        <span id="currentNodeSpan"></span><br>
-
-                    </div>
-                    <!--  	<button onclick="getSVG()">getSVG</button>-->
-
-                    <div id="accordionRepresentation" class="accordionLeft">
-
-                        <h3>
-                            <span id='lang_3'>Apparence</span>
-                        </h3>
-                        <div id="graphDecorationPanel">
-                            <table>
-                                <tr valign="middle">
-
-                                    <td colspan="2" align="center">
-
-                                        <table class="visButtonTable">
-
-                                            <tr align="center">
-                                                <td width="100%" colspan="6"><span
-                                                        style="color: white">Representation</span></td>
-                                            </tr>
-                                            <tr>
-                                                <td><input type="image" height="30px" alt="fleur"
-                                                           onclick="onVisButton('FLOWER')" id="treeFlowerButton"
-                                                           src="images/flower.png"/></td>
-
-                                                <td><input type="image" height="30px"
-                                                           alt="<span id='lang_9'>carte</span>"
-                                                           onclick="onVisButton('SIMPLE_FORCE_GRAPH')"
-                                                           id="treemapButton" src="images/graph.png"/></td>
-
-                                                <td><input type="image"
-                                                           alt="<span id='lang_7'>arbre</span>" height="30px"
-                                                           onclick="onVisButton('TREE')" id="treeButton"
-                                                           src="images/tree.png"/></td>
-
-                                                <td><input type="image" height="30px" alt="carte"
-                                                           onclick="onVisButton('TREEMAP')" id="treemapButton"
-                                                           src="images/treemap.png"/></td>
-
-
-                                                <!--    <td><input type="image" height="30px" alt="carte"
-                                                    onclick="onVisButton('MANUAL')" id="treemapButton"
-                                                    src="images/treeModif.jpg" /></td>
-
-                                                       <td><input type="image" alt="<span id='lang_14'>roue</span>"
-                                            onclick="onVisButton('FORCE_COLLAPSE')" height="30px"
-                                            id="wheelButton" src="images/tree.png" /></td>-->
-
-                                            </tr>
-                                            <tr align="center">
-                                                <td valign="middle" colspan="6"><input type="checkbox"
-                                                                                       id="groupByLabelsCbx"
-
-                                                                                       onclick="drawGraphGeneral()"><span
-                                                        style="color: white"><span id='lang_5'>Grouper
-																par labels</span></span></td>
-
-                                            </tr>
-                                            <tr align="center">
-                                                <td valign="middle" colspan="6"><input type="checkbox"
-                                                                                       id="showRelationTypesCbx"
-                                                                                       onclick="drawGraphGeneral()"><span
-                                                        style="color: white"><span
-                                                        id='lang_163'>noms des relation</span></span></td>
-
-                                            </tr>
-
-
-                                        </table>
-                                        <select style="visibility: hidden;"
-                                                id="representationSelect" onchange="drawGraphGeneral()">
-
-
-                                            <option value="FLOWER" selected="selected">flower</option>
-                                            <option value="TREE">arbre</option>
-                                            <option value="SIMPLE_FORCE_GRAPH">graphe</option>
-                                            <option value="TREEMAP">carte</option>
-                                            <option value="MANUAL">manual</option>
-                                            <option value="HTML">manual</option>
-
-                                            <option value="CSV">tableau</option>
-
-                                            <!--  <option value="LIST">liste</option>
-                                                <option value="FORCE_COLLAPSE">roue</option>
-                                             -->
-                                        </select>
-                                    </td>
-                                </tr>
-
-
-                                <tr valign="middle">
-                                    <td><B> <span id='lang_16'>ecartement</span>&nbsp;</B></td>
-                                    <td colspan="2">
-                                        <div id="graphForceDistanceSlider" style="width: 130px;"></div>
-
-                                    </td>
-
-                                </tr>
-
-
-                                <tr>
-                                    <td><B> <span id='lang_17'>charge</span></B></td>
-                                    <td>
-                                        <div id="graphForceChargeSlider"></div>
-                                    </td>
-                                </tr>
-
-                                <tr valign="middle">
-
-                                    <td colspan="2">
-                                        <div id="helpDiv" class="help"></div>
-
-                                    </td>
-
-                                </tr>
-
-                                </tr>
-                            </table>
-
-                        </div>
-
-
-                        <h3>
-                            <span id='lang_19'>Filtrer les noeud et les relations</span>
-                        </h3>
-                        <div id="graphFiltersPanel">
-								<span class="help"><span id='lang_20'>filtre les
-										noeud et les relations</span></span><br>
-                            <button onclick="backToNonFilteredGraph()"><span id='lang_160'>supprimer les filtres</span>
-                            </button>
-                            <!-- <button id="drawFilteredGraphButton"
-                                    onclick="drawGraphGeneral()">
-                                    <span id='lang_21'>Appliquer les filtres</span>
-                                </button> -->
-
-                            <div id="graphQueryFilters"></div>
-
-                        </div>
-
-
-                    </div>
-
-                </div>
-
-
-                <!--  ****************************************************attrs***************************-->
-                <div id="attrsTab">
-
-
-                    <div class="title">proprietes</div>
-                    <div id="infoPanel"></div>
-                    <hr>
-                    <div id="imagePanel"></div>
-                    <button onclick="previousImage()">previous</button>
-                    image
-                    <button onclick="nextImage()">next</button>
-                    <input type="checkbox" id="largeImage"> grandFormat
-                    <button onclick="rotateImage(true)">rotate-</button>
-                    <button onclick="rotateImage()">rotate+</button>
-                    <div id="div_externalRessources">
-                        <div class="title">
-                            <span id='lang_23'>Ressources externes</span>
-                        </div>
-                        Source :<select id="externalSourceSelect"
-                                        onchange="loadExternalData(this)">
-                        <option></option>
-                        <option value="DbPedia">DBPedia</option>
-                        <option value="BNF">BNF</option>
-
-                    </select>
-                        <button onclick="searhExternalResource()">
-                            <span id='lang_1'>Chercher</span>
-                        </button>
-                        <div id="externalInfoPanel"></div>
-                        <div id="chronoParams"></div>
-
-
-                    </div>
-
-
-                    <!-- <button onclick='$("#breadcrumb").html("")'><span id='lang_27'>effacer</span></button>
-                                &nbsp;&nbsp;<span id="breadcrumb"></span> -->
-                </div>
-
-
-            </div>
-
-
-        </div>
-    </div>
 
 
     <!--  ****************************************************right panel***************************-->
@@ -716,6 +426,7 @@
             <li><a href="#graphTab"><span id='lang_28'><span
                     id='lang_42'>Graphe</span></span></a></li>
             <li><a href="#textTab"><span id='lang_29'>Liste</span></a></li>
+            <li><a href="#leftTab"><span id='lang_29'>Nav</span></a></li>
 
             <li id="li_nodeDetails"><a href="#nodeDetailsTab">Details </a></li>
             <li id="li_modify"><a href="#modifyTab"><span id='lang_31'>M.a.j</span></a></li>
@@ -1021,6 +732,301 @@
                 </tr>
             </table>
 
+        </div>
+        <div id="leftTab">
+
+            <div id="left">
+
+                <div id="left-radar">
+
+                    <span id="radarTitle"></span>
+                    <div id="tabs-radarLeft">
+                        <ul>
+                            <li><a href="#radarFiltersTab"><span id='lang_60'>Selection</span></a></li>
+                            <li><a href="#graphQueryFiltersTab"><span id='lang_59'>Vue</span></a></li>
+                            <li><a href="#attrsTab"><span id='lang_37'>Infos.</span></a></li>
+                        </ul>
+                        <div id="legendTab"></div>
+
+
+                        <!--  ****************************************************noeudInitial***************************-->
+
+
+                        <div id="radarFiltersTab">
+                            <div id="topPanel">
+                                <input type="hidden" value="500" id="limitResult">
+                                <table border="0">
+                                    <!--   <tr>
+
+
+                                               <a href="javascript:showGantt()"><b> <span
+                                                       id='lang_52'>Chronologie...</span></b></a>
+
+                                           </td>
+
+
+                                       </tr>-->
+                                    <tr align="center">
+                                        <!-- <td colspan="2"><span id='lang_61'> Selectionner un
+                                                     noeud de depart</span></td> -->
+                                        <td colspan="2" valign="center"> <button onclick="showAdvancedSearchDialog()"> <span id='lang_61'> Advanced Search</span></button>
+
+                                    </tr>
+                                    <tr>
+                                        <td><B></B> Labels</td>
+                                        <td><select id="nodesLabelsSelect"
+                                                    onchange=onLabelSelect(this)></select></td>
+
+                                    </tr>
+
+                                    <tr>
+
+
+                                        <td><span id='lang_1'>Chercher</span></td>
+                                        <td><input id="word" onkeyup="searchNodesUI(this,null)"
+                                                   size="10"></td>
+                                        <td>
+                                            <!-- <button  onclick="showAdvancedSearchDialog()">+</button>-->
+                                            <input type="image"
+                                                   alt="<span id='lang_XX'>search</span>" height="20px"
+                                                   onclick="showSimpleSearchDialog()" id="searchButton"
+                                                   src="images/search.png"/>
+
+                                        </td>
+
+                                    </tr>
+
+
+                                    <tr>
+                                        <td colspan="3">
+                                            <div id="startNodePageNavigation"></div>
+                                        </td>
+                                    </tr>
+                                    <tr colspan="3" valign="middle">
+                                        <td><span id='lang_15'>Profondeur</span>&nbsp;<input
+                                                id="depth" value="1" size="1"></td>
+                                        <td colspan="2">
+                                            <div id="depthSlider" style="width: 130px;"></div>
+                                        </td>
+
+                                    </tr>
+
+                                    <tr>
+                                        <td colspan="3"><select size="15" id="wordsSelect"
+                                                                onclick="onWordSelect(this)">
+                                            <option>--------------</option>
+                                        </select></td>
+
+
+                                    </tr>
+
+                                    <tr>
+                                        <td></td>
+                                    </tr>
+
+
+                                </table>
+                            </div>
+                        </div>
+
+                        <!--  ****************************************************#graphQueryFilters***************************-->
+
+
+                        <div id="graphQueryFiltersTab">
+
+                            <div align="center">
+                                <span id="currentNodeSpan"></span><br>
+
+                            </div>
+                            <!--  	<button onclick="getSVG()">getSVG</button>-->
+
+                            <div id="accordionRepresentation" class="accordionLeft">
+
+                                <h3>
+                                    <span id='lang_3'>Apparence</span>
+                                </h3>
+                                <div id="graphDecorationPanel">
+                                    <table>
+                                        <tr valign="middle">
+
+                                            <td colspan="2" align="center">
+
+                                                <table class="visButtonTable">
+
+                                                    <tr align="center">
+                                                        <td width="100%" colspan="6"><span
+                                                                style="color: white">Representation</span></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td><input type="image" height="30px" alt="fleur"
+                                                                   onclick="onVisButton('FLOWER')" id="treeFlowerButton"
+                                                                   src="images/flower.png"/></td>
+
+                                                        <td><input type="image" height="30px"
+                                                                   alt="<span id='lang_9'>carte</span>"
+                                                                   onclick="onVisButton('SIMPLE_FORCE_GRAPH')"
+                                                                   id="treemapButton" src="images/graph.png"/></td>
+
+                                                        <td><input type="image"
+                                                                   alt="<span id='lang_7'>arbre</span>" height="30px"
+                                                                   onclick="onVisButton('TREE')" id="treeButton"
+                                                                   src="images/tree.png"/></td>
+
+                                                        <td><input type="image" height="30px" alt="carte"
+                                                                   onclick="onVisButton('TREEMAP')" id="treemapButton"
+                                                                   src="images/treemap.png"/></td>
+
+
+                                                        <!--    <td><input type="image" height="30px" alt="carte"
+                                                            onclick="onVisButton('MANUAL')" id="treemapButton"
+                                                            src="images/treeModif.jpg" /></td>
+
+                                                               <td><input type="image" alt="<span id='lang_14'>roue</span>"
+                                                    onclick="onVisButton('FORCE_COLLAPSE')" height="30px"
+                                                    id="wheelButton" src="images/tree.png" /></td>-->
+
+                                                    </tr>
+                                                    <tr align="center">
+                                                        <td valign="middle" colspan="6"><input type="checkbox"
+                                                                                               id="groupByLabelsCbx"
+
+                                                                                               onclick="drawGraphGeneral()"><span
+                                                                style="color: white"><span id='lang_5'>Grouper
+																par labels</span></span></td>
+
+                                                    </tr>
+                                                    <tr align="center">
+                                                        <td valign="middle" colspan="6"><input type="checkbox"
+                                                                                               id="showRelationTypesCbx"
+                                                                                               onclick="drawGraphGeneral()"><span
+                                                                style="color: white"><span
+                                                                id='lang_163'>noms des relation</span></span></td>
+
+                                                    </tr>
+
+
+                                                </table>
+                                                <select style="visibility: hidden;"
+                                                        id="representationSelect" onchange="drawGraphGeneral()">
+
+
+                                                    <option value="FLOWER" selected="selected">flower</option>
+                                                    <option value="TREE">arbre</option>
+                                                    <option value="SIMPLE_FORCE_GRAPH">graphe</option>
+                                                    <option value="TREEMAP">carte</option>
+                                                    <option value="MANUAL">manual</option>
+                                                    <option value="HTML">manual</option>
+
+                                                    <option value="CSV">tableau</option>
+
+                                                    <!--  <option value="LIST">liste</option>
+                                                        <option value="FORCE_COLLAPSE">roue</option>
+                                                     -->
+                                                </select>
+                                            </td>
+                                        </tr>
+
+
+                                        <tr valign="middle">
+                                            <td><B> <span id='lang_16'>ecartement</span>&nbsp;</B></td>
+                                            <td colspan="2">
+                                                <div id="graphForceDistanceSlider" style="width: 130px;"></div>
+
+                                            </td>
+
+                                        </tr>
+
+
+                                        <tr>
+                                            <td><B> <span id='lang_17'>charge</span></B></td>
+                                            <td>
+                                                <div id="graphForceChargeSlider"></div>
+                                            </td>
+                                        </tr>
+
+                                        <tr valign="middle">
+
+                                            <td colspan="2">
+                                                <div id="helpDiv" class="help"></div>
+
+                                            </td>
+
+                                        </tr>
+
+                                        </tr>
+                                    </table>
+
+                                </div>
+
+
+                                <h3>
+                                    <span id='lang_19'>Filtrer les noeud et les relations</span>
+                                </h3>
+                                <div id="graphFiltersPanel">
+								<span class="help"><span id='lang_20'>filtre les
+										noeud et les relations</span></span><br>
+                                    <button onclick="backToNonFilteredGraph()"><span id='lang_160'>supprimer les filtres</span>
+                                    </button>
+                                    <!-- <button id="drawFilteredGraphButton"
+                                            onclick="drawGraphGeneral()">
+                                            <span id='lang_21'>Appliquer les filtres</span>
+                                        </button> -->
+
+                                    <div id="graphQueryFilters"></div>
+
+                                </div>
+
+
+                            </div>
+
+                        </div>
+
+
+                        <!--  ****************************************************attrs***************************-->
+                        <div id="attrsTab">
+
+
+                            <div class="title">proprietes</div>
+                            <div id="infoPanel"></div>
+                            <hr>
+                            <div id="imagePanel"></div>
+                            <button onclick="previousImage()">previous</button>
+                            image
+                            <button onclick="nextImage()">next</button>
+                            <input type="checkbox" id="largeImage"> grandFormat
+                            <button onclick="rotateImage(true)">rotate-</button>
+                            <button onclick="rotateImage()">rotate+</button>
+                            <div id="div_externalRessources">
+                                <div class="title">
+                                    <span id='lang_23'>Ressources externes</span>
+                                </div>
+                                Source :<select id="externalSourceSelect"
+                                                onchange="loadExternalData(this)">
+                                <option></option>
+                                <option value="DbPedia">DBPedia</option>
+                                <option value="BNF">BNF</option>
+
+                            </select>
+                                <button onclick="searhExternalResource()">
+                                    <span id='lang_1'>Chercher</span>
+                                </button>
+                                <div id="externalInfoPanel"></div>
+                                <div id="chronoParams"></div>
+
+
+                            </div>
+
+
+                            <!-- <button onclick='$("#breadcrumb").html("")'><span id='lang_27'>effacer</span></button>
+                                        &nbsp;&nbsp;<span id="breadcrumb"></span> -->
+                        </div>
+
+
+                    </div>
+
+
+                </div>
+            </div>
         </div>
 
 

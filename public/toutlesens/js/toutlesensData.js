@@ -292,6 +292,7 @@ function toFlareJson(resultArray, addToExistingTree) {
                 hiddenChildren: [],
                 neoAttrs: nodeNeo
             }
+
             if (nodeNeo.path) {
                 if (currentThumbnails.ids.indexOf(nodeObj.id) < 0) {
                     currentThumbnails.ids.push(nodeObj.id);
@@ -375,8 +376,9 @@ function toFlareJson(resultArray, addToExistingTree) {
 
     maxEffectiveLevels = 1;
     var maxLevels = parseInt($("#depth").val());
-
+console.log(JSON.stringify(nodesMap))
     addChildRecursive(root, nodesMap, 1, maxLevels);
+
 
     initThumbnails();
     // console.log (JSON.stringify(root));

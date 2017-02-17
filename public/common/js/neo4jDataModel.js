@@ -27,6 +27,7 @@
 
 var dataModel = {
     labels: {},
+    labelsRelations: {},
     relations: {},
     allRelations: {},
     allProperties: [""],
@@ -38,6 +39,7 @@ function initNeoModel(subGraph, callback) {
     dataModel = {
         labels: {},
         relations: {},
+        labelsRelations: {},
         allRelations: {},
         allProperties: [""],
         allRelationsArray: [""],
@@ -77,7 +79,15 @@ function initNeoModel(subGraph, callback) {
                     count2: data[i].count_m,
                 }
 
+                if (obj.relType) {
+                    if (!dataModel.labelsRelations[obj.label1])
+                        dataModel.labelsRelations[obj.label1] = [];
+                    dataModel.labelsRelations[obj.label1].push(obj.relType);
+                    if (!dataModel.labelsRelations[obj.label2])
+                        dataModel.labelsRelations[obj.label2] = [];
+                    dataModel.labelsRelations[obj.label2].push(obj.relType);
 
+                }
                 if (obj.label1 == data[i].label_startNode)
                     obj.direction = "normal";
                 else
@@ -156,14 +166,14 @@ function initNeoModel(subGraph, callback) {
                         }
 
                     }
-                   ,
-                        error: function (xhr, err, msg) {
-                            console.log(xhr);
-                            console.log(err);
-                            console.log(msg);
-                        }
+                    ,
+                    error: function (xhr, err, msg) {
+                        console.log(xhr);
+                        console.log(err);
+                        console.log(msg);
+                    }
 
-                    })
+                })
 
         },
         error: function (xhr, err, msg) {

@@ -6,7 +6,7 @@
 var csv = require('csvtojson');
 var fs = require('fs');
 
-var regexNormeInt = new RegExp("([GS|CR|LI]{2}[- ]MS[- ][A-Z]{3}[- ][0-9]{3})", "gm");
+var regexNormeInt = new RegExp("([GS|CR|LI]{2}[- ]MS[- ][A-Z]{3,4}[- ][0-9]{2,4})", "gm");
 
 var csvFilePath = './normesInternesMS.csv';
 var csvFilePathOut = './normesInternesMS_out.csv';

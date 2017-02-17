@@ -9,7 +9,7 @@ node_modules
 ./public/files
 .npm-debug.log
 upload/*
-
+upload
 
 #############
 ## Windows detritus
