@@ -6,7 +6,7 @@ Souslesens is a tool to visualize and manipulate graphs. It is based on Neo4j, D
 
 ## Getting Started
 
-To run Souslesens you need to have  [Node.js](https://nodejs.org/en/) and  [Noeo4j](https://neo4j.com/download/) working on you server server or laptop
+To run Souslesens you need to have  [Node.js](https://nodejs.org/en/) and  [Neo4j](https://neo4j.com/download/) working on you server server or laptop
 
 ### Prerequisites
 
