@@ -161,7 +161,7 @@
         $("#tabs-radarRight").height(totalHeight - 20);
         $("#radarFiltersTab").width((totalWidth / 4) - 20).height(totalHeight - 50);
         $("#info_panel").width(totalWidth / 4).height(totalHeight - 10);
-        $("#graphDiv").width((totalWidth / 4 * 3) - Gparams.legendWidth).height(totalHeight - 50)
+        $("#graphDiv").width(totalWidth - Gparams.legendWidth).height(totalHeight - 50)
         $("#graphLegendDiv").width(Gparams.legendWidth).height(totalHeight - 50).css("left", $("#graphDiv").width());
         $("#table_Graph").width((totalWidth / 4 * 3) - 50).height(totalHeight - 50);
         $("#textDivContainer").width((totalWidth / 4 * 3) - 50).height(totalHeight - 100);
@@ -179,6 +179,7 @@
         //  $("#graphLegendDiv").width(totalWidth / 4 * 3).height(50);
 
         $("#nodeIframe").width("100%").height(totalHeight - 100);
+        $("#center").width("100%").height(totalHeight - 100);
         $("#modifyControls").width((totalWidth / 4 * 3) - 50).height(totalHeight - 300);
 
 
@@ -236,10 +237,10 @@
             }
         );
 
-        if (queryParams.mode == "write")
+     /*   if (queryParams.mode == "write")
             $("#tabs-radarRight").tabs("option", "disabled", [0, 1, 2]);
         else
-            $("#tabs-radarRight").tabs("option", "disabled", [0, 1, 2, 3, 4]);
+            $("#tabs-radarRight").tabs("option", "disabled", [0, 1, 2, 3, 4]);*/
 
         $("#table_Graph").tabs();
         $("#linkNodesDivAccordion").accordion({
@@ -378,11 +379,12 @@
 
         var text=queryParams.initialQuery;
 
-       var str= "([GS|CR|LI]{2}[- ]MS[- ][A-Z]{3,4}[- ][0-9]{2,4})";
 
+
+    if(text && text.length>0) {
+        var str= "([GS|CR|LI]{2}[- ]MS[- ][A-Z]{3,4}[- ][0-9]{2,4})";
+        text=text.replace(/_/g," ");
         var regex = new RegExp(str, "gm");
-
-    if(text.length>0) {
         var str = "";
         var result;
         var i = 0;
