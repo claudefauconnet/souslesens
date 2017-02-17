@@ -1,1 +1,0 @@
-[{"neoId":369583,"mongoId":"work","label":"YagoType"},{"neoId":369584,"mongoId":"software","label":"YagoType"}]
