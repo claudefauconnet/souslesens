@@ -376,7 +376,7 @@ function toFlareJson(resultArray, addToExistingTree) {
 
     maxEffectiveLevels = 1;
     var maxLevels = parseInt($("#depth").val());
-console.log(JSON.stringify(nodesMap))
+//console.log(JSON.stringify(nodesMap))
     addChildRecursive(root, nodesMap, 1, maxLevels);
 
 

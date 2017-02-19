@@ -96,20 +96,21 @@
         body {
             overflow: hidden;
         }
-        #message{
+
+        #message {
             width: 100%;
             color: red;
             font-style: italic;
-            font-size:14px;
+            font-size: 14px;
         }
     </style>
 
 
     <script>
         $(function () {
-            var types = {0: "pathes", 1: "frequentQuery",2: "cypher"}
+            var types = {0: "pathes", 1: "frequentQuery", 2: "pattern",3:"cypher"}
             currentActionObj = {type: types[0], subGraph: subGraph};
-            initNeoModel(subGraph, [initLabels, initLabelsCurrentQueries]);
+            initNeoModel(subGraph, [initLabels, initLabelsCurrentQueries, patternInitLabels, patternInitRelTypes]);
             setCurrentQueriesSelect();
 
 
@@ -144,7 +145,9 @@
 
         <li><a href="#graphPathDiv"><span id='lang_103'>Chemin entre  noeuds</span></a></li>
         <li><a href="#currentQueriesDiv"><span id='lang_168'>Current queries</span></a></li>
+        <li><a href="#PatternVizDiv"><span id='lang_169'>Pattern viz</span></a></li>
         <li><a href="#cypherQueryDivX"><span id='lang_101'>Cypher query</span></a></li>
+
         <!--  <li><a href="#graphTraversalDiv"><span id='lang_102'>Traversee de graphe</span></a></li>-->
         <li><a href="#graphSavedRequestsDiv"><span id='lang_162'>requetes enregistrees</span></a></li>
 
@@ -177,6 +180,62 @@
 
 
         </table>
+    </div>
+    <div id="PatternVizDiv">
+        <table>
+            <tr>
+
+                <td>
+                    <table>
+                        <tr>
+                            <td>
+                                Add Label
+                            </td>
+                            <td>
+                                <select id="patternLabelSelect"
+                                        onchange="patternAdd(this);onPatternLabelSelect(this)"><option></option></select>
+                            </td>
+
+                        </tr>
+                        <tr>
+                            <td>
+                                 Add relation type
+                            </td>
+                            <td>
+                                <select id="patternRelTypeSelect" onchange="onPatternRelTypeSelect(this)"><option></option></select>
+                            </td>
+
+                        </tr>
+                       <!-- <tr>
+                            <td>
+                                All RelType
+                            </td>
+                            <td>
+                                <select id="patternRelTypeSelect" onchange="patternAdd(this)"><option></option></select>
+                            </td>
+
+                        </tr>-->
+                    </table>
+
+
+                </td>
+                <td>
+
+                    Pattern
+                    <br>
+                    <select id="patternPatternSelect" size="10"></select>
+
+                </td>
+
+                <td>
+                    <button onclick="removeFromPatternSelect()">-</button><br>
+                    <button onclick="executePattern(true)">Count</button><br>
+                    <input id="patternCount">
+                </td>
+            </tr>
+        </table>
+
+
     </div>
 
     <div id="cypherQueryDivX">
@@ -240,8 +299,8 @@
                 <td>
                     <select id="currentQueriesTargetLabelSelect"> </select>
 
-                   &nbsp;direction <select id="currentQueriesDirectionSelect">
-                <option>any</option>
+                    &nbsp;direction <select id="currentQueriesDirectionSelect">
+                    <option>any</option>
                     <option>outgoing</option>
                     <option>incoming</option>
                 </select>
@@ -252,10 +311,10 @@
                     Standard queries
                 </td>
                 <td>
-                    <select id="currentQueriesSelect" onchange="onCurrentQueriesSelect()"> </select>&nbsp;limit<input id="currentQueriesLimit" value="100">
+                    <select id="currentQueriesSelect" onchange="onCurrentQueriesSelect()"> </select>&nbsp;limit<input
+                        id="currentQueriesLimit" value="100">
                 </td>
             </tr>
-
 
 
         </table>

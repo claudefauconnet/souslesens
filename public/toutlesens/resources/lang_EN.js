@@ -139,6 +139,6 @@ langResources['EN'] = {
     "lang_166": "relation type",
     "lang_167": "relation property",
     "lang_168": "Standard queries",
-
+    "lang_169": "Looking for patterns",
 
 }

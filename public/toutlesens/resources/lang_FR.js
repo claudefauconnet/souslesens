@@ -139,6 +139,7 @@ langResources['FR'] = {
     "lang_166": "type de la relation",
     "lang_167": "propriete de la relation",
     "lang_168": "Requetes standard",
+    "lang_169": "chercher  des patterns",
 
 
 

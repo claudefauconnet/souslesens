@@ -14,6 +14,7 @@ function setCsvImportFields(json) {
     fillSelectOptionsWithStringArray(dbSelect,  [json.name]);
 //  $("#dbSelect").val('CSV');
     loadRequests();
+    onCollSelect();
 
 
 }

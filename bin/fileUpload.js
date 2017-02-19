@@ -1,8 +1,6 @@
 var fs = require('fs');
 var multer = require('multer');
-
-
-
+var serverParams=require('./serverParams.js')
 
 
 var diskStorage = multer.diskStorage({
@@ -20,11 +18,14 @@ var memStorage = multer.memoryStorage()
 
 
 var fileUpload = {
-    upload: function (req,fieldName, callback) {
+    upload: function (req, fieldName, callback) {
         var storage = diskStorage;
-    if (callback)
+        if (callback)
             storage = memStorage;
-        var upload = multer({storage: storage}).single(fieldName);
+        var upload = multer({
+            storage: storage,
+            limits: {fileSize: serverParams.uploadMaxSize}
+        }).single(fieldName);
         upload(req, null, function (err) {
             if (err) {
                 callback('Error Occured' + err);
@@ -38,7 +39,6 @@ var fileUpload = {
 
 
 }
-
 
 
 module.exports = fileUpload;

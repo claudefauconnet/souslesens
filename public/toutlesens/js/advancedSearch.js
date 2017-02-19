@@ -52,9 +52,7 @@ function onTargetNodeClick() {
 }
 
 
-
-
-function showSimpleSearchDialog(){
+function showSimpleSearchDialog() {
     $("#dialog").dialog("option", "title", "valeur d'une propriete");
     str = getAllpropertiesDialogContent("setSearchNodeReturnFilterVal(true)");
     str += '<button onclick=" closeDialog()">Cancel</button><br>';
@@ -131,11 +129,11 @@ function showNodeSelectionDialog(value) {
 }
 
 
-function setTargetNodeVisibility(hide){
-    if(hide || $("#graphPathSourceNode").val()=="")
-    $(".targetNode").css("visibility","hidden");
-   else
-        $(".targetNode").css("visibility","visible");
+function setTargetNodeVisibility(hide) {
+    if (hide || $("#graphPathSourceNode").val() == "")
+        $(".targetNode").css("visibility", "hidden");
+    else
+        $(".targetNode").css("visibility", "visible");
 }
 
 function setTargetNodeLabel() {
@@ -289,9 +287,6 @@ function execute() {
 }
 
 
-
-
-
 function executePathQuery() {
     var maxDistance = parseInt($("#graphPathMaxDistance").val());
     var algo = "allSimplePaths"// $("#graphPathsAlgorithm").val();
@@ -426,15 +421,20 @@ function executeCypherAndDisplayGraph(query, _currentActionObj) {
     currentActionObj = _currentActionObj;
 
 
-    if( currentActionObj.graphPathTargetNode) {
+    if (currentActionObj.graphPathTargetNode) {
         currentDataStructure = "flat";
         currentDisplayType = "SIMPLE_FORCE_GRAPH";
         $("#graphForceDistance").val(20);
     }
-    else if(currentActionObj.type=="pattern") {
+    else if (currentActionObj.type == "pattern") {
         currentDataStructure = "flat";
         currentDisplayType = "SIMPLE_FORCE_GRAPH_BULK";
-        $("#graphForceDistance").val(20);
+        executeQuery(QUERY_TYPE_MATCH, query, function (data) {
+            cachedResultArray = data;
+            data.patternNodes = currentActionObj.nodes;
+            displayGraph(data, currentDisplayType, null)
+        });
+        return;
     }
     else {
         currentDataStructure = "tree";
@@ -498,17 +498,17 @@ function setCypherqueryMatch(done) {
 
 function searchByNamesList(list) {
     var names;
-if(typeof list=="string" )
-     names=list.split(",");
-else
-    names=list;
-    var query="MATCH path=(n)-[r]-(m) where n.nom IN ["
-    for(var i=0;i<names.length;i++){
-        if(i>0)
-            query+=","
-        query+="\'"+names[i]+"\'";
+    if (typeof list == "string")
+        names = list.split(",");
+    else
+        names = list;
+    var query = "MATCH path=(n)-[r]-(m) where n.nom IN ["
+    for (var i = 0; i < names.length; i++) {
+        if (i > 0)
+            query += ","
+        query += "\'" + names[i] + "\'";
     }
-    query+="] return "+ returnStr;
+    query += "] return " + returnStr;
     executeCypherAndDisplayGraph(query);
 
 }
@@ -668,49 +668,75 @@ function onExecuteTraversalQuery() {
 }
 
 
-
-
 /*********************Patterns***************************/
-function patternInitLabels(){
-  //  initLabels(subGraph,"patternLabelSelect");
-   for(var key in dataModel.labels){
-var value="("+key+")";
+function patternInitLabels() {
+    //  initLabels(subGraph,"patternLabelSelect");
+    for (var key in dataModel.labels) {
+        var value = "(" + key + ")";
         $('#patternLabelSelect').append($('<option/>', {
-            value: value,
-            text : value
+            value: key,
+            text: value
         }));
     }
 }
-function patternInitRelTypes(){
-    var array=dataModel.allRelationsArray;
-    for (var i=0;i<array.length;i++){
-        value="-[:"+array[i]+"]-";
+function patternInitRelTypes() {
+    var array = dataModel.allRelationsArray;
+    for (var i = 0; i < array.length; i++) {
+        value = "-[:" + array[i] + "]-";
         $('#patternRelTypeSelect').append($('<option/>', {
-            value: value,
-            text : value
+            text: value,
+            value: array[i]
         }));
     }
 
 }
 
-function setPatternDirectLabelSelect(select){
-    patternDirectRelTypeSelect.options.length=0;
-    var value=$(select).val();
-    value=value.substring(1,value.length-1);
-   var key =dataModel.labelsRelations[value];
-   key.splice(0,0,"");
-    for (var i=0;i<key.length;i++){
-        value="-[:"+key[i]+"]-";
-        $('#patternDirectRelTypeSelect').append($('<option/>', {
-            value: value,
-            text : value
+function onPatternLabelSelect(select) {
+    patternRelTypeSelect.options.length = 0;
+    var value = $(select).val();
+    var key = dataModel.labelsRelations[value];
+    key.splice(0, 0, "");
+    for (var i = 0; i < key.length; i++) {
+        var text = "-[:" + key[i] + "]-";
+        $('#patternRelTypeSelect').append($('<option/>', {
+            value:  key[i],
+            text: text
         }));
     }
 
+
 }
-function patternAdd(select){
-    var value=$(select).val();
-    if(value && value.length>0) {
+
+function onPatternRelTypeSelect(select) {
+    patternLabelSelect.options.length = 0;
+    var value = $(select).val();
+    var rels = dataModel.allRelations[value];
+
+    var labels=[]
+    for(var rel in rels){
+        for(var i=0;i<rel.length;i++){
+            if(labels.indexOf(rel[i]<0))
+                labels.push(rel[i]);
+
+        }
+    }
+
+
+        key.splice(0, 0, "");
+    for (var i = 0; i < key.length; i++) {
+        text = "(" + key[i] + ")";
+        $('#patternLabelSelect').append($('<option/>', {
+            value: key[i],
+            text: text
+        }));
+    }
+
+
+}
+
+function patternAdd(select) {
+    var value = $(select).text();
+    if (value && value.length > 0) {
         $('#patternPatternSelect').append($('<option/>', {
             value: value,
             text: value
@@ -719,29 +745,78 @@ function patternAdd(select){
 
 }
 
-function removeFromPatternSelect(){
-    var val=$('#patternPatternSelect').val()
-    $("#patternPatternSelect option[value='"+val+"']").remove();
+function removeFromPatternSelect() {
+    var val = $('#patternPatternSelect').val()
+    $("#patternPatternSelect option[value='" + val + "']").remove();
 }
 
 
-function executePattern(){
+function executePattern(count) {
 
-    var match="MATCH path=";
-    $("#patternPatternSelect option").each(function() {
+    var query = getPatternQuery(count);
+    executeQuery(QUERY_TYPE_MATCH, query, function (data) {
 
-        match+=$(this).val();
-    })
-    if(match.substring(match.length-1)=="-")
-        match+-"()";
-    match+=" return path";
-    console.log(match);
+        var nodes = [];
+        ;
 
-    var matchAll= "MATCH path=(n)-[r]-(m) where n.subGraph='"+subGraph+"' ";
-    matchAll+=" return "+returnStr +"  limit 500";
-    currentActionObj={
-        type:"pattern"
-    };
+        if(count){
+            $("#patternCount").val(data.length)
+        }
+        else {
+
+
+            var regex = /.+\/([0-9]+)/;
+            for (var i = 0; i < data.length; i++) {
+                var nodes0 = data[i].path.nodes;
+                for (var j = 0; j < nodes0.length; j++) {
+                    var array = regex.exec(nodes0[j]);
+                    var node = parseInt(array[1]);
+                    if (nodes.indexOf(node) < 0)
+                        nodes.push(node);
+                }
+            }
+            currentActionObj = {
+                type: "pattern",
+                nodes: nodes
+            };
+
+            showWholeGraph(subGraph, currentActionObj);
+        }
+
+    });
+}
+
+function showWholeGraph(subGraph,currentActionObj){
+    if(!currentActionObj){
+        if(!Gparams.startWithWholeGraphView===true)
+           return;
+        currentActionObj = {
+            type: "pattern",
+        };
+    }
+    var matchAll = "MATCH path=(n)-[r]-(m) where n.subGraph='" + subGraph + "' ";
+    matchAll += " return " + returnStr+ "  limit "+Gparams.wholeGraphViewMaxNodes;
+
     console.log(matchAll);
-    window.parent.executeCypherAndDisplayGraph(matchAll, currentActionObj);
+    if (window.parent.executeCypherAndDisplayGraph)
+        window.parent.executeCypherAndDisplayGraph(matchAll, currentActionObj);
+    else
+        executeCypherAndDisplayGraph(matchAll, currentActionObj);
+
+}
+
+function getPatternQuery(count) {
+    var match = "MATCH path=";
+    $("#patternPatternSelect option").each(function () {
+
+        match += $(this).val();
+    })
+    if (match.charAt(match.length - 1) == "-")
+        match += "()";
+    if (count)
+        match += " return count(path)";
+    else
+        match += " return path";
+    console.log(match);
+    return match;
 }

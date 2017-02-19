@@ -22,9 +22,10 @@ var exportToNeoBatch = {
             var requestData = fs.readFileSync("./uploads/requests_" + dbName + ".json");
             if (requestData) {
                 requestData = JSON.parse("" + requestData);
-                for (var i = 0; i < requestData.length; i++) {
-                    if (requestNames.indexOf(requestData[i].name) > -1)
-                        requestsToExecute.push(requestData[i]);
+             //   for (var i = 0; i < requestData.length; i++) {
+                for(var key in requestData ){
+                    if (requestNames.indexOf(requestData[key].name) > -1)
+                        requestsToExecute.push(requestData[key]);
 
                 }
 

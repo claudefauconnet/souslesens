@@ -29,12 +29,33 @@ var dbName;
 var neoApiUrl = "../exportMongoToNeo";
 var currentRequests;
 var importType = "LINK";
+
+var help = {
+
+    mongoField: "field that will give its name attribute to the created node in Neo",
+    exportedFields: "fields that will be exported as attributes of this nodes type in Neo (separated by ;)",
+    distinctValues: "create nodes only for distinct values of the Mongo Field",
+    mongoQuery: "query to filter nodes in the input sources (only for MongoDB by now)",
+    label: " Neo Label for the new nodes or a field name if begins with #",
+
+    mongoSourceField: "Field used as source  join key ",
+    mongoTargetField: "Field used as target  join key ",
+    neoSourceLabel: "Neo label where  source  join key was imported in Neo4j",
+    neoTargetLabel: "Neo label where  target  join key was imported in Neo4j",
+    relationType: "name given to the relation",
+    neoRelAttributeField: "fields that will be exported as attributes of this  relation type in Neo (separated by ;)",
+    mongoQueryR: "query to filter nodes in the input sources (only for MongoDB by now)"
+
+
+}
+
+
 // messageDivId=document.getElementById("message");
 
 $(function () {
 
     loadSubgraphs("hist-antiq");
-
+    $("#importSourceType").val("");
 
     $('form[name=new_post]').submit(function () {
         $.ajax({
@@ -245,24 +266,46 @@ function setMongoField() {
 
 }
 
-function setMongoLabelField() {
-    var fieldSelect = $("#fieldSelect").val();
-    $("#label").val("#" + fieldSelect);
+function getRelLabelForField(fieldName) {
+    if (currentRequests) {
+        for (var i = 0; i < currentRequests.length; i++) {
+            if (currentRequests[i].request.mongoField == fieldName)
+                return currentRequests[i].request.label;
+        }
 
+    }
+    return "";
 }
 function setMongoSourceField() {
-    var fieldSelect = $("#fieldSelect").val();
-    $("#mongoSourceField").val(fieldSelect);
+    var field = $("#fieldSelect").val();
+    $("#mongoSourceField").val(field);
+    loadLabels();
+    label = getRelLabelForField(field);
+    $("#neoSourceLabel").val(label);
+
 }
 
 function setMongoTargetField() {
-    var fieldSelect = $("#fieldSelect").val();
-    $("#mongoTargetField").val(fieldSelect);
+    var field = $("#fieldSelect").val();
+    $("#mongoTargetField").val(field);
+    label = getRelLabelForField(field);
+    $("#neoTargetLabel").val(label);
 }
 function setNeoRelAttributeField() {
     var fieldSelect = $("#fieldSelect").val();
     $("#neoRelAttributeField").val(fieldSelect);
 }
+function setNeoSourceLabel() {
+    var labelSelect = $("#labelsSelect").val();
+    $("#neoSourceLabel").val(labelSelect);
+}
+
+function setNeoTargetLabel() {
+    var labelSelect = $("#labelsSelect").val();
+    $("#neoTargetLabel").val(labelSelect);
+}
+
+
 function validateMongoQuery(mongoQuery) {
     if (!mongoQuery || mongoQuery.length == 0) {
         mongoQuery = "{}";
@@ -291,7 +334,9 @@ function exportNeoNodes(execute, save) {
     var mongoQuery = $("#mongoQuery").val();
     var subGraph = $("#subGraphSelect").val();
     var distinctValues = $("#distinctValues").prop('checked');
-    var mongoIdField = $("#mongoIdField").val();
+    // var mongoIdField = $("#mongoIdField").val();
+    var mongoIdField = mongoField;// change : more simple !!
+
 
     mongoQuery = validateMongoQuery(mongoQuery);
     if (!mongoQuery)
@@ -329,7 +374,8 @@ function exportNeoNodes(execute, save) {
         saveRequest(JSON.stringify(data).replace(/,/, ",\n"));
     if (execute) {
         $("#exportResultDiv").html("");
-        callExportToNeo("node", data);
+        callExportToNeo("node", data, loadLabels);
+
     }
 
 
@@ -383,6 +429,7 @@ function exportNeoLinks(execute, save) {
     if (execute) {
         $("#exportResultDiv").html("");
         callExportToNeo("relation", data);
+
     }
 
 
@@ -399,16 +446,16 @@ function afterImport(data) {
 }
 
 
-function loadLabels(subGraphName) {// not used
-
-    return;
+function loadLabels(subGraphName) {
 
 
+    if (!subGraphName)
+        subGraphName = $('#subGraphSelect').val();
     var match = "Match (n) where n.subGraph=\"" + subGraphName
         + "\" return distinct labels(n)[0] as label";
     callNeoMatch(match, null, function (data) {
 
-        if (data && data.length > 0) {// } && results[0].data.length >
+        if (data && data.length > 0) {
             var labels = []
             for (var i = 0; i < data.length; i++) {
                 var value = data[i].label;
@@ -416,7 +463,7 @@ function loadLabels(subGraphName) {// not used
 
             }
             labels.splice(0, 0, "");
-            //     fillSelectOptionsWithStringArray(labelsSelect, labels)
+            fillSelectOptionsWithStringArray(labelsSelect, labels)
 
         }
     });
@@ -495,18 +542,25 @@ function saveRequest(json) {
         date: new Date()
     }
     var query = {name: name};
-    if (mongoDB.indexOf(".csv")>-1) {
-        if (!currentRequests)
-            currentRequests = {};
-        data.name = data.name;
-        currentRequests[name] = data;
+
+    if (mongoDB.indexOf(".csv") > -1) {
+        var requestsObj = {}
+        if (currentRequests) {
+            for (var i = 0; i < currentRequests.length; i++) {
+                requestsObj[currentRequests[i].name] = currentRequests[i];
+            }
+
+        }
+
+
+        requestsObj[name] = data;
         var path = "./uploads/requests_" + $("#collSelect").val() + ".json";
         var paramsObj = {
 
 
             path: path,
             store: true,
-            data: currentRequests
+            data: requestsObj
         }
         $.ajax({
             type: "POST",
@@ -561,21 +615,25 @@ function loadRequests() {
             success: function (data, textStatus, jqXHR) {
                 if (!data)
                     return;
-                var currentRequestsObj = data;
-                var requestsArray = [];
-
-                for (var key in data) {
-
-                    requestsArray.push(data[key]);
-
-                }
+                //   var currentRequestsObj = data;
+                //  var requestsArray = [];
                 currentRequests = [];
-                for (var key in currentRequestsObj) {
+                for (var key in data) {
+                    if (typeof data[key].request == "string")
+                        data[key].request = JSON.parse(data[key].request);
+                    currentRequests.push(data[key]);
 
-                    var obj = currentRequestsObj[key];
-                    currentRequests.push(obj);
+
                 }
-                fillSelectOptions(requests, requestsArray, "name", "name");
+
+                /*  for (var key in currentRequestsObj) {
+
+                 var obj = currentRequestsObj[key];
+                 if(typeof obj.request=="string")
+                 obj.request=JSON.parse( obj.request);
+                 currentRequests.push(obj);
+                 }*/
+                fillSelectOptions(requests, currentRequests, "name", "name");
                 setRequestSubGraphFilterOptions();
             },
 
@@ -938,6 +996,7 @@ function setImportSourceType() {
         $("#importMongoDiv").css("visibility", "hidden");
         $(".dbInfos").css("visibility", "visible");
 
+
     } else if (type == "MongoDB") {
         initDBs();
         $("#importCSVdiv").css("visibility", "hidden");
@@ -945,5 +1004,12 @@ function setImportSourceType() {
         $(".dbInfos").css("visibility", "visible");
 
     }
+
+}
+
+function showHelp(fieldName) {
+    $("#message").html(help[fieldName]);
+    //setMessage(help[fieldName],"blue");
+
 
 }

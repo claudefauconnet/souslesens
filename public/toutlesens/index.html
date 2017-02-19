@@ -121,7 +121,7 @@
         var queryParams = getQueryParams(document.location.search);
 
 
-        initNeoModel(subGraph, initLabels);
+        initNeoModel(subGraph, [initLabels,showWholeGraph]);
         initFunctionalities();
         var mode = queryParams.mode;
         if (mode == "write")
@@ -398,6 +398,10 @@
         $("#popupMenuNodeInfoDiv").mouseleave(function () {
             $(this).hide();
         });
+
+
+
+
 
 
     })

@@ -36,9 +36,6 @@
           href="../common/js/others/jquery.datatables.min.css"/>
 
 
-    <link rel="stylesheet" type="text/css" href="css/index00.css"/>
-
-
     <script src="../common/js/jquery/jquery.min.js"></script>
     <script src="../common/js/jquery/jquery-ui.min.js"></script>
     <script src="../common/js/jquery/jquery.splitter.js"></script>
@@ -176,10 +173,12 @@
             opacity: 0.9;
 
         }
-        #subGraphSelect,#labelsSelect{
-            width:200px !important;
+
+        #subGraphSelect, #labelsSelect {
+            width: 200px !important;
         }
-        #sourceTable{
+
+        #sourceTable {
             align-content: center !important;;
             align-items: center !important;;
         }
@@ -224,7 +223,8 @@
             $("#info_panel").width(totalWidth - 30).height(totalHeight - 10);
             $("#graphDiv").width(totalWidth - (split + right )).height(totalHeight - 100);
             $("#tabs-center").width((totalWidth - (split + right ))).height(totalHeight - 10);
-            $("#right").width((right)).height(totalHeight - 10).height(totalHeight - 10);;
+            $("#right").width((right)).height(totalHeight - 10).height(totalHeight - 10);
+            ;
 
 
             $(".splitter_panel").width(totalWidth - split).height(totalHeight - 10);
@@ -271,11 +271,13 @@
 
 
                     <tr class="source">
-                        <td>Data to import<hr> Import type <br><select id="importSourceType" onchange="setImportSourceType()">
-                            <option></option>
-                            <option>MongoDB</option>
-                            <option>CSV</option>
-                        </select>
+                        <td>Data to import
+                            <hr>
+                            Import type <br><select id="importSourceType" onchange="setImportSourceType()">
+                                <option selected="selected"></option>
+                                <option>MongoDB</option>
+                                <option>CSV</option>
+                            </select>
                         </td>
                     </tr>
 
@@ -347,7 +349,7 @@
                         <li><a href="#savedQueries">savedQueries</a></li>
                         <li><a href="#export2NeoNodes">Nodes export to Neo </a></li>
                         <li><a href="#export2NeoLinks">Links export to Neo</a></li>
-                        <li><a href="#graphDivTab">graph</a></li>
+                     <!--   <li><a href="#graphDivTab">graph</a></li>-->
                         <li><a href="#exportCypherDivTab">exportCypher</a></li>
                         <!--	<li><a href="#createForeignKey">createForeignKey</a></li>  -->
 
@@ -410,60 +412,60 @@
                     exportNodes(String db, String collection, List<String> fields, DBObject query, String nameMongoField,String subGraph, String label) {
                 -->
                     <div id="export2NeoNodes">
-
+                <input type="hidden" name="nodeInput" id="mongoIdField" value="">
+                        <input type="hidden" name="nodeInput" id="mongoCollectionNode">
 
                         <table>
 
-                            <tr class="source">
-                                <td align="right">Collection
+                           <!-- <tr class="source">
+                                <td align="right">Collection <button onclick="showHelp('mongoQuery')">?</button></td>
 
-                                <td><input name="nodeInput" id="mongoCollectionNode"></td>
-                                <td><span class="comment"> collection</span></td>
-                            </tr>
-                            <tr class="source">
-                                <td align="right">Field
+                                <td><input disabled="disabled" name="nodeInput" id="mongoCollectionNode"></td>
+
+                            </tr>-->
+                            <tr class="source0">
+                                <td align="right">Field </td>
+                                <td>
                                     <button onclick="setMongoField()">Set</button>
-                                </td>
-                                <td><input name="nodeInput" id="mongoField"></td>
-                                <td><span class="comment"> field that will give
-								its name to the created node in Neo</span></td>
-                            </tr>
-                            <tr class="source">
-                                <td align="right"> Id Field</td>
-                                <td><input name="nodeInput" id="mongoIdField" value="id"></td>
-                                <td><span class="comment"> Field used as Id in
-								Neo</span></td>
+                                    <input disabled="disabled"   name="nodeInput" id="mongoField"></td>
+                                <td> <button onclick="showHelp('mongoField')">?</button></td>
+
                             </tr>
 
-                            <tr class="source">
-                                <td align="right">exportedFields
+                            <!-- <tr class="source">
+                                 <td align="right"> Id Field</td>
+                                 <td><input name="nodeInput" id="mongoIdField" value="id"></td>
+                                 <td><span class="comment"> Field used as Id in
+                                 Neo</span></td>
+                             </tr>-->
+
+                            <tr class="source0">
+                                <td align="right">exportedFields  </td>
+                                <td>
                                     <button onclick="addToExportedFields()">Add</button>
-                                </td>
-                                <td><input name="nodeInput" id="exportedFields"></td>
-                                <td><span class="comment"> field that will be
-								exported as attributes of node in Neo</span></td>
+                                    <input disabled="disabled"  name="nodeInput" id="exportedFields"></td>
+                                <td> <button onclick="showHelp('exportedFields')">?</button></td>
                             </tr>
-                            <tr class="source">
-                                <td align="right">distinct values</td>
+                            <tr class="source0">
+                                <td align="right">distinct values </td>
                                 <td align="left"><input type="checkbox" id="distinctValues" checked="checked"></td>
-                                <td><span class="comment">create nodes only for
-								distinct values of the Mongo Field</span></td>
+                                <td> <button onclick="showHelp('distinctValues')">?</button></td>
                             </tr>
-                            <tr class="source">
-                                <td align="right">Query</td>
+                            <tr class="source0">
+                                <td align="right">Query   </td>
                                 <td><input name="nodeInput" id="mongoQuery" value="{}"></td>
-                                <td><span class="comment"> query to filter nodes
-								to create</span></td>
+                                <td> <button onclick="showHelp('mongoQuery')">?</button></td>
                             </tr>
 
 
-                            <tr class="neoTarget">
-                                <td align="right" class="neoTarget">label
-                                    <button onclick="setMongoLabelField()">Set</button>
+                            <tr class="neoTarget0">
+                                <td align="right">label
+
                                 </td>
-                                <td><input name="nodeInput" id="label"></td>
-                                <td><span class="comment">Neo Label for the new nodes(
-								default collection name) or a field if begins with #</span></td>
+                                <td><input name="nodeInput" id="label">
+
+                                </td>
+                                <td> <button onclick="showHelp('label')">?</button></td>
                             </tr>
 
                         </table>
@@ -481,70 +483,78 @@
 
 
                     <div id="export2NeoLinks">
-
+                <input type="hidden" name="linkInput" id="mongoCollectionRel">
                         <table>
 
-                            <tr>
+                         <!--   <tr>
                                 <td align="right" class="source">Collection
 
                                 <td><input name="linkInput" id="mongoCollectionRel"></td>
                                 <td><span class="comment"> collection</span></td>
+                            </tr>-->
+
+                            <tr class="source0">
+                                <td align="right"> Source Field</td>
+                                <td>  <button onclick="setMongoSourceField()">Set</button>
+                                    <input disabled="disabled" name="linkInput" id="mongoSourceField"></td>
+                                <td> <button onclick="showHelp('mongoSourceField')">?</button></td>
                             </tr>
 
-                            <tr class="source">
-                                <td align="right"> Source Field
-                                    <button onclick="setMongoSourceField()">Set</button>
-                                </td>
-                                <td><input name="linkInput" id="mongoSourceField"></td>
-                                <td><span class="comment"> Mongo start key to create
-								the relation</span></td>
-                            </tr>
-
-                            <tr class="neoTarget">
+                            <tr class="neoTarget0">
                                 <td align="right">Neo Source Label</td>
-                                <td><input name="linkInput" id="neoSourceLabel"></td>
-                                <td><span class="comment">Neo label for the source
-								node in the relation</span></td>
+                                <td><input disabled="disabled"  name="linkInput" id="neoSourceLabel">
+                                    <button onclick="setNeoSourceLabel()">SET</button></td>
+                                <td> <button onclick="showHelp('neoSourceLabel')">?</button></td>
+                            </tr>
+                            <tr class="source0">
+                                <td align="right"></td>
+                                <td> &nbsp;   </td>
+                                <td></td>
                             </tr>
 
-                            <tr class="source">
-                                <td align="right"> Target Field
-                                    <button onclick="setMongoTargetField()">Add</button>
-                                </td>
-                                <td><input name="linkInput" id="mongoTargetField"></td>
-                                <td><span class="comment"> end key to create the
-								relation</span></td>
+
+                            <tr class="source0">
+                                <td align="right"> Target Field </td>
+                                <td> <button onclick="setMongoTargetField()">Set</button>
+                                    <input disabled="disabled" name="linkInput" id="mongoTargetField"></td>
+
+                                <td> <button onclick="showHelp('mongoTargetField')">?</button></td>
                             </tr>
 
-                            <tr class="neoTarget">
+                            <tr class="neoTarget0">
                                 <td align="right">Neo Target Label</td>
-                                <td><input name="linkInput" id="neoTargetLabel"></td>
-                                <td><span class="comment">Neo label for the target
-								node in the relation</span></td>
+                                <td><input disabled="disabled" name="linkInput" id="neoTargetLabel">
+                                    <button onclick="setNeoTargetLabel()">Set</button></td>
+                                <td> <button onclick="showHelp('neoTargetLabel')">?</button></td>
                             </tr>
 
-                            <tr class="neoTarget">
-                                <td align="right">Neo relation type</td>
-                                <td><input name="linkInput" id="relationType"></td>
-                                <td><span class="comment">type of the relation(
-								default collection name)</span></td>
+                            <tr class="source0">
+                                <td align="right"></td>
+                                <td>&nbsp;  </td>
+                                <td></td>
                             </tr>
-                            <tr class="source">
+
+                            <tr class="neoTarget0">
+                                <td align="right">Neo relation type</td>
+                                <td><input  name="linkInput" id="relationType"></td>
+                                <td> <button onclick="showHelp('relationType')">?</button></td>
+                            </tr>
+                            <tr class="source0">
 
                                 <td align="right">Neo Rel Attribute Field
                                     <button onclick="setNeoRelAttributeField()">Add</button>
                                 </td>
-                                <td><input name="linkInput" id="neoRelAttributeField"></td>
-                                <td><span class="comment"> field used as
-								attribute for the relation</span></td>
+                                <td><input disabled="disabled" name="linkInput" id="neoRelAttributeField"></td>
+
+                                <td> <button onclick="showHelp('neoRelAttributeField')">?</button></td>
                             </tr>
 
 
-                            <tr class="source">
+                            <tr class="source0">
                                 <td align="right">Query</td>
                                 <td><input name="linkInput" id="mongoQueryR" value="{}"></td>
-                                <td><span class="comment"> query to filter
-								relations to create</span></td>
+
+                                <td> <button onclick="showHelp('mongoQueryR')">?</button></td>
                             </tr>
 
                         </table>
@@ -623,29 +633,29 @@
                 <td>
 
 
+                    <table width="250">
+                        <tr class=" neoTarget" align="center">
+                            <td>
+                                Neo4j subGraph&nbsp;
 
-                        <table width="250">
-                            <tr class=" neoTarget" align="center">
-                                <td>
-                                    Neo4j subGraph&nbsp;
+                                <br>
+                                <select id="subGraphSelect" onchange="onSubGraphSelect(this,false)"></select>
+                                <button onclick="addSubGraph()">New</button>
+                                <br>
+                                <button onclick="eraseNeoSubgraph()">Delete subgraph</button>
+                                <br>
+                             <!--   <button onclick="loadSubgraphs($('#subGraphSelect').val())">Reload subGraphs</button>
+                                <br>-->
 
-                                    <br>
-                                    <select id="subGraphSelect" onchange="onSubGraphSelect(this,false)"></select>
-                                    <button onclick="addSubGraph()">New</button>
-                                    <br>
-                                    <button onclick="eraseNeoSubgraph()">Remove subgraph</button>
-                                    <br>
-                                    <button onclick="loadSubgraphs($('#subGraphSelect').val())">Reload subGraph</button>
-                                    <br>
 
-                                    <button onclick="loadLabels($('#subGraphSelect').val())">Reload labels</button>
-                                    <br>
-                                    <select id="labelsSelect" onchange="onLabelSelect(this)"
-                                            size="5"></select>
+                                <select id="labelsSelect" onchange="onLabelSelect(this)"
+                                        size="10"></select>
+                                <br>
+                                <button onclick="loadLabels($('#subGraphSelect').val())">Reload labels</button>
 
-                                </td>
-                            </tr>
-                        </table>
+                            </td>
+                        </tr>
+                    </table>
 
                 </td>
 

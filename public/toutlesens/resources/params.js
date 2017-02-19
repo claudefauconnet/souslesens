@@ -1,5 +1,7 @@
 var Gparams = {
     readOnly: true,
+    startWithWholeGraphView:true,
+    wholeGraphViewMaxNodes:5000,
     modifyMode:'onList',//''onList'
     MaxResults: 2000,
     lang: "EN",
