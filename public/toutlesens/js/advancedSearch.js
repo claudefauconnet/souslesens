@@ -697,52 +697,62 @@ function onPatternLabelSelect(select) {
     var key = dataModel.labelsRelations[value];
     key.splice(0, 0, "");
     for (var i = 0; i < key.length; i++) {
-        var text = "-[:" + key[i] + "]-";
+        if (i == 0)
+            text = "";
+        else
+            var text = "-[:" + key[i] + "]-";
         $('#patternRelTypeSelect').append($('<option/>', {
-            value:  key[i],
-            text: text
-        }));
-    }
-
-
-}
-
-function onPatternRelTypeSelect(select) {
-    patternLabelSelect.options.length = 0;
-    var value = $(select).val();
-    var rels = dataModel.allRelations[value];
-
-    var labels=[]
-    for(var rel in rels){
-        for(var i=0;i<rel.length;i++){
-            if(labels.indexOf(rel[i]<0))
-                labels.push(rel[i]);
-
-        }
-    }
-
-
-        key.splice(0, 0, "");
-    for (var i = 0; i < key.length; i++) {
-        text = "(" + key[i] + ")";
-        $('#patternLabelSelect').append($('<option/>', {
             value: key[i],
             text: text
         }));
     }
+    patternAdd("(" + value + ")", value)
+
+}
+
+function patternResetLabel(){
+    patternPatternSelect.options.length = 0;
+    patternRelTypeSelect.options.length = 0;
+    patternInitLabels();
+}
+
+function onPatternRelTypeSelect(select) {
+    var previousValue=$(select).val()
+    patternLabelSelect.options.length = 0;
+    var value = $(select).val();
+    var rel = dataModel.allRelations[value];
+
+    var labels = []
+
+    for (var i = 0; i < rel.length; i++) {
+        var label = rel[i].endLabel;
+        if (labels.indexOf(label) < 0)
+            labels.push(label);
+    }
+
+
+    labels.splice(0, 0, "");
+    for (var i = 0; i < labels.length; i++) {
+        if (i == 0)
+            text = "";
+        else
+            text = "(" + labels[i] + ")";
+        $('#patternLabelSelect').append($('<option/>', {
+            value: labels[i],
+            text: text
+        }));
+    }
+    patternAdd("-[:" + value + "]-", value)
 
 
 }
 
-function patternAdd(select) {
-    var value = $(select).text();
-    if (value && value.length > 0) {
-        $('#patternPatternSelect').append($('<option/>', {
-            value: value,
-            text: value
-        }));
-    }
+function patternAdd(text, value) {
 
+    $('#patternPatternSelect').append($('<option/>', {
+        value: value,
+        text: text
+    }));
 }
 
 function removeFromPatternSelect() {
@@ -759,7 +769,7 @@ function executePattern(count) {
         var nodes = [];
         ;
 
-        if(count){
+        if (count) {
             $("#patternCount").val(data.length)
         }
         else {
@@ -786,16 +796,16 @@ function executePattern(count) {
     });
 }
 
-function showWholeGraph(subGraph,currentActionObj){
-    if(!currentActionObj){
-        if(!Gparams.startWithWholeGraphView===true)
-           return;
+function showWholeGraph(subGraph, currentActionObj) {
+    if (!currentActionObj) {
+        if (!Gparams.startWithWholeGraphView === true)
+            return;
         currentActionObj = {
             type: "pattern",
         };
     }
     var matchAll = "MATCH path=(n)-[r]-(m) where n.subGraph='" + subGraph + "' ";
-    matchAll += " return " + returnStr+ "  limit "+Gparams.wholeGraphViewMaxNodes;
+    matchAll += " return " + returnStr + "  limit " + Gparams.wholeGraphViewMaxNodes;
 
     console.log(matchAll);
     if (window.parent.executeCypherAndDisplayGraph)
@@ -807,13 +817,15 @@ function showWholeGraph(subGraph,currentActionObj){
 
 function getPatternQuery(count) {
     var match = "MATCH path=";
+    var value;
     $("#patternPatternSelect option").each(function () {
+        match += $(this).text();
+        value += $(this).val();
 
-        match += $(this).val();
     })
     if (match.charAt(match.length - 1) == "-")
         match += "()";
-    if (count)
+    if (false && count)
         match += " return count(path)";
     else
         match += " return path";

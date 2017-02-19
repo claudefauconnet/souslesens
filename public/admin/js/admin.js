@@ -554,6 +554,7 @@ function saveRequest(json) {
 
 
         requestsObj[name] = data;
+        currentRequests.push(data)
         var path = "./uploads/requests_" + $("#collSelect").val() + ".json";
         var paramsObj = {
 

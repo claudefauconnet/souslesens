@@ -1,17 +1,33 @@
 function drawsimpleForceBulk(json) {
-var patternNodes=json.patternNodes;
+    var patternNodes = json.patternNodes;
 
     var forceData = buildNodesAndLinks(json);
-    for(var i=0;i<forceData.nodes.length;i++){
-        if(!patternNodes)// tous les noeuds visibility 1
-            forceData.nodes[i].blongsToPattern=true;
-        else if(patternNodes.indexOf(forceData.nodes[i].id)>-1) {
+    var linkNodeIndexes = [];
+    for (var i = 0; i < forceData.nodes.length; i++) {
+        if (!patternNodes)// tous les noeuds visibility 1
             forceData.nodes[i].blongsToPattern = true;
+        else if (patternNodes.indexOf(forceData.nodes[i].id) > -1) {
+            forceData.nodes[i].blongsToPattern = true;
+            linkNodeIndexes.push(forceData.nodes[i].nodeIndex);
+        }
+
+
+    }
+
+    for (var i = 0; i < forceData.links.length; i++) {
+
+        if (linkNodeIndexes.indexOf(forceData.links[i].target) > -1 && forceData.nodes[forceData.links[i].source].blongsToPattern == true) {
+            forceData.links[i].drawLink = true;
+
+        }
+        if (linkNodeIndexes.indexOf(forceData.links[i].source) > -1 && forceData.nodes[forceData.links[i].target].blongsToPattern == true) {
+            forceData.links[i].drawLink = true;
 
         }
 
 
     }
+
 
 //	 makeDiag( forceData.nodes, forceData.links);
     drawSimpleForceBulk(forceData.nodes, forceData.links);
@@ -28,8 +44,8 @@ function drawSimpleForceBulk(nodes, links) {
     var charge = Gparams.d3ForceParams.charge;
     var gravity = Gparams.d3ForceParams.gravity;
     var distance = Gparams.d3ForceParams.distance;
-    charge=charge/10;
-    distance=distance/10;
+    charge = charge / 10;
+    distance = distance / 10;
     var isDragging = false;
 
 
@@ -126,27 +142,28 @@ function drawSimpleForceBulk(nodes, links) {
 
 
         link.each(function (d) {
-            var aLine = d3.select(this)
+            if (d.drawLink) {
+                d3.select(this).insert("svg:line", ".line").attr("class", "link")
+                    .attr("x1", function (d) {
+                        return d.source.px;
+                    })
+                    .attr("y1", function (d) {
+                        return d.source.py;
+                    })
+                    .attr("x2", function (d) {
+                        return d.target.px;
+                    })
+                    .attr("y2", function (d) {
+                        return d.target.py;
+                    })
 
-            /*   link.enter().insert("svg:line", ".line").attr("class", "link")
-                .attr("x1", function (d) {
-                    return d.source.px;
-                })
-                .attr("y1", function (d) {
-                    return d.source.py;
-                })
-                .attr("x2", function (d) {
-                    return d.target.px;
-                })
-                .attr("y2", function (d) {
-                    return d.target.py;
-                })
-
-           .style("stroke", function(d) {
-             return "brown";
-             })
-             .attr("stroke-width", 1)
-             .attr("stroke", "#65dbf1").attr("fill", "none")*/
+                    .style("stroke", function (d) {
+                        return "brown";
+                    })
+                    .attr("stroke-width", 1)
+                    .attr("fill", "none")
+                ;
+            }
         });
 
 
@@ -173,22 +190,27 @@ function drawSimpleForceBulk(nodes, links) {
                     .style("fill", function (d) {
                         if (d.decoration && d.decoration.color)
                             return d.decoration.color;
-                        if(d.label && nodeColors[d.label])
+                        if (d.label && nodeColors[d.label])
                             return nodeColors[d.label];
                         return "grey";
                     })
 
                     .style('opacity', function (d) {
-                        console.log( d.label+"  :  "+d.blongsToPattern)
-                        if(d.blongsToPattern)
+                        //    console.log( d.label+"  :  "+d.blongsToPattern)
+                        if (d.blongsToPattern)
                             return 1;
                         return 0.2;
-                     if (d.isRoot || d.isTarget)
-                     return 1;
-                     return Gparams.minOpacity;
+                        if (d.isRoot || d.isTarget)
+                            return 1;
+                        return Gparams.minOpacity;
 
-                     })
+                    })
                     .attr("class", "shape");
+                if (d.blongsToPattern) {
+                    anode.on("mouseover", function (d) {
+                        d3CommonMouseover(d)
+                    });
+                }
 
             });
         }
@@ -198,8 +220,8 @@ function drawSimpleForceBulk(nodes, links) {
 
 
     function tick() {
-        if(false) {
-        link.select("path").attr("d", function (d) {
+        if (false) {
+            link.select("path").attr("d", function (d) {
 
                 if (d.source.isSource) {
                     d.source.x = 100;
@@ -217,21 +239,23 @@ function drawSimpleForceBulk(nodes, links) {
 
                 // console.log(str);
                 return str;
-        });
-
-        }
-
-            link.attr("x1", function(d) {
-                return d.source.px;
-            }).attr("y1", function(d) {
-                return d.source.py;
-            }).attr("x2", function(d) {
-                return d.target.px;
-            }).attr("y2", function(d) {
-                return d.target.py;
             });
 
+        }
+        link.select("line").attr("d", function (d) {
+            if (d.drawLink) {
 
+                d3.select(this).attr("x1", function (d) {
+                    return d.source.px;
+                }).attr("y1", function (d) {
+                    return d.source.py;
+                }).attr("x2", function (d) {
+                    return d.target.px;
+                }).attr("y2", function (d) {
+                    return d.target.py;
+                });
+            }
+        });
 
 
         node.attr("transform", function (d) {
