@@ -1921,7 +1921,7 @@ function switchModifyMode(cbx) {
 }
 
 function showPopupMenu(x, y, type) {
-    var popup = "popupMenuRead";
+  var popup = "popupMenuRead";
 
     if (type && type == "label") {
         popup = "popupMenuLabel";
@@ -1932,8 +1932,8 @@ function showPopupMenu(x, y, type) {
         $("#popupMenuNodeInfoDiv").show();
     }
 
-    else if (currentMode == "write")
-        popup = "popupMenuWrite";
+   /* else if (currentMode == "write")
+        popup = "popupMenuWrite";*/
 
 
     $("#" + popup).css("visibility", "visible").css("top", y).css("left", x);

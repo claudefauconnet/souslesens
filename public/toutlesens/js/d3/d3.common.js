@@ -191,7 +191,7 @@ function appendSplitText(d3Group, text, fontSize) {
     var xxx = d3.select(d3Group).selectAll("rect")[0][0]
     witdh = xxx.__data__.dx;
     height = xxx.__data__.dy;
-if(witdh>100)
+if(text.indexOf("Apollon")>-1)
     var x="";
 
     var charsByLine = witdh / fontSize*1.8;

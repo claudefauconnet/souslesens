@@ -344,10 +344,16 @@ function toFlareJson(resultArray, addToExistingTree) {
                     }
                 }
 
-                if (linksToSkip
+               /* if (linksToSkip
                     && linksToSkip.indexOf("" + nodeObj.id + "_"
-                        + nodeObj.parent) < 0)
-                    nodesMap[nodeObj.id] = nodeObj;
+                        + nodeObj.parent) < 0)*/
+               if( nodesMap[nodeObj.id]){// create a new id if allready existing
+                   nodeObj.id=(-j*1000000000)+nodeObj.id;
+                   ids[j]= nodeObj.id;
+               }
+
+                   nodesMap[nodeObj.id] = nodeObj;
+
 
             }
 

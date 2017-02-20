@@ -706,7 +706,7 @@ function onPatternLabelSelect(select) {
             text: text
         }));
     }
-    patternAdd("(" + value + ")", value)
+    patternAdd("(:" + value + ")", value)
 
 }
 
@@ -736,7 +736,7 @@ function onPatternRelTypeSelect(select) {
         if (i == 0)
             text = "";
         else
-            text = "(" + labels[i] + ")";
+            text = "(:" + labels[i] + ")";
         $('#patternLabelSelect').append($('<option/>', {
             value: labels[i],
             text: text
@@ -816,7 +816,7 @@ function showWholeGraph(subGraph, currentActionObj) {
 }
 
 function getPatternQuery(count) {
-    var match = "MATCH path=";
+    var match = "";
     var value;
     $("#patternPatternSelect option").each(function () {
         match += $(this).text();
@@ -825,6 +825,9 @@ function getPatternQuery(count) {
     })
     if (match.charAt(match.length - 1) == "-")
         match += "()";
+    if (match.charAt(0) == "-")
+        match ="()"+match;
+    match="MATCH path="+match;
     if (false && count)
         match += " return count(path)";
     else
