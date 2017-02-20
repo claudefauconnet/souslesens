@@ -492,15 +492,52 @@ function loadSubgraphs(defaultSubGraph) {
 
 function deleteRequest() {
     var request = $("#requests").val();
+    var db=$("#dbSelect").val();
+
     if (confirm("delete request :" + request)) {
-        callMongo("", {
-            delete: 1,
-            dbName: $("#dbSelect").val(),
-            collectionName: "requests_" + $("#subGraphSelect").val(),
-            query: {name: request},
-        }, function (result) {
-            $("#requests option:contains(" + request + ")").remove();
-        });
+        if (db.indexOf(".csv") > -1) {
+            var requestsObj={}
+            for(var i=0;i<currentRequests.length;i++){
+                if(currentRequests[i].name!=request)
+                requestsObj[currentRequests[i].name] = currentRequests[i];
+            }
+
+            var path = "./uploads/requests_" + $("#collSelect").val() + ".json";
+            var paramsObj = {
+                path: path,
+                store: true,
+                data: requestsObj
+            }
+            $.ajax({
+                type: "POST",
+                url: "/jsonFileStorage",
+                data: paramsObj,
+                dataType: "json",
+                success: function (data, textStatus, jqXHR) {
+                    setMessage("request "+request+" deleted", "green");
+                    $("#requests option:contains(" + request + ")").remove();
+                },
+
+                error: function (xhr, err, msg) {
+                    setMessage(err, "red");
+                    console.log(xhr);
+                    console.log(err);
+                    console.log(msg);
+                },
+
+            });
+
+        } else {
+
+            callMongo("", {
+                delete: 1,
+                dbName:db ,
+                collectionName: "requests_" +request,
+                query: {name: request},
+            }, function (result) {
+                $("#requests option:contains(" + request + ")").remove();
+            });
+        }
     }
 }
 
@@ -509,7 +546,7 @@ function saveRequest(json) {
     var subGraph = $("#subGraphSelect").val();
     var query = "action=saveQuery";
     var mongoDB = $("#dbSelect").val();
-    var mongoDB = $("#dbSelect").val();
+
     //var json = $("#exportParams").val();
     if (json.indexOf("relationType") > -1) {
         json = json.replace("mongoCollection", "mongoCollectionRel");
@@ -551,10 +588,13 @@ function saveRequest(json) {
             }
 
         }
+        else {
+            currentRequests = [];
+        }
 
+        currentRequests.push(data)
 
         requestsObj[name] = data;
-        currentRequests.push(data)
         var path = "./uploads/requests_" + $("#collSelect").val() + ".json";
         var paramsObj = {
 
@@ -574,6 +614,7 @@ function saveRequest(json) {
             },
 
             error: function (xhr, err, msg) {
+                setMessage(err, "red");
                 console.log(xhr);
                 console.log(err);
                 console.log(msg);

@@ -124,11 +124,11 @@
         }
 
         #tabs-center input {
-            width: 400px;
+            width: 250px;
         }
 
         #tabs-center select {
-            width: 400px;
+            width: 250px;
         }
 
         #labelsDiv0000 {
@@ -163,14 +163,16 @@
         }
 
         .source {
-            background-color: wheat;
+            background-color: tan;
             opacity: 0.9;
+            color: black;
 
         }
 
         .neoTarget {
             background-color: #7f9f7f;
             opacity: 0.9;
+            color: black;
 
         }
 
@@ -270,7 +272,7 @@
                 <table align="center" id="sourceTable">
 
 
-                    <tr class="source">
+                    <tr class="source"  align="center">
                         <td>Data to import
                             <hr>
                             Import type <br><select id="importSourceType" onchange="setImportSourceType()">
@@ -281,7 +283,7 @@
                         </td>
                     </tr>
 
-                    <tr class="source">
+                    <tr class="source"  align="center">
                         <td>
 
                             <div id="importCSVdiv">
@@ -289,9 +291,8 @@
                                 <form name="uploadCcvForm" enctype="multipart/form-data" action="/uploadCsvForNeo"
                                       method="post"
                                       target="votar">
-                                    <input type="file" name="csv" class='exportNeo'/>
+                                    <input type="file" name="csv" class='exportNeo' value="choose file..."/>
                                     <input type="submit" value="upload" name="submit" class='exportNeo'/>
-                                    <!--    <button onclick="submitCsvForm()">upload</button>-->
                                 </form>
                             </div>
                         </td>
@@ -299,7 +300,7 @@
                     </tr>
 
 
-                    <tr class="source">
+                    <tr class="source"  align="center">
                         <td>
 
                             Source<br>
@@ -349,7 +350,7 @@
                         <li><a href="#savedQueries">savedQueries</a></li>
                         <li><a href="#export2NeoNodes">Nodes export to Neo </a></li>
                         <li><a href="#export2NeoLinks">Links export to Neo</a></li>
-                     <!--   <li><a href="#graphDivTab">graph</a></li>-->
+                        <!--   <li><a href="#graphDivTab">graph</a></li>-->
                         <li><a href="#exportCypherDivTab">exportCypher</a></li>
                         <!--	<li><a href="#createForeignKey">createForeignKey</a></li>  -->
 
@@ -412,49 +413,45 @@
                     exportNodes(String db, String collection, List<String> fields, DBObject query, String nameMongoField,String subGraph, String label) {
                 -->
                     <div id="export2NeoNodes">
-                <input type="hidden" name="nodeInput" id="mongoIdField" value="">
+                        <input type="hidden" name="nodeInput" id="mongoIdField" value="">
                         <input type="hidden" name="nodeInput" id="mongoCollectionNode">
 
                         <table>
 
-                           <!-- <tr class="source">
-                                <td align="right">Collection <button onclick="showHelp('mongoQuery')">?</button></td>
-
-                                <td><input disabled="disabled" name="nodeInput" id="mongoCollectionNode"></td>
-
-                            </tr>-->
-                            <tr class="source0">
-                                <td align="right">Field </td>
+                            <tr>
+                                <td align="right">Field</td>
                                 <td>
-                                    <button onclick="setMongoField()">Set</button>
-                                    <input disabled="disabled"   name="nodeInput" id="mongoField"></td>
-                                <td> <button onclick="showHelp('mongoField')">?</button></td>
+                                    <button class="source" onclick="setMongoField()">Set</button>
+                                    <input disabled="disabled" name="nodeInput" id="mongoField"></td>
+                                <td>
+                                    <button onclick="showHelp('mongoField')">?</button>
+                                </td>
 
                             </tr>
 
-                            <!-- <tr class="source">
-                                 <td align="right"> Id Field</td>
-                                 <td><input name="nodeInput" id="mongoIdField" value="id"></td>
-                                 <td><span class="comment"> Field used as Id in
-                                 Neo</span></td>
-                             </tr>-->
 
-                            <tr class="source0">
-                                <td align="right">exportedFields  </td>
+                            <tr>
+                                <td align="right">exportedFields</td>
                                 <td>
-                                    <button onclick="addToExportedFields()">Add</button>
-                                    <input disabled="disabled"  name="nodeInput" id="exportedFields"></td>
-                                <td> <button onclick="showHelp('exportedFields')">?</button></td>
+                                    <button class="source" onclick="addToExportedFields()">Add</button>
+                                    <input name="nodeInput" id="exportedFields"></td>
+                                <td>
+                                    <button onclick="showHelp('exportedFields')">?</button>
+                                </td>
                             </tr>
                             <tr class="source0">
-                                <td align="right">distinct values </td>
+                                <td align="right">distinct values</td>
                                 <td align="left"><input type="checkbox" id="distinctValues" checked="checked"></td>
-                                <td> <button onclick="showHelp('distinctValues')">?</button></td>
+                                <td>
+                                    <button onclick="showHelp('distinctValues')">?</button>
+                                </td>
                             </tr>
                             <tr class="source0">
-                                <td align="right">Query   </td>
+                                <td align="right">Query</td>
                                 <td><input name="nodeInput" id="mongoQuery" value="{}"></td>
-                                <td> <button onclick="showHelp('mongoQuery')">?</button></td>
+                                <td>
+                                    <button onclick="showHelp('mongoQuery')">?</button>
+                                </td>
                             </tr>
 
 
@@ -465,7 +462,9 @@
                                 <td><input name="nodeInput" id="label">
 
                                 </td>
-                                <td> <button onclick="showHelp('label')">?</button></td>
+                                <td>
+                                    <button onclick="showHelp('label')">?</button>
+                                </td>
                             </tr>
 
                         </table>
@@ -483,28 +482,27 @@
 
 
                     <div id="export2NeoLinks">
-                <input type="hidden" name="linkInput" id="mongoCollectionRel">
+                        <input type="hidden" name="linkInput" id="mongoCollectionRel">
                         <table>
 
-                         <!--   <tr>
-                                <td align="right" class="source">Collection
-
-                                <td><input name="linkInput" id="mongoCollectionRel"></td>
-                                <td><span class="comment"> collection</span></td>
-                            </tr>-->
-
-                            <tr class="source0">
+                            <tr>
                                 <td align="right"> Source Field</td>
-                                <td>  <button onclick="setMongoSourceField()">Set</button>
+                                <td>
+                                    <button class="source" onclick="setMongoSourceField()">Set</button>
                                     <input disabled="disabled" name="linkInput" id="mongoSourceField"></td>
-                                <td> <button onclick="showHelp('mongoSourceField')">?</button></td>
+                                <td>
+                                    <button onclick="showHelp('mongoSourceField')">?</button>
+                                </td>
                             </tr>
 
-                            <tr class="neoTarget0">
+                            <tr>
                                 <td align="right">Neo Source Label</td>
-                                <td><input disabled="disabled"  name="linkInput" id="neoSourceLabel">
-                                    <button onclick="setNeoSourceLabel()">SET</button></td>
-                                <td> <button onclick="showHelp('neoSourceLabel')">?</button></td>
+                                <td><input disabled="disabled" name="linkInput" id="neoSourceLabel">
+                                    <button class="neoTarget" onclick="setNeoSourceLabel()">Set</button>
+                                </td>
+                                <td>
+                                    <button onclick="showHelp('neoSourceLabel')">?</button>
+                                </td>
                             </tr>
                             <tr class="source0">
                                 <td align="right"></td>
@@ -513,19 +511,25 @@
                             </tr>
 
 
-                            <tr class="source0">
-                                <td align="right"> Target Field </td>
-                                <td> <button onclick="setMongoTargetField()">Set</button>
+                            <tr>
+                                <td align="right"> Target Field</td>
+                                <td>
+                                    <button class="source" onclick="setMongoTargetField()">Set</button>
                                     <input disabled="disabled" name="linkInput" id="mongoTargetField"></td>
 
-                                <td> <button onclick="showHelp('mongoTargetField')">?</button></td>
+                                <td>
+                                    <button onclick="showHelp('mongoTargetField')">?</button>
+                                </td>
                             </tr>
 
-                            <tr class="neoTarget0">
+                            <tr>
                                 <td align="right">Neo Target Label</td>
                                 <td><input disabled="disabled" name="linkInput" id="neoTargetLabel">
-                                    <button onclick="setNeoTargetLabel()">Set</button></td>
-                                <td> <button onclick="showHelp('neoTargetLabel')">?</button></td>
+                                    <button class="neoTarget" onclick="setNeoTargetLabel()">Set</button>
+                                </td>
+                                <td>
+                                    <button onclick="showHelp('neoTargetLabel')">?</button>
+                                </td>
                             </tr>
 
                             <tr class="source0">
@@ -534,27 +538,33 @@
                                 <td></td>
                             </tr>
 
-                            <tr class="neoTarget0">
+                            <tr>
                                 <td align="right">Neo relation type</td>
-                                <td><input  name="linkInput" id="relationType"></td>
-                                <td> <button onclick="showHelp('relationType')">?</button></td>
-                            </tr>
-                            <tr class="source0">
-
-                                <td align="right">Neo Rel Attribute Field
-                                    <button onclick="setNeoRelAttributeField()">Add</button>
+                                <td><input name="linkInput" id="relationType"></td>
+                                <td>
+                                    <button onclick="showHelp('relationType')">?</button>
                                 </td>
-                                <td><input disabled="disabled" name="linkInput" id="neoRelAttributeField"></td>
+                            </tr>
+                            <tr>
 
-                                <td> <button onclick="showHelp('neoRelAttributeField')">?</button></td>
+                                <td align="right">Neo Rel Attributes Field
+                                    <button class="source" onclick="setNeoRelAttributeField()">Add</button>
+                                </td>
+                                <td><input name="linkInput" id="neoRelAttributeField"></td>
+
+                                <td>
+                                    <button onclick="showHelp('neoRelAttributeField')">?</button>
+                                </td>
                             </tr>
 
 
-                            <tr class="source0">
+                            <tr>
                                 <td align="right">Query</td>
                                 <td><input name="linkInput" id="mongoQueryR" value="{}"></td>
 
-                                <td> <button onclick="showHelp('mongoQueryR')">?</button></td>
+                                <td>
+                                    <button onclick="showHelp('mongoQueryR')">?</button>
+                                </td>
                             </tr>
 
                         </table>
@@ -584,10 +594,6 @@
                                     </form>
                                 </td>
 
-
-                                <!--   <td>
-                                         import file located on  server<input id="importPathOnServer" size="30"><button onclick="importOnServer()">Importer</button>
-                                     </td>-->
                             </tr>
                             <tr>
                                 <td>Export</td>
@@ -644,10 +650,10 @@
                                 <br>
                                 <button onclick="eraseNeoSubgraph()">Delete subgraph</button>
                                 <br>
-                             <!--   <button onclick="loadSubgraphs($('#subGraphSelect').val())">Reload subGraphs</button>
-                                <br>-->
+                                <!--   <button onclick="loadSubgraphs($('#subGraphSelect').val())">Reload subGraphs</button>
+                                   <br>-->
 
-
+                                Neo4J labels<br>
                                 <select id="labelsSelect" onchange="onLabelSelect(this)"
                                         size="10"></select>
                                 <br>
