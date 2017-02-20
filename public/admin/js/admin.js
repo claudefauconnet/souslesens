@@ -546,7 +546,7 @@ function saveRequest(json) {
     var subGraph = $("#subGraphSelect").val();
     var query = "action=saveQuery";
     var mongoDB = $("#dbSelect").val();
-
+    var mongoField = $("#mongoField").val();
     //var json = $("#exportParams").val();
     if (json.indexOf("relationType") > -1) {
         json = json.replace("mongoCollection", "mongoCollectionRel");
@@ -567,7 +567,7 @@ function saveRequest(json) {
     }
     if (json.indexOf("label") > -1) {
         type = "node";
-        name += "Nodes_" + $("#subGraphSelect").val() + "." + $("#label").val();
+        name += "Nodes_" + $("#subGraphSelect").val() + "." + $("#label").val()+"_"+mongoField;
     }
 
 

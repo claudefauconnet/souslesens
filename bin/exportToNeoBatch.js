@@ -52,7 +52,7 @@ var exportToNeoBatch = {
             var callbackG = _callbackG;
 
 
-            async.eachSeries(requestsToExecute, function (request, callbackBatch) {
+            async.eachSeries(requestsToExecute, function (request, callback) {
                     var message = request.name + " executing";
                     console.log(message);
                     socket.message(message);
@@ -74,12 +74,14 @@ var exportToNeoBatch = {
                         exportMongoToNeo.exportNodes(requestObj, function (err, result) {
                             if (err) {
                                 console.log(err);
-                                callbackBatch(null);
+                                callback(err);
                                 globalMessage.push(err);
                                 return;
                             }
-                            globalMessage.push(result);
-                            callbackBatch(null);
+                            else {
+                                globalMessage.push(result);
+                                callback();
+                            }
                         });
                     }
                     else if (request.name.indexOf("Rels_") == 0) {
@@ -89,13 +91,13 @@ var exportToNeoBatch = {
                             if (err) {
                                 console.log(err);
                                 globalMessage.push(err);
-                                //  callbackBatch(null);
+                                callback(null);
 
                             }
                             else {
                                 console.log("--imported--" + result);
                                 globalMessage.push(result);
-                                callbackBatch(null);
+                                callback();
                             }
                         });
                     }
