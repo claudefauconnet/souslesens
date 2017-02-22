@@ -4,12 +4,9 @@
 .idea
 node_modules
 .gitignore
-./bin/jfm/
-./bin/jfm/trump
 ./public/files
 .npm-debug.log
-upload/*
-upload
+
 
 #############
 ## Windows detritus
@@ -29,3 +26,7 @@ $RECYCLE.BIN/
 .DS_Store
 
 
+uploads/*.js
+uploads/*.json
+bin/sinequa/*
+bin/jfm/*
