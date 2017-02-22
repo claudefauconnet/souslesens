@@ -7,12 +7,13 @@ var neoProxy = require('./neoProxy.js');
 
 var neoImportObjects = {
 
-    writeNodesToNeoNodes: function (label, _objs, callback) {
+    writeNodesToNeoNodes: function ( _objs, callback) {
         var objs = _objs;
         var path = "/db/data/transaction/commit";
 
 
         var statements = [];
+        var label;
         for (var i = 0; i < objs.length; i++) {
             var obj = objs[i];
 
@@ -22,7 +23,7 @@ var neoImportObjects = {
             if (labelFieldValue != null) {
                 label = labelFieldValue;
                 delete  obj._labelField;
-            }
+            }else label=obj.label;
 
             var attrs = JSON.stringify(obj).replace(/"(\w+)"\s*:/g, '$1:');// quote the keys in json
             var statement = {statement: "CREATE (n:" + label + attrs + ")  RETURN n.id,ID(n), labels(n)"};
@@ -60,6 +61,8 @@ var neoImportObjects = {
         targetField:"",
         relationType:"",
         neoRelAttributeField:"",
+     sourceLabel:"",
+     targetLabel:"
        }
 
      */
