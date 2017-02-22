@@ -3,7 +3,6 @@
  */
 
 
-
 function roundRange(range) {
 
     var magnMin = ("" + Math.abs(range.min)).length;

@@ -15,6 +15,7 @@ var pathes=["public/admin/js",
 
 ]
 
+
 for(var i=0;i<pathes.length;i++) {
     var path = "../" + pathes[i]+"/";
     var files = fs.readdirSync(path);

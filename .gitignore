@@ -30,3 +30,5 @@ uploads/*.js
 uploads/*.json
 bin/sinequa/*
 bin/jfm/*
+bin/discogs/*
+bin/test.js
