@@ -32,3 +32,5 @@ bin/sinequa/*
 bin/jfm/*
 bin/discogs/*
 bin/test.js
+!bin/sinequa/entities2Neo.js
+

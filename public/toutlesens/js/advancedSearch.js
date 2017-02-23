@@ -509,7 +509,7 @@ function searchByNamesList(list) {
         query += "\'" + names[i] + "\'";
     }
     query += "] return " + returnStr;
-    executeCypherAndDisplayGraph(query);
+    executeCypherAndDisplayGraph(query,"searchByNameList");
 
 }
 //********************************************************old*****************************************
