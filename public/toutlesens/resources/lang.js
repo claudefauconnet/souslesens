@@ -4,7 +4,7 @@ var langResources = {}
 $(function() {
 	var queryParams = getQueryParams(document.location.search);
 
-	if (!queryParams.lang && window.parent)
+	if (!queryParams.lang && window.parent.toFlareJson)
 	 queryParams.lang = window.parent.lang;
 	if (queryParams.lang)
 		Gparams.lang = queryParams.lang;
