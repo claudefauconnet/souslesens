@@ -120,8 +120,8 @@ currentThumbnails.currentIndex = -1;
 $(document).ready(function () {
     var queryParams = getQueryParams(document.location.search);
     subGraph = queryParams.subGraph;
-    if (!subGraph  && window.parent.toFlareJson)
-        subGraph = window.parent.subGraph;
+  //  if (!subGraph  && window.parent.toFlareJson)
+    //    subGraph = window.parent.subGraph;
 
 });
 

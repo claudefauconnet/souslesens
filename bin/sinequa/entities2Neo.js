@@ -10,10 +10,11 @@ var existingNodes=[];
 //***************************************Params****************************************************
 var toProcessArray = [
     {
-        sinequaFilePath: './neoNormes_surete.csv',
-        neoSubGraph: 'SinequaSurete',
-        regexArray: ['regexNormeInt', 'regexNormeExt', 'regexLegalLaw']//, 'regexLegalReg']
+        sinequaFilePath: './normes_refMSX.csv',
+        neoSubGraph: 'SinequaRefMS',
+        regexArray: ['regexNormeInt']//, 'regexLegalReg']
     }
+
 ];
 
 var regeDefs = {
@@ -27,76 +28,83 @@ var regeDefs = {
 
 
 
-function parse(text, regex, sourceLabel, targetLabel,relType, subGraph){
+function parse(text, regex, sourceLabel, targetLabel,relType, subGraph) {
 
     var lines = text.split('\n');
     var newObjs = [];
 
     for (var i = 0; i < lines.length; i++) {
-        var p=lines[i].indexOf('\t');
-        var filename=lines[i].substring(0,p);
-        if(existingNodes.indexOf(filename)>-1)// on importe les noeuds qu'une fois pour l'instant !!!!!
-            continue;
-        var line=lines[i].substring(p+1);
-        var linkedDocs = [];
-           var array;
-     while ((array = regex.exec(line)) !== null) {
-                linkedDocs.push(array[0])
-        }
-        if (linkedDocs.length>0) {
-            newObjs[filename] = linkedDocs;
+
+        var cells = lines[i].split('\t');
+        if (cells.length > 2) {
+            for (var j = 0; j < cells.length; j++) {
+                var obj = {
+                    id: cells[0],
+                    nom: cells[1]
+            }
+                var linkedDocs = [];
+                var array;
+                while ((array = regex.exec(cells[2])) !== null) {
+                    linkedDocs.push(array[0])
+                }
+                obj.targets = linkedDocs;
+                if(obj.targets.length>0)
+                newObjs.push(obj);
+
+            }
         }
 
-  /*  var array=line.split(";");
-    for(var i=0;i<array.length;i++){
-        if(!array[i].match(/([0-9]*,[0-9]*)/) && linkedDocs.indexOf(array[i]<0) ){
-            linkedDocs.push(array[i])
-        }
 
-    }
-        if (filename) {
-            newObjs[filename] = linkedDocs;
-        }*/
 
 
     }
-
-    writeNodesToNeo(newObjs, sourceLabel,targetLabel, relType, subGraph);
-
+    writeNodesToNeo(newObjs, sourceLabel, targetLabel, relType, subGraph);
 }
 
 
 function writeNodesToNeo(newObjs, sourceLabel,targetLabel, relType, subGraph) {
     var nodesArray = [];
     var relsArray = [];
-    for (var key in newObjs) {
+    var uniqueNodes=[];
 
-        var obj = {
-            nom: key,
+    for (var i = 0; i < newObjs.length; i++) {
+        var newObj = newObjs[i];
+
+        var objNode = {
+            nom: newObj.nom,
             subGraph: subGraph,
-            id: key,
-            label:sourceLabel
+            id: newObj.id,
+            label: sourceLabel
         }
-        nodesArray.push(obj);
-        for (var i = 0; i < newObjs[key].length; i++) {
-            obj = {
-                nom: newObjs[key][i],
-                subGraph: subGraph,
-                id: newObjs[key][i],
-                label:targetLabel
-            }
-            nodesArray.push(obj);
-
-            var relObj = {
-                source: key,
-                target: newObjs[key][i],
-
-            }
-
-            relsArray.push(relObj);
-
-
+        if(uniqueNodes.indexOf(objNode.id)<0) {
+            uniqueNodes.push(objNode.id);
+            nodesArray.push(objNode);
         }
+        if (newObj.targets){
+            for (var j = 0; j < newObj.targets.length; j++) {
+
+                var target = newObj.targets[j];
+                if(uniqueNodes.indexOf(target)<0) {
+                    uniqueNodes.push(target);
+                    var targetNode = {
+                        nom: target,
+                        subGraph: subGraph,
+                        id: target,
+                        label: targetLabel
+                    }
+                    nodesArray.push(targetNode);
+                }
+                var relObj = {
+                    source: objNode.id,
+                    target: target,
+
+                }
+
+                relsArray.push(relObj);
+
+
+            }
+    }
 
     }
     neoImportObjects.writeNodesToNeoNodes( nodesArray, function (result) {

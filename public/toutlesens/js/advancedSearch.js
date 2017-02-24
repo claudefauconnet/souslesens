@@ -445,8 +445,9 @@ function executeCypherAndDisplayGraph(query, _currentActionObj) {
     $("#tabs-radarLeft").tabs("enable");
     executeQuery(QUERY_TYPE_MATCH, query, function (data) {
         cachedResultArray = data;
+        var output = "SIMPLE_FORCE_GRAPH";
 
-        displayGraph(data, currentDisplayType, null)
+        displayGraph(data, output, null)
     });
 }
 
@@ -502,7 +503,7 @@ function searchByNamesList(list) {
         names = list.split(",");
     else
         names = list;
-    var query = "MATCH path=(n)-[r]-(m) where n.nom IN ["
+    var query = "MATCH path=(n)-[r]-(m) where n.id in ["
     for (var i = 0; i < names.length; i++) {
         if (i > 0)
             query += ","
