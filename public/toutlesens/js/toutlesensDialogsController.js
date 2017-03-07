@@ -94,7 +94,6 @@ function saveStoredDecorationObjsDialog() {
     $("#dialog").dialog("open")//;.parent().position({ my: 'center', at: 'center', of: '#tabs-radarRight' });
 }
 
-
 function setPopupMenuNodeInfoContent() {
     var name = formatNode(currentObject).name;
 

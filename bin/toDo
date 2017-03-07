@@ -1,4 +1,7 @@
 
+
+bug import :"/" dans les cles d'import transformé en - à corriger
+
 force graph global avec patterns
 pb subgraph // multi label pour JP
 classes arrondies pour advanced display

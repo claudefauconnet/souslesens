@@ -37,6 +37,7 @@ var Gparams = {
     d3ForceParams: {distance: 200, charge: -500, gravity: .25},
     htmlOutputWithAttrs: true,
     showRelationNames: false,
+    isInframe:false,
     treeGraphVertSpacing: 35,
     bigDialogSize :{w: 800, h: 500},
     gantt: {

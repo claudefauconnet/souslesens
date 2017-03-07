@@ -54,6 +54,7 @@
     <script src="js/toutlesensData.js"></script>
     <script src="resources/params.js"></script>
     <script src="js/advancedDisplay.js"></script>
+    <script src="js/storedParams.js"></script>
     <script src="js/toutlesensDialogsController.js"></script>
 
 
@@ -101,13 +102,13 @@
                     var index = ui.newTab.index();
 
                     if (index == 1) {
-                        loadStoredDecorationObjs();
+                        loadStoredParams("decoration");
                     }
 
                 }
             });
 
-            $("#graphDecorationTabsDiv").tabs("option", "disabled", [1]);
+          //  $("#graphDecorationTabsDiv").tabs("option", "disabled", [1]);
 
             $("#dialog").dialog({
                 autoOpen: false,

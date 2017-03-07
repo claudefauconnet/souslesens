@@ -37,79 +37,10 @@ var propertyRange = {
 var intPattern = /-?[0-9]+/
 var rangePattern = /-?[0-9]+~-?[0-9]+/
 var decorationObjs = [];
-var storedDecorationObjs = {};
-function loadStoredDecorationObjs() {
-    return;
-    var payload = {"load": "displayParams", "user": Gparams.user};
-    $.ajax({
-        type: "POST",
-        url: Gparams.storedParamsUrl,
-        data: payload,
-        dataType: "json",
-        success: function (data, textStatus, jqXHR) {
-            storedDecorationObjs = data;
-            var names = [];
-            for (var key in data) {
-                names.push(key);
-            }
-            if (names.length > 0) {
-                if (!currentlabel)
-                    $("#graphDecorationTabsDiv").tabs("option", "active", 1);
-
-                fillSelectOptionsWithStringArray(storedDecorationObjsSelect, names);
-            }
 
 
-        },
-        error: function (xhr, err, msg) {
-            console.log(xhr);
-            console.log(err);
-            console.log(msg);
-        }
-
-    });
 
 
-}
-
-
-function saveDisplaySet() {
-    var name = $("#storedDecorationObjsName").val();
-    var description = $("#storedDecorationObjsDescription").val();
-    var scope = $("#storedDecorationObjsScope").val();
-    $("#dialogAdvancedSearch").dialog("close");
-    if (!name || name == "") {
-        $("#dialogMessage").html("le nom est obligatoire");
-        return;
-    }
-    var obj = {
-        name: name,
-        value: decorationObjs,
-        description: description,
-        scope: scope
-    };
-
-    var payload = {save: "displayParams", obj: JSON.stringify(obj), "user": Gparams.user};
-    $.ajax({
-        type: "POST",
-        url: Gparams.storedParamsUrl,
-        data: payload,
-        dataType: "json",
-        success: function (data, textStatus, jqXHR) {
-            var xx = data;
-
-
-        },
-        error: function (xhr, err, msg) {
-            console.log(xhr);
-            console.log(err);
-            console.log(msg);
-        }
-
-    });
-
-
-}
 
 
 function loadGraphDisplaylabels() {
@@ -408,7 +339,7 @@ function setNumberOfclasses(nClasses) {
 function initDecorationDiv() {
     data = window.parent.cachedResultArray;
     dataModel = window.parent.dataModel;
-    loadStoredDecorationObjs();
+    loadStoredParams("decoration");
     // initNeoModel(subGraph);
     if (!currentlabel) {
         loadGraphDisplaylabels();
@@ -507,4 +438,26 @@ function roundRange(range) {
     var value1 = Math.ceil(range.max / value1) * value1;
     var nclasses=Math.abs((value0-value1)/ Math.pow(10, magnMin - 1))
     return {min: value0, max: value1,nClasses:nClasses};
+}
+
+function saveStoredDecorationObjsDialog() {
+    $("#dialog").dialog("option", "title", "enregistrer une representation");
+    var str = "<table><tr><td>nom</td><td><input id='storedDecorationObjsName'></input></td></tr>" +
+        " <tr><td>description</td><td><textArea id='storedDecorationObjsDescription' <row='3' cols='30'></textArea></td></tr>" +
+        " <tr><td>scope</td><td><select id='storedDecorationObjsScope'><option>public</option><option>prive</option><option>groupe</option></select></td></tr>" +
+        "<tr><td colspan=2'><span id='dialogMessage'></span></td></tr>"
+    str += "</table><button onclick= saveDisplaySet()>OK</button>";
+    $("#dialog").html(str);
+    $("#dialog").dialog("open")//;.parent().position({ my: 'center', at: 'center', of: '#tabs-radarRight' });
+}
+
+
+function saveDisplaySet(){
+    var obj={
+        name:$("#storedDecorationObjsName").val(),
+        description:$("#storedDecorationObjsDescription").val(),
+        scope:$("#storedDecorationObjsScope").val(),
+        type:"decoration"
+    }
+    saveStoredParams(obj);
 }
