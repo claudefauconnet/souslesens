@@ -1921,7 +1921,7 @@ function switchModifyMode(cbx) {
 }
 
 function showPopupMenu(x, y, type) {
-  var popup = "popupMenuRead";
+  var popup ="popupMenuNodeInfoDiv"; "popupMenuRead";
 
     if (type && type == "label") {
         popup = "popupMenuLabel";
