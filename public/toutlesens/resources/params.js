@@ -8,7 +8,7 @@ var Gparams = {
 
     profiles: {
         minimum: {
-            hide: ["lang_52", "lang_62", "listDownloadButton", "div_externalRessources"],
+            hide: ["lang_52", "lang_62", "listDownloadButton", "div_externalRessources","photoControls"],
             disable: ["listDownloadButton"]
         },
         all: {
@@ -16,7 +16,7 @@ var Gparams = {
             disable: []
         }
     },
-    currentProfile: "all",//minimum ,all
+    currentProfile: "minimum",//minimum ,all
     navigationStyle: "",// , "jpt" // Jean Paul
     httpProxyUrl: "../http",
     neo4jProxyUrl: "/neo",
