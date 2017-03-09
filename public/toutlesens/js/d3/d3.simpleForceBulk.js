@@ -2,6 +2,11 @@ function drawsimpleForceBulk(json) {
     var patternNodes = json.patternNodes;
 
     var forceData = buildNodesAndLinks(json);
+    console.log("nodes : "+forceData.nodes.length);
+    console.log("charge :"+ Gparams.d3ForceParams.charge);
+    console.log("gravity :"+ Gparams.d3ForceParams.gravity);
+    console.log("distance:"+Gparams.d3ForceParams.distance);
+
     var linkNodeIndexes = [];
     for (var i = 0; i < forceData.nodes.length; i++) {
         if (!patternNodes)// tous les noeuds visibility 1
@@ -42,6 +47,7 @@ function drawSimpleForceBulk(nodes, links) {
     var h = $(selector).height() - 50;
 
     var charge = Gparams.d3ForceParams.charge;
+    charge=(0.2*nodes.length)-1000;
     var gravity = Gparams.d3ForceParams.gravity;
     var distance = Gparams.d3ForceParams.distance;
     charge = charge / 10;

@@ -360,14 +360,17 @@ function getWhereProperty(str, nodeAlias) {
         value = str.substring(q + 1);
     }
     else {
+        property = "nom";
+        operator = "~";
+        value = str;
         console.log("!!!!invalid query");
-        return "";
+       // return "";
     }
 
     if (operator == "~") {
         operator = "=~"
         // value = "'.*" + value.trim() + ".*'";
-        value = "'.*" + value.trim() + ".*'";
+        value = "'(?i).*" + value.trim() + ".*'";
     }
     else {
         if ((/[\s\S]+/).test(str))
