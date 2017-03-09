@@ -272,11 +272,11 @@ function toFlareJson(resultArray, addToExistingTree) {
         var startNodes = resultArray[i].startLabels;
         var relProperties = resultArray[i].relProperties;
         var legendRelIndex = 1;
-        console.log("------------\n")
+      //  console.log("------------\n")
         for (var j = 0; j < nodes.length; j++) {
 
             var nodeNeo = nodes[j].properties;
-            console.log(JSON.stringify(nodeNeo))
+          //  console.log(JSON.stringify(nodeNeo))
             if (distinctNodeName[nodeNeo.nom] == null)
                 distinctNodeName[nodeNeo.nom] = 0;
             else {
@@ -346,11 +346,11 @@ function toFlareJson(resultArray, addToExistingTree) {
                 }
 
  var key=nodeObj.id+"_"+ids[j-1];
-              if( nodesMap[key]){// create a new id if allready existing
+            /*  if( nodesMap[key]){// create a new id if allready existing
                   //    if( nodesMap[(-j*1000000000)+nodeObj.id]){// create a new id if allready existing
                     nodeObj.id=(-j*1000000000)+nodeObj.id;
                     ids[j]= nodeObj.id;
-                }
+                }*/
 
                 nodesMap[key] = nodeObj;
 
