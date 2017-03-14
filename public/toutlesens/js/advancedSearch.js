@@ -280,7 +280,14 @@ function execute() {
     }
 
     if (currentActionObj.type == "pattern") {
-        executePattern()
+        if (currentActionObj.selection) {
+            var query = getPatternQuery();
+            window.parent.executeCypherAndDisplayGraph(query, currentActionObj);
+
+        } else {
+
+            executePattern()
+        }
     }
 
 
@@ -363,8 +370,8 @@ function getWhereProperty(str, nodeAlias) {
         property = "nom";
         operator = "~";
         value = str;
-        console.log("!!!!invalid query");
-       // return "";
+        // console.log("!!!!invalid query");
+        // return "";
     }
 
     if (operator == "~") {
@@ -425,13 +432,23 @@ function executeCypherAndDisplayGraph(query, _currentActionObj) {
 
 
     if (currentActionObj.graphPathTargetNode) {
-        currentDataStructure = "flat";
-        currentDisplayType = "SIMPLE_FORCE_GRAPH";
-        $("#graphForceDistance").val(20);
+        if (currentActionObj.selection) {
+            currentDataStructure = "flat";
+            currentDisplayType = "NODES_SELECTION";
+        } else {
+            currentDataStructure = "flat";
+            currentDisplayType = "SIMPLE_FORCE_GRAPH";
+            $("#graphForceDistance").val(20);
+        }
     }
     else if (currentActionObj.type == "pattern") {
-        currentDataStructure = "flat";
-        currentDisplayType = "SIMPLE_FORCE_GRAPH_BULK";
+        if (currentActionObj.selection) {
+            currentDataStructure = "flat";
+            currentDisplayType = "NODES_SELECTION";
+        } else {
+            currentDataStructure = "flat";
+            currentDisplayType = "SIMPLE_FORCE_GRAPH_BULK";
+        }
         executeQuery(QUERY_TYPE_MATCH, query, function (data) {
             cachedResultArray = data;
             data.patternNodes = currentActionObj.nodes;
@@ -440,17 +457,20 @@ function executeCypherAndDisplayGraph(query, _currentActionObj) {
         return;
     }
     else {
-        currentDataStructure = "tree";
-        currentDisplayType = "FLOWER";
+        if (currentActionObj.selection) {
+            currentDataStructure = "flat";
+            currentDisplayType = "NODES_SELECTION";
+        } else {
+            currentDataStructure = "tree";
+            currentDisplayType = "SIMPLE_FORCE_GRAPH";
+        }
         $("#graphForceDistance").val(20);
     }
 
     $("#tabs-radarLeft").tabs("enable");
     executeQuery(QUERY_TYPE_MATCH, query, function (data) {
         cachedResultArray = data;
-        var output = "SIMPLE_FORCE_GRAPH";
-
-        displayGraph(data, output, null)
+        displayGraph(data, currentDisplayType, null)
     });
 }
 
@@ -513,7 +533,7 @@ function searchByNamesList(list) {
         query += "\'" + names[i] + "\'";
     }
     query += "] return " + returnStr;
-    executeCypherAndDisplayGraph(query,"searchByNameList");
+    executeCypherAndDisplayGraph(query, "searchByNameList");
 
 }
 //********************************************************old*****************************************
@@ -714,14 +734,14 @@ function onPatternLabelSelect(select) {
 
 }
 
-function patternResetLabel(){
+function patternResetLabel() {
     patternPatternSelect.options.length = 0;
     patternRelTypeSelect.options.length = 0;
     patternInitLabels();
 }
 
 function onPatternRelTypeSelect(select) {
-    var previousValue=$(select).val()
+    var previousValue = $(select).val()
     patternLabelSelect.options.length = 0;
     var value = $(select).val();
     var rel = dataModel.allRelations[value];
@@ -766,6 +786,7 @@ function removeFromPatternSelect() {
 
 
 function executePattern(count) {
+
 
     var query = getPatternQuery(count);
     executeQuery(QUERY_TYPE_MATCH, query, function (data) {
@@ -830,8 +851,8 @@ function getPatternQuery(count) {
     if (match.charAt(match.length - 1) == "-")
         match += "()";
     if (match.charAt(0) == "-")
-        match ="()"+match;
-    match="MATCH path="+match;
+        match = "()" + match;
+    match = "MATCH path=" + match;
     if (false && count)
         match += " return count(path)";
     else

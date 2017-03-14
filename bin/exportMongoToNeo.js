@@ -10,7 +10,8 @@ var fs = require("fs");
 var serverParams = require("./serverParams.js");
 var totalLines = 0;
 var neoMappings = [];
-
+var distinctNames = [];
+var countNodes=0;
 var exportMongoToNeo = {
 
 
@@ -27,7 +28,7 @@ var exportMongoToNeo = {
 
 
         params.fields = setNodeMongoFieldsToExport(params);
-        var distinctNames = [];
+
         if (label == null)
             label = collection;
 
@@ -40,6 +41,7 @@ var exportMongoToNeo = {
                 var obj = data[i];
                 delete obj._id;
                 var nameMongoFieldValue = obj[nameMongoField];
+             //   console.log(nameMongoFieldValue+"   "+(countNodes++));
                 if (isDistinct & distinctNames.indexOf(nameMongoFieldValue) > -1)
                     continue;
                 if (obj[idMongoField]) {// on stocke dans neo et neoMappings dans id la valeur de mongoIdField
@@ -49,6 +51,7 @@ var exportMongoToNeo = {
                 }
                 totalImported += 1;
                 distinctNames.push(nameMongoFieldValue);
+
                 if (!obj.nom)
                     obj.nom = nameMongoFieldValue;
                 obj.subGraph = subGraph;
@@ -442,7 +445,7 @@ function cleanFieldsForNeo(obj) {
         value = value.replace(/&/g, " and ");
         value = value.replace(/"/g, "'");
         value = value.replace(/,/g, "\\,");
-        value = value.replace(/\//g, "\-");
+        value = value.replace(/\//g, "%2F");
         obj[key] = value;
     }
 
@@ -565,25 +568,27 @@ function loadAndFetchDataToImport(params, importFn, _rootCallBack) {
             },
             function (_callback) {//iterate
                 var callBack=_callback;
-                mongoProxy.pagedFind(currentIndex, serverParams.mongoFetchSize, dbName, collection, query, params.fields, function (err, result) {
+                mongoProxy.pagedFind(currentIndex, serverParams.mongoFetchSize, dbName, collection, query, params.fields, function (err, resultMongo) {
                     if (err)
                         return rootCallBack(err);
 
-                    importFn(params, result, function (err, result) {
+                    importFn(params, resultMongo, function (err, result) {
                         if (err)
                             return callback(err);
 
-                        if (result.length > 0) {
+                       //
                             if (params.label) {//nodes
-                                nodeMappings = nodeMappings.concat(result);
+                                if (result.length > 0) {
+                                    nodeMappings = nodeMappings.concat(result);
+                                }
                                 totalLines += result.length;
                                 var message = "Imported " + nodeMappings.length + " lines with label " + params.label;
                                 socket.message(message);
                             }
-                        }
+                       // }
 
                         currentIndex += serverParams.mongoFetchSize;
-                        resultSize = result.length;
+                        resultSize = resultMongo.length;
                         totalLines += result.length;
                         if(callBack)
                             callBack(null, resultSize);

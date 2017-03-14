@@ -97,7 +97,7 @@
 
 <script src="js/advancedDisplay.js"></script>
 <script src="js/advancedSearch.js"></script>
-
+<script src="js/selection.js"></script>
 <script src="js/d3/jit-yc.js"></script>
 <!--<link rel="stylesheet" type="text/css"
 	href="../common/js/others/jquery.datatables.min.css" />
@@ -232,7 +232,7 @@
         );
 
         if (queryParams.mode == "write")
-            $("#tabs-radarRight").tabs("option", "disabled", [0, 1, 2]);
+            $("#tabs-radarRight").tabs("option", "disabled", [0, 1, 2,3]);
         else
             $("#tabs-radarRight").tabs("option", "disabled", [0, 1, 2, 3, 4]);
 
@@ -422,9 +422,10 @@
             <span id="radarTitle"></span>
             <div id="tabs-radarLeft">
                 <ul>
-                    <li><a href="#radarFiltersTab"><span id='lang_60'>Selection</span></a></li>
+                    <li><a href="#radarFiltersTab"><span id='lang_60'>Recherche</span></a></li>
                     <li><a href="#graphQueryFiltersTab"><span id='lang_59'>Vue</span></a></li>
                     <li><a href="#attrsTab"><span id='lang_37'>Infos.</span></a></li>
+                    <li><a href="#selectionTab"><span id='lang_170'>Selection</span></a></li>
                 </ul>
                 <div id="legendTab"></div>
 
@@ -665,7 +666,7 @@
                     <button onclick="previousImage()">previous</button>
                     image
                     <button onclick="nextImage()">next</button>
-                    <input type="checkbox" id="largeImage"> grandFormat
+                    <input type="checkbox" id="largeImageCBX" checked="true"> grandFormat
                     <button onclick="rotateImage(true)">rotate-</button>
                     <button onclick="rotateImage()">rotate+</button>
                     </div>
@@ -695,7 +696,29 @@
                 </div>
 
 
+
+                <!--  ****************************************************selection***************************-->
+                <div id="selectionTab">
+                    nodes
+                    <select size= "15" id="d3SelectionSelect"></select> <button onclick="removeNodeFromSelection()";>-</button>
+
+
+                   <br> action <select onchange="d3SelectionAction(this)">
+                    <option></option>
+                    <option value="clear"><span id='lang_172'>clear</span></option>
+                    <option value="setAttributeDialog"><span id='lang_172'>set attribute</span></option>
+                    <option value="defineAsLinkSourceNodes"><span id='lang_173'>define as link Source</span></option>
+                    <option value="defineAsLinkTargetNodes"><span id='lang_171'>define as link Target</span></option>
+                    <option value="deleteRelationTypeDialog"><span id='lang_174'>delete link</span></option>
+
+
+                </select>
+
+                </div>
+
             </div>
+
+
 
 
         </div>
@@ -1020,6 +1043,8 @@
             </table>
 
         </div>
+
+
 
 
     </div>

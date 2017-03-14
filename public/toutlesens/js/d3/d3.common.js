@@ -10,17 +10,25 @@ function d3CommonClick(d) {
         return;
     var id = d.id;
     currentObject = d;
-    if (Gparams.readOnly == true) {
+    if (d3.event.ctrlKey) {
+        addToSelection(currentObject)
+
+    }
+
+    else if (Gparams.readOnly == true) {
         dispatchAction('nodeInfos');
 
 
     }
 
+
     else {
         var e = d3.event;
+
+
         var x = e.offsetX + 10;
         var y = e.offsetY + 100;
-        ;
+
         if (e.offsetX < 50) {// IE
             var xy0 = $("#graphDiv").offset();
             var x = e.clientX - xy0.left + 10;
@@ -150,7 +158,7 @@ function showThumbnails(nodes) {
                     //   console.log(d.neoAttrs.path);
 
                     //return "http://127.0.0.1:3002/JAVATHEQUE"+encodeURIComponent(d.neoAttrs.path);
-                    var str = nodeData.neoAttrs.path.replace("--", "/");
+                    var str = decodePath(nodeData.neoAttrs.path);
                     return encodeURI(Gparams.imagesRootPath + str);
                     //   return encodeURI(d.neoAttrs.path);
 
@@ -191,29 +199,29 @@ function appendSplitText(d3Group, text, fontSize) {
     var xxx = d3.select(d3Group).selectAll("rect")[0][0]
     witdh = xxx.__data__.dx;
     height = xxx.__data__.dy;
-if(text.indexOf("Apollon")>-1)
-    var x="";
+    if (text.indexOf("Apollon") > -1)
+        var x = "";
 
-    var charsByLine = witdh / fontSize*1.8;
+    var charsByLine = witdh / fontSize * 1.8;
     var array = [];
     var index = 0;
     var chars = [];
-    var lastSpaceIndex=-1;
+    var lastSpaceIndex = -1;
     while (index < text.length) {
 
-        chars.push (text[index]);
-        if(text[index]==" ")
-            lastSpaceIndex=chars.length-1;
+        chars.push(text[index]);
+        if (text[index] == " ")
+            lastSpaceIndex = chars.length - 1;
         index++;
         if (chars.length >= charsByLine || index >= text.length) {
-            var str=chars.join("");
-            if(lastSpaceIndex>-1){
-                var str2=str.substring(lastSpaceIndex);
-                str=str.substring(0,lastSpaceIndex);
+            var str = chars.join("");
+            if (lastSpaceIndex > -1) {
+                var str2 = str.substring(lastSpaceIndex);
+                str = str.substring(0, lastSpaceIndex);
 
-                index-= str2.length;//(a cause du index++ plus haut)
+                index -= str2.length;//(a cause du index++ plus haut)
                 index++;
-                lastSpaceIndex=-1;//
+                lastSpaceIndex = -1;//
             }
             array.push(str);
 
@@ -231,7 +239,7 @@ if(text.indexOf("Apollon")>-1)
         .range([0, 500]);
     var finish = false;
     for (var i = 0; i < array.length; i++) {
-      if ((fontSize * (i + 2)) > height) {// troncature des textes si trop hauts
+        if ((fontSize * (i + 2)) > height) {// troncature des textes si trop hauts
             array[i] = array[i].substring(0, Math.min(array[i].length, 3)) + "...";
             finish = true;
         }

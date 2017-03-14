@@ -1778,6 +1778,7 @@ function drawGraphGeneral(useCache) {
 
 }
 function displayGraph(json, output, labels) {
+    d3NodesSelection=[];
     $("#textDiv").html("");
     $("#tabs-radarRight").tabs("option", "active", 0);
 
@@ -1796,7 +1797,7 @@ function displayGraph(json, output, labels) {
     });
     if (!queryParams.mode == "write") {
         $("#tabs-radarRight").tabs({
-            disabled: [3, 4]
+            disabled: [3,4]
         });
     }
 
@@ -1809,6 +1810,11 @@ function displayGraph(json, output, labels) {
     if (!output) {
         output = $("#representationSelect").val();
     }
+
+     if (output == "NODES_SELECTION") {
+        setSelectionFromQuery(json);
+        return;
+     }
     else if (output == "FLOWER") {
         var jsonFlower = json;
         if ($("#groupByLabelsCbx").prop("checked"))
@@ -1851,6 +1857,8 @@ function displayGraph(json, output, labels) {
         if (!json || json.children && json.children.length > 0)// maladroit à revoir dans flower
             forceJson = cachedResultArray;
         drawsimpleForceBulk(forceJson);
+        currentDisplayType="FLOWER";
+
     }
 
 
@@ -1992,7 +2000,7 @@ function onLinkClick(id) {
         currentObject.id = d[0].n._id;
         currentObject.label = d[0].n.labels[0];
         if (currentObject.path)
-            showImage(Gparams.imagesRootPath + currentObject.path)
+            showImage(Gparams.imagesRootPath +decodePath(currentObject.path));
         dispatchAction('nodeInfos');
         // $("#tabs-radarRight").tabs("option", "active", 2);
         getNodeAllRelations(id, null, false, function (json, labels) {
@@ -2010,6 +2018,7 @@ function showImage(url) {
     // $("#nodeDetailsIframe").prop("src", url);
     var w = $("#nodeDetailsIframe").width();
     $("#nodeDetailsIframe").html('<img id="largeImage" src="' + url + '" border="0" height="real_height" width="real_width" onload="resizeImg(this, null, ' + w + ');">')
+    $("#tabs-radarRight").tabs("enable", 2);
     $("#tabs-radarRight").tabs("option", "active", 2);
 }
 function restorePopupMenuNodeInfo() {
@@ -2017,9 +2026,9 @@ function restorePopupMenuNodeInfo() {
 }
 
 function showThumbnail(relativePath) {
-    var url = Gparams.imagesRootPath + relativePath.replace("--", "/");
+    var url = Gparams.imagesRootPath + relativePath.replace("%2F", "/");
     var str2 = ' <img id="thumbnailImage" src="' + url + '" border="0" height="real_height" width="real_width"  onclick="showImage(\'' + url + '\')" onload="resizeImg(this, null, 300);">'
-    if ($("#largeImage").prop("checked")) {
+    if ($("#largeImageCBX").prop("checked")) {
         showImage(url);
     }
     $("#imagePanel").html(str2);
@@ -2060,7 +2069,12 @@ function rotateImage(negative) {
     var angle = 90;
     if (negative)
         angle = -90;
-    rotate("thumbnailImage", angle);
+   rotate("thumbnailImage", angle);
+var oldW=$("#largeImage").css("width");
+    var oldH=$("#largeImage").css("height");
+    var ratio=oldW/oldH;
+ $("#largeImage").css("width",  oldH*ratio); // Set new width
+ // $("#largeImage").css("height",  oldW);
     rotate("largeImage", angle);
 
 

@@ -21,11 +21,16 @@ function getAllpropertiesDialogContent(onclickAction) {
 function getAllRelationsDialogContent(onclickAction) {
     var str = "<table><tr><td>type de propriete</td><td><select id='relType'></select></td></tr>"
     str += "<tr><td><select id='relDir'><option>all</option><option>in</option><option>out</option></select></td></tr>"
-    str += "</table><button onclick=" + onclickAction + ";>OK</button>";
+    str += "</table><button onclick='" + onclickAction + "();'>OK</button>";
     str += "<script>fillSelectOptionsWithStringArray(relType,dataModel.allRelationsArray);</script>";
     return str;
 }
-
+function getSetAttributeDialogContent(onclickAction) {
+    var str = "<table><tr><td>Attribute</td><td><input id='selectionAttrName'></td></tr>"
+    str += "<tr><td>Value</td><td><input id='selectionAttrVal'></td></tr>"
+    str += "</table><button onclick='" + onclickAction + "();'>OK</button>";
+    return str;
+}
 
 function searchNodesUIByPropertyValue() {
     $("#dialog").dialog("option", "title", "valeur d'une propriete");

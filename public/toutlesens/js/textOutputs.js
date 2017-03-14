@@ -380,7 +380,11 @@ function drawCSV_DataTable(json) {
     });
 
 }
-
+function decodePath(path){
+    if (!path)
+        return "";
+    return path.replace(/%2F/g, "/");
+}
 
 function formatNodeInfo(obj) {
     var str = "";
@@ -398,7 +402,7 @@ function formatNodeInfo(obj) {
 
     for (var key in obj) {
         if (key == "path") {
-            var str = obj[key].replace("--", "/");
+            var str = decodePath(obj[key]);
             showThumbnail(str);
 
 

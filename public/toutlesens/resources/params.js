@@ -16,7 +16,7 @@ var Gparams = {
             disable: []
         }
     },
-    currentProfile: "minimum",//minimum ,all
+    currentProfile: "all",//minimum ,all
     navigationStyle: "",// , "jpt" // Jean Paul
     httpProxyUrl: "../http",
     neo4jProxyUrl: "/neo",

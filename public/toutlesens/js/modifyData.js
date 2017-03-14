@@ -238,7 +238,7 @@ function writeNodeInNeo4j(obj) {
         });
     } else {//old object update
         var query = "MATCH (n) where ID(n)=" + id + " SET n = "
-            + props + ", n:"+label+" RETURN n";
+            + props + ", n:" + label + " RETURN n";
 
         executeQuery(QUERY_TYPE_MATCH, query, function () {
             setMessage("Noeud modifie !", "green");
@@ -247,7 +247,7 @@ function writeNodeInNeo4j(obj) {
         });
 
     }
-    searchNodes(obj.subGraph,obj.label,obj.name);
+    searchNodes(obj.subGraph, obj.label, obj.name);
 
     // $("#radarFiltersTab").hide().fadeIn();
 }
@@ -266,7 +266,7 @@ function updateProperties(obj, propsObj) {
     /*
      * MATCH (n { name: 'Andres' }) SET n.surname = 'Taylor' RETURN n
      */
-    var neoId = obj.neoId;
+    var neoId = obj.id;
     var i = 0;
     for (var key in propsObj) {
         var props = ""
@@ -336,8 +336,73 @@ function createRelation() {
         setMessage("selectionner les noeuds source et cible")
         return;
     }
-    writeRelationInNeo4j(currentRelationData.sourceNode, currentRelationData.type,
-        currentRelationData.targetNode);
+
+    if (currentRelationData.sourceNode.nodes) {//source selection
+        for (var i = 0; i < currentRelationData.sourceNode.nodes.length; i++) {
+            writeRelationInNeo4j(currentRelationData.sourceNode.nodes[i], currentRelationData.type,
+                currentRelationData.targetNode);
+        }
+    }
+    else if (currentRelationData.targetNode.nodes) {//source selection
+        for (var i = 0; i < currentRelationData.targetNode.nodes.length; i++) {
+            writeRelationInNeo4j(currentRelationData.sourceNode, currentRelationData.type,
+                currentRelationData.targetNode.nodes[i]);
+        }
+    }
+
+    else if (currentRelationData.source.nodes && currentRelationData.targetNode.nodes) {//source selection
+        for (var i = 0; i < currentRelationData.source.nodes.length; i++) {
+            for (var i = 0; i < currentRelationData.targetNode.nodes.length; i++) {
+                writeRelationInNeo4j(currentRelationData.sourceNode.nodes[i], currentRelationData.type,
+                    currentRelationData.targetNode.nodes[j]);
+            }
+        }
+    }
+    else {
+        writeRelationInNeo4j(currentRelationData.sourceNode, currentRelationData.type,
+            currentRelationData.targetNode);
+    }
+}
+
+
+function deleteRelations(nodes, relType, relId) {
+
+
+    for (var i = 0; i < nodes.length; i++) {
+        writeDeleteRelation(nodes[i].id, relType, relId)
+    }
+
+
+}
+
+/*
+ nodeId pas obligatoire
+ relId ou relType (pas les deux)
+ */
+function writeDeleteRelation(nodeId, relType, relId) {
+    var whereNodeId = "";
+    var whereRelType = ""
+    var whereRelId = "";
+    var whereAnd = ""
+    if (nodeId) {
+        whereNodeId = " id(n)=" + nodeId + " ";
+    }
+    if (relType) {
+        whereRelType = " type(r)='" + relType + "' ";
+        if (nodeId)
+            whereAnd = " and ";
+    }
+    if (relId) {
+        whereRelId = " type(r)=" + relId + " ";
+        if (nodeId)
+            whereAnd = " and ";
+    }
+
+    query = "MATCH (n)-[r]-(m)" + "WHERE " + whereNodeId + whereAnd + whereRelType + whereRelId + " delete r;"
+    executeQuery(QUERY_TYPE_MATCH, query, function () {
+        setMessage("Relation deleted !", "green");
+        dispatchAction("setAsRootNode");
+    });
 }
 
 function reverseLinkNodes() {

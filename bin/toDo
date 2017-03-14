@@ -2,7 +2,7 @@
 
 bug import :"/" dans les cles d'import transformé en - à corriger
 
-force graph global avec patterns
+force graph global avec pattern                                                                                                                   s
 pb subgraph // multi label pour JP
 classes arrondies pour advanced display
 user prefs

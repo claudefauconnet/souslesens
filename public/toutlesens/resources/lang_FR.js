@@ -55,7 +55,7 @@ langResources['FR'] = {
 	"lang_56" : "Modifier",
 	"lang_57" : "X",
 	"lang_59" : "Vue",
-	"lang_60" : "Selection",
+	"lang_60" : "Recherche",
 	"lang_61" : "Recherche avancee",
 	"lang_62" : "Peindre des proprietes...",
 	"lang_63" : "affiche tous les autour du noeud dedepart (sans filtres)",
@@ -121,7 +121,7 @@ langResources['FR'] = {
 	"lang_149" : "triangle",
 	"lang_150" : "triangle inverse",
 	"lang_151" : "Ajouter",
-	"lang_152" : "Executer",
+	"lang_152" : "Dessiner Graphe",
 	"lang_153" : "Annuler",
 	"lang_154" : "Save",
 	"lang_155" : "Enregistrer",
@@ -140,7 +140,12 @@ langResources['FR'] = {
     "lang_167": "propriete de la relation",
     "lang_168": "Requetes standard",
     "lang_169": "chercher  des patterns",
-
+    "lang_170": "Selection",
+    "lang_171": "definir comme noeuds cible d'un lien",
+    "lang_172": "effacer",
+    "lang_173": "definir comme noeuds source d'un lien",
+    "lang_174": "Selection",
+    "lang_175": "Supprimer le lien",
 
 
 }

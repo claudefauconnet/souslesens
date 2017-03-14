@@ -52,6 +52,7 @@
     <script src="js/toutlesensData.js"></script>
     <script src="resources/params.js"></script>
     <script src="js/advancedSearch.js"></script>
+    <script src="js/selection.js"></script>
     <script src="js/statistics.js"></script>
     <script src="js/graphTraversalQueries.js"></script>
     <script src="js/toutlesensDialogsController.js"></script>
@@ -326,10 +327,11 @@
 
 </div>
 <div class="executeDiv">
-    <button oncLick="execute()"><span id='lang_152'>Executer</span></button>
+    <button onclick="execute()"><span id='lang_152'>Draw Graph</span></button>
+    <button onclick="currentActionObj.selection=true;execute()"><span id='lang_174'>Selection</span></button>
     <span id='lang_108'>Limite</span></td>
     <input id="cypherQueryLimitInput" size="5" value="2000">&nbsp;
-    <button oncLick="window.parent.hideAdvancedSearch()"><span id='lang_153'>Annuler</span></button>
+    <button onclick="currentActionObj.selection=false;window.parent.hideAdvancedSearch()"><span id='lang_153'>Annuler</span></button>
     <div id="message"></div>
 </div>
 
