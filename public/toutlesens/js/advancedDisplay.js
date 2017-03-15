@@ -88,7 +88,7 @@ function onPropertyClick(select, noClasses) {
     };
     decorationObjs = [];
     distinctPropertyValues = [];
-    var pattern = /_[0-9]*/;
+    var pattern = /__[0-9]*/;
     currentlabel = $("#nodesLabelsSelect").val();
     var property = $(select).val();
     var propertyType = null;

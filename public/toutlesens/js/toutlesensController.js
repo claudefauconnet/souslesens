@@ -120,7 +120,8 @@ currentThumbnails.currentIndex = -1;
 $(document).ready(function () {
     var queryParams = getQueryParams(document.location.search);
     subGraph = queryParams.subGraph;
-    if (! Gparams.isInframe && !subGraph  && window.parent.toFlareJson)
+   // if (! Gparams.isInframe && !subGraph  && window.parent.toFlareJson)
+    if (typeof isSouslesensIframe == 'undefined') // voir html des iframe filles
        subGraph = window.parent.subGraph;
 
 });

@@ -57,7 +57,7 @@ function printNode(node, withAttrs) {
     rel = "<span style='font-size:10px'>" + rel + "</span>";
 
     var name = node.name
-    var match = /_[0-9]*/.exec(name);
+    var match = /__[0-9]*/.exec(name);
     if (match) {
         var p = match.index;
         if (p > -1)
@@ -486,7 +486,7 @@ function formatNode(node) {
 }
 
 function formatNodeName(name) {
-    var match = /_[0-9]*/.exec(name);// on enleve le suffixe des names ajoutés pour l'unicité des noeuds dans d3js
+    var match = /__[0-9]*/.exec(name);// on enleve le suffixe des names ajoutés pour l'unicité des noeuds dans d3js
     if (match) {
         var p = match.index;
         if (p > -1)

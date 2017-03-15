@@ -110,6 +110,7 @@
 
     <script>
         $(function () {
+            var isSouslesensIframe=true;
             var types = {0: "pathes", 1: "frequentQuery", 2: "pattern",3:"cypher"}
             currentActionObj = {type: types[0], subGraph: subGraph};
             initNeoModel(subGraph, [initLabels, initLabelsCurrentQueries, patternInitLabels, patternInitRelTypes]);

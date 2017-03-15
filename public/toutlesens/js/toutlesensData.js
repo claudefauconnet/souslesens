@@ -281,7 +281,7 @@ function toFlareJson(resultArray, addToExistingTree) {
                 distinctNodeName[nodeNeo.nom] = 0;
             else {
                 distinctNodeName[nodeNeo.nom] += 1;
-                nodeNeo.nom = nodeNeo.nom + "_" + distinctNodeName[nodeNeo.nom];
+                nodeNeo.nom = nodeNeo.nom + "__" + distinctNodeName[nodeNeo.nom];
             }
 
             var nodeObj = {
@@ -550,7 +550,7 @@ function jsonToHierarchyTree(json, groupBy) {
                 // plusieurs
                 if (!labels[childLabel]) {
                     labels[childLabel] = {
-                        name: childLabel + "_" + levelX + (100 * layerIndex),
+                        name: childLabel + "__" + levelX + (100 * layerIndex),
                         children: [],
                         level: levelX,
                         value: 0,

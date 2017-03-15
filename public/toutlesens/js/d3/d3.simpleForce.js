@@ -427,7 +427,7 @@ function drawSimpleForce(nodes, links) {
                     return "middle";
                 return "start";
             }).text(function (d) {
-                var match = /_[0-9]*/.exec(d.name);
+                var match = /__[0-9]*/.exec(d.name);
                 if (match) {
                     var p = match.index;
                     if (p > -1)
