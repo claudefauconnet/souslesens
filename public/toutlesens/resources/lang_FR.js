@@ -146,6 +146,7 @@ langResources['FR'] = {
     "lang_173": "definir comme noeuds source d'un lien",
     "lang_174": "Selection",
     "lang_175": "Supprimer le lien",
+    "lang_176": " Selectionner  tous les noeuds du graphe",
 
 
 }

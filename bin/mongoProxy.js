@@ -60,7 +60,10 @@ var MongoProxy = {
         }
 
         getDb(dbName, function (err, db, callbackDB) {
+
             if (err) {
+                if(!callbackDB)
+                    return;
                 callbackDB(err, null);
             }
             //   const bulk = db.collection(collectionName).initializeUnorderedBulkOp();

@@ -104,7 +104,7 @@ var labelsPositions = {};
 var initialQuery = "";
 //var currentVariables = [];
 var currentVariable = "";
-var currentDisplayType = "FLOWER";
+var currentDisplayType = "SIMPLE_FORCE_GRAPH_BULK";
 var selectedObject = {};
 var subGraph;
 var d3tree;
@@ -2016,9 +2016,9 @@ function onLinkClick(id) {
 
 }
 function showImage(url) {
-    // $("#nodeDetailsIframe").prop("src", url);
-    var w = $("#nodeDetailsIframe").width();
-    $("#nodeDetailsIframe").html('<img id="largeImage" src="' + url + '" border="0" height="real_height" width="real_width" onload="resizeImg(this, null, ' + w + ');">')
+    // $("#nodeDetailsDiv").prop("src", url);
+    var w = $("#nodeDetailsDiv").width();
+    $("#nodeDetailsDiv").html('<img id="largeImage" src="' + url + '" border="0" height="real_height" width="real_width" onload="resizeImg(this, null, ' + w + ');">')
     $("#tabs-radarRight").tabs("enable", 2);
     $("#tabs-radarRight").tabs("option", "active", 2);
 }
@@ -2071,10 +2071,12 @@ function rotateImage(negative) {
     if (negative)
         angle = -90;
    rotate("thumbnailImage", angle);
-var oldW=$("#largeImage").css("width");
-    var oldH=$("#largeImage").css("height");
-    var ratio=oldW/oldH;
- $("#largeImage").css("width",  oldH*ratio); // Set new width
+   var oldW=$("#largeImage").css("width");
+   var oldH=$("#largeImage").css("height");
+    var divHeight=$("#nodeDetailsDiv").css("height");
+    var ratio=parseInt(divHeight.replace("px",""))/parseInt(oldW.replace("px",""));
+ $("#largeImage").css("width",  parseInt(oldW.replace("px",""))*ratio); // Set new width
+    $("#nodeDetailsDiv").css("top",  "100px");
  // $("#largeImage").css("height",  oldW);
     rotate("largeImage", angle);
 

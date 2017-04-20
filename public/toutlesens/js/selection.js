@@ -128,3 +128,9 @@ function setSelectionFromQuery(json) {
     }
     $("#tabs-radarLeft").tabs("option", "active", 3);
 }
+
+
+function selectAllGraphNodes(){
+    var json=cachedResultArray;
+    setSelectionFromQuery(json);
+}

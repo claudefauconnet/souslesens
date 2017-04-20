@@ -1,8 +1,8 @@
 var jsonHtml = "";
-
+var outputFormat = "";
 
 function listTreeResultToHtml(jsonTree, withAttrs) {
-
+    outputFormat = "HTML";
     jsonHtml = jsonTree;
     var str = "";
     str += "<ul>";
@@ -40,6 +40,8 @@ function printNode(node, withAttrs) {
     if (true) {//node.nodeType && node.nodeType == "node" && node.parentNodeType && node.parentNodeType != "label") {
         label = "" + node.label + ".";
         color = nodeColors[node.label];
+        if (!color)
+            color = "brown";
         label = "<span style='color:" + color + "'>" + label + "</span>";
     }
 
@@ -156,14 +158,24 @@ function downloadHtml() {
 
 function downloadTextOutput() {
 
-    var output = $("#representationSelect").val();
-    var extension = "txt";
-    if (output == "HTML")
-        extension = "html"
+    //   var output = $("#representationSelect").val();
+    var extension = "csv";
+    var fileName = "";
+    var str = "";
 
-    var fileName = "souslesens_" + currentObject.label + "_" + currentObject.name + "." + extension;
+    if (outputFormat == "HTML") {
+        extension = "html";
+        str = $("#textDiv").html();
 
-    var str = $("#textDiv").html();
+
+    } else if (outputFormat == "CSV") {
+        str = getCSV();
+    }
+
+    if (currentObject)
+        fileName = "souslesens_" + currentObject.label + "_" + currentObject.name + "." + extension;
+    else
+        fileName = "souslesens_" + new Date() + "." + extension;
     var element = document.createElement('a');
     element.setAttribute('href', 'data:text/plain;charset=utf-8,'
         + encodeURIComponent(str));
@@ -175,22 +187,23 @@ function downloadTextOutput() {
 
 }
 
-function exportCSV() {
+function getCSV() {
     var str = "";
     for (var i = 0; i < currentFlattenedData.length; i++) {
         var line = currentFlattenedData[i];
         for (var j = 0; j < line.length; j++) {
-            str += line[j] + "\t";
+            str += line[j] + ";";
         }
         str += "\n";
 
     }
+    return str;
 
 
 }
 
 function drawCSV(json) {
-
+    outputFormat = "CSV";
     var spreadSheetData = formatTreeToCsv(json);
 
     var maxCols = 0;
@@ -225,7 +238,7 @@ function drawCSV(json) {
     for (var i = 0; i < spreadSheetData.length; i++) {
         str += "<tr>";
         for (var j = 0; j < header.length; j++) {
-           name= formatNodeName(spreadSheetData[i][j]);
+            name = formatNodeName(spreadSheetData[i][j]);
             str += "<td>" + name + "</td>";
         }
         str += "</tr>";
@@ -380,7 +393,7 @@ function drawCSV_DataTable(json) {
     });
 
 }
-function decodePath(path){
+function decodePath(path) {
     if (!path)
         return "";
     return path.replace(/%2F/g, "/");
@@ -404,9 +417,6 @@ function formatNodeInfo(obj) {
         if (key == "path") {
             var str = decodePath(obj[key]);
             showThumbnail(str);
-
-
-
 
 
             obj[key] = "<a href='javascript:showImage(\"" + encodeURI(Gparams.imagesRootPath + str) + "\")'>voir <a/>";
@@ -446,16 +456,28 @@ function formatNodeInfo(obj) {
             + "&nbsp;" + strLinkImage;
     }
 
-    return str;
 
+    // lien Sinequa)
+    if (typeof isSouslesensIframe == 'undefined') {
+        var name = obj.nom;
+        if (!name)
+            name = obj.name;
+        var p = name.lastIndexOf(".");
+        if (p > -1)
+            name = name.substring(0, p);
+
+        var sinequaLink = "<a target ='_blanck' href='http://frhdstd-aefl06x/search?text=" + name + "&advanced=0&precision=&after_included=True&after=&before_included=True&before=&docformat=&documentlanguages=&treepath-0=&sort=globalrelevance.desc'>Search in Sinequa</a>"
+        str = sinequaLink + "<br>" + str;
+    }
+    return str;
 
 }
 
 function resizeImg(img, height, width) {
-    if(height)
-    img.height = height;
-    if(width)
-    img.width = width;
+    if (height)
+        img.height = height;
+    if (width)
+        img.width = width;
 }
 
 String.prototype.sansAccent = function () {
@@ -479,8 +501,8 @@ String.prototype.sansAccent = function () {
 }
 
 function formatNode(node) {
-    if(node.name)
-       node.name= formatNodeName(node.name);
+    if (node.name)
+        node.name = formatNodeName(node.name);
 
     return node;
 }

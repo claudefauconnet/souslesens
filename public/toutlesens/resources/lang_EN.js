@@ -146,4 +146,6 @@ langResources['EN'] = {
     "lang_173": "define as Link source nodes",
     "lang_174": "Selection",
     "lang_175": "Delete link",
+    "lang_176": " Select all graph nodes",
+
 }

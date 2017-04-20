@@ -92,6 +92,12 @@ function setWhereLabels() {
             continue;
         if (i > 0)
             whereLabel += " OR ";
+
+        var p=exportedLabels[i].indexOf(",");// multi labels
+        if(  p>-1) {
+            exportedLabels[i] = exportedLabels[i].substring(0, p);
+            exportedLabels.push( exportedLabels[i].substring(p+1));
+        }
         whereLabel += "n:" + exportedLabels[i];
     }
     whereLabel += ") ";
