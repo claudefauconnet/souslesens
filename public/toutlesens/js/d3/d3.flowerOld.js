@@ -179,26 +179,13 @@ CodeFlower.prototype.update = function (json) {
     });
 
     this.link.each(function (d) {
-        var drawRelAttr=null;
         if (Gparams.showRelationNames == false)
             return;
-
         if (d.source.shape == "textBox" || d.target.level > 2)
             return;
         var aLine = d3.select(this).append("text").attr("dy", -5)
             .append("textPath")
             .text(function (d) {
-    var relAttrsStr="";
-                if (Gparams.showRelationAttrs)
-                    for(var key in d.target.relProperties){
-                        if(key!="subGraph"){
-                            if(relAttrsStr.length>0)
-                                relAttrsStr+="-";
-                            relAttrsStr+=d.target.relProperties[key];
-                            drawRelAttr=true;
-                        }
-                    }
-                    return relAttrsStr;
                 if (d.target.relDir == "normal")
                     return d.target.relType + " ->";
                 else
@@ -208,11 +195,7 @@ CodeFlower.prototype.update = function (json) {
             .attr("marker-end", "url(#arrowhead)")
             .style("text-anchor", "middle") // place the text halfway on the arc
             .attr("startOffset", "50%")
-            .style("font-size",function (d){
-                if(drawRelAttr)
-                    return "18px";
-                return "12px";
-            } )
+            .style("font-size", "12px")
             .style("font-weight", "bold")
             .style("fill", function (d) {
                 if (d.target.color)
@@ -279,14 +262,9 @@ CodeFlower.prototype.update = function (json) {
             shape = anode.append('rect')
                 .attr("width", 10).attr("height", 10).attr("rx", 10).attr("ry", 10)
         }
-        else if(d.neoAttrs.path){
-            shape = anode.append("svg:image")
-                .attr('x',-9)
-                .attr('y',-12)
-               .attr('width', 30)
-                //.attr('height', 24)
-                .attr("xlink:href",Gparams.imagesRootPath+d.neoAttrs.path.replace("photos2016","thumbnails2016"));
-        }
+
+
+
         else {// if( d.shape=="circle" ){
             shape = anode.append('svg:circle')
                 .attr("r", function (d) {
@@ -332,7 +310,7 @@ CodeFlower.prototype.update = function (json) {
                 if (d.color)
                     return d.color;
                 return nodeColors[d.label];
-
+                
                 return "purple";
             })
             .style("opacity", function (d) {

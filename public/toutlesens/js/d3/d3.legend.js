@@ -7,6 +7,7 @@ var xLeg = 10;
 var circleLegR = Gparams.circleR / 1.5;
 var yDecoLeg;
 var visLeg;
+var excludedLabels=[];
 function drawLegend(legendDivId) {
     var legendDiv;
 
@@ -20,6 +21,8 @@ function drawLegend(legendDivId) {
 
         var w = legendDiv.width();
         var h = legendDiv.height();
+        if(w<5)
+            return;
 
         visLeg = d3.select("#graphLegendDiv").append("svg:svg").attr("width", w).attr(
             "height", h).attr("class", "legendSVG");
@@ -53,6 +56,9 @@ function drawLegend(legendDivId) {
         relations.push(type);
 
     }
+
+    if(excludedLabels)
+
     for (label in legendNodeLabels) {
         // legHeight += 20;
 
@@ -244,5 +250,25 @@ function drawDecorationLegend(_decorationObjs) {
      return "purple";
      })*/
 
+
+}
+
+function clickLegend(e) {
+    var p;
+   // excludedLabels=[];
+    if((p=excludedLabels.indexOf(e.name))<0)
+        excludedLabels.push(e.name);
+    else// bascule
+        excludedLabels.splice(p,1);
+
+    graphQueryExcludeNodeFilters="";
+    for (var i = 0; i < excludedLabels.length; i++) {
+        //if (i > 0)
+            graphQueryExcludeNodeFilters += " and not ";
+        graphQueryExcludeNodeFilters += "m:" + excludedLabels[i];
+    }
+
+
+    getNodeAllRelations(currentObject.id, currentDisplayType);
 
 }

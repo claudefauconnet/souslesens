@@ -158,10 +158,10 @@ function showExternalressourcesList(objs,target){
 function showExternalResourceDetails(uri){
 	currentExternalUri=uri;
 	$("#tabs-radarRight").tabs("option", "active", 2);
-	$("#nodeDetailsIframe").html("  <button onclick='associateExternalResourceToNode()'>"+
+	$("#nodeDetailsDiv").html("  <button onclick='associateExternalResourceToNode()'>"+
 		"Associer  cette page au noeud courant </button><br"+
 		"<iframe width='"+((totalWidth / 4 * 3) - 50)+"' height='"+(totalHeight - 150)+"' src='"+uri+"'>");
-//	$("#nodeDetailsIframe").attr("src",uri);
+//	$("#nodeDetailsDiv").attr("src",uri);
 
 }
 

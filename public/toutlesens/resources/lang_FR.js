@@ -126,7 +126,7 @@ langResources['FR'] = {
 	"lang_154" : "Save",
 	"lang_155" : "Enregistrer",
 
-    "lang_156" : "noeuds trouves",
+    "lang_156" : "",// noeuds trouvés
     "lang_157" : "liste",
     "lang_158" : "page suivante",
     "lang_159" : "page précédente",

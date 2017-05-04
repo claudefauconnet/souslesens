@@ -1,6 +1,5 @@
-function drawsimpleForceBulk(json) {
+function initSimpleForceBulk(json) {
     var patternNodes = json.patternNodes;
-
     var forceData = buildNodesAndLinks(json);
     console.log("nodes : "+forceData.nodes.length);
     console.log("charge :"+ Gparams.d3ForceParams.charge);
@@ -9,6 +8,7 @@ function drawsimpleForceBulk(json) {
 
     var linkNodeIndexes = [];
     for (var i = 0; i < forceData.nodes.length; i++) {
+
         if (!patternNodes)// tous les noeuds visibility 1
             forceData.nodes[i].blongsToPattern = true;
         else if (patternNodes.indexOf(forceData.nodes[i].id) > -1) {
@@ -36,8 +36,13 @@ function drawsimpleForceBulk(json) {
 
 //	 makeDiag( forceData.nodes, forceData.links);
     drawSimpleForceBulk(forceData.nodes, forceData.links);
+    drawLegend();
 
 }
+
+
+
+
 
 
 function drawSimpleForceBulk(nodes, links) {
@@ -212,7 +217,7 @@ function drawSimpleForceBulk(nodes, links) {
 
                     })
                     .attr("class", "shape");
-                if (d.blongsToPattern) {
+                if (true || d.blongsToPattern) {
                     anode.on("mouseover", function (d) {
                         d3CommonMouseover(d)
                     });

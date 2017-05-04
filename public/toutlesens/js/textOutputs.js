@@ -458,7 +458,7 @@ function formatNodeInfo(obj) {
 
 
     // lien Sinequa)
-    if (typeof isSouslesensIframe == 'undefined') {
+    if (typeof isSouslesensIframe != 'undefined') {
         var name = obj.nom;
         if (!name)
             name = obj.name;
@@ -467,8 +467,11 @@ function formatNodeInfo(obj) {
             name = name.substring(0, p);
 
         var sinequaLink = "<a target ='_blanck' href='http://frhdstd-aefl06x/search?text=" + name + "&advanced=0&precision=&after_included=True&after=&before_included=True&before=&docformat=&documentlanguages=&treepath-0=&sort=globalrelevance.desc'>Search in Sinequa</a>"
+       // sinequaLink="";
+
         str = sinequaLink + "<br>" + str;
     }
+    str+= "<br> NeoId:" + currentObject.id;
     return str;
 
 }

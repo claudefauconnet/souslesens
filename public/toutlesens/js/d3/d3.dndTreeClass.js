@@ -641,8 +641,7 @@ function D3Tree2(_graphDiv, _nodesData, distance) {
                     return "purple";
 
                 return "000";
-            })
-            shape.style("stroke-width", function (d) {
+            }).style("stroke-width", function (d) {
                 if (d.isRoot || d.isTarget == true)
                     return 4;
                 return 1;

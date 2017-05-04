@@ -126,7 +126,7 @@ langResources['EN'] = {
 	"lang_154" : "Save",
 	"lang_155" : "Save",
 
-    "lang_156" : "found nodes",
+    "lang_156" : "",//found nodes"
     "lang_157" : "list",
     "lang_158" : "next page",
     "lang_159" : "previous page",

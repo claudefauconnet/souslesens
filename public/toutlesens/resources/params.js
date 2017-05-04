@@ -1,14 +1,17 @@
 var Gparams = {
     readOnly: true,
-    startWithWholeGraphView:true,
-    wholeGraphViewMaxNodes:5000,
-    modifyMode:'onList',//''onList'
+    showRelationAttrs:true,
+    startWithWholeGraphView: true,
+    defaultGraphtype:"FLOWER",
+    graphNavigationMode: "expandNode",
+    wholeGraphViewMaxNodes: 5000,
+    modifyMode: 'onList',//''onList'
     MaxResults: 2000,
     lang: "EN",
 
     profiles: {
         minimum: {
-            hide: ["lang_52", "lang_62", "listDownloadButton", "div_externalRessources","photoControls"],
+            hide: ["lang_52", "lang_62", "listDownloadButton", "div_externalRessources", "photoControls"],
             disable: ["listDownloadButton"]
         },
         all: {
@@ -37,9 +40,9 @@ var Gparams = {
     d3ForceParams: {distance: 200, charge: -500, gravity: .25},
     htmlOutputWithAttrs: true,
     showRelationNames: false,
-    isInframe:false,
+    isInframe: false,
     treeGraphVertSpacing: 35,
-    bigDialogSize :{w: 800, h: 500},
+    bigDialogSize: {w: 800, h: 500},
     gantt: {
         name: "nom",
         startField: "datedebut",

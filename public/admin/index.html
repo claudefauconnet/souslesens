@@ -192,7 +192,10 @@
     <script>
         processDataBeforeDrawingCallback = null;
         $(function () {
-            var socket = io.connect('http://localhost:3002');
+            var url=window.location.href;
+            var p=url.indexOf('/admin');
+            url=url.substring(0,p);
+            var socket = io.connect(url);
             socket.on('connect', function (data) {
                 socket.emit('join', 'Hello World from client');
             });
@@ -288,10 +291,10 @@
 
                             <div id="importCSVdiv">
                                 ImportCSV<br>
-                                <form name="uploadCcvForm" enctype="multipart/form-data" action="/uploadCsvForNeo"
+                                <form name="uploadCcvForm" enctype="multipart/form-data"   action="/uploadCsvForNeo"
                                       method="post"
                                       target="votar">
-                                    <input type="file" name="csv" class='exportNeo' value="choose file..."/>
+                                    <input type="file"  accept=".csv" name="csv" class='exportNeo' value="choose file..."/>
                                     <input type="submit" value="upload" name="submit" class='exportNeo'/>
                                 </form>
                             </div>

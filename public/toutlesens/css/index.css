@@ -495,7 +495,7 @@ table.dataTable thead th div.DataTables_sort_wrapper {
     width: 150px;
 }
 
-#nodeDetailsIframe {
+#nodeDetailsDiv {
     width: 90%;
 
     margin: 5px;

@@ -914,7 +914,7 @@ function drawLegendType(type) {
 
 }
 
-function clickLegend(e) {
+function clickLegend3(e) {
     var id = this.__data__.enumId.value;
     var currentEnum = radarXmls[radarModelName].Xml_getEnumeration(id);
     setMessage("legendId :" + currentEnum.label + " : " + !currentEnum.checked);

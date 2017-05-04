@@ -21,6 +21,7 @@ var graphQueryRelFilters = "";
 var graphQueryTargetFilter = "";
 var graphQueryExcludeNodeFilters = "";
 var graphQueryExcludeRelFilters = "";
+var graphQueryUnionStatement = "";
 var currentQueryParams;
 
 var totalNodesToDraw = 0;
@@ -129,10 +130,18 @@ function getNodeAllRelations(id, output, addToExistingTree, callback) {
 
     var numberOfLevelsVal = $("#depth").val();
     numberOfLevelsVal = parseInt(numberOfLevelsVal);
-    if (!currentDisplayType || currentDisplayType == "FLOWER" || currentDisplayType == "TREE" || currentDisplayType == "SIMPLE_FORCE_GRAPH" || currentDisplayType == "TREEMAP")
-        numberOfLevelsVal += 1;// pour les count des feuilles
+    if(Gparams.graphNavigationMode!="expandNode") {
+        if (!currentDisplayType || currentDisplayType == "FLOWER" || currentDisplayType == "TREE" || currentDisplayType == "SIMPLE_FORCE_GRAPH" || currentDisplayType == "TREEMAP")
+            numberOfLevelsVal += 1;
+    }// pour les count des feuilles
     // var statement = "MATCH path=(node1:"
     // + currentLabel
+    var returnStatement = " RETURN EXTRACT(rel IN relationships(path) | type(rel)) as rels," +
+        "EXTRACT(rel IN relationships(path) | rel)  as relProperties," +
+        "nodes(path) as nodes," +
+        " EXTRACT(node IN nodes(path) | ID(node)) as ids," +
+        " EXTRACT(node IN nodes(path) | labels(node)) as labels "
+        + ", EXTRACT(rel IN relationships(path) | labels(startNode(rel))) as startLabels"
     var statement = "MATCH path=(node1"
         + ")-[r"
         + graphQueryRelFilters
@@ -145,13 +154,11 @@ function getNodeAllRelations(id, output, addToExistingTree, callback) {
         + graphQueryNodeFilters
         + graphQueryExcludeNodeFilters
         + graphQueryExcludeRelFilters
-        + " RETURN EXTRACT(rel IN relationships(path) | type(rel)) as rels," +
-        "EXTRACT(rel IN relationships(path) | rel)  as relProperties," +
-        "nodes(path) as nodes," +
-        " EXTRACT(node IN nodes(path) | ID(node)) as ids," +
-        " EXTRACT(node IN nodes(path) | labels(node)) as labels "
-        + ", EXTRACT(rel IN relationships(path) | labels(startNode(rel))) as startLabels"
-        + " limit " + Gparams.MaxResults;
+        + returnStatement;
+    if (graphQueryUnionStatement)
+        statement += " UNION " + graphQueryUnionStatement + returnStatement;
+
+    statement += " limit " + Gparams.MaxResults;
     console.log(statement);
     $("#neoQueriesTextArea").val(statement);
     $("#neoQueriesHistoryId").prepend(statement + "<br><br>");
@@ -159,6 +166,7 @@ function getNodeAllRelations(id, output, addToExistingTree, callback) {
     graphQueryRelFilters = "";
     graphQueryExcludeNodeFilters = "";
     graphQueryExcludeRelFilters = "";
+    graphQueryUnionStatement = "";
 
     var payload = {match: statement};
 
@@ -180,6 +188,11 @@ function getNodeAllRelations(id, output, addToExistingTree, callback) {
             var resultArray = data;
             // data.log(JSON.stringify(resultArray))
             if (addToExistingTree && cachedResultArray) {
+                for (var i = 0; i < resultArray.length; i++) {
+                    for (var j = 0; j < resultArray[i].nodes.length; j++) {
+                        resultArray[i].nodes[j].show = true;
+                    }
+                }
 
                 resultArray = $.merge(resultArray, cachedResultArray);
 
@@ -200,6 +213,8 @@ function getNodeAllRelations(id, output, addToExistingTree, callback) {
 
 
 function prepareRawDataAndDisplay(resultArray, addToExistingTree, output, callback) {
+
+
     if (!output)
         output = currentDisplayType;
     var json;
@@ -220,8 +235,10 @@ function prepareRawDataAndDisplay(resultArray, addToExistingTree, output, callba
     else
         exploredTree = null;
     var currentLabels = [];
-    for (i = 0; i < resultArray.length; i++) {
-        for (j = 0; j < resultArray[i].labels.length; j++) {
+    for (var i = 0; i < resultArray.length; i++) {
+        if( !resultArray[i].labels) // !!!!bug à trouver
+            continue;
+        for (var j = 0; j < resultArray[i].labels.length; j++) {
             var label = resultArray[i].labels[j][0];
             if (currentLabels.indexOf(label) < 0)
                 currentLabels.push(label)
@@ -234,6 +251,7 @@ function prepareRawDataAndDisplay(resultArray, addToExistingTree, output, callba
         displayGraph(json, output, currentLabels);
 
 }
+
 
 function showInfos2(id, callback) {
     query = "MATCH (n) WHERE ID(n) =" + id + " RETURN n ";
@@ -272,11 +290,11 @@ function toFlareJson(resultArray, addToExistingTree) {
         var startNodes = resultArray[i].startLabels;
         var relProperties = resultArray[i].relProperties;
         var legendRelIndex = 1;
-      //  console.log("------------\n")
+        //  console.log("------------\n")
         for (var j = 0; j < nodes.length; j++) {
 
             var nodeNeo = nodes[j].properties;
-          //  console.log(JSON.stringify(nodeNeo))
+            //  console.log(JSON.stringify(nodeNeo))
             if (distinctNodeName[nodeNeo.nom] == null)
                 distinctNodeName[nodeNeo.nom] = 0;
             else {
@@ -293,7 +311,8 @@ function toFlareJson(resultArray, addToExistingTree) {
                 hiddenChildren: [],
                 neoAttrs: nodeNeo
             }
-
+            if(nodes[j].show)
+                nodeObj.show=true;
             if (nodeNeo.path) {
                 if (currentThumbnails.ids.indexOf(nodeObj.id) < 0) {
                     currentThumbnails.ids.push(nodeObj.id);
@@ -345,12 +364,12 @@ function toFlareJson(resultArray, addToExistingTree) {
                     }
                 }
 
- var key=nodeObj.id+"_"+ids[j-1];
-            /*  if( nodesMap[key]){// create a new id if allready existing
-                  //    if( nodesMap[(-j*1000000000)+nodeObj.id]){// create a new id if allready existing
-                    nodeObj.id=(-j*1000000000)+nodeObj.id;
-                    ids[j]= nodeObj.id;
-                }*/
+                var key = nodeObj.id + "_" + ids[j - 1];
+                /*  if( nodesMap[key]){// create a new id if allready existing
+                 //    if( nodesMap[(-j*1000000000)+nodeObj.id]){// create a new id if allready existing
+                 nodeObj.id=(-j*1000000000)+nodeObj.id;
+                 ids[j]= nodeObj.id;
+                 }*/
 
                 nodesMap[key] = nodeObj;
 
@@ -437,20 +456,27 @@ function deleteRecursiveReferences(nodesMap) {
 
 function addChildRecursive(node, nodesMap, level, maxLevels) {
     totalNodesToDraw = 0;
+
     maxEffectiveLevels = Math.max(maxEffectiveLevels, level);
     // maxEffectiveLevels=level;
     try {// max stack size limit
         for (var key in nodesMap) {
 
             var aNode = nodesMap[key];
-
+            if (aNode.parent == aNode.id) // self relation
+                continue;
             if (aNode.parent == node.id) {
                 if (excludeLabels && excludeLabels[aNode.label]
                     && excludeLabels[aNode.label] > -1)
                     continue;
+                if (aNode.show) {
+                    var www = "a"
+                }
                 if (!nodesMap[key].visited) {
                     aNode.level = level;
-                    if (level > maxLevels) {
+
+
+                    if (level > maxLevels && !aNode.show) {
                         if (false && node.decoration) {// on dessine les noeuds avec des decorations meme s'ils sont au dernier niveau
                             node.children.push(aNode);
                             totalNodesToDraw += 1;

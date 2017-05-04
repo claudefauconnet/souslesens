@@ -74,6 +74,7 @@ router.post('/elastic', function (req, response) {
 
 
 router.post('/exportMongoToNeo', function (req, response) {
+    exportMongoToNeo.clearVars();
     if ( req.body.type=="batch")
         exportToNeoBatch.exportBatch(req.body.sourceType,req.body.dbName,req.body.subGraph,JSON.parse(req.body.data), function(error,result){processResponse(response,error,result)});
     if ( req.body.type=="node")

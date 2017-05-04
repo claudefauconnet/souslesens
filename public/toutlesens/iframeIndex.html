@@ -82,7 +82,7 @@
 <script src="js/d3/d3.forceCollapseClass.js"></script>
 <script src="js/d3/d3.flower.js"></script>
 <script src="js/d3/d3.modifiableGraph.js"></script>
-<script src="js/d3/d3.simpleForce.js"></script>
+<script src="js/d3/d3.simpleForceSinequa.js"></script>
 <script src="js/d3/d3.treemap.js"></script>
 <script src="js/d3/d3.gantt.js"></script>
 <script src="js/d3/gant-chart-d3v2.js"></script>
@@ -167,7 +167,7 @@
         $("#textDivContainer").width((totalWidth ) - 50).height(totalHeight - 100);
         $("#neoQueriesHistoryId").width((totalWidth ) - 50).height(totalHeight - 100);
         $("#center").width(totalWidth ).height(totalHeight - 100);
-        $("#nodeDetailsIframe").width((totalWidth ) - 50).height(totalHeight - 150);
+        $("#nodeDetailsDiv").width((totalWidth ) - 50).height(totalHeight - 150);
         $("#graphDecorationPanel").height(totalHeight / 2);
 
 
@@ -177,6 +177,8 @@
 
         $(".splitter_panel").width(totalWidth / 4 * 3).height(totalHeight - 50);
         //  $("#graphLegendDiv").width(totalWidth / 4 * 3).height(50);
+        $("#graphLegendDiv").width(0).height(0);
+        $("#graphDiv").width(totalWidth ).height(totalHeight - 50)
 
         $("#nodeIframe").width("100%").height(totalHeight - 100);
         $("#center").width("100%").height(totalHeight - 100);
@@ -430,7 +432,7 @@
             <li><a href="#graphTab"><span id='lang_28'><span
                     id='lang_42'>Graphe</span></span></a></li>
             <li><a href="#textTab"><span id='lang_29'>Liste</span></a></li>
-            <li><a href="#leftTab"><span id='lang_29'>Nav</span></a></li>
+          <!--  <li><a href="#leftTab"><span id='lang_29'>Nav</span></a></li>
 
             <li id="li_nodeDetails"><a href="#nodeDetailsTab">Details </a></li>
             <li id="li_modify"><a href="#modifyTab"><span id='lang_31'>M.a.j</span></a></li>
@@ -704,7 +706,7 @@
                 cette page au noeud courant
             </button>
             <br>
-            <div id="nodeDetailsIframe"></div>
+            <div id="nodeDetailsDiv"></div>
 
         </div>
 

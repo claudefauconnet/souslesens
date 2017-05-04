@@ -279,14 +279,14 @@ function execute() {
         executeFrequentQuery();
     }
 
-    if (currentActionObj.type == "pattern") {
+     if (typeof isSouslesensIframe == 'undefined' && currentActionObj.type == "pattern") {
         if (currentActionObj.selection) {
             var query = getPatternQuery();
             window.parent.executeCypherAndDisplayGraph(query, currentActionObj);
 
         } else {
 
-            executePattern()
+            executePatternUI()
         }
     }
 
@@ -349,7 +349,7 @@ function buildCypherQuery() {
 
     query += " LIMIT " + limit;
     console.log(query);
-    window.parent.executeCypherAndDisplayGraph(query, currentActionObj);
+        window.parent.executeCypherAndDisplayGraph(query, currentActionObj);
 
 }
 
@@ -452,6 +452,7 @@ function executeCypherAndDisplayGraph(query, _currentActionObj) {
         executeQuery(QUERY_TYPE_MATCH, query, function (data) {
             cachedResultArray = data;
             data.patternNodes = currentActionObj.nodes;
+            currentDisplayType = "SIMPLE_FORCE_GRAPH_BULK";
             displayGraph(data, currentDisplayType, null)
         });
         return;
@@ -785,10 +786,8 @@ function removeFromPatternSelect() {
 }
 
 
-function executePattern(count) {
-
-
-    var query = getPatternQuery(count);
+function executePatternUI(count) {
+        query = getPatternQuery(count);
     executeQuery(QUERY_TYPE_MATCH, query, function (data) {
 
         var nodes = [];
@@ -815,30 +814,32 @@ function executePattern(count) {
                 nodes: nodes
             };
 
-            showWholeGraph(subGraph, currentActionObj);
+            showBulkGraph(subGraph, currentActionObj);
         }
 
     });
 }
 
-function showWholeGraph(subGraph, currentActionObj) {
+function showBulkGraph(subGraph, currentActionObj) {
     if (!currentActionObj) {
         if (!Gparams.startWithWholeGraphView === true)
             return;
         currentActionObj = {
             type: "pattern",
         };
+
     }
     var matchAll = "MATCH path=(n)-[r]-(m) where n.subGraph='" + subGraph + "' ";
     matchAll += " return " + returnStr + "  limit " + Gparams.wholeGraphViewMaxNodes;
 
     console.log(matchAll);
-    if (window.parent.executeCypherAndDisplayGraph)
+     if (typeof isSouslesensIframe == 'undefined' && window.parent.executeCypherAndDisplayGraph)
         window.parent.executeCypherAndDisplayGraph(matchAll, currentActionObj);
     else
         executeCypherAndDisplayGraph(matchAll, currentActionObj);
 
 }
+
 
 function getPatternQuery(count) {
     var match = "";

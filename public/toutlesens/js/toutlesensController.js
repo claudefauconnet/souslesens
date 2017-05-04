@@ -104,7 +104,7 @@ var labelsPositions = {};
 var initialQuery = "";
 //var currentVariables = [];
 var currentVariable = "";
-var currentDisplayType = "SIMPLE_FORCE_GRAPH_BULK";
+var currentDisplayType ;
 var selectedObject = {};
 var subGraph;
 var d3tree;
@@ -568,16 +568,17 @@ function extractNodesList(data) {
 function fillLabelsPage(neoResult) {
     var nodes = extractNodesList(neoResult);
     fillSelectOptions(wordsSelect, nodes, "name", "id");
-    var str = "<table><tr><td><span id='lang_156'>Noeuds trouves</span> </td><td>"
+    var str = "<table><tr><td><span id='lang_156'></span> </td><td>"
         + currentRequestCount
         + "&nbsp;<button onclick='listNodesAndAttrs()'><span id='lang_157'>liste</span></button>"
-        + "</td></tr>";
-    str += "<tr><td>ou noeud de depart </td><td>&nbsp;&nbsp;"
     if (currentPageIndex > 0)
         str += "<button onclick=' goToPreviousPage()'>&lt;</button>&nbsp;"
     if (nodes.length < currentRequestCount)
         str += "<button onclick=' goToNextPage()'>&gt;</button>&nbsp;"
     str += "</td></tr></table>";
+        + "</td>";//</tr>";
+ //   str += "<tr><td> </td><td>&nbsp;&nbsp;"
+
 
     // str += "<a class='pageNav' href='javascript: goToPreviousPage()'>
     // page precedente</a>&nbsp;"
@@ -628,6 +629,8 @@ function fillSelectOptions(select, data, textfield, valueField) {
 }
 
 function onWordSelect(draw) {
+    if(currentDisplayType =="SIMPLE_FORCE_GRAPH_BULK")
+        currentDisplayType = "FLOWER";
     var text = wordsSelect.options[wordsSelect.selectedIndex].text;
 
     currentLabel = text.substring(text.indexOf("[") + 1, text.indexOf("]"));
@@ -684,7 +687,9 @@ function getGraphDataAroundNode(id, callbackFunction) {
         currentObjId = id;
 
     // var mode = $("#outputModeHome:checked").val();
-    var mode = $("#representationSelect").val();
+    //var mode = $("#representationSelect").val();
+
+    var mode = currentDisplayType
     currentMode = mode;
     /* $("#bottomPanel").css("visibility", "visible"); */
 
@@ -1341,7 +1346,8 @@ function onRadarRightActivate(index) {
      }*/
 }
 
-function dispatchAction(action, objectId) {
+function dispatchAction(action, objectId,targetObjectId) {
+
     if (objectId)
         currentObject = currentHiddenChildren[objectId];
 
@@ -1356,6 +1362,15 @@ function dispatchAction(action, objectId) {
     }
 
     currentGraphPanel == "";// "graphParametersPanel"
+
+
+    if (action == "addNodeToGraph") {
+      /*  var numberOfLevelsVal = $("#depth").val();
+        numberOfLevelsVal = parseInt(numberOfLevelsVal)+2;
+        graphQueryUnionStatement="MATCH path=(node1)-[r*.."+numberOfLevelsVal + "]-(m) where ID(node1)="+currentObject.id+" and  ID(m)="+targetObjectId+" and node1.subGraph='"+subGraph+"'";
+        //initGraphFilters(currentObject.label);*/
+        getNodeAllRelations(targetObjectId, mode,true);
+    }
 
     if (action == "nodeInfosPopup") {
         $("#externalInfoPanel").html("");
@@ -1749,7 +1764,7 @@ function drawGraphGeneral(useCache) {
 
     if (currentGraphRequestType == currentGraphRequestType_FROM_NODE) {
         if (!currentObject) {
-            alert("il est nécessaire de choisir un noeud source ou de passer en mode recherche avancee")
+           // alert("il est nécessaire de choisir un noeud source ou de passer en mode recherche avancee")
             return;
         }
         getGraphDataAroundNode(useCache);
@@ -1854,11 +1869,33 @@ function displayGraph(json, output, labels) {
         drawsimpleForce(forceJson);
     }
     else if (output == "SIMPLE_FORCE_GRAPH_BULK") {
-        var forceJson = json;
-        if (!json || json.children && json.children.length > 0)// maladroit à revoir dans flower
-            forceJson = cachedResultArray;
-        drawsimpleForceBulk(forceJson);
-        currentDisplayType="FLOWER";
+        var forceJson = cachedResultArray;
+      //  if (!json || json.children && json.children.length > 0){// maladroit à revoir dans flower
+        // convert json nodes in ids array and pass it to showBulkGraph
+            var nodeIds=[];
+            if(forceJson.patternNodes){// from patterns screen
+                initSimpleForceBulk(forceJson);
+            }
+            else {
+                for (var i = 0; i < forceJson.length; i++) {
+                    var aNode = forceJson[i];
+                    for (var j = 0; j < aNode.ids.length; j++) {
+                        if (nodeIds.indexOf(aNode.ids[j]) < 0)
+                            nodeIds.push(aNode.ids[j]);
+                    }
+                }
+
+
+                var matchAll = "MATCH path=(n)-[r]-(m) where n.subGraph='" + subGraph + "' ";
+                matchAll += " return " + returnStr + "  limit " + Gparams.wholeGraphViewMaxNodes;
+                executeQuery(QUERY_TYPE_MATCH, matchAll, function (data) {
+                    data.patternNodes = nodeIds;
+                    initSimpleForceBulk(data);
+                });
+            }
+      //   executePatternUI();
+   //   initSimpleForceBulk(forceJson);
+     //   currentDisplayType="FLOWER";
 
     }
 

@@ -108,8 +108,10 @@ function setPopupMenuNodeInfoContent() {
         "<B><span style='color:" + nodeColors[currentObject.label] + "'> [" + currentObject.label + "]<span>" +name+"</B>"*/
 
     var str="<table> <tr>" +
-        "<td> <input type='image' height='20px' alt='infos'  onclick='dispatchAction(\"nodeInfosPopup\")' src='images/infos.png'/></td>"+
-        "<td><input type='image' height='15px'  alt='set as rootNode' onclick='dispatchAction(\"setAsRootNode\")' src='images/squareRoot.png'/></td>"
+        "<td> <input type='image' height='20px' alt='infos'  onclick='dispatchAction(\"nodeInfosPopup\")' src='images/infos.png'/></td>";
+  if(currentDisplayType=="SIMPLE_FORCE_GRAPH")
+    str+= "<input type='image' height='15px'  alt='set as rootNode' onclick='dispatchAction(\"addNodeToGraph\",null," + currentObject.id + ")' src='images/add.jpg'/>" + "&nbsp;";
+    str+=   "<td><input type='image' height='15px'  alt='set as rootNode' onclick='dispatchAction(\"setAsRootNode\")' src='images/squareRoot.png'/></td>"
     if(Gparams.readOnly ==false){
         str+="<td> <input type='image' height='20px' alt='infos'  onclick='dispatchAction(\"modifyNode\")' src='images/modify.png'/></td>"+
         "<td><input type='image' height='20px'  alt='set as rootNode' onclick='dispatchAction(\"linkSource\")' src='images/sourceLink.png'/></td>"+
@@ -135,6 +137,8 @@ function setPopupMenuNodeInfoContent() {
 
 
             str +="<li><input type='image' height='15px' alt='infos'  onclick='dispatchAction(\"nodeInfosPopup\"," + child.id + ")' src='images/infos.png'/>" +
+
+
                 "<input type='image' height='15px'  alt='set as rootNode' onclick='dispatchAction(\"setAsRootNode\"," + child.id + ")' src='images/squareRoot.png'/>" + "&nbsp;" +
                 "<span style='color:" + nodeColors[child.label] + "'> [" + child.label + "]</span>" + name + "&nbsp;</li>";
 
