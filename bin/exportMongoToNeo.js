@@ -563,7 +563,7 @@ function loadAndFetchDataToImport(params, importFn, _rootCallBack) {
                 if (params.label) {//nodes
 
                     //   fs.writeFile("./uploads/neoNodesMapping_" + params.mongoDB + "_" + params.label + ".js", JSON.stringify(nodeMappings));
-                    mergeNodesMappingsAndSaveFile("./uploads/neoNodesMapping_" + params.subGraph + "_" + params.label + "_" + params.mongoField + ".js", nodeMappings, params.label, rootCallBack)
+                    mergeNodesMappingsAndSaveFile("./uploads/neoNodesMapping_" + params.subGraph + "_" + params.label + "_" + params.mongoKey + ".js", nodeMappings, params.label, rootCallBack)
 
 
                 } else {
