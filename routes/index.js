@@ -146,7 +146,7 @@ function processResponse(response,error,result){
         if(error) {
             console.log("ERROR !!"+error);
             socket.message("ERROR !!"+error);
-          //  response.send({ERROR: error});
+         response.send({ERROR: error});
 
         }
         else if(!result) {

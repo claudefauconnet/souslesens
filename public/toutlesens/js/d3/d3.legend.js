@@ -57,7 +57,12 @@ function drawLegend(legendDivId) {
 
     }
 
-    if(excludedLabels)
+    if(excludedLabels){
+      for(var key in excludedLabels){
+          legendNodeLabels[key]={label:key};
+      }
+
+    }
 
     for (label in legendNodeLabels) {
         // legHeight += 20;
@@ -268,7 +273,7 @@ function clickLegend(e) {
         graphQueryExcludeNodeFilters += "m:" + excludedLabels[i];
     }
 
-
-    getNodeAllRelations(currentObject.id, currentDisplayType);
+    executeSearch();
+   // getNodeAllRelations(currentObject.id, currentDisplayType);
 
 }

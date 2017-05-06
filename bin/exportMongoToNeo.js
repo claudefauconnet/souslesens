@@ -27,7 +27,8 @@ var exportMongoToNeo = {
         var collection = params.mongoCollection;
 
         var nameMongoField = params.mongoField;
-        var idMongoField = params.mongoIdField;
+        var mongoKey = params.mongoKey;
+
         var subGraph = params.subGraph;
         var label = params.label;
         var isDistinct = params.distinctValues ? true : false;
@@ -53,8 +54,8 @@ var exportMongoToNeo = {
 
                 if (isDistinct & distinctNames.indexOf(nameMongoFieldValue) > -1)
                     continue;
-                if (obj[idMongoField]) {// on stocke dans neo et neoMappings dans id la valeur de mongoIdField
-                    obj.id = obj[idMongoField];
+                if (obj[mongoKey]) {// on stocke dans neo et neoMappings dans id la valeur de mongoKey
+                    obj.id = obj[mongoKey];
                 } else {
                     continue;
                 }
@@ -161,11 +162,22 @@ var exportMongoToNeo = {
         var dbName = params.mongoDB;
         var mongoCollection = params.mongoCollection;
         var mongoSourceField = params.mongoSourceField;
+        var neoSourceKey = params.neoSourceKey;
+        var neoTargetKey = params.neoTargetKey;
+        var mongoSourceField = params.mongoSourceField;
         var neoSourceLabel = params.neoSourceLabel;
         var mongoTargetField = params.mongoTargetField;
         var neoTargetLabel = params.neoTargetLabel;
         var relationType = params.relationType;
         params.fields = setRelationsMongoFieldsToExport(params);
+
+        if(!neoSourceKey){
+            neoSourceKey=mongoSourceField;
+        }
+        if(!neoTargetKey){
+            neoTargetKey=mongoTargetField;
+        }
+
 
         var mongoQuery = params.mongoQueryR;
         var subGraph = params.subGraph;
@@ -173,8 +185,23 @@ var exportMongoToNeo = {
         var mongoNeoSourceIdsMap = {};
         var mongoNeoTargetIdsMap = {};
         try {
-            var sourceNodeMappings = fs.readFileSync("./uploads/neoNodesMapping_" + dbName + "_" + neoSourceLabel + "_" + mongoSourceField + ".js");
-            var targetNodeMappings = fs.readFileSync("./uploads/neoNodesMapping_" + dbName + "_" + neoTargetLabel + "_" + mongoTargetField + ".js");
+            var sourceFilePath="./uploads/neoNodesMapping_" + subGraph + "_" + neoSourceLabel + "_" + neoSourceKey + ".js";
+                      if(!fs.existsSync(sourceFilePath)){
+                callback("sourceNodeMappings "+sourceFilePath+" does not exists ");
+                return;
+            }
+
+            var targetFilePath="./uploads/neoNodesMapping_" + subGraph + "_" + neoTargetLabel + "_" + neoTargetKey + ".js";
+            if(!fs.existsSync(targetFilePath)){
+                callback("targetNodeMappings"+targetFilePath+"  does not exists ");
+                return;
+            }
+            var sourceNodeMappings = fs.readFileSync(sourceFilePath);
+
+            var targetNodeMappings= fs.readFileSync(targetFilePath);
+
+
+
         } catch (e) {
             callback(e)
         }
@@ -536,7 +563,7 @@ function loadAndFetchDataToImport(params, importFn, _rootCallBack) {
                 if (params.label) {//nodes
 
                     //   fs.writeFile("./uploads/neoNodesMapping_" + params.mongoDB + "_" + params.label + ".js", JSON.stringify(nodeMappings));
-                    mergeNodesMappingsAndSaveFile("./uploads/neoNodesMapping_" + params.mongoDB + "_" + params.label + "_" + params.mongoField + ".js", nodeMappings, params.label, rootCallBack)
+                    mergeNodesMappingsAndSaveFile("./uploads/neoNodesMapping_" + params.subGraph + "_" + params.label + "_" + params.mongoField + ".js", nodeMappings, params.label, rootCallBack)
 
 
                 } else {
@@ -610,10 +637,10 @@ function loadAndFetchDataToImport(params, importFn, _rootCallBack) {
                 var message = "";
 
                 if (params.label) {//nodes
-                    mergeNodesMappingsAndSaveFile("./uploads/neoNodesMapping_" + params.mongoDB + "_" + params.label + "_" + params.mongoField + ".js", nodeMappings, params.label, rootCallBack)
+                    mergeNodesMappingsAndSaveFile("./uploads/neoNodesMapping_" + params.subGraph + "_" + params.label + "_" + params.mongoKey + ".js", nodeMappings, params.label, rootCallBack)
 
 
-                } else {
+                } else {// relations
                     var message = "import done : " + totalLines + "lines for relation " + params.neoSourceLabel + "->" + params.neoTargetLabel;
                     socket.message(message);
                     console.log(message);
@@ -631,12 +658,12 @@ function loadAndFetchDataToImport(params, importFn, _rootCallBack) {
 function setNodeMongoFieldsToExport(params) {
     var exportedFields = params.exportedFields;
     var fields = [];
-    if (!exportedFields)
+    if (!exportedFields || exportedFields=="all")
         return null;// on exporte tous les champs mongo
 
     fields = exportedFields.trim().split(";");
     fields.push(params.mongoField);
-    fields.push(params.mongoIdField);
+    fields.push(params.mongoKey);
     if (params.label.indexOf("#") == 0)
         fields.push(params.label.substring(1));
 

@@ -352,7 +352,7 @@ function initDecorationDiv() {
 }
 
 
-function execute() {
+function executeDisplay() {
     var groupByClass = $("#groupByClassCBx").prop("checked");
     setDataDecoration(groupByClass);
     if(false && $("#crossLabel").prop("checked"))

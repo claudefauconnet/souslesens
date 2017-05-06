@@ -1,5 +1,7 @@
 function buildNodesAndLinks(resultArray) {
     currentDataStructure="flat";
+    if(resultArray.currentActionObj)
+    currentActionObj=resultArray.currentActionObj;
     var nodesMap = {};
     var links = [];
     var linkId = 1000;

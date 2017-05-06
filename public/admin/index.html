@@ -184,6 +184,11 @@
             align-content: center !important;;
             align-items: center !important;;
         }
+        .title{
+            font-size: 18px;
+            font-weight: bold;
+            text-align: center;
+        }
 
 
     </style>
@@ -204,6 +209,7 @@
                     return;
                 if (typeof message == 'string') {
                     if (message.indexOf("listCsvFields") > 0) {
+
                         setCsvImportFields(JSON.parse(message));
                         return;
                     }
@@ -258,6 +264,13 @@
             radarDiv = "#radarDiv";
             attrsIFrame = "#attrsIframe";
 
+
+
+            $("input[type=file]").on('change',function(){
+                document.forms["uploadCsvForm"].submit();
+            });
+
+
         });
     </script>
 <body>
@@ -291,11 +304,11 @@
 
                             <div id="importCSVdiv">
                                 ImportCSV<br>
-                                <form name="uploadCcvForm" enctype="multipart/form-data"   action="/uploadCsvForNeo"
+                                <form name="uploadCsvForm" enctype="multipart/form-data"   action="/uploadCsvForNeo"
                                       method="post"
                                       target="votar">
                                     <input type="file"  accept=".csv" name="csv" class='exportNeo' value="choose file..."/>
-                                    <input type="submit" value="upload" name="submit" class='exportNeo'/>
+                                 <!--   <input type="submit" value="upload" name="submit" class='exportNeo'/>  voir script $function-->
                                 </form>
                             </div>
                         </td>
@@ -422,7 +435,7 @@
                         <table>
 
                             <tr>
-                                <td align="right">Field</td>
+                                <td align="right">Node name field</td>
                                 <td>
                                     <button class="source" onclick="setMongoField()">Set</button>
                                     <input disabled="disabled" name="nodeInput" id="mongoField"></td>
@@ -432,12 +445,22 @@
 
                             </tr>
 
+                            <tr>
+                                <td align="right">Node key field</td>
+                                <td>
+                                    <button class="source" onclick="setMongoKey()">Set</button>
+                                    <input disabled="disabled" name="nodeInput" id="mongoKey"></td>
+                                <td>
+                                    <button onclick="showHelp('mongoKey')">?</button>
+                                </td>
+
+                            </tr>
 
                             <tr>
-                                <td align="right">exportedFields</td>
+                                <td align="right">Node attribute fields</td>
                                 <td>
                                     <button class="source" onclick="addToExportedFields()">Add</button>
-                                    <input name="nodeInput" id="exportedFields"></td>
+                                    <input name="nodeInput" id="exportedFields" value="none"> <button onclick='$("#exportedFields").val("all")'>All</button></td>
                                 <td>
                                     <button onclick="showHelp('exportedFields')">?</button>
                                 </td>
@@ -488,8 +511,14 @@
                         <input type="hidden" name="linkInput" id="mongoCollectionRel">
                         <table>
 
+                            <tr class="source0">
+                                <td colspan="3" class="title">Join From</td>
+                                <td> &nbsp;   </td>
+                                <td></td>
+                            </tr>
+
                             <tr>
-                                <td align="right"> Source Field</td>
+                                <td align="right"> Source Key</td>
                                 <td>
                                     <button class="source" onclick="setMongoSourceField()">Set</button>
                                     <input disabled="disabled" name="linkInput" id="mongoSourceField"></td>
@@ -499,7 +528,12 @@
                             </tr>
 
                             <tr>
-                                <td align="right">Neo Source Label</td>
+                                <td align="right">Neo Key</td>
+                                   <td> <input name="linkInput" id="neoSourceKey"></td>
+
+                            </tr>
+                            <tr>
+                                <td align="right">Neo Label</td>
                                 <td><input disabled="disabled" name="linkInput" id="neoSourceLabel">
                                     <button class="neoTarget" onclick="setNeoSourceLabel()">Set</button>
                                 </td>
@@ -507,15 +541,15 @@
                                     <button onclick="showHelp('neoSourceLabel')">?</button>
                                 </td>
                             </tr>
+
+
                             <tr class="source0">
-                                <td align="right"></td>
+                                <td colspan="3" class="title">Join To</td>
                                 <td> &nbsp;   </td>
                                 <td></td>
                             </tr>
-
-
                             <tr>
-                                <td align="right"> Target Field</td>
+                                <td align="right"> Source Key</td>
                                 <td>
                                     <button class="source" onclick="setMongoTargetField()">Set</button>
                                     <input disabled="disabled" name="linkInput" id="mongoTargetField"></td>
@@ -524,25 +558,29 @@
                                     <button onclick="showHelp('mongoTargetField')">?</button>
                                 </td>
                             </tr>
-
                             <tr>
-                                <td align="right">Neo Target Label</td>
+                                <td align="right">Neo Key</td>
+                                <td> <input name="linkInput" id="neoTargetKey"></td>
+
+                            </tr>
+                            <tr>
+                                <td align="right">Neo Label</td>
                                 <td><input disabled="disabled" name="linkInput" id="neoTargetLabel">
+
                                     <button class="neoTarget" onclick="setNeoTargetLabel()">Set</button>
                                 </td>
                                 <td>
                                     <button onclick="showHelp('neoTargetLabel')">?</button>
                                 </td>
                             </tr>
-
                             <tr class="source0">
-                                <td align="right"></td>
-                                <td>&nbsp;  </td>
+                                <td colspan="3" class="title">Relation</td>
+                                <td> &nbsp;   </td>
                                 <td></td>
                             </tr>
 
                             <tr>
-                                <td align="right">Neo relation type</td>
+                                <td align="right">Neo  type</td>
                                 <td><input name="linkInput" id="relationType"></td>
                                 <td>
                                     <button onclick="showHelp('relationType')">?</button>
@@ -550,7 +588,7 @@
                             </tr>
                             <tr>
 
-                                <td align="right">Neo Rel Attributes Field
+                                <td align="right">  Fields
                                     <button class="source" onclick="setNeoRelAttributeField()">Add</button>
                                 </td>
                                 <td><input name="linkInput" id="neoRelAttributeField"></td>
@@ -592,7 +630,7 @@
                                 <td>
                                     <form enctype="multipart/form-data" action="/uploadToNeo" method="post"
                                           target="votar">
-                                        <input type="file" name="cypher" class='exportNeo'/>
+                                        <input type="file" name="cypher" class='exportNeo' onblur= 'onFileButton()';>
                                         <input type="submit" value="upload" name="submit" class='exportNeo'/>
                                     </form>
                                 </td>

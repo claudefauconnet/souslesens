@@ -261,7 +261,8 @@ function getCaretPosition(ctrl) {
 
 //********************************************************execute*****************************************
 
-function execute() {
+function executeSearch() {
+    currentActionObj.maxDistance= parseInt($("#graphPathMaxDistance").val());
     if (currentActionObj.type == "pathes") {
         if (currentActionObj.graphPathSourceNode && currentActionObj.graphPathSourceNode.nodeId && currentActionObj.graphPathTargetNode && currentActionObj.graphPathTargetNode.nodeId) {
             executePathQuery();
@@ -303,7 +304,8 @@ function executePathQuery() {
 
 
 function buildCypherQuery() {
-    var maxDistance = parseInt($("#graphPathMaxDistance").val());
+
+    var maxDistance = currentActionObj.maxDistance;
     var str = ""
 
     var matchStr = "(n"
@@ -336,11 +338,15 @@ function buildCypherQuery() {
             whereStr += "  and ";
         whereStr += "ID(m)=" + currentActionObj.graphPathTargetNode.nodeId;
     }
+    if(graphQueryExcludeNodeFilters)
+        whereStr += graphQueryExcludeNodeFilters;
 
 
     var query = "Match path=" + matchStr;
     if (whereStr.length > 0)
         query += " WHERE " + whereStr;
+
+
 
     /*  if (groupBy.length > 0)
      query += "groupBy " + groupBy;*/
@@ -452,6 +458,7 @@ function executeCypherAndDisplayGraph(query, _currentActionObj) {
         executeQuery(QUERY_TYPE_MATCH, query, function (data) {
             cachedResultArray = data;
             data.patternNodes = currentActionObj.nodes;
+            data.currentActionObj=currentActionObj;
             currentDisplayType = "SIMPLE_FORCE_GRAPH_BULK";
             displayGraph(data, currentDisplayType, null)
         });
@@ -470,7 +477,9 @@ function executeCypherAndDisplayGraph(query, _currentActionObj) {
 
     $("#tabs-radarLeft").tabs("enable");
     executeQuery(QUERY_TYPE_MATCH, query, function (data) {
-        cachedResultArray = data;
+        data.currentActionObj=currentActionObj;
+
+            cachedResultArray = data;
         displayGraph(data, currentDisplayType, null)
     });
 }
