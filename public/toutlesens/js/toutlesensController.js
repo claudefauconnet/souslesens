@@ -68,9 +68,11 @@ var currentObjId;
 var currentLabel;
 var currentRelation;
 var currentMode;
+var currentSourceNode;
 var cachedResultTree;
 var currentHiddenChildren = {};
 var currentRelationActionTargetNode;
+var collapseTargetLabels=[]
 var startSearchNodesTime;
 var nodeTypes = [];
 var oldRightTabIndex = -1;
@@ -104,7 +106,7 @@ var labelsPositions = {};
 var initialQuery = "";
 //var currentVariables = [];
 var currentVariable = "";
-var currentDisplayType ;
+var currentDisplayType="FLOWER" ;
 var selectedObject = {};
 var subGraph;
 var d3tree;
@@ -641,24 +643,27 @@ function onWordSelect(draw) {
         name: currentNodeName,
         label: currentLabel
     }
+    currentSourceNode=currentObject;
 
-    $("#tabs-radarLeft").tabs("enable");
-    $("#tabs-radarRight").tabs("enable");
-    $("#currentNodeSpan").html("Noeud central : " + text);
+    if(  currentDisplayType!="SIMPLE_UI" ) {
+        $("#tabs-radarLeft").tabs("enable");
+        $("#tabs-radarRight").tabs("enable");
+        $("#currentNodeSpan").html("Noeud central : " + text);
 
-    if (Gparams.modifyMode == 'onList' && currentMode == "write") {
-        var index = $('#tabs-radarRight a[href="#modifyTab"]').parent().index();
-        $("#tabs-radarRight").tabs("option", "active", index);
+        if (Gparams.modifyMode == 'onList' && currentMode == "write") {
+            var index = $('#tabs-radarRight a[href="#modifyTab"]').parent().index();
+            $("#tabs-radarRight").tabs("option", "active", index);
 
-        dispatchAction("modifyNode");
-        return;
+            dispatchAction("modifyNode");
+            return;
+        }
+
+
+        //selectLeftTab("#graphQueryFiltersTab");
+
+        $("#graphPathSourceNode").html(text);
+        $("#graphTravSourceNode").html(text);
     }
-
-    //selectLeftTab("#graphQueryFiltersTab");
-
-    $("#graphPathSourceNode").html(text);
-    $("#graphTravSourceNode").html(text);
-
     getGraphDataAroundNode(currentObjId, drawGraph);
 
 }
@@ -706,6 +711,10 @@ function getGraphDataAroundNode(id, callbackFunction) {
      active : 1
      });*/
 
+    if(mode == "SIMPLE_UI"){
+        getNodeAllRelations(id, mode);
+        return;
+    }
     if (mode == "FORCE_COLLAPSE") {
         getNodeAllRelations(id, mode);
         return;

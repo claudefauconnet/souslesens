@@ -10,6 +10,7 @@ function d3CommonClick(d) {
         return;
     var id = d.id;
     currentObject = d;
+    currentSourceNode=d;
     if (d3.event.ctrlKey) {
         addToSelection(currentObject)
 
@@ -43,6 +44,7 @@ function d3CommonClick(d) {
 
 function d3CommonDblclick(d) {
     currentObject = d;
+    currentSourceNode=d;
     dispatchAction('setAsRootNode');
 
 }

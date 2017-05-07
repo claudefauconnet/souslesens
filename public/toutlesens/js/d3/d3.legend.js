@@ -7,7 +7,7 @@ var xLeg = 10;
 var circleLegR = Gparams.circleR / 1.5;
 var yDecoLeg;
 var visLeg;
-var excludedLabels=[];
+var excludedLabels = [];
 function drawLegend(legendDivId) {
     var legendDiv;
 
@@ -21,7 +21,7 @@ function drawLegend(legendDivId) {
 
         var w = legendDiv.width();
         var h = legendDiv.height();
-        if(w<5)
+        if (w < 5)
             return;
 
         visLeg = d3.select("#graphLegendDiv").append("svg:svg").attr("width", w).attr(
@@ -57,12 +57,17 @@ function drawLegend(legendDivId) {
 
     }
 
-    if(excludedLabels){
-      for(var key in excludedLabels){
-          legendNodeLabels[key]={label:key};
-      }
+   if (excludedLabels) {
+        for (var key in excludedLabels) {
+            legendNodeLabels[key] = {label: key};
+        }
 
     }
+    for(var i=0;i<collapseTargetLabels.length;i++){
+        legendNodeLabels.push(collapseTargetLabels[i]);
+    }
+
+
 
     for (label in legendNodeLabels) {
         // legHeight += 20;
@@ -260,20 +265,24 @@ function drawDecorationLegend(_decorationObjs) {
 
 function clickLegend(e) {
     var p;
-   // excludedLabels=[];
-    if((p=excludedLabels.indexOf(e.name))<0)
+    // excludedLabels=[];
+  /*  if ((p = excludedLabels.indexOf(e.name)) < 0)
         excludedLabels.push(e.name);
     else// bascule
-        excludedLabels.splice(p,1);
+        excludedLabels.splice(p, 1);
 
-    graphQueryExcludeNodeFilters="";
+    graphQueryExcludeNodeFilters = "";
     for (var i = 0; i < excludedLabels.length; i++) {
         //if (i > 0)
-            graphQueryExcludeNodeFilters += " and not ";
+        graphQueryExcludeNodeFilters += " and not ";
         graphQueryExcludeNodeFilters += "m:" + excludedLabels[i];
-    }
+    }*/
 
-    executeSearch();
-   // getNodeAllRelations(currentObject.id, currentDisplayType);
+    collapseTargetLabels=[e.name];
+  //  prepareRawDataAndDisplay(cachedResultArray);
+    if (legendNodeLabels.currentActionObj)//call from advancedSearch
+        executeSearch();
+    else //callfrom toutlesensData
+        getNodeAllRelations(currentSourceNode.id, currentDisplayType);
 
 }

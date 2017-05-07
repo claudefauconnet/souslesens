@@ -1,0 +1,24 @@
+a:link {
+    text-decoration: none;
+    color: #00F;
+}
+
+a:visited {
+    text-decoration: none;
+    color: #F00;
+}
+
+a:hover {
+    text-decoration: none;
+    color: #F00;
+}
+
+a:active {
+    text-decoration: none;
+    color: #F00;
+}
+
+#tagCloudContainer{
+    width: 1000px;
+    height: 500px;
+}

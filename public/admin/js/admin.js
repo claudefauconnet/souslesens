@@ -755,8 +755,11 @@ function loadRequests() {
             for (var i = 0; i < currentRequests.length; i++) {
                 if (currentRequests[i].request) {
                     currentRequests[i].request = JSON.parse(currentRequests[i].request);
+                    if(currentRequests[i].mongoIdField)//patch
+                        currentRequests[i].mongoKey=currentRequests.mongoIdField
                 }
             }
+
             fillSelectOptions(requests, currentRequests, "name", "name");
             setRequestSubGraphFilterOptions();
 

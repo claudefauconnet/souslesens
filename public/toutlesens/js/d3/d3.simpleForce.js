@@ -13,6 +13,9 @@ function buildNodesAndLinks(resultArray) {
     for (var i = 0; i < resultArray.length; i++) {
         var rels = resultArray[i].rels;
         var nodes = resultArray[i].nodes;
+       if(!nodes)
+           continue;
+
         var ids = resultArray[i].ids;
         var legendRelIndex = 1;
 
@@ -120,6 +123,9 @@ function buildNodesAndLinks(resultArray) {
 
 
 
+        }
+        if(currentActionObj){
+            legendNodeLabels.currentActionObj=currentActionObj;
         }
     }
 
@@ -294,7 +300,9 @@ function drawSimpleForce(nodes, links) {
                 })
 
                 .attr("stroke-width", Gparams.relStrokeWidth)
-                .attr("stroke", "#65dbf1").attr("fill", "none").attr("stroke", nodeColors[d.target.label]);
+                .attr("fill", "none")
+         //   .attr("stroke", "#65dbf1");
+          //  .attr("stroke", nodeColors[d.target.label]);
         });
 
 
@@ -478,7 +486,7 @@ function drawSimpleForce(nodes, links) {
 
             d3.select("#L_" + d.id).style("opacity", Gparams.minOpacity);
             d3.select("#L_" + d.id).select("text").style("stroke", null);
-            d3.select("#L_" + d.id).select("path").style("stroke", "brown");
+          //  d3.select("#L_" + d.id).select("path").style("stroke", "brown");
 
         });
 
@@ -492,7 +500,7 @@ function drawSimpleForce(nodes, links) {
             var id = d.rels[i];
             d3.select("#L_" + id).style("opacity", 1);
             d3.select("#L_" + id).select("text").style("stroke", "purple");
-            d3.select("#L_" + id).select("path").style("stroke", "purple");
+         //   d3.select("#L_" + id).select("path").style("stroke", "purple");
 
 
         }
@@ -503,7 +511,7 @@ function drawSimpleForce(nodes, links) {
 
         d3.select("#L_" + d.id).style("opacity", Gparams.minOpacity);
         d3.select("#L_" + d.id).select("text").style("stroke", null);
-        d3.select("#L_" + d.id).select("path").style("stroke", "brown");
+    //    d3.select("#L_" + d.id).select("path").style("stroke", "brown");
 
     });
 }

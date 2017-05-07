@@ -109,7 +109,7 @@ function executeQuery(queryType, str, successFunction) {
 }
 
 function getNodeAllRelations(id, output, addToExistingTree, callback) {
-
+    excludedLabels = [];
     id = parseInt("" + id);
     if (addToExistingTree)
         navigationPath.push(id);
@@ -123,19 +123,17 @@ function getNodeAllRelations(id, output, addToExistingTree, callback) {
         subGraphWhere = " and node1.subGraph=\"" + subGraph + "\" "
     // http://graphaware.com/graphaware/2015/05/19/neo4j-cypher-variable-length-relationships-by-example.html
 
-    /*
-     * var statement = "MATCH path=(node1:technos {id:"+id+"})-[*..100]->() " +
-     * "RETURN relationships(path) as rels,nodes(path)as nodes limit 100"
-     */
+
 
     var numberOfLevelsVal = $("#depth").val();
+    if(numberOfLevelsVal === undefined)
+        numberOfLevelsVal=Gparams.defaultQueryDepth;
+    else
     numberOfLevelsVal = parseInt(numberOfLevelsVal);
-    if(Gparams.graphNavigationMode!="expandNode") {
+    if (Gparams.graphNavigationMode != "expandNode") {
         if (!currentDisplayType || currentDisplayType == "FLOWER" || currentDisplayType == "TREE" || currentDisplayType == "SIMPLE_FORCE_GRAPH" || currentDisplayType == "TREEMAP")
             numberOfLevelsVal += 1;
-    }// pour les count des feuilles
-    // var statement = "MATCH path=(node1:"
-    // + currentLabel
+    }
     var returnStatement = " RETURN EXTRACT(rel IN relationships(path) | type(rel)) as rels," +
         "EXTRACT(rel IN relationships(path) | rel)  as relProperties," +
         "nodes(path) as nodes," +
@@ -211,14 +209,67 @@ function getNodeAllRelations(id, output, addToExistingTree, callback) {
 
 }
 
+function collapseResult(resultArray) {
+ //   collapseTargetLabels=[]//["cote"];
+    var resultArrayTransitive = [];
+    for (var k = 0; k < collapseTargetLabels.length; k++) {
+        var targetLabel = collapseTargetLabels[k];
+        for (var i = 0; i < resultArray.length; i++) {
+            var rels = resultArray[i].rels;
+            var nodes = resultArray[i].nodes;
+            var ids = resultArray[i].ids;
+            var labels = resultArray[i].labels;
+            var startNodes = resultArray[i].startLabels;
+            var relProperties = resultArray[i].relProperties;
+            var toRemoveNodesIndexes = [];
+            for (var j = 1; j < nodes.length; j++) {
+                nodeLabels = nodes[j].labels;
+                if (nodeLabels[0] != targetLabel) {
+                    toRemoveNodesIndexes.push(j);
+                }
+            }
+            if (toRemoveNodesIndexes.length == 0)// none node  with target label in path
+                continue;
 
+            for (var j = 1; j < nodes.length; j++) {
+                if (toRemoveNodesIndexes.indexOf(j) < 0) {
+                    var obj = {
+                        rels: ["transitiveRelation"],
+                        nodes: [nodes[0], nodes[j]],
+                        ids: [ids[0], ids[j]],
+                        labels: [labels[0], labels[j]],
+                        startNodes: [startNodes[j]],
+                        relProperties: [{
+                            properties: {type: "transitiveRelation", _fromId: ids[0], _id: -9999, _toId: ids[j]}
+                        }]
+                    }
+                    resultArrayTransitive.push(obj);
+                }
+
+            }
+
+
+        }
+
+
+    }
+    collapseTargetLabels=[];
+    if(resultArrayTransitive.length>0)
+        return resultArrayTransitive;
+    else
+        return resultArray;
+}
 function prepareRawDataAndDisplay(resultArray, addToExistingTree, output, callback) {
-
-
+    resultArray=collapseResult(resultArray);
     if (!output)
         output = currentDisplayType;
     var json;
-    if (output == "SIMPLE_FORCE_GRAPH") {
+    if (output == "SIMPLE_UI") {
+        simpleUI.listResult(resultArray);
+        return;
+
+    }
+    else if (output == "SIMPLE_FORCE_GRAPH") {
         totalNodesToDraw = resultArray.length;
         json = resultArray;
     }
@@ -236,7 +287,7 @@ function prepareRawDataAndDisplay(resultArray, addToExistingTree, output, callba
         exploredTree = null;
     var currentLabels = [];
     for (var i = 0; i < resultArray.length; i++) {
-        if( !resultArray[i].labels) // !!!!bug à trouver
+        if (!resultArray[i].labels) // !!!!bug à trouver
             continue;
         for (var j = 0; j < resultArray[i].labels.length; j++) {
             var label = resultArray[i].labels[j][0];
@@ -311,8 +362,8 @@ function toFlareJson(resultArray, addToExistingTree) {
                 hiddenChildren: [],
                 neoAttrs: nodeNeo
             }
-            if(nodes[j].show)
-                nodeObj.show=true;
+            if (nodes[j].show)
+                nodeObj.show = true;
             if (nodeNeo.path) {
                 if (currentThumbnails.ids.indexOf(nodeObj.id) < 0) {
                     currentThumbnails.ids.push(nodeObj.id);
@@ -391,6 +442,9 @@ function toFlareJson(resultArray, addToExistingTree) {
         }
 
     }
+    if (resultArray.currentActionObj) {
+        legendNodeLabels.currentActionObj = currentActionObj;
+    }
     foldedTreeChildren = [];
     // removeExcludedLabels(nodesMap);
     deleteRecursiveReferences(nodesMap);
@@ -400,7 +454,11 @@ function toFlareJson(resultArray, addToExistingTree) {
     root.isRoot = true;
 
     maxEffectiveLevels = 1;
-    var maxLevels = parseInt($("#depth").val());
+    var maxLevels = $("#depth")
+    if(maxLevels === undefined)
+        maxLevels=Gparams.depth;
+    else
+        maxLevels=parseInt(maxLevels.val());
 //console.log(JSON.stringify(nodesMap))
     addChildRecursive(root, nodesMap, 1, maxLevels);
 
@@ -890,6 +948,8 @@ function flatResultToTree(data, withAttrs) {
     var color = "black";
     var nodes = {};
     for (var i = 0; i < data.length; i++) {
+        if(! data[i].nodes)
+            continue;
         for (var j = 0; j < data[i].nodes.length; j++) {
 
 

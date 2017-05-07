@@ -262,6 +262,7 @@ function getCaretPosition(ctrl) {
 //********************************************************execute*****************************************
 
 function executeSearch() {
+    excludedLabels=[];
     currentActionObj.maxDistance= parseInt($("#graphPathMaxDistance").val());
     if (currentActionObj.type == "pathes") {
         if (currentActionObj.graphPathSourceNode && currentActionObj.graphPathSourceNode.nodeId && currentActionObj.graphPathTargetNode && currentActionObj.graphPathTargetNode.nodeId) {
@@ -831,7 +832,7 @@ function executePatternUI(count) {
 
 function showBulkGraph(subGraph, currentActionObj) {
     if (!currentActionObj) {
-        if (!Gparams.startWithWholeGraphView === true)
+        if (!Gparams.startWithBulkGraphView === true)
             return;
         currentActionObj = {
             type: "pattern",

@@ -1,6 +1,7 @@
 function initSimpleForceBulk(json) {
     var patternNodes = json.patternNodes;
     var forceData = buildNodesAndLinks(json);
+
     console.log("nodes : "+forceData.nodes.length);
     console.log("charge :"+ Gparams.d3ForceParams.charge);
     console.log("gravity :"+ Gparams.d3ForceParams.gravity);
@@ -10,9 +11,9 @@ function initSimpleForceBulk(json) {
     for (var i = 0; i < forceData.nodes.length; i++) {
 
         if (!patternNodes)// tous les noeuds visibility 1
-            forceData.nodes[i].blongsToPattern = true;
+            forceData.nodes[i].belongsToPattern = true;
         else if (patternNodes.indexOf(forceData.nodes[i].id) > -1) {
-            forceData.nodes[i].blongsToPattern = true;
+            forceData.nodes[i].belongsToPattern = true;
             linkNodeIndexes.push(forceData.nodes[i].nodeIndex);
         }
 
@@ -21,11 +22,11 @@ function initSimpleForceBulk(json) {
 
     for (var i = 0; i < forceData.links.length; i++) {
 
-        if (linkNodeIndexes.indexOf(forceData.links[i].target) > -1 && forceData.nodes[forceData.links[i].source].blongsToPattern == true) {
+        if (linkNodeIndexes.indexOf(forceData.links[i].target) > -1 && forceData.nodes[forceData.links[i].source].belongsToPattern == true) {
             forceData.links[i].drawLink = true;
 
         }
-        if (linkNodeIndexes.indexOf(forceData.links[i].source) > -1 && forceData.nodes[forceData.links[i].target].blongsToPattern == true) {
+        if (linkNodeIndexes.indexOf(forceData.links[i].source) > -1 && forceData.nodes[forceData.links[i].target].belongsToPattern == true) {
             forceData.links[i].drawLink = true;
 
         }
@@ -46,7 +47,7 @@ function initSimpleForceBulk(json) {
 
 
 function drawSimpleForceBulk(nodes, links) {
-
+    var drawLinks=(nodes.length<Gparams.bulkGraphViewMaxNodesToDrawLinks)
     var selector = "#graphDiv";
     var w = $(selector).width() - 50;
     var h = $(selector).height() - 50;
@@ -153,7 +154,7 @@ function drawSimpleForceBulk(nodes, links) {
 
 
         link.each(function (d) {
-            if (d.drawLink) {
+            if (d.drawLink || drawLinks) {
                 d3.select(this).insert("svg:line", ".line").attr("class", "link")
                     .attr("x1", function (d) {
                         return d.source.px;
@@ -207,8 +208,8 @@ function drawSimpleForceBulk(nodes, links) {
                     })
 
                     .style('opacity', function (d) {
-                        //    console.log( d.label+"  :  "+d.blongsToPattern)
-                        if (d.blongsToPattern)
+                        //    console.log( d.label+"  :  "+d.belongsToPattern)
+                        if (d.belongsToPattern)
                             return 1;
                         return 0.2;
                         if (d.isRoot || d.isTarget)
@@ -217,7 +218,7 @@ function drawSimpleForceBulk(nodes, links) {
 
                     })
                     .attr("class", "shape");
-                if (true || d.blongsToPattern) {
+                if (d.belongsToPattern || drawLinks) {
                     anode.on("mouseover", function (d) {
                         d3CommonMouseover(d)
                     });

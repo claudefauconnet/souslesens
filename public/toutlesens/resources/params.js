@@ -1,7 +1,9 @@
 var Gparams = {
     readOnly: true,
     showRelationAttrs:true,
-    startWithWholeGraphView: true,
+    startWithBulkGraphView: false,
+    defaultQueryDepth:2,
+    bulkGraphViewMaxNodesToDrawLinks:1000,
     defaultGraphtype:"FLOWER",
     graphNavigationMode: "expandNode",
     wholeGraphViewMaxNodes: 5000,
