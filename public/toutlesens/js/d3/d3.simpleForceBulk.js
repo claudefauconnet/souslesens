@@ -1,7 +1,8 @@
-function initSimpleForceBulk(json) {
-    var patternNodes = json.patternNodes;
-    var forceData = buildNodesAndLinks(json);
 
+function initSimpleForceBulk(json) {
+
+    var forceData = buildNodesAndLinks(json);
+    var patternNodes = json.patternNodes;
     console.log("nodes : "+forceData.nodes.length);
     console.log("charge :"+ Gparams.d3ForceParams.charge);
     console.log("gravity :"+ Gparams.d3ForceParams.gravity);
@@ -36,7 +37,8 @@ function initSimpleForceBulk(json) {
 
 
 //	 makeDiag( forceData.nodes, forceData.links);
-    drawSimpleForceBulk(forceData.nodes, forceData.links);
+    var drawLinks=(forceData.nodes.length<Gparams.bulkGraphViewMaxNodesToDrawLinks && !patternNodes)
+    drawSimpleForceBulk(forceData.nodes, forceData.links,drawLinks);
     drawLegend();
 
 }
@@ -46,8 +48,8 @@ function initSimpleForceBulk(json) {
 
 
 
-function drawSimpleForceBulk(nodes, links) {
-    var drawLinks=(nodes.length<Gparams.bulkGraphViewMaxNodesToDrawLinks)
+function drawSimpleForceBulk(nodes, links,drawLinks) {
+
     var selector = "#graphDiv";
     var w = $(selector).width() - 50;
     var h = $(selector).height() - 50;
@@ -154,7 +156,7 @@ function drawSimpleForceBulk(nodes, links) {
 
 
         link.each(function (d) {
-            if (d.drawLink || drawLinks) {
+            if (d.drawLink || drawLinks ) {
                 d3.select(this).insert("svg:line", ".line").attr("class", "link")
                     .attr("x1", function (d) {
                         return d.source.px;
@@ -209,7 +211,7 @@ function drawSimpleForceBulk(nodes, links) {
 
                     .style('opacity', function (d) {
                         //    console.log( d.label+"  :  "+d.belongsToPattern)
-                        if (d.belongsToPattern)
+                        if (d.belongsToPattern || drawLinks)
                             return 1;
                         return 0.2;
                         if (d.isRoot || d.isTarget)

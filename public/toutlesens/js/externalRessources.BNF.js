@@ -125,6 +125,7 @@ function listBNFPerson(obj, target) {
 
 }
 
+//listBNFBook({name:"Freud"});
 function listBNFBook(obj, target) {
 	var word = "Freud"
 	if(obj){
@@ -148,7 +149,7 @@ function listBNFBook(obj, target) {
 	var query2 = "&format=json&timeout=30000";
 	
 	var query="";
-	if(true){
+	if(false){
 		var query = "PREFIX bnf-onto: <http://data.bnf.fr/ontology/bnf-onto/>"
 		+"select * where {" 
 				

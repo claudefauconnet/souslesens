@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>SPARQL BNF</title>
+    <script src="../common/js/jquery/jquery.min.js"></script>
+    <script src="../common/js/common.js"></script>
+    <script src="bnf.js"></script>
+
+
+    <style>
+        #resultDiv {
+            width:500px;
+            height:1000px;
+
+        }
+    </style>
+
+</head>
+
+<body>
+
+filter<input id="filter"  value="Adoration">
+
+<button onclick="bnf.addFilter()">add filter</button>
+<select id="filters">
+
+</select>
+<button onclick="bnf.removeFilter()">remove filter</button>
+<br>
+<input id="limit"  value="500">
+<input id="nSubjects"  value="4">
+<br>
+<select id="type">
+<option value="160">160 Personnages fictifs, mythologiques ou légendaires, divinités</option>
+<option value="161">131 Nom de collectivité</option>
+<option value="162">162 Titre propre d’anonyme</option>
+<option value="164">164 Titres de publications en série (périodiques et collections de monographies)</option>
+<option value="165">165Titre uniforme textuel</option>
+<option value="166" selected="selected">166 Noms communs (et noms de peuples, de batailles, etc.)</option>
+<option value="167">167 Noms géographiques</option>
+<option value="168">168 Subdivisions chronologiques</option>
+</select>
+
+<br>
+
+
+<button onclick="bnf.query()">run</button>
+
+<table>
+    <tr>
+        <td>
+            title
+        </td>
+        <td>
+            theme
+        </td>
+        <td>
+            auteur
+        </td>
+    </tr>
+    <tr>
+        <td>
+           <select size="30>" id="title"></select>
+        </td>
+        <td>
+            <select size="30>" id="theme"></select>
+
+        </td>
+        <td>
+            <select size="30>" id="auteur"></select>
+
+        </td>
+    </tr>
+
+
+</table>
+
+
+
+<div id="resultDiv"></div>
+
+</body>
+</html>

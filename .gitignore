@@ -27,10 +27,12 @@ $RECYCLE.BIN/
 
 
 uploads/*.js
+uploads/*
 uploads/*.json
 bin/sinequa/*
 bin/jfm/*
 bin/discogs/*
 bin/test.js
+public/toutlesens/js/modules/*
 !bin/sinequa/entities2Neo.js
 

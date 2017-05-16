@@ -27,13 +27,14 @@ var uploadCsvForNeo={
                 csv({noheader: false, trim: true, delimiter: "auto"})
                     .fromString(data)
                     .on('json', function (json) {
-                        if (i == 0) {
+                     //   if (i == 0) {
                             for (var key in json) {
+                                if(header.indexOf(key)<0)
                                 header.push(key);
                             }
-                            ;
+                       //     ;
                             i++;
-                        }
+
 
                         jsonArray.push(json);
 

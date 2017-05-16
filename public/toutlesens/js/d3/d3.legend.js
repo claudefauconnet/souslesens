@@ -280,9 +280,9 @@ function clickLegend(e) {
 
     collapseTargetLabels=[e.name];
   //  prepareRawDataAndDisplay(cachedResultArray);
-    if (legendNodeLabels.currentActionObj)//call from advancedSearch
+   /* if (legendNodeLabels.currentActionObj)//call from advancedSearch
         executeSearch();
-    else //callfrom toutlesensData
+    else //callfrom toutlesensData*/
         getNodeAllRelations(currentSourceNode.id, currentDisplayType);
 
 }
