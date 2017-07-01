@@ -508,6 +508,8 @@ function loadAndFetchDataToImport(params, importFn, _rootCallBack) {
     var rootCallBack = _rootCallBack;
     var loadParams = getLoadParams(params);
     totalLines = 0;
+
+
     nodeMappings = [];
     if (loadParams.type == "csv") {
         try {

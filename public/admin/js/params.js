@@ -32,6 +32,7 @@ var Gparams = {
     mongoToNeoUrl: "../exportMongoToNeo",
 
 
+
     palette: ['#B39BAB', '#FF78FF', '#A84F02', '#A8A302', '#0056B3',
         '#B354B3', '#FFD900', '#B37A00', '#B3B005', '#007DFF', '#F5ED02',
         '#F67502', '#B35905', '#FFFB08', '#FF7D07', '#FFDEF4',]

@@ -26,6 +26,7 @@ var neoImportObjects = {
             }else label=obj.label;
 
             var attrs = JSON.stringify(obj).replace(/"(\w+)"\s*:/g, '$1:');// quote the keys in json
+
             var statement = {statement: "CREATE (n:" + label + attrs + ")  RETURN n.id,ID(n), labels(n)"};
             statements.push(statement);
         }
