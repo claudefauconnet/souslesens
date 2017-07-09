@@ -8,7 +8,7 @@ var serverParams={
      mongoUrl : "mongodb://127.0.0.1:27017/",
     mongoFetchSize:500,
     elasticUrl:'localhost:9200',
-    uploadMaxSize:100*1000*1000 //20M
+    uploadMaxSize:100*1000*1000 //100M
 }
 
 module.exports = serverParams;
