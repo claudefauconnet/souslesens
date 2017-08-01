@@ -25,7 +25,7 @@
  *
  ******************************************************************************/
 
-function D3Tree2(_graphDiv, _nodesData, distance) {
+function d3treeGraph(_graphDiv, _nodesData, distance) {
 
     // coefficients du graphes (espacements) ajout CF
     // var treeName = treeName_;

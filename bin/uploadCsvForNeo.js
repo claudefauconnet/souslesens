@@ -45,7 +45,7 @@ var uploadCsvForNeo={
                         fs.writeFileSync(path,JSON.stringify(jsonArray));
                         var result = {message:"listCsvFields",remoteJsonPath: path,name:fileName, header: header};
                        socket.message(JSON.stringify(result));
-                     callback(null,null);
+                     callback(null,result);
                     });
             }
 

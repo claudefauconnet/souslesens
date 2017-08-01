@@ -1,0 +1,292 @@
+<!--*******************************************************************************
+ * SOUSLESENS LICENSE************************
+ *
+ * The MIT License (MIT)
+ *
+ * Copyright (c) 2016-2017 Claude Fauconnet claude.fauconnet@neuf.fr
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ *
+ ******************************************************************************-->
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="ISO-8859-1">
+    <title>Insert title here</title>
+
+    <link rel="stylesheet" type="text/css" title="Design"
+          href="../common/js/jquery/theme_humanity/jquery-ui.min.css"/>
+    <link rel="stylesheet" type="text/css"
+          href="js/jquery/jquery.splitter.css"/>
+
+    <link rel="stylesheet" href="js/jsTree/themes/default/style.min.css"/>
+
+    <link rel="stylesheet" type="text/css" href="css/index.css"/>
+
+
+    <script src="../common/js/jquery/jquery.min.js"></script>
+    <script src="../common/js/jquery/theme_humanity/jquery-ui.min.js "></script>
+    <script src="../common/js/others/jscolor.min.js"></script>
+    <script src="../common/js/d3/d3.js"></script>
+
+    <script src="js/modules/common.js"></script>
+    <script src="js/modules/neo4jDataModel.js"></script>
+    <script src="js/modules/common.js"></script>
+
+
+    <script src="js/modules/globalVars.js"></script>
+    <script src="js/modules/toutlesensController.js"></script>
+    <script src="js/modules/toutlesensData.js"></script>
+    <script src="resources/modules/params.js"></script>
+    <script src="js/modules/advancedDisplay.js"></script>
+    <script src="js/modules/storedParams.js"></script>
+    <script src="js/modules/toutlesensDialogsController.js"></script>
+
+
+    <script src="js/modules/help.js"></script>
+    <script src="js/modules/lang.js"></script>
+    <script src="resources/lang_FR.js"></script>
+    <script src="resources/lang_EN.js"></script>
+    <script src="resources/params.js"></script>
+
+
+    <style type="text/css">
+        body {
+            font-family: verdana;
+            font-size: 12px;
+        }
+
+        #graphDecorationDiv {
+            position: absolute;
+            left: 0px;
+            top: 0px;
+            width: 200px;
+        }
+
+        #graphDecorationTabsDiv {
+            position: absolute;
+            left: 200px;
+            top: 0px;
+        }
+
+        #graphDecorationValues {
+            width: 250px;
+        }
+        body{
+            overflow: hidden;
+        }
+    </style>
+
+
+    <script>
+        var isSouslesensIframe=true;
+        $(function () {
+            advancedDisplay.initDecorationDiv();
+
+            $("#graphDecorationTabsDiv").tabs({
+                activate: function (event, ui) {
+                    var index = ui.newTab.index();
+
+                    if (index == 1) {
+                        loadStoredParams("decoration");
+                    }
+
+                }
+            });
+
+          //  $("#graphDecorationTabsDiv").tabs("option", "disabled", [1]);
+
+            $("#dialog").dialog({
+                autoOpen: false,
+                height: 400,
+                width: 350,
+                modal: true
+
+            });
+            $("#graphDecorationSizeSlider").slider({
+                min: 5,
+                max: 100,
+                range: "min",
+                value: 20,
+                slide: function (event, ui) {
+                    $("#graphDecorationSize").val(ui.value);
+
+                }
+
+
+            }).on("slidestop", function (event, ui) {
+                setPropertyValueOptionSize();
+            })
+
+        });
+    </script>
+
+
+</head>
+<body>
+<div id="graphDecorationDiv">
+    <table border="0" align="center">
+
+        <tr>
+            <td><span id='lang_100'><span id='lang_140'>Labels</span></span></td>
+        </tr>
+
+        <tr >
+            <td><select id="nodesLabelsSelect" size="8"
+                        onclick="advancedDisplay.onLabelClick(this)"></select></td>
+
+        </tr>
+
+
+        <tr>
+            <td><span id='lang_141'>Proprietes</span></td>
+        </tr>
+
+        <tr>
+
+            <td><select id="nodesLabelsPropertiesSelect" size="8"
+                        onclick="advancedDisplay.onPropertyClick(this)">
+                <option><span id='lang_139'>------</span>----</option>
+            </select></td>
+
+        </tr>
+
+
+    </table>
+</div>
+
+<div id="graphDecorationTabsDiv">
+    <ul>
+        <li><a href="#graphDecorationNodeVal"><span id='lang_142'>proprietes</span></a></li>
+        <li><a href="#graphSavedPropsDiv"><span id='lang_161'>proprietes enregistr�es</span></a></li>
+
+    </ul>
+
+    <div id="graphDecorationNodeVal">
+        <span class="help">Representer la valeur d'un parametre</span>
+        <table border="0">
+
+            <tr>
+                <td>
+                    <span id='lang_144'>Valeurs</span><button onclick="advancedDisplay.clearGraphDecorationValues()">X</button>
+                </td>
+
+                <td>
+                    <select id="graphDecorationValues" size="8">
+                    </select>
+                </td>
+                <td>
+                    number of classes<br>
+                    <input id="nClassesInput" onclick="advancedDisplay.setNumberOfclasses()">
+                    <button onclick="setNoClasses()">No classes</button>
+
+                </td>
+            </tr>
+
+
+            <tr>
+                <td>
+                    <span id='lang_145'>Couleur</span>
+                </td>
+
+                <td>
+                    <button id="graphDecorationColor" class="jscolor {valueElement:colorInput,value:'66ccff'}">choose
+                    </button>
+                    <input type="hidden" id="colorInput" onchange="advancedDisplay.setPropertyValueOptionColor()">
+                </td>
+                <td>
+                    <button onclick="advancedDisplay.setAutoRangeColors()">Range</button>
+                    <button onclick="advancedDisplay.setAutoAllColors()">All</button>
+                    <!--  <button onclick="showPaletteDialog()">Palette...</button>-->
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <span id='lang_146'>Taille</span> <input id="graphDecorationSize" size="3">
+                </td>
+                <td>
+
+                    <div id="graphDecorationSizeSlider" style="width: 130px;"></div>
+                </td>
+                <td>
+                    <button onclick="advancedDisplay.setAutoRangeSize()">Range</button>
+                    <button onclick="advancedDisplay.setAutoAllSize()">All</button>
+
+
+                </td>
+            </tr>
+            <!--          <tr>
+                          <td>
+                              <span id='lang_147'>Symbole</span>
+                          </td>
+
+                          <td>
+                              <select id="graphDecorationShape">
+                                  <option value="circle"><span id='lang_148'>aucun</span></option>
+                                  <option value="square"><span id='lang_154'>carre</span></option>
+                                  <option value="triangleUp"><span id='lang_149'>triangle</span></option>
+                                  <option value="triangleDown"><span id='lang_150'>triangle inverse</span></option>
+                              </select>
+                          </td>
+                          <td>
+                          -->
+            <button onclick="advancedDisplay.setAutoAllShape()"> All</button>
+            </td>
+            </tr>
+            <!--   <tr>
+                   <td>
+                       <button onclick="setPropertyValueAttr()"><span id='lang_151'>Ajouter</span></button>
+                   </td>
+
+                   <td colspan="2">
+
+                       <select id="graphDecorationDoneValues" size=8>
+                       </select>
+
+
+                   </td>
+               </tr>-->
+
+
+        </table>
+
+
+        <div>
+            <button oncLick="advancedDisplay.executeDisplay()"><span id='lang_152'>Executer</span></button>
+            <button oncLick="advancedDisplay.saveStoredDecorationObjsDialog()"><span id='lang_155'>Enregistrer</span></button>
+            <button oncLick="window.parent.toutlesensController.hideAdvancedDisplay()"><span id='lang_153'>Annuler</span></button>
+            <input type="checkbox" id="groupByClassCBx"> grouper les valeurs &nbsp;<input type="checkbox" checked="checked"   id="crossLabel"> pour tous les labels
+        </div>
+
+    </div>
+    <div id="graphSavedPropsDiv">
+        <select id="storedDecorationObjsSelect" onclick="advancedDisplay.onStoredDecorationObjsSelect()" size="10">
+        </select>
+        description
+        <div id="storedDecorationObjsTA"></div>
+        <button onclick="advancedDisplay.executeStoredDecorationObjs()">executer</button>
+
+
+    </div>
+</div>
+
+<div id="dialog" title="dialog"></div>
+</body>
+</html>

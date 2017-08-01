@@ -109,7 +109,7 @@ function drawLegend(legendDivId) {
             return "translate(" + d.x + "," + d.y + ")";
         }).on("click", clickLegend);
 
-    legendElts.append("circle").attr('class', 'nodeCircle').attr("r",
+   var node= legendElts.append("circle").attr('class', 'nodeCircle').attr("r",
         circleLegR).style("fill", function (d) {
         var color = nodeColors[d.name];
         if (!color)
@@ -122,6 +122,25 @@ function drawLegend(legendDivId) {
         return Gparams.defaultNodeColor;
 
     }).attr("x", circleLegR).attr("y", 0);
+
+    legendElts.each(function (d) {
+        var hasIcon = false;
+
+        if (Gparams.customIcons[subGraph] && Gparams.customIcons[subGraph][d.name]) {// icon
+            hasIcon = true;
+        }
+        var anode = d3.select(this);
+
+            if (hasIcon) {
+                shape = anode.append("svg:image")
+                    .attr('x', -10)
+                    .attr('y', -10)
+                    .attr('width', 20)
+                    .attr('opacity', 0.7)
+                    //.attr('height', 24)
+                    .attr("xlink:href", "icons/" + Gparams.customIcons[subGraph][d.name]);
+            }
+        });
 
     legendElts.append("text").attr("x", function (d) {
         return circleLegR + 8;

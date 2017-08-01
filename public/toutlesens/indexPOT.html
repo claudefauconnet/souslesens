@@ -30,6 +30,7 @@
 <head>
     <meta charset="ISO-8859-1">
     <title>souslesens</title>
+    <script src="js/toutlesensData.js"></script>
 </head>
 
 <link rel="stylesheet" type="text/css" title="Design"
@@ -38,7 +39,7 @@
 <link rel="stylesheet" type="text/css" title="Design"
       href="js/jquery/jquery.splitter.css"/>
 
-<!--<link rel="stylesheet" href="js/modules/jsTree/themes/default/style.min.css"/>-->
+<!--<link rel="stylesheet" href="js/modulesTree/themes/default/style.min.css"/>-->
 <!--<link rel="stylesheet" type="text/css"
 	href="../common/js/others/jquery.handsontable.full.min.css" />-->
 
@@ -54,11 +55,13 @@
 
 <script src="../common/js/d3/d3.js"></script>
 <!--<script src="https://d3js.org/d3.v4.min.js"></script>-->
+<!--<script src="https://d3js.org/d3.v4.min.js"></script>-->
 
+<script src="js/modules/globalVars.js"></script>
 <script src="resources/params.js"></script>
 
-<script src="../common/js/common.js"></script>
-<script src="../common/js/neo4jDataModel.js"></script>
+<script src="js/modules/common.js"></script>
+<script src="js/modules/neo4jDataModel.js"></script>
 
 
 <script src="js/modules/toutlesensController.js"></script>
@@ -69,23 +72,26 @@
 <script src="js/modules/modifyData.js"></script>
 
 
-<script src="js/modules/externalRessources.common.js"></script>
-<script src="js/modules/externalRessources.DbPedia.js"></script>
-<script src="js/modules/externalRessources.BNF.js"></script>
-<script src="js/modules/globalVars.js"></script>
+<script src="js/modules/externalRessourcesCommon.js"></script>
+<script src="js/modules/externalRessourcesDbPedia.js"></script>
+<script src="js/modules/externalRessourcesBNF.js"></script>
 
-<script src="js/modules/d3.common.js"></script>
-<script src="js/modules/d3.legend.js"></script>
+
+<script src="js/modules/d3common.js"></script>
+<script src="js/modules/d3legend.js"></script>
+
+<script src="js/modules/d3flower.js"></script>
+
+<script src="js/modules/d3simpleForce.js"></script>
+<script src="js/modules/d3simpleForceBulk.js"></script>
+<script src="js/modules/d3treemap.js"></script>
+<script src="js/modules/d3forceCollapseClass.js"></script>
+<script src="js/modules/d3treeGraph.js"></script>
+
 <!--<script src="js/modules/d3.forceGraphClass.js"></script>
 <script src="js/modules/d3.dndTreeClass.js"></script>
 <script src="js/modules/d3.modifiableGraph.js"></script>
-<script src="js/modules/d3.forceCollapseClass.js"></script>-->
-<script src="js/modules/d3.flower.js"></script>
-
-<script src="js/modules/d3.simpleForce.js"></script>
-<script src="js/modules/d3.simpleForceBulk.js"></script>
-<!--
-<script src="js/modules/d3.treemap.js"></script>
+<script src="js/modules/d3.forceCollapseClass.js"></script>
 <script src="js/modules/d3.gantt.js"></script>
 <script src="js/modules/gant-chart-d3v2.js"></script>
 <script type="text/javascript" src="js/modules/gant-chart-d3v2.js"></script>
@@ -104,24 +110,35 @@
 	src="../common/js/others/jquery.datatables.min.js"></script>-->
 
 
-<script src="resources/help.js"></script>
-<script src="resources/lang.js"></script>
+<script src="js/modules/help.js"></script>
+<script src="js/modules/lang.js"></script>
 <script src="resources/lang_FR.js"></script>
 <script src="resources/lang_EN.js"></script>
 <script src="js/modules/functionalities.js"></script>
 
+<script src="js/custom/d3POTGraph.js"></script>
+
 
 <script>
-    var totalWidth;
-    var totalHeight;
-    processDataBeforeDrawingCallback = null;
+    var isSouslesensIframe=true;
+
+ function startGraph(subGraph){
+if(!subGraph){
+    subGraph=$("#subGraphPOT").val();
+
+}
+
+     neo4jDataModel.initNeoModel(subGraph, [toutlesensController.initLabels, advancedSearch.showBulkGraph]);
+     functionalities.initFunctionalities();
+ }
+
+
+
     $(function () {
 
-        var queryParams = getQueryParams(document.location.search);
-        subGraph = queryParams.subGraph;
 
-        initNeoModel(queryParams.subGraph, [toutlesensController.initLabels, advancedSearch.showBulkGraph]);
-        functionalities.initFunctionalities();
+
+
         var mode = queryParams.mode;
         if (mode == "write")
             Gparams.readOnly = false;
@@ -144,11 +161,11 @@
         $("#graphDiv").click(function (e) {
             var dat = e.target.__data__;
             if (!dat) {
-                hidePopupMenu();
+                toutlesensController.hidePopupMenu();
                 return;
             }
             if (dat.id == null || dat.id == "")
-                hidePopupMenu();
+                toutlesensController.hidePopupMenu();
 
         });
 
@@ -406,7 +423,14 @@
 </script>
 <body>
 
+<div id=""graphCommandsDiv>
 
+
+    <input id="subGraphPOT" value="POTJ">
+    <button onclick="startGraph()">Open graph</button>
+    &nbsp;  &nbsp;  &nbsp;  &nbsp;  &nbsp;  &nbsp;  &nbsp;  &nbsp;  &nbsp;  &nbsp;  &nbsp;  &nbsp; &nbsp;  &nbsp;  &nbsp;  &nbsp;  &nbsp;  &nbsp; <input id="mongoDbName" value="POT2017">
+    <button onclick="d3Graph.updateGraphData()">update graph Data</button>
+</div>
 <div id="main">
 
     <div id="left">
@@ -891,7 +915,7 @@
                                    src="images/table.png"/></td>
                         <td>
 
-                            <button id="listDownloadButton" onclick="toutlesensController.downloadTextOutput()">
+                            <button id="listDownloadButton" onclick="textOutputs.downloadTextOutput()">
                                 <span id='lang_43'>telecharcher</span>
                             </button>
 
@@ -1087,10 +1111,10 @@
 
 <div id="dialog" title="dialog"></div>
 <div id="dialogAdvancedSearch" title="advancedSearch">
-    <iframe id="advancedSearchIframe" src="advancedSearchDialog.html"></iframe>
+    <iframe id="advancedSearchIframe" src="advancedSearchDialogModules.html"></iframe>
 </div>
 <div id="dialogAdvancedDisplay" title="advancedDisplay">
-    <iframe id="advancedDisplayIframe" src="advancedDisplayDialog.html"></iframe>
+    <iframe id="advancedDisplayIframe" src="advancedDisplayDialogModules.html"></iframe>
 </div>
 <div id="dialogGantt" title="Gantt">
     <iframe id="dialogGanttIframe" src="ganttDialog.html"></iframe>

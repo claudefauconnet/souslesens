@@ -718,8 +718,10 @@ function mergeNodesMappingsAndSaveFile(path, nodeMappings, label, callback) {
      // Do something
      }*/
     try {
+        if(fs.existsSync(path))
+            fs.unlinkSync(path);
 
-        fs.writeFile(path, JSON.stringify(nodeMappings));
+        fs.writeFileSync(path, JSON.stringify(nodeMappings));
         var message = "Imported " + nodeMappings.length + " lines with label " + label;
         socket.message(message);
         console.log(message);

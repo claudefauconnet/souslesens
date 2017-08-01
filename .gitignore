@@ -35,4 +35,5 @@ bin/discogs/*
 bin/test.js
 public/toutlesens/js/modules/*
 !bin/sinequa/entities2Neo.js
+public/toutlesens/js/icons/*
 

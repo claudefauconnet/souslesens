@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<script src="../common/js/jquery/jquery.min.js"></script>
+<script>
+function updateNeofromCSV(){
+ var subGraph=$("#subGraph").val();
+    var fileName=$("#fileName").val();
+    var csv=$("#csv").val();
+    csv=csv.replace(/"/g,"'");
+    csv= encodeURIComponent(csv);
+    var payload={
+        sourceType:"CSV",
+        fileName:fileName,
+        subGraph:subGraph,
+        csvData:csv
+    }
+    $.ajax({
+        url : '/rest/?updateNeo=1',
+        data : payload,
+        dataType: "json",
+        type : 'POST',
+        error : function(error ,ajaxOptions, thrownError){
+
+            console.log(error);
+            console.log(thrownError);
+            setMessage("server error" + thrownError);
+        }
+        ,
+        success : function(data) {
+$("#message").html(data)
+
+        }
+    });
+}
+
+
+</script>
+<body>
+
+
+<textarea cols="200" rows="20" id="csv">
+
+
+</textarea>
+<br>
+fileName<input id="fileName" value="UCtestAPI.csv"/>
+subGraph<input id="subGraph" value="testAPI1"/>
+<button onclick="updateNeofromCSV()">Import</button>
+<div id="message"></div>
+</body>
+</html>

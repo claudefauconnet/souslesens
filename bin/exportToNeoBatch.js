@@ -15,6 +15,8 @@ var serverParams = require("./serverParams.js");
 var exportToNeoBatch = {
 
 
+
+
     exportBatch: function (sourceType, dbName, subGraph, requestNames, callbackG) {
         var globalMessage = [];
         var requestsToExecute = [];
@@ -122,6 +124,8 @@ var exportToNeoBatch = {
 
         };
     }
+
+
 }
 
 module.exports = exportToNeoBatch;

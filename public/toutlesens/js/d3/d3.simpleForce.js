@@ -246,7 +246,7 @@ function drawSimpleForce(nodes, links) {
             });
 
         function dragstart(d) {
-            hidePopupMenu()
+            toutlesensController.hidePopupMenu()
             isDragging = false;
             d3.select(this).classed("fixed", d.fixed = true);
         }
@@ -360,7 +360,11 @@ function drawSimpleForce(nodes, links) {
         });
 
         node.each(function (d) {
+            var hasIcon = false;
 
+            if (Gparams.customIcons[subGraph] && Gparams.customIcons[subGraph][d.label]) {// icon
+                hasIcon = true;
+            }
             var anode = d3.select(this);
             var ashape;
             if (d.shape && d.shape == "textBox") {
@@ -371,6 +375,8 @@ function drawSimpleForce(nodes, links) {
             else {// if( d.shape=="circle" ){
                 shape = anode.append('svg:circle')
                     .attr("r", function (d) {
+                        if (hasIcon === true)
+                            return 20;
                         if (d.hiddenChildren && d.hiddenChildren.length > 0)
                             return Gparams.circleR * 1.2;
                         if (d.decoration && d.decoration.size)
@@ -412,6 +418,8 @@ function drawSimpleForce(nodes, links) {
                 })
 
                 .style('opacity', function (d) {
+                    if (hasIcon === true)
+                        return 0.5;
                     if (d.isRoot || d.isTarget)
                         return 1;
                     return Gparams.minOpacity;
@@ -419,6 +427,17 @@ function drawSimpleForce(nodes, links) {
                 })
                 .attr("class", "shape");
 
+
+
+            if (hasIcon) {
+                shape = anode.append("svg:image")
+                    .attr('x', -15)
+                    .attr('y', -15)
+                    .attr('width',30)
+                    .attr('opacity',0.7)
+                    //.attr('height', 24)
+                    .attr("xlink:href", "icons/" + Gparams.customIcons[subGraph][d.label]);
+            }
 
             anode.append("text").attr("x", function (d) {
 

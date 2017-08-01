@@ -438,9 +438,8 @@
                         <input type="hidden" value="500" id="limitResult">
                         <table border="0">
 
-                            <tr align="center">
-                               <!-- <td colspan="2"><span id='lang_61'> Selectionner un
-											noeud de depart</span></td> -->
+                          <tr align="center">
+
                                 <td colspan="2" valign="center"> <button onclick="showAdvancedSearchDialog()"> <span id='lang_61'> Advanced Search</span></button>
 
                             </tr>
@@ -475,49 +474,13 @@
                                 </td>
                             </tr>
                             <tr>
-                                <td>
-                                <table class="visButtonTable">
-
-                                    <tr align="center">
-                                        <td width="100%" colspan="6"><span
-                                                style="color: white">Representation</span></td>
-                                    </tr>
-                                    <tr>
-                                        <td><input type="image" height="30px" alt="fleur"
-                                                   onclick="onVisButton('FLOWER')" id="treeFlowerButton"
-                                                   src="images/flower.png"/></td>
-                                        <td><input type="image" height="30px" alt="graphBulk"
-                                                   onclick="onVisButton('SIMPLE_FORCE_GRAPH_BULK')" id="graphBulkButton"
-                                                   src="images/graphBulk.png"/></td>
-
-                                        <td><input type="image" height="30px"
-                                                   alt="<span id='lang_9'>carte</span>"
-                                                   onclick="onVisButton('SIMPLE_FORCE_GRAPH')"
-                                                   id="treemapButton" src="images/graph.png"/></td>
-
-                                        <td><input type="image"
-                                                   alt="<span id='lang_7'>arbre</span>" height="30px"
-                                                   onclick="onVisButton('TREE')" id="treeButton"
-                                                   src="images/tree.png"/></td>
-
-                                        <td><input type="image" height="30px" alt="carte"
-                                                   onclick="onVisButton('TREEMAP')" id="treemapButton"
-                                                   src="images/treemap.png"/></td>
+                                <td colspan="3"><select size="10" id="wordsSelect"
+                                                        onclick="onWordSelect(this)">
+                                    <option>--------------</option>
+                                </select></td>
 
 
-                                        <!--    <td><input type="image" height="30px" alt="carte"
-                                            onclick="onVisButton('MANUAL')" id="treemapButton"
-                                            src="images/treeModif.jpg" /></td>
-
-                                               <td><input type="image" alt="<span id='lang_14'>roue</span>"
-                                    onclick="onVisButton('FORCE_COLLAPSE')" height="30px"
-                                    id="wheelButton" src="images/tree.png" /></td>-->
-
-
-
-
-                                </table>
-                                </td>
+                            </tr>
                             </tr>
                             <tr colspan="3" valign="middle">
                                 <td><span id='lang_15'>Profondeur</span>&nbsp;<input
@@ -528,18 +491,67 @@
 
                             </tr>
 
-                            <tr>
-                                <td colspan="3"><select size="15" id="wordsSelect"
-                                                        onclick="onWordSelect(this)">
-                                    <option>--------------</option>
-                                </select></td>
 
+                            <tr >
+                                <td colspan="3">
+
+                                    <table class="visButtonTable">
+
+
+                                        <tr>
+                                            <td><input type="image" height="30px" alt="fleur"
+                                                       onclick="onVisButton('FLOWER')" id="treeFlowerButton"
+                                                       src="images/flower.png"/></td>
+                                            <td><input type="image" height="30px" alt="graphBulk"
+                                                       onclick="onVisButton('SIMPLE_FORCE_GRAPH_BULK')" id="graphBulkButton"
+                                                       src="images/graphBulk.png"/></td>
+
+                                            <td><input type="image" height="30px"
+                                                       alt="<span id='lang_9'>carte</span>"
+                                                       onclick="onVisButton('SIMPLE_FORCE_GRAPH')"
+                                                       id="treemapButton" src="images/graph.png"/></td>
+
+                                            <td><input type="image"
+                                                       alt="<span id='lang_7'>arbre</span>" height="30px"
+                                                       onclick="onVisButton('TREE')" id="treeButton"
+                                                       src="images/tree.png"/></td>
+
+                                            <td><input type="image" height="30px" alt="carte"
+                                                       onclick="onVisButton('TREEMAP')" id="treemapButton"
+                                                       src="images/treemap.png"/></td>
+
+
+                                        </tr>
+                                    </table>
+
+
+
+                                </td>
 
                             </tr>
 
-                            <tr>
-                                <td></td>
-                            </tr>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
                         </table>

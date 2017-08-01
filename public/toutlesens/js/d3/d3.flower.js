@@ -273,7 +273,11 @@ CodeFlower.prototype.update = function (json) {
 
         var anode = d3.select(this);
         var ashape;
+        var hasIcon = false;
 
+        if (Gparams.customIcons[subGraph] && Gparams.customIcons[subGraph][d.label]) {// icon
+            hasIcon = true;
+        }
 
         if (d.shape && d.shape == "textBox") {
             shape = anode.append('rect')
@@ -290,6 +294,8 @@ CodeFlower.prototype.update = function (json) {
         else {// if( d.shape=="circle" ){
             shape = anode.append('svg:circle')
                 .attr("r", function (d) {
+                    if (hasIcon === true)
+                        return 20;
                     if (d.decoration && d.decoration.size)
                         return d.decoration.size;
 
@@ -305,7 +311,11 @@ CodeFlower.prototype.update = function (json) {
 
 
         }
+
+
         shape.style("stroke", function (d) {
+            if (hasIcon === true)
+                return null;
             if (d.level == 0 || d.isRoot == true)
                 return "purple";
             return "000";
@@ -336,6 +346,8 @@ CodeFlower.prototype.update = function (json) {
                 return "purple";
             })
             .style("opacity", function (d) {
+                if (hasIcon === true)
+                    return 0.5;
                 if (d.neoAttrs && d.neoAttrs.path)
                     return CodeFlower.imgOpacityWeak;
                 return 1;
@@ -348,7 +360,15 @@ CodeFlower.prototype.update = function (json) {
             }).attr("text-anchor", "middle").style("fill", "purple")
         }
 
-
+        if (hasIcon) {
+            shape = anode.append("svg:image")
+                .attr('x', -15)
+                .attr('y', -15)
+                .attr('width',30)
+                .attr('opacity',0.7)
+                //.attr('height', 24)
+                .attr("xlink:href", "icons/" + Gparams.customIcons[subGraph][d.label]);
+        }
         anode.append("text").attr("x", function (d) {
             if (d.level == null)
                 return Gparams.circleR + 3;

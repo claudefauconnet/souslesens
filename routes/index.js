@@ -14,10 +14,14 @@ var exportMongoToNeo= require('../bin/exportMongoToNeo.js');
 var exportToNeoBatch= require('../bin/exportToNeoBatch.js');
 var uploadToNeo= require('../bin/uploadToNeo.js');
 var uploadCsvForNeo= require('../bin/uploadCsvForNeo.js');
+var restAPI=require("../bin/restAPI.js");
 var socket=require('./socket.js');
 
 
-
+const cors = require('cors');
+var app = express();
+app.use(cors());
+app.options('*', cors());
 
 
 
@@ -28,15 +32,18 @@ router.get('/', function (req, res) {
 });
 
 router.get('/rest', function (req, response) {
+    if (req.query && req.query.desc_updateNeo) {
+        restAPI.desc_updateNeo(function(error,result){processResponse(response,error,result)});
+    }
+
 });
 
 
 router.post('/neo', function (req, response) {
     if (req.body && req.body.match)
         neoProxy.match(req.body.match, function(error,result){processResponse(response,error,result)});
-    if (req.body && req.body.urlSuffix) {
-        var payload=JSON.parse(req.body.payload)
-        neoProxy.cypher("",req.body.urlSuffix,payload,function(error,result){processResponse(response,error,result)});
+    if (req.body &&req.body.cypher) {
+        neoProxy.cypher("",req.body.urlSuffix,req.body.payload,function(error,result){processResponse(response,error,result)});
     }
 
 });
@@ -124,6 +131,15 @@ router.post('/uploadToNeo', function(req, response) {
 
 router.post('/uploadCsvForNeo', function(req, response) {
     uploadCsvForNeo.upload(req,function(error,result){processResponse(response,error,result)});
+
+});
+
+
+router.post('/rest', function(req, response) {
+    if (req.query && req.query.updateNeo) {
+        restAPI.updateNeo(req.body, function(error,result){processResponse(response,error,result)});
+    }
+
 });
 
 router.post('/exportMongoToElastic', function(req, response) {

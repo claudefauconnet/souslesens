@@ -259,9 +259,10 @@ function onFieldSelect() {
 
 function addToExportedFields() {
     var fieldSelect = $("#fieldSelect").val();
-    if (fieldSelect == "none")
-        fieldSelect = "";
     var exportedFields = $("#exportedFields").val();
+    if (exportedFields == "none")
+        exportedFields = "";
+
     if (exportedFields && exportedFields.length > 0)
         $("#exportedFields").val(exportedFields + ";" + fieldSelect);
     else
