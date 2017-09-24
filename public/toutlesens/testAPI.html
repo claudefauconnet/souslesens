@@ -62,7 +62,7 @@
 
                 payload.fileName = fileName;
 
-
+    $("#message").html("updating graph...")
             $.ajax({
                 url: '/rest/?updateNeoFromCSV=1',
                 data: payload,
