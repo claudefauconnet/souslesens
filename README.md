@@ -43,7 +43,7 @@ To run Souslesens you need to have  [Node.js](https://nodejs.org/en/) and  [Neo4
 
 
 ## Versioning
-version 1.0.0
+version 2.0.1
 ## Authors
 [Claude Fauconnet] (mailto:claude.fauconnet@neuf.fr)
 
