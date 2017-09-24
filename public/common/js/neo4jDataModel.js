@@ -24,218 +24,235 @@
  * SOFTWARE.
  *
  ******************************************************************************/
+var dataModel = (function () {
+    var self = {};
 
-var dataModel = {
-    labels: {},
-    labelsRelations: {},
-    relations: {},
-    allRelations: {},
-    allProperties: [""],
-    allRelationsArray: [""],
-    allLabels: [""]
-}
-
-function initNeoModel(subGraph, callback) {
-    dataModel = {
-        labels: {},
-        relations: {},
-        labelsRelations: {},
-        allRelations: {},
-        allProperties: [""],
-        allRelationsArray: [""],
-        allLabels: [""]
-    }
-    var where = "";
-    if (subGraph && subGraph != "undefined")
-        where = " where n.subGraph='" + subGraph + "'";
+    self.labels = {};
+    self.labelsRelations = {};
+    self.relations = {};
+    self.allRelations = {};
+    self.allProperties = [""];
+    self.allRelationsArray = [""];
+    self.allLabels = [""];
 
 
-    var query = "MATCH (n) OPTIONAL MATCH(n)-[r]-(m) "
-        + where
-        + " RETURN distinct labels(n) as labels_n, type(r) as type_r,labels(m)[0] as label_m, labels(startNode(r))[0] as label_startNode,count(n) as count_n,count(r) as count_r,count(m) as count_m";
-
-    var payload = {
-        match: query
-    }
-    $.ajax({
-        type: "POST",
-        url: Gparams.neo4jProxyUrl,
-        //data : paramsObj,
-        data: payload,
-        dataType: "json",
-        success: function (data, textStatus, jqXHR) {
-
-            //	var data = data.results[0].data;
-
-            for (var i = 0; i < data.length; i++) {
-                var obj = {
-                    label1: data[i].labels_n[0],
-                    labels: data[i].labels_n,
-                    labels2: data[i].labels_m,
-                    label1: data[i].label_n,
-                    relType: data[i].type_r,
-                    label2: data[i].label_m,
-                    count1: data[i].count_n,
-                    count2: data[i].count_m,
-                }
-
-                if (obj.relType) {
-                    if (!dataModel.labelsRelations[obj.label1])
-                        dataModel.labelsRelations[obj.label1] = [];
-                    dataModel.labelsRelations[obj.label1].push(obj.relType);
-                    if (!dataModel.labelsRelations[obj.label2])
-                        dataModel.labelsRelations[obj.label2] = [];
-                    dataModel.labelsRelations[obj.label2].push(obj.relType);
-
-                }
-                if (obj.label1 == data[i].label_startNode)
-                    obj.direction = "normal";
-                else
-                    obj.direction = "inverse";
-
-                if (!dataModel.relations[obj.label1])
-                    dataModel.relations[obj.label1] = [];
-                dataModel.relations[obj.label1].push(obj);
-
-                if (!dataModel.allRelations[obj.relType])
-                    dataModel.allRelations[obj.relType] = [];
-
-                dataModel.allRelations[obj.relType].push({
-                    startLabel: obj.label1,
-                    endLabel: obj.label2,
-                    direction: obj.direction
-                });
-                if (dataModel.allRelationsArray.indexOf(obj.relType) < 0)
-                    dataModel.allRelationsArray.push(obj.relType);
-
-            }
-            // fields
-            query = "MATCH (n) " + where
-                + " return distinct labels(n) as labels_n,keys(n) as keys_n,count(n) as count_n";
-            //  + " return distinct labels(n)[0] as label_n,keys(n) as keys_n,count(n) as count_n";
-
-            payload = {match: query};
+    self.initNeoModel = function (subGraph, callback) {
+        self.labels = {};
+        self.labelsRelations = {};
+        self.relations = {};
+        self.allRelations = {};
+        self.allProperties = [""];
+        self.allRelationsArray = [""];
+        self.allLabels = [""];
+        var where = "";
+        if (subGraph && subGraph != "undefined")
+            where = " where n.subGraph='" + subGraph + "'";
 
 
-            // console.log("QUERY----" + JSON.stringify(payload));
-            $
-                .ajax({
-                    type: "POST",
-                    url: Gparams.neo4jProxyUrl,
-                    data: payload,
-                    dataType: "json",
-                    success: function (data, textStatus, jqXHR) {
-                        for (var i = 0; i < data.length; i++) {
+        var query = "MATCH (n) OPTIONAL MATCH(n)-[r]-(m) "
+            + where
+            + " RETURN distinct labels(n) as labels_n, type(r) as type_r,labels(m)[0] as label_m, labels(startNode(r))[0] as label_startNode,count(n) as count_n,count(r) as count_r,count(m) as count_m";
 
-                            var labels = data[i].labels_n;
+        var payload = {
+            match: query
+        }
+        $.ajax({
+            type: "POST",
+            url: Gparams.neo4jProxyUrl,
+            //data : paramsObj,
+            data: payload,
+            dataType: "json",
+            success: function (data, textStatus, jqXHR) {
 
-                            for (var k = 0; k < labels.length; k++) {
-                                var label = labels[k];
-                                if (dataModel.allLabels.indexOf(label) < 0)
-                                    dataModel.allLabels.push(label);
-                                var fields = data[i].keys_n;
-                                if (!dataModel.labels[label])
-                                    dataModel.labels[label] = [];
+                //	var data = data.results[0].data;
 
-                                for (var j = 0; j < fields.length; j++) {
-                                    if (dataModel.allProperties
-                                            .indexOf(fields[j]) < 0)
-                                        dataModel.allProperties
-                                            .push(fields[j]);
-                                    if (dataModel.labels[label]
-                                            .indexOf(fields[j]) < 0) {
-                                        dataModel.labels[label]
-                                            .push(fields[j]);
-                                    }
+                for (var i = 0; i < data.length; i++) {
+                    var objNeo = data[i];
+                    var obj = {
+                        labels1: objNeo.labels_n,
+                        label2: objNeo.label_m,
+                        relStartLabel: objNeo.label_startNode,
+                        relType: objNeo.type_r,
+                        count1: objNeo.count_n,
+                        count2: objNeo.count_m,
+                    }
+                    if (i == 231) {
+                        var www =obj;
 
-                                }
-                            }
-                        }
+                    }
+                    if (obj.relType) {
+                        if (!dataModel.labelsRelations[obj.label1])
+                            dataModel.labelsRelations[obj.label1] = [];
+                        dataModel.labelsRelations[obj.label1].push(obj.relType);
+                        if (!dataModel.labelsRelations[obj.label2])
+                            dataModel.labelsRelations[obj.label2] = [];
+                        dataModel.labelsRelations[obj.label2].push(obj.relType);
 
-                        dataModel.allProperties.sort();
-                        dataModel.allLabels.sort();
 
-                        if (callback) {
-                            if (Array.isArray(callback)) {
-                                for (var i = 0; i < callback.length; i++) {
-                                    callback[i](subGraph);
-                                }
-                            }
+                        if (obj.labels1) {
+                            obj.label1 = obj.labels1[0];
+                            if (obj.label1 == obj.relStartLabel)
+                                obj.direction = "normal";
                             else
-                                callback(subGraph);
+                                obj.direction = "inverse";
                         }
 
+                        if (!dataModel.relations[obj.label1])
+                            dataModel.relations[obj.label1] = [];
+                        dataModel.relations[obj.label1].push(obj);
+
+                        if (!dataModel.allRelations[obj.relType])
+                            dataModel.allRelations[obj.relType] = [];
+
+
+                        dataModel.allRelations[obj.relType].push({
+                            startLabel: obj.label1,
+                            endLabel: obj.label2,
+                            direction: obj.direction
+                        });
+                        if (dataModel.allRelationsArray.indexOf(obj.relType) < 0)
+                            dataModel.allRelationsArray.push(obj.relType);
                     }
-                    ,
-                    error: function (xhr, err, msg) {
-                        console.log(xhr);
-                        console.log(err);
-                        console.log(msg);
-                    }
+                }
+                // fields
+                query = "MATCH (n) " + where
+                    + " return distinct labels(n) as labels_n,keys(n) as keys_n,count(n) as count_n";
+                //  + " return distinct labels(n)[0] as label_n,keys(n) as keys_n,count(n) as count_n";
 
-                })
+                payload = {match: query};
 
-        },
-        error: function (xhr, err, msg) {
-            console.log(xhr);
-            console.log(err);
-            console.log(msg);
-        }
 
-    });
+                // console.log("QUERY----" + JSON.stringify(payload));
+                $
+                    .ajax({
+                        type: "POST",
+                        url: Gparams.neo4jProxyUrl,
+                        data: payload,
+                        dataType: "json",
+                        success: function (data, textStatus, jqXHR) {
+                            for (var i = 0; i < data.length; i++) {
 
-}
+                                var labels = data[i].labels_n;
 
-function drawDataModel() {
+                                for (var k = 0; k < labels.length; k++) {
+                                    var label = labels[k];
+                                    if (dataModel.allLabels.indexOf(label) < 0)
+                                        dataModel.allLabels.push(label);
+                                    var fields = data[i].keys_n;
+                                    if (!dataModel.labels[label])
+                                        dataModel.labels[label] = [];
 
-    drawNeoModel(subGraph);
-}
-function callMongo(urlSuffix, payload, callback) {
-    if (!urlSuffix)
-        urlSuffix = "";
-    $.ajax({
-        type: "POST",
-        url: Gparams.mongoProxyUrl + urlSuffix,
-        data: payload,
-        dataType: "json",
-        success: function (data, textStatus, jqXHR) {
-            callback(data);
-        },
-        error: function (xhr, err, msg) {
-            console.log(xhr);
-            console.log(err);
-            console.log(msg);
-        }
-    });
-}
-function callNeoMatch(match, url, callback) {
-    payload = {
-        match: match
-    };
-    if (!url)
-        url = Gparams.neo4jProxyUrl;
+                                    for (var j = 0; j < fields.length; j++) {
+                                        if (dataModel.allProperties
+                                                .indexOf(fields[j]) < 0)
+                                            dataModel.allProperties
+                                                .push(fields[j]);
+                                        if (dataModel.labels[label]
+                                                .indexOf(fields[j]) < 0) {
+                                            dataModel.labels[label]
+                                                .push(fields[j]);
+                                        }
 
-    $.ajax({
-        type: "POST",
-        url: url,
-        data: payload,
-        dataType: "json",
-        success: function (data, textStatus, jqXHR) {
-            callback(data);
-        },
-        error: function (xhr, err, msg) {
+                                    }
+                                }
+                            }
 
-            console.log(xhr);
-            console.log(err);
-            console.log(msg);
-            if (err.result) {
-                $("#message").html(err.result);
-                $("#message").css("color", "red");
+                            dataModel.allProperties.sort();
+                            dataModel.allLabels.sort();
+
+                            if (callback) {
+                                if (Array.isArray(callback)) {
+                                    for (var i = 0; i < callback.length; i++) {
+                                        if(callback[i])
+                                        callback[i](subGraph);
+                                    }
+                                }
+                                else
+                                    callback(subGraph);
+                            }
+
+                        }
+                        ,
+                        error: function (xhr, err, msg) {
+                            console.log(xhr);
+                            console.log(err);
+                            console.log(msg);
+                        }
+
+                    })
+
+            },
+            error: function (xhr, err, msg) {
+                console.log(xhr);
+                console.log(err);
+                console.log(msg);
             }
-            else
-                $("#message").html(err);
-        }
 
-    });
+        });
 
-}
+    }
+
+    self.drawDataModel = function () {
+
+        drawNeoModel(subGraph);
+    }
+
+    self.callMongo = function (urlSuffix, payload, callback) {
+        if (!urlSuffix)
+            urlSuffix = "";
+        $.ajax({
+            type: "POST",
+            url: Gparams.mongoProxyUrl + urlSuffix,
+            data: payload,
+            dataType: "json",
+            success: function (data, textStatus, jqXHR) {
+                callback(data);
+            },
+            error: function (xhr, err, msg) {
+                console.log(xhr);
+                console.log(err);
+                console.log(msg);
+            }
+        });
+    }
+
+    self.listSubGraph=function() {
+       var  match = "MATCH (n)  return distinct n.subGraph";
+       self.callNeoMatch (match, Gparams.neo4jProxyUrl,function(data){
+            console.log (data);
+        });
+    }
+
+    self.callNeoMatch = function (match, url, callback) {
+        payload = {
+            match: match
+        };
+        if (!url)
+            url = Gparams.neo4jProxyUrl;
+
+        $.ajax({
+            type: "POST",
+            url: url,
+            data: payload,
+            dataType: "json",
+            success: function (data, textStatus, jqXHR) {
+                callback(data);
+            },
+            error: function (xhr, err, msg) {
+
+                console.log(xhr);
+                console.log(err);
+                console.log(msg);
+                if (err.result) {
+                    $("#message").html(err.result);
+                    $("#message").css("color", "red");
+                }
+                else
+                    $("#message").html(err);
+            }
+
+        });
+
+    }
+    return self;
+})()

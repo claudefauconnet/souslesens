@@ -1,3 +1,5 @@
+var graphTraversalQueries = (function(){
+ var self = {};
 /*******************************************************************************
  * TOUTLESENS LICENCE************************
  *
@@ -24,7 +26,7 @@
  * SOFTWARE.
  *
  ******************************************************************************/
-function getAllSimplePaths(startId, endId, depth, algo) {
+   self.getAllSimplePaths=function(startId, endId, depth, algo) {
     var body = '{ "to":"' + endId + '","max_depth":' + depth + ',"algorithm":"'
         + algo + '"}';
     var urlSuffix = "/db/data/node/" + startId + "/paths";
@@ -59,7 +61,7 @@ function getAllSimplePaths(startId, endId, depth, algo) {
                     return;
 
                 }
-                processPathResults(data);
+self.processPathResults(data);
             },
             error: function (xhr, err, msg) {
                 console.log(xhr);
@@ -71,7 +73,7 @@ function getAllSimplePaths(startId, endId, depth, algo) {
 
 }
 
-function processPathResults(data) {
+   self.processPathResults=function(data) {
     /* graphPathDebugInfo += "\n---------result------------\n" */
 
     var RelIds = [];
@@ -90,11 +92,11 @@ function processPathResults(data) {
             .lastIndexOf("/") + 1));
     var endNodeId = parseInt(data[0].end
         .substring(data[0].end.lastIndexOf("/") + 1))
-    getRelationsByIds(RelIds, data, startNodeId, endNodeId);
+self.getRelationsByIds(RelIds, data, startNodeId, endNodeId);
 
 }
 
-function getRelationsByIds(RelIds, rawData, startNodeId, endNodeId) {
+   self.getRelationsByIds=function(RelIds, rawData, startNodeId, endNodeId) {
     // var query = "MATCH (n)-[r]->(m) WHERE ID(r) IN "+
     // JSON.stringify(normalRelIds)+ " RETURN
     // n,m,r,labels(n),labels(m),ID(n),ID(m),type(r),ID(r) ";
@@ -123,10 +125,10 @@ function getRelationsByIds(RelIds, rawData, startNodeId, endNodeId) {
 
         }
         window.parent. cachedResultArray=data;
-        window.parent.hideAdvancedSearch();
+        window.parent.toutlesensController.hideAdvancedSearch();
         window.parent.currentDisplayType= "SIMPLE_FORCE_GRAPH";
         window.parent.currentDataStructure = "flat";
-        window.parent.displayGraph(data, "SIMPLE_FORCE_GRAPH", null);
+        window.parent.toutlesensController.displayGraph(data, "SIMPLE_FORCE_GRAPH", null);
 
     });
 
@@ -138,7 +140,7 @@ function getRelationsByIds(RelIds, rawData, startNodeId, endNodeId) {
  * http://neo4j.com/docs/stable/rest-api-traverse.html
  * http://www.ekino.com/optimization-strategies-traversals-neo4j/
  */
-function drawGraphTraversal(startNodeId, graphTravReturnType,
+   self.drawGraphTraversal=function(startNodeId, graphTravReturnType,
                             graphTravPriority, graphTravUnicity, graphTravPruneEvaluator,
                             graphTravReturnEvaluator, graphTravReturnFilter, graphTravDepth,
                             graphTravRelTypes) {
@@ -202,7 +204,7 @@ function drawGraphTraversal(startNodeId, graphTravReturnType,
                         + currentDepth + ")?");
                     if (more === true) {
                         $("#depth").val(++currentDepth);
-                        drawGraphGeneral()
+toutlesensController.drawGraphGeneral()
 
                     }
 
@@ -218,7 +220,7 @@ function drawGraphTraversal(startNodeId, graphTravReturnType,
 
                 }
 
-                processPathResults(data);
+self.processPathResults(data);
 
             },
             error: function (xhr, err, msg) {
@@ -230,3 +232,6 @@ function drawGraphTraversal(startNodeId, graphTravReturnType,
         });
 
 }
+
+ return self;
+})()

@@ -1,36 +1,63 @@
-/**
- * Created by claud on 10/02/2017.
- */
+/*******************************************************************************
+ * TOUTLESENS LICENCE************************
+ *
+ * The MIT License (MIT)
+ *
+ * Copyright (c) 2016 Claude Fauconnet claude.fauconnet@neuf.fr
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ *
+ ******************************************************************************/
+
+var statistics = (function(){
+ var self = {};
 
 
-var statQueries = {
+
+ var statQueries = {
     Relations_count: " MATCH (n:$sourceLabel)$incoming-[r]-$outgoing(m$targetLabel)  return DISTINCT n as node,labels(n) as sourceLabels,labels(m) as targetLabels, type(r) as relType ,count(type(r))as relCount order by relCount desc limit $limit",
    // incomingRelsCount: "MATCH (m:$sourceLabel)-[r]->(n$targetLabel)  return DISTINCT n.name as node,labels(n) as nodeLabels,type(r) as relType ,count(type(r))as relCount order by relCount desc limit $limit",
 }
 
 
-function setCurrentQueriesSelect() {
-    var array = [""];
+   self.setCurrentQueriesSelect=function() {
+   var array = [];//[""];
 
     for (var key in statQueries) {
         array.push(key);
-        fillSelectOptionsWithStringArray(currentQueriesSelect, array);
+common.fillSelectOptionsWithStringArray(currentQueriesSelect, array);
 
     }
 }
 
-function initLabelsCurrentQueries() {
-    initLabels(subGraph, "currentQueriesSourceLabelSelect");
-    initLabels(subGraph, "currentQueriesTargetLabelSelect");
+   self.initLabelsCurrentQueries=function() {
+toutlesensController.initLabels(subGraph, "currentQueriesSourceLabelSelect");
+toutlesensController.initLabels(subGraph, "currentQueriesTargetLabelSelect");
 }
 
 
-function onCurrentQueriesSelect() {
+   self.onCurrentQueriesSelect=function() {
     currentActionObj = {type: "frequentQuery"}
 }
 
 
-function executeFrequentQuery() {
+   self.executeFrequentQuery=function() {
 
 
     var queryName = $("#currentQueriesSelect").val();
@@ -73,18 +100,18 @@ function executeFrequentQuery() {
     }
 
     query = query.replace("$limit", limit);
-    buildStatTree(queryName, query, function (jsonTree) {
+self.buildStatTree(queryName, query, function (jsonTree) {
 
         currentDataStructure = "tree";
         currentDisplayType = "TREEMAP";
-        window.parent.hideAdvancedSearch();
+        window.parent.toutlesensDialogsController.hideAdvancedSearch();
         window.parent.cachedResultTree = jsonTree;
-        window.parent.displayGraph(jsonTree, currentDisplayType, null)
+        window.parent.toutlesensController.displayGraph(jsonTree, currentDisplayType, null)
     })
 
 }
 
-function buildStatTree(title, query, callback) {
+   self.buildStatTree=function(title, query, callback) {
 
     var payload = {match: query};
 
@@ -97,7 +124,7 @@ function buildStatTree(title, query, callback) {
         success: function (data, textStatus, jqXHR) {
             $("#message").html("")
             if (!data || data.length == 0) {
-                setMessage("No results", blue);
+                 common.setMessage("No results", blue);
                 return;
             }
             var errors = data.errors;
@@ -108,7 +135,7 @@ function buildStatTree(title, query, callback) {
                     str += errors[i].code + " : " + errors[i].message + "<br>"
                         + JSON.stringify(paramsObj);
                 }
-                setMessage("!!! erreur de requete", red);
+                 common.setMessage("!!! erreur de requete", red);
                 console.log(str);
                 return;
             }
@@ -121,7 +148,7 @@ function buildStatTree(title, query, callback) {
             for (var i = 0; i < data.length; i++) {
                 var name=data[i].node.properties.name;
                 if(!name){
-                    data[i].node.properties.name=data[i].node.properties.nom
+                    data[i].node.properties.name=data[i].node.properties[Gparams.defaultnodeNameField]
                 }
 
                 var neoAttrs= data[i].node.properties;
@@ -153,3 +180,6 @@ function buildStatTree(title, query, callback) {
 
 }
 
+
+ return self;
+})()

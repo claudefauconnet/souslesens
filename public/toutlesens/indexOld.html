@@ -30,6 +30,7 @@
 <head>
     <meta charset="ISO-8859-1">
     <title>souslesens</title>
+    <script src="oldJs/toutlesensData.js"></script>
 </head>
 
 <link rel="stylesheet" type="text/css" title="Design"
@@ -38,30 +39,28 @@
 <link rel="stylesheet" type="text/css" title="Design"
       href="js/jquery/jquery.splitter.css"/>
 
-<!--<link rel="stylesheet" href="js/jsTree/themes/default/style.min.css"/>-->
+<!--<link rel="stylesheet" href="js/Tree/themes/default/style.min.css"/>-->
 <!--<link rel="stylesheet" type="text/css"
 	href="../common/js/others/jquery.handsontable.full.min.css" />-->
 
-
-
-
+<link rel="stylesheet" type="text/css" href="css/d3tree.css"/>
 <link rel="stylesheet" type="text/css" href="css/index.css"/>
 <link rel="stylesheet" type="text/css" href="css/treemap.css"/>
-
 
 
 <script src="../common/js/jquery/jquery.min.js"></script>
 <script src="../common/js/jquery/jquery-ui.min.js"></script>
 <script src="../common/js/jquery/jquery.splitter.js"></script>
-
+<script src="../common/js/neo4jDataModel.js"></script>
 
 <script src="../common/js/d3/d3.js"></script>
 <!--<script src="https://d3js.org/d3.v4.min.js"></script>-->
+<!--<script src="https://d3js.org/d3.v4.min.js"></script>-->
 
+<script src="js/globalVars.js"></script>
 <script src="resources/params.js"></script>
 
-<script src="../common/js/common.js"></script>
-<script src="../common/js/neo4jDataModel.js"></script>
+<script src="js/common.js"></script>
 
 
 <script src="js/toutlesensController.js"></script>
@@ -71,58 +70,72 @@
 
 <script src="js/modifyData.js"></script>
 
+<!--
+<script src="js//externalRessourcesCommon.js"></script>
+<script src="js//externalRessourcesDbPedia.js"></script>
+<script src="js//externalRessourcesBNF.js"></script>
+-->
 
-<script src="js/externalRessources.common.js"></script>
-<script src="js/externalRessources.DbPedia.js"></script>
-<script src="js/externalRessources.BNF.js"></script>
+<script src="js/d3common.js"></script>
+<script src="js/d3legend.js"></script>
 
+<script src="js/d3flower.js"></script>
 
-<script src="js/d3/d3.common.js"></script>
-<script src="js/d3/d3.legend.js"></script>
-<script src="js/d3/d3.forceGraphClass.js"></script>
-<script src="js/d3/d3.dndTreeClass.js"></script>
-<script src="js/d3/d3.forceCollapseClass.js"></script>
-<script src="js/d3/d3.flower.js"></script>
-<script src="js/d3/d3.modifiableGraph.js"></script>
-<script src="js/d3/d3.simpleForce.js"></script>
-<script src="js/d3/d3.simpleForceBulk.js"></script>
-<script src="js/d3/d3.treemap.js"></script>
-<script src="js/d3/d3.gantt.js"></script>
-<script src="js/d3/gant-chart-d3v2.js"></script>
-<script type="text/javascript" src="js/d3/gant-chart-d3v2.js"></script>
-<script type="text/javascript" src="js/d3/d3.gantt.js"></script>
+<script src="js/d3simpleForce.js"></script>
+<script src="js/d3simpleForceBulk.js"></script>
+<script src="js/d3treemap.js"></script>
+<script src="js/d3forceCollapseClass.js"></script>
+<script src="js/d3tree.js"></script>
 
-<script src="../admin/js/graphD3.js"></script>
+<script src="js/customizeUI.js"></script>
+
+<!--<script src="js//d3.forceGraphClass.js"></script>
+<script src="js//d3.dndTreeClass.js"></script>
+<script src="js//d3.modifiableGraph.js"></script>
+<script src="js//d3.forceCollapseClass.js"></script>
+<script src="js//d3.gantt.js"></script>
+<script src="js//gant-chart-d3v2.js"></script>
+<script type="text/javascript" src="js//gant-chart-d3v2.js"></script>
+<script type="text/javascript" src="js//d3.gantt.js"></script>
+
+<script src="../admin/js//graphD3.js"></script>-->
 <script src="js/textOutputs.js"></script>
 
 <script src="js/advancedDisplay.js"></script>
 <script src="js/advancedSearch.js"></script>
 <script src="js/selection.js"></script>
-<script src="js/d3/jit-yc.js"></script>
-<!--<link rel="stylesheet" type="text/css"
+
+<script src="../common/js/tableFlip.js"></script>
+<!--<script src="js//jit-yc.js"></script>
+<link rel="stylesheet" type="text/css"
 	href="../common/js/others/jquery.datatables.min.css" />
 <script type="text/javascript"
 	src="../common/js/others/jquery.datatables.min.js"></script>-->
 
 
-<script src="resources/help.js"></script>
-<script src="resources/lang.js"></script>
+<script src="js/help.js"></script>
+<script src="js/lang.js"></script>
 <script src="resources/lang_FR.js"></script>
 <script src="resources/lang_EN.js"></script>
 <script src="js/functionalities.js"></script>
 
 
+<!-- test visjs---------------------------------------->
+<script src="js/visjs/visjs.js"></script>
+<script src="js/visjs/visJsGraph.js"></script>
+<link rel="stylesheet" type="text/css" href="js/visjs/vis-network.min.css.js"/>
+<!-- test visjs---------------------------------------->
+
+
 <script>
-    var totalWidth;
-    var totalHeight;
-    processDataBeforeDrawingCallback = null;
+
     $(function () {
 
-        var queryParams = getQueryParams(document.location.search);
+        queryParams = toutlesensController.getQueryParams(document.location.search);
+        subGraph = queryParams.subGraph;
 
-
-        initNeoModel(subGraph, [initLabels,showBulkGraph]);
-        initFunctionalities();
+        dataModel.initNeoModel(queryParams.subGraph, [toutlesensController.initLabels, customizeUI.customize, advancedSearch.showBulkGraph]);
+        functionalities.initFunctionalities();
         var mode = queryParams.mode;
         if (mode == "write")
             Gparams.readOnly = false;
@@ -145,17 +158,16 @@
         $("#graphDiv").click(function (e) {
             var dat = e.target.__data__;
             if (!dat) {
-                hidePopupMenu();
+                toutlesensController.hidePopupMenu();
                 return;
             }
             if (dat.id == null || dat.id == "")
-                hidePopupMenu();
+                toutlesensController.hidePopupMenu();
 
         });
 
         totalWidth = $(window).width();
         totalHeight = $(window).height();
-
 
 
         $("body").height(totalHeight - 20);
@@ -192,10 +204,10 @@
         //  $("#advancedSearchIframe").height(totalHeight / 3 * 2).width(totalWidth / 3 * 2);
         //   $("#advancedDisplayIframe").height(totalHeight / 3 * 2).width(totalWidth / 3 * 2);
 
-        $("#advancedSearchIframe").height(Gparams.bigDialogSize.h-100).width(Gparams.bigDialogSize.w-40);
-        $("#advancedDisplayIframe").height(Gparams.bigDialogSize.h-100).width(Gparams.bigDialogSize.w-40);
+        $("#advancedSearchIframe").height(Gparams.bigDialogSize.h - 100).width(Gparams.bigDialogSize.w - 40);
+        $("#advancedDisplayIframe").height(Gparams.bigDialogSize.h - 100).width(Gparams.bigDialogSize.w - 40);
 
-        $('#main').width("100%").height("100%").split({
+        splitter = $('#main').width("100%").height("100%").split({
             orientation: 'vertical',
             limit: 100,
             position: (totalWidth / 4) + 5
@@ -205,7 +217,7 @@
 
             activate: function (event, ui) {
                 var index = ui.newTab.index();
-                onRadarLeftActivate(index);
+                toutlesensController.onRadarLeftActivate(index);
             }
 
         });
@@ -232,9 +244,9 @@
         );
 
         if (queryParams.mode == "write")
-            $("#tabs-radarRight").tabs("option", "disabled", [0, 1, 2,3]);
+            $("#tabs-radarRight").tabs("option", "disabled", [0, 1, 2]);
         else
-            $("#tabs-radarRight").tabs("option", "disabled", [0, 1, 2, 3, 4]);
+            $("#tabs-radarRight").tabs("option", "disabled", [0, 1]);
 
         $("#table_Graph").tabs();
         $("#linkNodesDivAccordion").accordion({
@@ -302,6 +314,7 @@
 
             }
 
+
         });
 
 
@@ -334,7 +347,7 @@
                  distance = h / (10 * depth) / (200 / distance);
                  }*/
                 Gparams.d3ForceParams.distance = ui.value;
-                displayGraph();
+                toutlesensController.displayGraph();
             }
         });
 
@@ -345,7 +358,7 @@
             value: -500,
             slide: function (event, ui) {
                 Gparams.d3ForceParams.charge = ui.value;
-                displayGraph();
+                toutlesensController.displayGraph();
             }
         });
 
@@ -357,7 +370,7 @@
             value: 1,
             slide: function (event, ui) {
                 $("#depth").val(ui.value);
-                drawGraphGeneral();
+                toutlesensController.drawGraphGeneral();
             }
         });
 
@@ -400,10 +413,6 @@
         });
 
 
-
-
-
-
     })
     ;
     ;
@@ -438,15 +447,17 @@
                         <input type="hidden" value="500" id="limitResult">
                         <table border="0">
 
-                          <tr align="center">
+                            <tr align="center">
 
-                                <td colspan="2" valign="center"> <button onclick="showAdvancedSearchDialog()"> <span id='lang_61'> Advanced Search</span></button>
+                                <td colspan="2" valign="center">
+                                    <button onclick="toutlesensDialogsController.showAdvancedSearchDialog()"><span
+                                            id='lang_61'> Advanced Search</span></button>
 
                             </tr>
                             <tr>
                                 <td><B></B> Labels</td>
                                 <td><select id="nodesLabelsSelect"
-                                            onchange=onLabelSelect(this)></select></td>
+                                            onchange=toutlesensController.onLabelSelect(this)></select></td>
 
                             </tr>
 
@@ -454,13 +465,14 @@
 
 
                                 <td><span id='lang_1'>Chercher</span></td>
-                                <td><input id="word" onkeyup="searchNodesUI(this,null)"
+                                <td><input id="word" onkeyup="toutlesensController.searchNodesUI(this,null)"
                                            size="10"></td>
                                 <td>
                                     <!-- <button  onclick="showAdvancedSearchDialog()">+</button>-->
                                     <input type="image"
                                            alt="<span id='lang_XX'>search</span>" height="20px"
-                                           onclick="showSimpleSearchDialog()" id="searchButton"
+                                           onclick="toutlesensDialogsController.showSimpleSearchDialog()"
+                                           id="searchButton"
                                            src="images/search.png"/>
 
                                 </td>
@@ -475,7 +487,7 @@
                             </tr>
                             <tr>
                                 <td colspan="3"><select size="10" id="wordsSelect"
-                                                        onclick="onWordSelect(this)">
+                                                        onclick="toutlesensController.onWordSelect(this)">
                                     <option>--------------</option>
                                 </select></td>
 
@@ -492,32 +504,36 @@
                             </tr>
 
 
-                            <tr >
+                            <tr>
                                 <td colspan="3">
 
-                                    <table class="visButtonTable">
+                                    <table class="visButtonTable" id="visButtonTableDiv">
 
 
                                         <tr>
                                             <td><input type="image" height="30px" alt="fleur"
-                                                       onclick="onVisButton('FLOWER')" id="treeFlowerButton"
+                                                       onclick="toutlesensController.onVisButton('FLOWER')"
+                                                       id="treeFlowerButton"
                                                        src="images/flower.png"/></td>
                                             <td><input type="image" height="30px" alt="graphBulk"
-                                                       onclick="onVisButton('SIMPLE_FORCE_GRAPH_BULK')" id="graphBulkButton"
+                                                       onclick="toutlesensController.onVisButton('SIMPLE_FORCE_GRAPH_BULK')"
+                                                       id="graphBulkButton"
                                                        src="images/graphBulk.png"/></td>
 
                                             <td><input type="image" height="30px"
                                                        alt="<span id='lang_9'>carte</span>"
-                                                       onclick="onVisButton('SIMPLE_FORCE_GRAPH')"
-                                                       id="treemapButton" src="images/graph.png"/></td>
+                                                       onclick="toutlesensController.onVisButton('SIMPLE_FORCE_GRAPH')"
+                                                       id="graphButton" src="images/graph.png"/></td>
 
                                             <td><input type="image"
                                                        alt="<span id='lang_7'>arbre</span>" height="30px"
-                                                       onclick="onVisButton('TREE')" id="treeButton"
+                                                       onclick="toutlesensController.onVisButton('TREE')"
+                                                       id="treeButton"
                                                        src="images/tree.png"/></td>
 
                                             <td><input type="image" height="30px" alt="carte"
-                                                       onclick="onVisButton('TREEMAP')" id="treemapButton"
+                                                       onclick="toutlesensController.onVisButton('TREEMAP')"
+                                                       id="treemapButton"
                                                        src="images/treemap.png"/></td>
 
 
@@ -525,33 +541,9 @@
                                     </table>
 
 
-
                                 </td>
 
                             </tr>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
                         </table>
@@ -580,7 +572,7 @@
 
                                     <td colspan="2" align="center">
 
-                                        <table class="visButtonTable">
+                                        <table class="visButtonTable" id=visButtonTableDiv">
 
                                             <tr align="center">
                                                 <td width="100%" colspan="6"><span
@@ -588,33 +580,37 @@
                                             </tr>
                                             <tr>
                                                 <td><input type="image" height="30px" alt="fleur"
-                                                           onclick="onVisButton('FLOWER')" id="treeFlowerButton"
+                                                           onclick="toutlesensController.onVisButton('FLOWER')"
+                                                           id="treeFlowerButton2"
                                                            src="images/flower.png"/></td>
                                                 <td><input type="image" height="30px" alt="graphBulk"
-                                                           onclick="onVisButton('SIMPLE_FORCE_GRAPH_BULK')" id="graphBulkButton"
+                                                           onclick="toutlesensController.onVisButton('SIMPLE_FORCE_GRAPH_BULK')"
+                                                           id="graphBulkButton2"
                                                            src="images/graphBulk.png"/></td>
 
                                                 <td><input type="image" height="30px"
                                                            alt="<span id='lang_9'>carte</span>"
-                                                           onclick="onVisButton('SIMPLE_FORCE_GRAPH')"
-                                                           id="treemapButton" src="images/graph.png"/></td>
+                                                           onclick="toutlesensController.onVisButton('SIMPLE_FORCE_GRAPH')"
+                                                           id="graphButton2" src="images/graph.png"/></td>
 
                                                 <td><input type="image"
                                                            alt="<span id='lang_7'>arbre</span>" height="30px"
-                                                           onclick="onVisButton('TREE')" id="treeButton"
+                                                           onclick="toutlesensController.onVisButton('TREE')"
+                                                           id="treeButton2"
                                                            src="images/tree.png"/></td>
 
                                                 <td><input type="image" height="30px" alt="carte"
-                                                           onclick="onVisButton('TREEMAP')" id="treemapButton"
+                                                           onclick="toutlesensController.onVisButton('TREEMAP')"
+                                                           id="treemapButton2"
                                                            src="images/treemap.png"/></td>
 
 
                                                 <!--    <td><input type="image" height="30px" alt="carte"
-                                                    onclick="onVisButton('MANUAL')" id="treemapButton"
+                                                    onclick="toutlesensController.onVisButton('MANUAL')" id="treemapButton"
                                                     src="images/treeModif.jpg" /></td>
 
                                                        <td><input type="image" alt="<span id='lang_14'>roue</span>"
-                                            onclick="onVisButton('FORCE_COLLAPSE')" height="30px"
+                                            onclick="toutlesensController.onVisButton('FORCE_COLLAPSE')" height="30px"
                                             id="wheelButton" src="images/tree.png" /></td>-->
 
                                             </tr>
@@ -622,7 +618,7 @@
                                                 <td valign="middle" colspan="6"><input type="checkbox"
                                                                                        id="groupByLabelsCbx"
 
-                                                                                       onclick="drawGraphGeneral()"><span
+                                                                                       onclick="toutlesensController.drawGraphGeneral()"><span
                                                         style="color: white"><span id='lang_5'>Grouper
 																par labels</span></span></td>
 
@@ -630,7 +626,7 @@
                                             <tr align="center">
                                                 <td valign="middle" colspan="6"><input type="checkbox"
                                                                                        id="showRelationTypesCbx"
-                                                                                       onclick="drawGraphGeneral()"><span
+                                                                                       onclick="toutlesensController.drawGraphGeneral()"><span
                                                         style="color: white"><span
                                                         id='lang_163'>noms des relation</span></span></td>
 
@@ -639,7 +635,8 @@
 
                                         </table>
                                         <select style="visibility: hidden;"
-                                                id="representationSelect" onchange="drawGraphGeneral()">
+                                                id="representationSelect"
+                                                onchange="toutlesensController.drawGraphGeneral()">
 
 
                                             <option value="FLOWER" selected="selected">flower</option>
@@ -697,10 +694,10 @@
                         <div id="graphFiltersPanel">
 								<span class="help"><span id='lang_20'>filtre les
 										noeud et les relations</span></span><br>
-                            <button onclick="backToNonFilteredGraph()"><span id='lang_160'>supprimer les filtres</span>
+                            <button onclick="toutlesensController.backToNonFilteredGraph()"><span id='lang_160'>supprimer les filtres</span>
                             </button>
                             <!-- <button id="drawFilteredGraphButton"
-                                    onclick="drawGraphGeneral()">
+                                    onclick="toutlesensController.drawGraphGeneral()">
                                     <span id='lang_21'>Appliquer les filtres</span>
                                 </button> -->
 
@@ -723,25 +720,25 @@
                     <hr>
                     <div id="imagePanel"></div>
                     <div id="photoControls">
-                    <button onclick="previousImage()">previous</button>
-                    image
-                    <button onclick="nextImage()">next</button>
-                    <input type="checkbox" id="largeImageCBX" checked="true"> grandFormat
-                    <button onclick="rotateImage(true)">rotate-</button>
-                    <button onclick="rotateImage()">rotate+</button>
+                        <button onclick="toutlesensController.previousImage()">previous</button>
+                        image
+                        <button onclick="toutlesensController.nextImage()">next</button>
+                        <input type="checkbox" id="largeImageCBX" checked="true"> grandFormat
+                        <button onclick="toutlesensController.rotateImage(true)">rotate-</button>
+                        <button onclick="toutlesensController.rotateImage()">rotate+</button>
                     </div>
                     <div id="div_externalRessources">
                         <div class="title">
                             <span id='lang_23'>Ressources externes</span>
                         </div>
                         Source :<select id="externalSourceSelect"
-                                        onchange="loadExternalData(this)">
+                                        onchange="toutlesensController.toutlesensController.loadExternalData(this)">
                         <option></option>
                         <option value="DbPedia">DBPedia</option>
                         <option value="BNF">BNF</option>
 
                     </select>
-                        <button onclick="searhExternalResource()">
+                        <button onclick="externalRessourcesCommon.searhExternalResource()">
                             <span id='lang_1'>Chercher</span>
                         </button>
                         <div id="externalInfoPanel"></div>
@@ -756,14 +753,14 @@
                 </div>
 
 
-
                 <!--  ****************************************************selection***************************-->
                 <div id="selectionTab">
                     nodes
-                    <select size= "15" id="d3SelectionSelect"></select> <button onclick="removeNodeFromSelection()";>-</button>
+                    <select size="15" id="d3SelectionSelect"></select>
+                    <button onclick="removeNodeFromSelection()" ;>-</button>
 
 
-                   <br> action <select onchange="d3SelectionAction(this)">
+                    <br> action <select onchange="toutlesensController.d3SelectionAction(this)">
                     <option></option>
                     <option value="clear"><span id='lang_172'>clear</span></option>
                     <option value="setAttributeDialog"><span id='lang_172'>set attribute</span></option>
@@ -781,8 +778,6 @@
             </div>
 
 
-
-
         </div>
     </div>
 
@@ -797,10 +792,9 @@
                     id='lang_42'>Graphe</span></span></a></li>
             <li><a href="#textTab"><span id='lang_29'>Liste</span></a></li>
 
-            <li id="li_nodeDetails"><a href="#nodeDetailsTab">Details </a></li>
+            <!--    <li id="li_nodeDetails"><a href="#nodeDetailsTab">Details </a></li>-->
             <li id="li_modify"><a href="#modifyTab"><span id='lang_31'>M.a.j</span></a></li>
-            <li id="li_neoQueries"><a href="#neoQueriesTab"><span
-                    id='lang_32'>Recherche avanc�e</span></a></li>
+
         </ul>
 
 
@@ -814,33 +808,33 @@
                 <div id="popupMenuWrite" class="popupmenuDiv">
                     <table border="0" class="popupMenuTable">
                         <tr>
-                            <td><span onclick="dispatchAction('nodeInfos')"><span
+                            <td><span onclick=toutlesensController.dispatchAction('nodeInfos')"><span
                                     id='lang_67'>Infos</span></span></td>
                         </tr>
                         <tr>
-                            <td><span onclick="dispatchAction('setAsRootNode')"><span
+                            <td><span onclick="toutlesensController.dispatchAction('setAsRootNode')"><span
                                     id='lang_68'>Devient Noeud racine</span></span></td>
                         </tr>
                         <tr>
-                            <td><span onclick="dispatchAction('unfoldNode')"><span
+                            <td><span onclick="toutlesensController.dispatchAction('unfoldNode')"><span
                                     id='lang_34'>Deplier</span></span></td>
                         </tr>
 
                         <tr>
-                            <td><span onclick="dispatchAction('foldNode')"><span
+                            <td><span onclick="toutlesensController.dispatchAction('foldNode')"><span
                                     id='lang_35'>Replier</span></span></td>
                         </tr>
 
                         <tr>
-                            <td><span onclick="dispatchAction('modifyNode')"><span
+                            <td><span onclick="toutlesensController.dispatchAction('modifyNode')"><span
                                     id='lang_36'>Modifier</span></span></td>
                         </tr>
                         <tr>
-                            <td><span onclick="dispatchAction('linkSource')"><span
+                            <td><span onclick="toutlesensController.dispatchAction('linkSource')"><span
                                     id='lang_64'>Source d'un lien</span></span></td>
                         </tr>
                         <tr>
-                            <td><span onclick="dispatchAction('linkTarget')"><span
+                            <td><span onclick="toutlesensController.dispatchAction('linkTarget')"><span
                                     id='lang_65'>Cible du lien</span></span></td>
                         </tr>
 
@@ -851,20 +845,20 @@
                 <div id="popupMenuRead" class="popupmenuDiv">
                     <table border="0" class="popupMenuTable">
                         <tr>
-                            <td><span onclick="dispatchAction('nodeInfos')"><span
+                            <td><span onclick="toutlesensController.dispatchAction('nodeInfos')"><span
                                     id='lang_67'>Infos</span></span></td>
                         </tr>
                         <tr>
-                            <td><span onclick="dispatchAction('setAsRootNode')"><span
+                            <td><span onclick="toutlesensController.dispatchAction('setAsRootNode')"><span
                                     id='lang_68'>Devient Noeud racine</span></span></td>
                         </tr>
                         <tr>
-                            <td><span onclick="dispatchAction('unfoldNode')"><span
+                            <td><span onclick="toutlesensController.dispatchAction('unfoldNode')"><span
                                     id='lang_38'>Deplier</span></span></td>
                         </tr>
 
                         <tr>
-                            <td><span onclick="dispatchAction('foldNode')"
+                            <td><span onclick="toutlesensController.dispatchAction('foldNode')"
                                       id='lang_39'>Replier</span></td>
                         </tr>
 
@@ -876,11 +870,11 @@
                 <div id="popupMenuLabel" class="popupmenuDiv">
                     <table border="0" class="popupMenuTable">
                         <tr>
-                            <td><span onclick="dispatchAction('closeNodesFromLabel')"
+                            <td><span onclick="toutlesensController.dispatchAction('closeNodesFromLabel')"
                                       id='lang_40'>Fermer</span></td>
                         </tr>
                         <tr>
-                            <td><span onclick="dispatchAction('openNodesFromLabel')"
+                            <td><span onclick="toutlesensController.dispatchAction('openNodesFromLabel')"
                                       id='lang_41'>Ouvrir</span></td>
                         </tr>
                         <!--  	<tr>
@@ -900,6 +894,18 @@
                     <div id="popupMenuNodeInfo">//onblur="hidePopupMenu()" >
                     </div>
                 </div>
+                <div id="verticalVisButtonsDiv" class="popupmenuDiv">
+                    <table id="verticalVisButtonsTable" class="vertVisButtonTable">
+                        <tbody>
+                        </tbody>
+                    </table>
+                    <br>
+                    Levels<br><select  onchange="customizeUI.setDepth(this)">
+                        <option>1</option>
+                        <option>2</option>
+                        <option>3</option>
+                    </select>
+                </div>
 
 
             </div>
@@ -911,21 +917,21 @@
                     <tr>
                         <td><input type="image" height="30px"
                                    alt="<span id='lang_13'>liste</span>"
-                                   onclick="onTextVisButton('HTML')" id="listOuput"
+                                   onclick="toutlesensController.onTextVisButton('HTML')" id="listOuput"
                                    src="images/list.png"/></td>
 
                         <td><input type="image" height="30px" alt="table"
-                                   onclick="onTextVisButton('CSV')" id="csvOutput"
+                                   onclick="toutlesensController.onTextVisButton('CSV')" id="csvOutput"
                                    src="images/table.png"/></td>
                         <td>
 
-                            <button id="listDownloadButton" onclick="downloadTextOutput()">
+                            <button id="listDownloadButton" onclick="textOutputs.downloadTextOutput()">
                                 <span id='lang_43'>telecharcher</span>
                             </button>
 
                         </td>
                         <td><input type="image" height="30px" alt="table"
-                                   onclick="showGanttDialog()" id="Gantt"
+                                   onclick="toutlesensDialogsController.showGanttDialog()" id="Gantt"
                                    src="images/gantt.png"/></td>
                         <td>
                     </tr>
@@ -947,17 +953,17 @@
         <div id="modifyTab">
 
             <input type="checkbox" name="modifyCbx" id="modifyCbx"
-                   onclick="switchModifyMode(this);"> <label for="modifyCbx">Mode
+                   onclick="toutlesensController.switchModifyMode(this);"> <label for="modifyCbx">Mode
             mise a jour</label> <span id="currentNodeSpan"></span>
             <div id="modifyButtonsDiv" style="visibility: hidden;">
 
-                <button onclick="onCreateNodeButton()">
+                <button onclick="modifyData.onCreateNodeButton()">
                     <span id='lang_45'>Creer Noeud</span>
                 </button>
-                <button onclick="dispatchAction('linkSource')">Source d
+                <button onclick="toutlesensController.dispatchAction('linkSource')">Source d
                     un lien
                 </button>
-                <button onclick="dispatchAction('linkTarget')">Cible du
+                <button onclick="toutlesensController.dispatchAction('linkTarget')">Cible du
                     lien
                 </button>
                 <a href="javascript:drawDataModel()">Show data Model</a>
@@ -976,10 +982,10 @@
 
                     <div id="nodeInputDiv">&nbsp;</div>
 
-                    <button onclick="saveNodeInput()">
+                    <button onclick="modifyData.saveNodeInput()">
                         <span id='lang_47'>Enregistrer</span>
                     </button>
-                    <button onclick="onDeleteNodeButton()">
+                    <button onclick="modifyData.onDeleteNodeButton()">
                         <span id='lang_48'>Supprimer</span>
                     </button>
 
@@ -997,7 +1003,7 @@
                         <tr>
 
                             <td colspan="2">
-                                <button onclick="reverseLinkNodes()">
+                                <button onclick="modifyData.reverseLinkNodes()">
                                     <span id='lang_69'>inverser les noeuds</span>
                                 </button>
                             </td>
@@ -1006,7 +1012,7 @@
                         <tr>
 
                             <td colspan="2">
-                                <button onclick="createNewLinkType()">
+                                <button onclick="modifyData.createNewLinkType()">
                                     <span id='lang_70'>ajouter un type de lien</span>
                                 </button>
                             </td>
@@ -1051,7 +1057,7 @@
 
                             <td colspan="2">
                                 <hr>
-                                <button onclick="createRelation()">
+                                <button onclick="modifyData.createRelation()">
                                     <span id='lang_51'>Enregistrer le lien</span>
                                 </button>
                             </td>
@@ -1090,7 +1096,7 @@
 
                 <tr>
                     <td colspan="2">
-                        <button onclick="execNeoQuery()">
+                        <button onclick="modifyData.execNeoQuery()">
                             <span id='lang_53'>Executer</span>
                         </button>
                     </td>
@@ -1107,8 +1113,6 @@
         </div>
 
 
-
-
     </div>
 
 
@@ -1123,7 +1127,7 @@
     <iframe id="advancedDisplayIframe" src="advancedDisplayDialog.html"></iframe>
 </div>
 <div id="dialogGantt" title="Gantt">
-    <iframe id="dialogGanttIframe" src="ganttDialog.html"></iframe>
+    <!--   <iframe id="dialogGanttIframe" src="ganttDialog.html"></iframe>-->
 </div>
 
 <input type="hidden" id="graphTravReturnEvaluator">

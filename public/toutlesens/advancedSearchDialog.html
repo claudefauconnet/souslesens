@@ -43,11 +43,13 @@
 
     <script src="../common/js/jquery/jquery.min.js"></script>
     <script src="../common/js/jquery/theme_humanity/jquery-ui.min.js "></script>
-
-    <script src="../common/js/common.js"></script>
     <script src="../common/js/neo4jDataModel.js"></script>
-    <script src="../common/js/common.js"></script>
+    <script src="js/common.js"></script>
 
+
+
+
+    <script src="js/globalVars.js"></script>
     <script src="js/toutlesensController.js"></script>
     <script src="js/toutlesensData.js"></script>
     <script src="resources/params.js"></script>
@@ -58,8 +60,8 @@
     <script src="js/toutlesensDialogsController.js"></script>
     <script src="js/storedParams.js"></script>
 
-    <script src="resources/help.js"></script>
-    <script src="resources/lang.js"></script>
+    <script src="js/help.js"></script>
+    <script src="js/lang.js"></script>
     <script src="resources/lang_FR.js"></script>
     <script src="resources/lang_EN.js"></script>
     <script src="resources/params.js"></script>
@@ -110,11 +112,11 @@
 
     <script>
         $(function () {
-            var isSouslesensIframe=true;
-            var types = {0: "pathes", 1: "frequentQuery", 2: "pattern",3:"cypher"}
+            var isSouslesensIframe = true;
+            var types = {0: "pathes", 1: "frequentQuery", 2: "pattern", 3: "cypher"}
             currentActionObj = {type: types[0], subGraph: subGraph};
-            initNeoModel(subGraph, [initLabels, initLabelsCurrentQueries, patternInitLabels, patternInitRelTypes]);
-            setCurrentQueriesSelect();
+            dataModel.initNeoModel(subGraph, [toutlesensController.initLabels, statistics.initLabelsCurrentQueries, advancedSearch.patternInitLabels, advancedSearch.patternInitRelTypes]);
+            statistics.setCurrentQueriesSelect();
 
 
             $("#requestTabsDiv").tabs({
@@ -125,7 +127,7 @@
                 }
             });
 
-           // $("#requestTabsDiv").tabs("option", "disabled", [4]);
+           $("#requestTabsDiv").tabs("option", "disabled", [3,4]);
 
             $("#dialog").dialog({
                 autoOpen: false,
@@ -162,8 +164,10 @@
         <table border="0">
             <tr>
                 <td><span id='lang_109'>noeud source</span></td>
-                <td><input id="graphPathSourceNode" value=" ?" onclick="onSourceNodeClick()">
-                    <button onclick="$('#graphPathSourceNode').val('?');setTargetNodeVisibility(true)">X</button>
+                <td><input id="graphPathSourceNode" value=" ?" onclick="advancedSearch.onSourceNodeClick()">
+                    <button onclick="$('#graphPathSourceNode').val('?');advancedSearch.setTargetNodeVisibility(true)">
+                        X
+                    </button>
                     </input></td>
 
             </tr>
@@ -171,7 +175,8 @@
 
                 <td><span id='lang_133' class="targetNode">noeud cible</span></td>
 
-                <td><span class="targetNode"><input onclick="onTargetNodeClick()" id="graphPathTargetNode" value=" ?">
+                <td><span class="targetNode"><input onclick="advancedSearch.onTargetNodeClick()"
+                                                    id="graphPathTargetNode" value=" ?">
                     <button onclick="$('#graphPathTargetNode').val('?'); ">X</button>
                     </input></span></td>
             <tr>
@@ -196,29 +201,34 @@
                             </td>
                             <td>
                                 <select id="patternLabelSelect"
-                                        onchange="onPatternLabelSelect(this)"><option></option></select>
-                                <button onclick="patternResetLabel()">Reset</button>
+                                        onchange="advancedSearch.onPatternLabelSelect(this)">
+                                    <option></option>
+                                </select>
+                                <button onclick="advancedSearch.patternResetLabel()">Reset</button>
                             </td>
 
                         </tr>
                         <tr>
                             <td>
-                                 Add relation type
+                                Add relation type
                             </td>
                             <td>
-                                <select id="patternRelTypeSelect" onchange="onPatternRelTypeSelect(this)"><option></option></select>
+                                <select id="patternRelTypeSelect"
+                                        onchange="advancedSearch.onPatternRelTypeSelect(this)">
+                                    <option></option>
+                                </select>
                             </td>
 
                         </tr>
-                       <!-- <tr>
-                            <td>
-                                All RelType
-                            </td>
-                            <td>
-                                <select id="patternRelTypeSelect" onchange="patternAdd(this)"><option></option></select>
-                            </td>
+                        <!-- <tr>
+                             <td>
+                                 All RelType
+                             </td>
+                             <td>
+                                 <select id="patternRelTypeSelect" onchange="patternAdd(this)"><option></option></select>
+                             </td>
 
-                        </tr>-->
+                         </tr>-->
                     </table>
 
 
@@ -232,8 +242,10 @@
                 </td>
 
                 <td>
-                    <button onclick="removeFromPatternSelect()">-</button><br>
-                    <button onclick="executePatternUI(true)">Count</button><br>
+                    <button onclick="advancedSearch.removeFromPatternSelect()">-</button>
+                    <br>
+                    <button onclick="advancedSearch.executePatternUI(true)">Count</button>
+                    <br>
                     <input id="patternCount">
                 </td>
             </tr>
@@ -248,7 +260,7 @@
 
                 <td><span id='lang_104'>Match</span></td>
                 <td><textArea id="cypherQueryMatchTextArea"
-                              ondblclick="showLabelSelectionDialog('setCypherqueryMatch()')"
+                              ondblclick="advancedSearch.showLabelSelectionDialog('setCypherqueryMatch()')"
                               class="cypherQueryTextArea"></textArea></td>
 
 
@@ -315,7 +327,7 @@
                     Standard queries
                 </td>
                 <td>
-                    <select id="currentQueriesSelect" onchange="onCurrentQueriesSelect()"> </select>&nbsp;limit<input
+                    <select id="currentQueriesSelect" onchange="statistics.onCurrentQueriesSelect()"> </select>&nbsp;limit<input
                         id="currentQueriesLimit" value="100">
                 </td>
             </tr>
@@ -328,106 +340,16 @@
 
 </div>
 <div class="executeDiv">
-    <button onclick="executeSearch()"><span id='lang_152'>Draw Graph</span></button>
-    <button onclick="currentActionObj.selection=true;executeSearch()"><span id='lang_174'>Selection</span></button>
+    <button onclick="advancedSearch.executeSearch()"><span id='lang_152'>Draw Graph</span></button>
+    <button onclick="currentActionObj.selection=true;advancedSearch.executeSearch()"><span
+            id='lang_174'>Selection</span></button>
     <span id='lang_108'>Limite</span></td>
     <input id="cypherQueryLimitInput" size="5" value="2000">&nbsp;
-    <button onclick="currentActionObj.selection=false;window.parent.hideAdvancedSearch()"><span id='lang_153'>Annuler</span></button>
+    <button onclick="currentActionObj.selection=false;window.parent.toutlesensDialogsController.hideAdvancedSearch()">
+        <span id='lang_153'>Annuler</span></button>
     <div id="message"></div>
 </div>
 
-
-<!--   <div id="graphTraversalDiv">
-           <span class="help">calcule les chemins avec des criteres de
-               parcours du graphe</span>
-       <table border="0">
-           <tr>
-               <td><span id='lang_109'>noeud source</span></td>
-               <td><input type="hidden" id="graphTravSourceNodeVal"><input
-                       id="graphTravSourceNodeText" value=" ?">
-                   <button onclick="$('#graphTravSourceNodeText').val('?');"><span id='lang_110'>X</span></button>
-                   </input></td>
-
-           </tr>
-
-           <tr>
-               <td><span id='lang_111'>Type du filtre de retour</span></td>
-
-               <td><select id="graphTravReturnTypeSelect"
-                           onchange="graphTravOnFilterSelect(this)">
-                   <option value="none"><span id='lang_148'>aucun</span></option>
-                   <option value="label"><span id='lang_115'>label du noeud</span></option>
-                   <option value="nodeProperty"><span id='lang_112'>propriete du noeud</span></option>
-                   <option value="RelationType"><span id='lang_113'>type de relation</span></option>
-               </select>
-           </tr>
-           <tr>
-               <td colspan="2"><input id="graphTravReturnEvaluator" value=""
-                                      size="50"></td>
-           <tr>
-           <tr>
-               <td><span id='lang_156'>Filtre d'arret</span></td>
-               <td><select id="graphTravPruneTypeSelect"
-                           onchange="onSearchPropertyDialog()">
-                   <option value="none"><span id='lang_148'>aucun</span></option>
-                   <option value="label"><span id='lang_115'>label du noeud</span></option>
-                   <option value="nodeProperty"><span id='lang_112'>propriete du noeud</span></option>
-
-               </select></td>
-           </tr>
-           <tr>
-
-               <td colspan="2"><input id="graphTravPruneEvaluator" value=""
-                                      size="50"></td>
-           <tr>
-           <tr>
-
-               <td><span id='lang_116'>Profondeur maximum de recherche</span></td>
-               <td><input id="graphTravMaxDepth" value="6"></input></td>
-           <tr>
-           <tr>
-
-               <td><span id='lang_117'>Unicite</span></td>
-               <td><select id="graphTravUnicity" onchange="">
-                   <option value="node_global"><span id='lang_118'>noeud sur tous les chemins</span></option>
-                   <option value="node_path"><span id='lang_119'>noeud sur chaque chemin</span></option>
-                   <option value="none"><span id='lang_120'>aucune</span></option>
-                   <option value="<span id='lang_127'>relations</span>hip_global">relation sur tous
-                       les chemins
-                   </option>
-                   <option value="relationship_path">relation sur chaque
-                       chemin
-                   </option>
-
-               </select></td>
-           </tr>
-           <tr>
-           <tr>
-
-               <td><span id='lang_121'>Priorite</span></td>
-               <td><select id="graphTravPriority" onchange="">
-
-                   <option value="depth_first"><span id='lang_122'>En profondeur</span></option>
-                   <option value="breadth_first"><span id='lang_123'>En surface</span></option>
-
-               </select></td>
-           <tr>
-
-               <td><span id='lang_124'>Type de retour</span></td>
-               <td><select id="graphTravReturnType" onchange="">
-                   <option value="path"><span id='lang_125'>url</span></option>
-
-
-                   <option value="fullpath"><span id='lang_128'>chemin complet</span></option>
-               </select></td>
-
-           </tr>
-
-
-
-       </table>
-   </div>
--->
 
 <div id="dialog" title="dialog"></div>
 </body>

@@ -1,3 +1,5 @@
+var externalRessourcesCommon = (function(){
+ var self = {};
 /*******************************************************************************
  * TOUTLESENS LICENCE************************
  * 
@@ -25,7 +27,7 @@
  * 
  ******************************************************************************/
 
-var currentExternalUri;
+//moved  var currentExternalUri;
 
 
 var labelsGenericTypes={
@@ -43,9 +45,9 @@ var labelsGenericTypes={
 
 
 
-function listExternalItems(source,object,target){
+   self.listExternalItems=function(source,object,target){
 	if( !subGraph){
-		setMessage("impossible to search info : no subGraph Attr");
+		common.setMessage("impossible to search info : no subGraph Attr");
 		console.error("no subGraph");
 		return;
 	}
@@ -63,14 +65,14 @@ if(typeof fn === 'function') {
 }
 
 
-function searhExternalResource(){
+   self.searhExternalResource=function(){
 
 	var source=$("#externalSourceSelect").val();
 	var word="";
 	if(currentObject && currentObject.name)
 	var word0= currentObject.name;
-	if(!word0 && currentObject && currentObject.nom)
-		var word0= currentObject.nom;
+	if(!word0 && currentObject && currentObject[Gparams.defaultnodeNameField])
+		var word0= currentObject[Gparams.defaultnodeNameField];
 	var word=prompt ("chercher",word0);
 	if(source && source.length>0 && word && word.length>3){
 		var fnName="searchInTitle"+source;
@@ -84,7 +86,7 @@ function searhExternalResource(){
 }
 
 
-function htmlEncode(value) {
+   self.htmlEncode=function(value) {
 	// create a in-memory div, set it's inner text(which jQuery
 	// automatically encodes)
 	// then grab the encoded contents back out. The div never exists on the
@@ -92,12 +94,12 @@ function htmlEncode(value) {
 	return $('<div/>').text(value).html();
 }
 
-function encode_utf8(s) {
+   self.encode_utf8=function(s) {
 	  return unescape(encodeURIComponent(s));
 	}
 
 
-function showExternalressourcesList(objs,target){
+   self.showExternalressourcesList=function(objs,target){
 	var strImage;
 	var dbPediaHtmlArray = "<table>";
 	for ( var i=0;i< objs.length;i++) {
@@ -107,7 +109,7 @@ function showExternalressourcesList(objs,target){
 
 		if (obj["thumbnail"]) {
 			var src = obj["thumbnail"].value;
-			strImage=generateExternalImg(src);
+self.generateExternalImg(src);
 
 		}
 		str += "<span>";
@@ -155,7 +157,7 @@ function showExternalressourcesList(objs,target){
 }
 
 
-function showExternalResourceDetails(uri){
+   self.showExternalResourceDetails=function(uri){
 	currentExternalUri=uri;
 	$("#tabs-radarRight").tabs("option", "active", 2);
 	$("#nodeDetailsDiv").html("  <button onclick='associateExternalResourceToNode()'>"+
@@ -165,7 +167,7 @@ function showExternalResourceDetails(uri){
 
 }
 
-function generateExternalImg(src) {
+   self.generateExternalImg=function(src) {
 	var imgWidth = $("#imagePanel").width();
 	var imgHeight = $("#imagePanel").height();
 	var imgSize;
@@ -182,3 +184,6 @@ function generateExternalImg(src) {
 }
 
 
+
+ return self;
+})()

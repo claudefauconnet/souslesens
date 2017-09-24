@@ -30,7 +30,7 @@
 <head>
     <meta charset="ISO-8859-1">
     <title>souslesens</title>
-    <script src="js/toutlesensData.js"></script>
+    <script src="oldJs/toutlesensData.js"></script>
 </head>
 
 <link rel="stylesheet" type="text/css" title="Design"
@@ -39,92 +39,180 @@
 <link rel="stylesheet" type="text/css" title="Design"
       href="js/jquery/jquery.splitter.css"/>
 
-<!--<link rel="stylesheet" href="js/modulesTree/themes/default/style.min.css"/>-->
+<link rel="stylesheet" href="./js/jsTree/themes/default/style.min.css"/>
+
+<!--<link rel="stylesheet" href="js/Tree/themes/default/style.min.css"/>-->
 <!--<link rel="stylesheet" type="text/css"
 	href="../common/js/others/jquery.handsontable.full.min.css" />-->
 
-
+<link rel="stylesheet" type="text/css" href="css/d3tree.css"/>
 <link rel="stylesheet" type="text/css" href="css/index.css"/>
 <link rel="stylesheet" type="text/css" href="css/treemap.css"/>
 
+<link rel="stylesheet" type="text/css" href="css/cards.css"/>
 
 <script src="../common/js/jquery/jquery.min.js"></script>
 <script src="../common/js/jquery/jquery-ui.min.js"></script>
 <script src="../common/js/jquery/jquery.splitter.js"></script>
-
+<script src="../common/js/neo4jDataModel.js"></script>
 
 <script src="../common/js/d3/d3.js"></script>
 <!--<script src="https://d3js.org/d3.v4.min.js"></script>-->
 <!--<script src="https://d3js.org/d3.v4.min.js"></script>-->
 
-<script src="js/modules/globalVars.js"></script>
+<script src="js/globalVars.js"></script>
 <script src="resources/params.js"></script>
 
-<script src="js/modules/common.js"></script>
-<script src="js/modules/neo4jDataModel.js"></script>
+<script src="js/common.js"></script>
+
+<script src="js/customizeUI.js"></script>
+<script src="js/toutlesensController.js"></script>
+<script src="js/toutlesensData.js"></script>
+<script src="js/toutlesensDialogsController.js"></script>
 
 
-<script src="js/modules/toutlesensController.js"></script>
-<script src="js/modules/toutlesensData.js"></script>
-<script src="js/modules/toutlesensDialogsController.js"></script>
+<script src="js/modifyData.js"></script>
+
+<!--
+<script src="js//externalRessourcesCommon.js"></script>
+<script src="js//externalRessourcesDbPedia.js"></script>
+<script src="js//externalRessourcesBNF.js"></script>
+-->
+
+<script src="js/d3common.js"></script>
+<script src="js/d3legend.js"></script>
+
+<script src="js/d3flower.js"></script>
+
+<script src="js/d3simpleForce.js"></script>
+<script src="js/d3simpleForceBulk.js"></script>
+<script src="js/d3treemap.js"></script>
+<script src="js/d3forceCollapseClass.js"></script>
+<script src="js/d3tree.js"></script>
+
+<script src="js/cards.js"></script>
 
 
-<script src="js/modules/modifyData.js"></script>
+<script src="../common/js/util.js"></script>
 
 
-<script src="js/modules/externalRessourcesCommon.js"></script>
-<script src="js/modules/externalRessourcesDbPedia.js"></script>
-<script src="js/modules/externalRessourcesBNF.js"></script>
+
+<!--<script src="js//d3.forceGraphClass.js"></script>
+<script src="js//d3.dndTreeClass.js"></script>
+<script src="js//d3.modifiableGraph.js"></script>
+<script src="js//d3.forceCollapseClass.js"></script>
+<script src="js//d3.gantt.js"></script>
+<script src="js//gant-chart-d3v2.js"></script>
+<script type="text/javascript" src="js//gant-chart-d3v2.js"></script>
+<script type="text/javascript" src="js//d3.gantt.js"></script>
+
+<script src="../admin/js//graphD3.js"></script>-->
+<script src="js/textOutputs.js"></script>
+
+<script src="js/advancedDisplay.js"></script>
+<script src="js/advancedSearch.js"></script>
+<script src="js/selection.js"></script>
 
 
-<script src="js/modules/d3common.js"></script>
-<script src="js/modules/d3legend.js"></script>
+<script src="./js/schema.js"></script>
+<script src="./js/jsTree/jstree.min.js"></script>
+<!--<script src="./js/jsTree/treeController.js"></script>-->
+<script src="./js/infosGenericDisplay.js"></script>
 
-<script src="js/modules/d3flower.js"></script>
+<script src="./js/neoToMongo.js"></script>
+<script src="../common/js/devisuProxy.js"></script>
 
-<script src="js/modules/d3simpleForce.js"></script>
-<script src="js/modules/d3simpleForceBulk.js"></script>
-<script src="js/modules/d3treemap.js"></script>
-<script src="js/modules/d3forceCollapseClass.js"></script>
-<script src="js/modules/d3treeGraph.js"></script>
 
-<!--<script src="js/modules/d3.forceGraphClass.js"></script>
-<script src="js/modules/d3.dndTreeClass.js"></script>
-<script src="js/modules/d3.modifiableGraph.js"></script>
-<script src="js/modules/d3.forceCollapseClass.js"></script>
-<script src="js/modules/d3.gantt.js"></script>
-<script src="js/modules/gant-chart-d3v2.js"></script>
-<script type="text/javascript" src="js/modules/gant-chart-d3v2.js"></script>
-<script type="text/javascript" src="js/modules/d3.gantt.js"></script>
-
-<script src="../admin/js/modules/graphD3.js"></script>-->
-<script src="js/modules/textOutputs.js"></script>
-
-<script src="js/modules/advancedDisplay.js"></script>
-<script src="js/modules/advancedSearch.js"></script>
-<script src="js/modules/selection.js"></script>
-<!--<script src="js/modules/jit-yc.js"></script>
+<script src="../common/js/others/tableFlip.js"></script>
+<!--<script src="js//jit-yc.js"></script>
 <link rel="stylesheet" type="text/css"
 	href="../common/js/others/jquery.datatables.min.css" />
 <script type="text/javascript"
 	src="../common/js/others/jquery.datatables.min.js"></script>-->
 
 
-<script src="js/modules/help.js"></script>
-<script src="js/modules/lang.js"></script>
+<script src="js/help.js"></script>
+<script src="js/lang.js"></script>
 <script src="resources/lang_FR.js"></script>
 <script src="resources/lang_EN.js"></script>
-<script src="js/modules/functionalities.js"></script>
+<script src="js/functionalities.js"></script>
 
+
+<!-- test visjs---------------------------------------->
+<script src="js/visjs/visjs.js"></script>
+<script src="js/visjs/visJsGraph.js"></script>
+<link rel="stylesheet" type="text/css" href="js/visjs/vis-network.min.css.js"/>
+<!-- test visjs---------------------------------------->
+<style>
+    #treeContainer {
+        width: 500px;
+        overflow: auto;
+
+    }
+
+    #nodeInfosDiv {
+    / / display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    #word, #nodesLabelsSelect {
+        width: 130px;
+    }
+
+    #nodeInfosDiv, relationInfosDivWrapper {
+        padding: 20px;
+        border-width: 0px;
+        border-color: #5f3f3f;
+        border-style: groove;
+        margin: 20px;
+
+        overflow: auto;
+        height: 500px;
+        background-color: seashell;
+        font-size: 14px;
+        font-family: verdana, sans-serif;
+        font-weight: normal;
+
+    }
+
+    #infosHeaderDiv {
+        background-color: burlywood;
+        font-size: 14px;
+        font-weight: bold;
+    }
+
+    .objAttrInput, #newNodeName {
+
+        width: 500px;
+
+    }
+
+    .displayIcon-selected {
+        border-width: 6px;
+        border-color: #666;
+        border-style: solid;
+    }
+
+    .infoTitle {
+        font-size: 14px;
+        font-family: verdana, sans-serif;
+        font-weight: bold;
+    }
+
+
+</style>
 
 <script>
 
     $(function () {
 
-        var queryParams = toutlesensController.getQueryParams(document.location.search);
+        queryParams = toutlesensController.getQueryParams(document.location.search);
+        customizeUI.init();
         subGraph = queryParams.subGraph;
-
-        neo4jDataModel.initNeoModel(queryParams.subGraph, [toutlesensController.initLabels, advancedSearch.showBulkGraph]);
+        functionalities.hideFunctionalities();
+        lang.setLangage();
+        dataModel.initNeoModel(queryParams.subGraph, [infoGenericDisplay.initLabels, customizeUI.customize, advancedSearch.showBulkGraph]);
         functionalities.initFunctionalities();
         var mode = queryParams.mode;
         if (mode == "write")
@@ -158,37 +246,43 @@
 
         totalWidth = $(window).width();
         totalHeight = $(window).height();
+        var leftPanelRatio = 3
+
+        $("#nodeInfosDiv").height(totalHeight - 200)
+        $("#nodeInfosDiv").width(totalWidth - 650)
+        $("#treeContainer").width((totalWidth / leftPanelRatio) - 30)
+        $("#treeContainer").height(totalHeight - 300)
 
 
         $("body").height(totalHeight - 20);
         $("#left").width(totalWidth / 4).height(totalHeight - 50);
-        $("#tabs-radarLeft").width(totalWidth / 4).height(totalHeight - 50);
+        $("#tabs-radarLeft").width(totalWidth / leftPanelRatio).height(totalHeight - 50);
         $("#tabs-radarRight").height(totalHeight - 20);
-        $("#radarFiltersTab").width((totalWidth / 4) - 20).height(totalHeight - 50);
-        $("#info_panel").width(totalWidth / 4).height(totalHeight - 10);
-        $("#graphDiv").width((totalWidth / 4 * 3) - Gparams.legendWidth).height(totalHeight - 50)
+        $("#radarFiltersTab").width((totalWidth / leftPanelRatio) - 20).height(totalHeight - 50);
+        $("#info_panel").width(totalWidth / leftPanelRatio).height(totalHeight - 10);
+        $("#graphDiv").width((totalWidth / leftPanelRatio * 2) - Gparams.legendWidth).height(totalHeight - 50)
         $("#graphLegendDiv").width(Gparams.legendWidth).height(totalHeight - 50).css("left", $("#graphDiv").width());
-        $("#table_Graph").width((totalWidth / 4 * 3) - 50).height(totalHeight - 50);
-        $("#textDivContainer").width((totalWidth / 4 * 3) - 50).height(totalHeight - 100);
-        $("#neoQueriesHistoryId").width((totalWidth / 4 * 3) - 50).height(totalHeight - 100);
+        $("#table_Graph").width((totalWidth / leftPanelRatio * 2) - 50).height(totalHeight - 50);
+        $("#textDivContainer").width((totalWidth / leftPanelRatio * 2) - 50).height(totalHeight - 100);
+        $("#neoQueriesHistoryId").width((totalWidth / leftPanelRatio * 2) - 50).height(totalHeight - 100);
         $("#center").width(totalWidth / 4 * 3).height(totalHeight - 100);
-        $("#nodeDetailsDiv").width((totalWidth / 4 * 3) - 50).height(totalHeight - 150);
+        $("#nodeDetailsDiv").width((totalWidth / leftPanelRatio * 2) - 50).height(totalHeight - 150);
         $("#graphDecorationPanel").height(totalHeight / 2);
 
 
-        $(".splitter_panel").width(totalWidth / 4 * 3).height(totalHeight - 50);
+        $(".splitter_panel").width(totalWidth / leftPanelRatio * 2).height(totalHeight - 50);
         //  $("#graphLegendDiv").width(totalWidth / 4 * 3).height(50);
 
         $("#nodeIframe").width("100%").height(totalHeight - 100);
         $("#modifyControls").width((totalWidth / 4 * 3) - 50).height(totalHeight - 300);
 
 
-        $(".accordionLeft").width((totalWidth / 4) - 30)//;.height(totalHeight-10);
-        $("#graphParametersPanel").height(totalHeight / 1.5).width((totalWidth / 4) - 35);
-        $("#graphFiltersPanel").height(totalHeight / 1.5).width((totalWidth / 4) - 35);
-        $("#graphPathsPanel").height(totalHeight / 1.5).width((totalWidth / 4) - 35);
-        $("#linkActionDiv").height(totalHeight / 1.5).width((totalWidth / 4) - 35);
-        $("#linkActionDiv").height(totalHeight - 150).width((totalWidth / 4) - 35);
+        $(".accordionLeft").width((totalWidth / leftPanelRatio) - 30)//;.height(totalHeight-10);
+        $("#graphParametersPanel").height(totalHeight / 1.5).width((totalWidth / leftPanelRatio) - 35);
+        $("#graphFiltersPanel").height(totalHeight / 1.5).width((totalWidth / leftPanelRatio) - 35);
+        $("#graphPathsPanel").height(totalHeight / 1.5).width((totalWidth / leftPanelRatio) - 35);
+        $("#linkActionDiv").height(totalHeight / 1.5).width((totalWidth / leftPanelRatio) - 35);
+        $("#linkActionDiv").height(totalHeight - 150).width((totalWidth / leftPanelRatio) - 35);
 
 
         //  $("#advancedSearchIframe").height(totalHeight / 3 * 2).width(totalWidth / 3 * 2);
@@ -197,10 +291,10 @@
         $("#advancedSearchIframe").height(Gparams.bigDialogSize.h - 100).width(Gparams.bigDialogSize.w - 40);
         $("#advancedDisplayIframe").height(Gparams.bigDialogSize.h - 100).width(Gparams.bigDialogSize.w - 40);
 
-        $('#main').width("100%").height("100%").split({
+        splitter = $('#main').width("100%").height("100%").split({
             orientation: 'vertical',
             limit: 100,
-            position: (totalWidth / 4) + 5
+            position: (totalWidth / leftPanelRatio) + 5
         });
 
         $("#tabs-radarLeft").tabs({
@@ -220,23 +314,18 @@
                 activate: function (event, ui) {
 
 
-                    return;
-
-
                     var index = ui.newTab.index();
-                    //  var oldindex = ui.oldTab.index();
-                    if (oldRightTabIndex != index) {
-                        onRadarRightActivate(index);
-                        oldRightTabIndex = index;
+                    if (index == 2) {
+                        toutlesensController.onVisButton("FORM", "#formButton");
                     }
                 }
             }
         );
 
-        if (queryParams.mode == "write")
-            $("#tabs-radarRight").tabs("option", "disabled", [0, 1, 2, 3]);
-        else
-            $("#tabs-radarRight").tabs("option", "disabled", [0, 1, 2, 3, 4]);
+        /*      if (queryParams.mode == "write")
+         $("#tabs-radarRight").tabs("option", "disabled", [0, 1, 2]);
+         else
+         $("#tabs-radarRight").tabs("option", "disabled", [0, 1]);*/
 
         $("#table_Graph").tabs();
         $("#linkNodesDivAccordion").accordion({
@@ -304,6 +393,7 @@
 
             }
 
+
         });
 
 
@@ -314,7 +404,7 @@
 
 
         if (Gparams.readOnly === true) {
-            $("#li_modify").detach();
+            //   $("#li_modify").detach();
             $("#li_nodeDetails").detach();
             $("#li_neoQueries").detach();
 
@@ -404,8 +494,18 @@
 
     })
     ;
-    ;
 
+    function onViewSelect(select) {
+
+        infoGenericDisplay.clearNodePropertiesDiv();
+        // $("#treeHeader").css("visibility", "hidden");
+
+        //  initUI();
+        //  dbName = $("#dbName").val();
+        var value = $(select).val();
+        if (value != "")
+            infoGenericDisplay.loadTree(value);
+    }
 
 </script>
 <body>
@@ -422,8 +522,8 @@
                 <ul>
                     <li><a href="#radarFiltersTab"><span id='lang_60'>Recherche</span></a></li>
                     <li><a href="#graphQueryFiltersTab"><span id='lang_59'>Vue</span></a></li>
-                    <li><a href="#attrsTab"><span id='lang_37'>Infos.</span></a></li>
-                    <li><a href="#selectionTab"><span id='lang_170'>Selection</span></a></li>
+                    <!--  <li><a href="#attrsTab"><span id='lang_37'>Infos.</span></a></li>-->
+                    <!--  <li><a href="#selectionTab"><span id='lang_170'>Selection</span></a></li>-->
                 </ul>
                 <div id="legendTab"></div>
 
@@ -443,44 +543,13 @@
                                             id='lang_61'> Advanced Search</span></button>
 
                             </tr>
-                            <tr>
-                                <td><B></B> Labels</td>
-                                <td><select id="nodesLabelsSelect"
-                                            onchange=toutlesensController.onLabelSelect(this)></select></td>
+                            <!--    <tr>
+                                    <td><B></B> Labels</td>
+                                    <td><select id="nodesLabelsSelect"
+                                                onchange=toutlesensController.onLabelSelect(this)></select></td>
 
-                            </tr>
+                                </tr>-->
 
-                            <tr>
-
-
-                                <td><span id='lang_1'>Chercher</span></td>
-                                <td><input id="word" onkeyup="toutlesensController.searchNodesUI(this,null)"
-                                           size="10"></td>
-                                <td>
-                                    <!-- <button  onclick="showAdvancedSearchDialog()">+</button>-->
-                                    <input type="image"
-                                           alt="<span id='lang_XX'>search</span>" height="20px"
-                                           onclick="toutlesensDialogsController.showSimpleSearchDialog()" id="searchButton"
-                                           src="images/search.png"/>
-
-                                </td>
-
-                            </tr>
-
-
-                            <tr>
-                                <td colspan="3">
-                                    <div id="startNodePageNavigation"></div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td colspan="3"><select size="10" id="wordsSelect"
-                                                        onclick="toutlesensController.onWordSelect(this)">
-                                    <option>--------------</option>
-                                </select></td>
-
-
-                            </tr>
                             </tr>
                             <tr colspan="3" valign="middle">
                                 <td><span id='lang_15'>Profondeur</span>&nbsp;<input
@@ -495,30 +564,42 @@
                             <tr>
                                 <td colspan="3">
 
-                                    <table class="visButtonTable">
+                                    <table class="visButtonTable" id="visButtonTableDiv">
 
 
                                         <tr>
-                                            <td><input type="image" height="30px" alt="fleur"
-                                                       onclick="toutlesensController.onVisButton('FLOWER')" id="treeFlowerButton"
+                                            <td><input type="image" height="30px" title="form" class="displayIcon"
+                                                       onclick="toutlesensController.onVisButton('FORM',this)"
+                                                       id="formButton"
+                                                       src="images/form.png"/></td>
+                                            <td><input type="image" height="30px" title="fleur" class="displayIcon"
+                                                       onclick="toutlesensController.onVisButton('FLOWER',this)"
+                                                       id="treeFlowerButton"
                                                        src="images/flower.png"/></td>
-                                            <td><input type="image" height="30px" alt="graphBulk"
-                                                       onclick="toutlesensController.onVisButton('SIMPLE_FORCE_GRAPH_BULK')"
+                                            <td><input type="image" height="30px" title="graphBulk" class="displayIcon"
+                                                       onclick="toutlesensController.onVisButton('SIMPLE_FORCE_GRAPH_BULK',this)"
                                                        id="graphBulkButton"
                                                        src="images/graphBulk.png"/></td>
 
-                                            <td><input type="image" height="30px"
-                                                       alt="<span id='lang_9'>carte</span>"
-                                                       onclick="toutlesensController.onVisButton('SIMPLE_FORCE_GRAPH')"
-                                                       id="treemapButton" src="images/graph.png"/></td>
+                                            <td><input type="image" height="30px" class="displayIcon"
+                                                       title="<span id='lang_9'>carte</span>"
+                                                       onclick="toutlesensController.onVisButton('SIMPLE_FORCE_GRAPH',this)"
+                                                       id="graphButton" src="images/graph.png"/></td>
+                                            <td><input type="image" height="30px" title="cards" class="displayIcon"
+                                                       onclick="toutlesensController.onVisButton('CARDS',this)"
+                                                       id="cardsButton"
+                                                       src="images/cards.png"/></td>
 
-                                            <td><input type="image"
-                                                       alt="<span id='lang_7'>arbre</span>" height="30px"
-                                                       onclick="toutlesensController.onVisButton('TREE')" id="treeButton"
+                                            <td><input type="image" class="displayIcon"
+                                                       title="<span id='lang_7'>arbre</span>" height="30px"
+                                                       onclick="toutlesensController.onVisButton('TREE',this)"
+                                                       id="treeButton"
                                                        src="images/tree.png"/></td>
 
-                                            <td><input type="image" height="30px" alt="carte"
-                                                       onclick="toutlesensController.onVisButton('TREEMAP')" id="treemapButton"
+
+                                            <td><input type="image" height="30px" title="treeMap" class="displayIcon"
+                                                       onclick="toutlesensController.onVisButton('TREEMAP',this)"
+                                                       id="treemapButton"
                                                        src="images/treemap.png"/></td>
 
 
@@ -527,6 +608,40 @@
 
 
                                 </td>
+
+                            </tr>
+
+
+                            <tr>
+
+                                <td colspan="2">
+                                    <span id='lang_1'>Search</span>
+                                    <input id="word"
+                                           onkeyup="toutlesensController.searchNodesUI('matchStr',null,null, infoGenericDisplay.loadSearchResultIntree);"
+                                           size="10"> <input type="image"
+                                                             alt="<span id='lang_XX'>search</span>" height="20px"
+                                                             onclick="toutlesensDialogsController.showSimpleSearchDialog()"
+                                                             id="searchButton"
+                                                             src="images/search.png"/>
+
+                                    <br> Label <select id="nodesLabelsSelect" onchange="onViewSelect(this)"> </select>
+                                    <button onclick="infoGenericDisplay.createNewRootNode()">Create Node</button>
+                                    <!-- <button  onclick="showAdvancedSearchDialog()">+</button>-->
+
+
+                                </td>
+
+                            </tr>
+                            <tr>
+                                <td colspan="2">
+
+
+                                    <div id="treeContainer">
+                                        <div id="genericTree"></div>
+                                    </div>
+
+                                </td>
+
 
                             </tr>
 
@@ -557,7 +672,7 @@
 
                                     <td colspan="2" align="center">
 
-                                        <table class="visButtonTable">
+                                        <table class="visButtonTable" id=visButtonTableDiv">
 
                                             <tr align="center">
                                                 <td width="100%" colspan="6"><span
@@ -565,25 +680,28 @@
                                             </tr>
                                             <tr>
                                                 <td><input type="image" height="30px" alt="fleur"
-                                                           onclick="toutlesensController.onVisButton('FLOWER')" id="treeFlowerButton"
+                                                           onclick="toutlesensController.onVisButton('FLOWER')"
+                                                           id="treeFlowerButton2"
                                                            src="images/flower.png"/></td>
                                                 <td><input type="image" height="30px" alt="graphBulk"
                                                            onclick="toutlesensController.onVisButton('SIMPLE_FORCE_GRAPH_BULK')"
-                                                           id="graphBulkButton"
+                                                           id="graphBulkButton2"
                                                            src="images/graphBulk.png"/></td>
 
                                                 <td><input type="image" height="30px"
                                                            alt="<span id='lang_9'>carte</span>"
                                                            onclick="toutlesensController.onVisButton('SIMPLE_FORCE_GRAPH')"
-                                                           id="treemapButton" src="images/graph.png"/></td>
+                                                           id="graphButton2" src="images/graph.png"/></td>
 
                                                 <td><input type="image"
                                                            alt="<span id='lang_7'>arbre</span>" height="30px"
-                                                           onclick="toutlesensController.onVisButton('TREE')" id="treeButton"
+                                                           onclick="toutlesensController.onVisButton('TREE')"
+                                                           id="treeButton2"
                                                            src="images/tree.png"/></td>
 
                                                 <td><input type="image" height="30px" alt="carte"
-                                                           onclick="toutlesensController.onVisButton('TREEMAP')" id="treemapButton"
+                                                           onclick="toutlesensController.onVisButton('TREEMAP')"
+                                                           id="treemapButton2"
                                                            src="images/treemap.png"/></td>
 
 
@@ -617,7 +735,8 @@
 
                                         </table>
                                         <select style="visibility: hidden;"
-                                                id="representationSelect" onchange="toutlesensController.drawGraphGeneral()">
+                                                id="representationSelect"
+                                                onchange="toutlesensController.drawGraphGeneral()">
 
 
                                             <option value="FLOWER" selected="selected">flower</option>
@@ -693,68 +812,67 @@
 
 
                 <!--  ****************************************************attrs***************************-->
-                <div id="attrsTab">
+                <!--    <div id="attrsTab">
 
 
-                    <div class="title">proprietes</div>
-                    <div id="infoPanel"></div>
-                    <hr>
-                    <div id="imagePanel"></div>
-                    <div id="photoControls">
-                        <button onclick="toutlesensController.previousImage()">previous</button>
-                        image
-                        <button onclick="toutlesensController.nextImage()">next</button>
-                        <input type="checkbox" id="largeImageCBX" checked="true"> grandFormat
-                        <button onclick="toutlesensController.rotateImage(true)">rotate-</button>
-                        <button onclick="toutlesensController.rotateImage()">rotate+</button>
-                    </div>
-                    <div id="div_externalRessources">
-                        <div class="title">
-                            <span id='lang_23'>Ressources externes</span>
+                        <div class="title">proprietes</div>
+                        <div id="infoPanel"></div>
+                        <hr>
+                        <div id="imagePanel"></div>
+                        <div id="photoControls">
+                            <button onclick="toutlesensController.previousImage()">previous</button>
+                            image
+                            <button onclick="toutlesensController.nextImage()">next</button>
+                            <input type="checkbox" id="largeImageCBX" checked="true"> grandFormat
+                            <button onclick="toutlesensController.rotateImage(true)">rotate-</button>
+                            <button onclick="toutlesensController.rotateImage()">rotate+</button>
                         </div>
-                        Source :<select id="externalSourceSelect"
-                                        onchange="toutlesensController.toutlesensController.loadExternalData(this)">
-                        <option></option>
-                        <option value="DbPedia">DBPedia</option>
-                        <option value="BNF">BNF</option>
+                        <div id="div_externalRessources">
+                            <div class="title">
+                                <span id='lang_23'>Ressources externes</span>
+                            </div>
+                            Source :<select id="externalSourceSelect"
+                                            onchange="toutlesensController.toutlesensController.loadExternalData(this)">
+                            <option></option>
+                            <option value="DbPedia">DBPedia</option>
+                            <option value="BNF">BNF</option>
 
-                    </select>
-                        <button onclick="externalRessourcesCommon.searhExternalResource()">
-                            <span id='lang_1'>Chercher</span>
-                        </button>
-                        <div id="externalInfoPanel"></div>
-                        <div id="chronoParams"></div>
+                        </select>
+                            <button onclick="externalRessourcesCommon.searhExternalResource()">
+                                <span id='lang_1'>Chercher</span>
+                            </button>
+                            <div id="externalInfoPanel"></div>
+                            <div id="chronoParams"></div>
 
 
-                    </div>
+                        </div>
 
 
-                    <!-- <button onclick='$("#breadcrumb").html("")'><span id='lang_27'>effacer</span></button>
-                                &nbsp;&nbsp;<span id="breadcrumb"></span> -->
-                </div>
+
+                    </div>-->
 
 
                 <!--  ****************************************************selection***************************-->
-                <div id="selectionTab">
-                    nodes
-                    <select size="15" id="d3SelectionSelect"></select>
-                    <button onclick="removeNodeFromSelection()" ;>-</button>
+                <!-- <div id="selectionTab">
+                     nodes
+                     <select size="15" id="d3SelectionSelect"></select>
+                     <button onclick="removeNodeFromSelection()" ;>-</button>
 
 
-                    <br> action <select onchange="toutlesensController.d3SelectionAction(this)">
-                    <option></option>
-                    <option value="clear"><span id='lang_172'>clear</span></option>
-                    <option value="setAttributeDialog"><span id='lang_172'>set attribute</span></option>
-                    <option value="defineAsLinkSourceNodes"><span id='lang_173'>define as link Source</span></option>
-                    <option value="defineAsLinkTargetNodes"><span id='lang_171'>define as link Target</span></option>
-                    <option value="deleteRelationTypeDialog"><span id='lang_174'>delete link</span></option>
+                     <br> action <select onchange="toutlesensController.d3SelectionAction(this)">
+                     <option></option>
+                     <option value="clear"><span id='lang_172'>clear</span></option>
+                     <option value="setAttributeDialog"><span id='lang_172'>set attribute</span></option>
+                     <option value="defineAsLinkSourceNodes"><span id='lang_173'>define as link Source</span></option>
+                     <option value="defineAsLinkTargetNodes"><span id='lang_171'>define as link Target</span></option>
+                     <option value="deleteRelationTypeDialog"><span id='lang_174'>delete link</span></option>
 
 
-                </select>
-                    <button onclick="selectAllGraphNodes()"><span id='lang_176'>Select all graph nodes</span></button>
+                 </select>
+                     <button onclick="selectAllGraphNodes()"><span id='lang_176'>Select all graph nodes</span></button>
 
 
-                </div>
+                 </div>-->
 
             </div>
 
@@ -773,10 +891,9 @@
                     id='lang_42'>Graphe</span></span></a></li>
             <li><a href="#textTab"><span id='lang_29'>Liste</span></a></li>
 
-            <li id="li_nodeDetails"><a href="#nodeDetailsTab">Details </a></li>
-            <li id="li_modify"><a href="#modifyTab"><span id='lang_31'>M.a.j</span></a></li>
-            <li id="li_neoQueries"><a href="#neoQueriesTab"><span
-                    id='lang_32'>Recherche avanc�e</span></a></li>
+            <!--    <li id="li_nodeDetails"><a href="#nodeDetailsTab">Details </a></li>-->
+            <li id="li_modify"><a href="#modifyTab"><span id='lang_31'>Data</span></a></li>
+
         </ul>
 
 
@@ -876,6 +993,18 @@
                     <div id="popupMenuNodeInfo">//onblur="hidePopupMenu()" >
                     </div>
                 </div>
+                <div id="verticalVisButtonsDiv" class="popupmenuDiv">
+                    <table id="verticalVisButtonsTable" class="vertVisButtonTable">
+                        <tbody>
+                        </tbody>
+                    </table>
+                    <br>
+                    Levels<br><select onchange="customizeUI.setDepth(this)">
+                    <option>1</option>
+                    <option>2</option>
+                    <option>3</option>
+                </select>
+                </div>
 
 
             </div>
@@ -921,130 +1050,32 @@
 
         <!--  ****************************************************modify***************************-->
         <div id="modifyTab">
-
-            <input type="checkbox" name="modifyCbx" id="modifyCbx"
-                   onclick="toutlesensController.switchModifyMode(this);"> <label for="modifyCbx">Mode
-            mise a jour</label> <span id="currentNodeSpan"></span>
-            <div id="modifyButtonsDiv" style="visibility: hidden;">
-
-                <button onclick="modifyData.onCreateNodeButton()">
-                    <span id='lang_45'>Creer Noeud</span>
-                </button>
-                <button onclick="toutlesensController.dispatchAction('linkSource')">Source d
-                    un lien
-                </button>
-                <button onclick="toutlesensController.dispatchAction('linkTarget')">Cible du
-                    lien
-                </button>
-                <a href="javascript:drawDataModel()">Show data Model</a>
-
-            </div>
-
-
-            <div id="message"></div>
-            <div id="accordionModifyPanel" class="accordionModify"
-                 style="visibility: hidden;">
-                <h3>
-                    <span id='lang_46'>Noeuds</span>
-                </h3>
-                <div id="modifyControls">
-
-
-                    <div id="nodeInputDiv">&nbsp;</div>
-
-                    <button onclick="modifyData.saveNodeInput()">
-                        <span id='lang_47'>Enregistrer</span>
-                    </button>
-                    <button onclick="modifyData.onDeleteNodeButton()">
-                        <span id='lang_48'>Supprimer</span>
-                    </button>
-
-
+            <div id="infosDiv">
+                <div id="infosHeaderDiv">
+                    &nbsp;&nbsp;<button onclick="infoGenericDisplay.saveNode()">Save</button>
+                    &nbsp;&nbsp;<button onclick="infoGenericDisplay.deleteNode()">Delete</button>
                 </div>
-                <h3>
-                    <span id='lang_49'>Liens</span>
-                </h3>
-                <div id="linkActionDiv">
-
-                    <!-- creation des liens______________________________ -->
-
-                    <table>
-
-                        <tr>
-
-                            <td colspan="2">
-                                <button onclick="modifyData.reverseLinkNodes()">
-                                    <span id='lang_69'>inverser les noeuds</span>
-                                </button>
-                            </td>
-                        </tr>
-
-                        <tr>
-
-                            <td colspan="2">
-                                <button onclick="modifyData.createNewLinkType()">
-                                    <span id='lang_70'>ajouter un type de lien</span>
-                                </button>
-                            </td>
-                        </tr>
-
-                        <tr>
-                            <td><span id="linkSourceLabel"></span></td>
-                            <td><input id="linkSourceNode"></td>
-                        </tr>
-                        <tr>
-
-                            <td align="center"><span id='lang_50'>type du lien</span></td>
-                            <td><select size="1" id="linkType">
-                                <option>___________________</option>
-
-                            </select></td>
-
-                        </tr>
-                        <tr>
-                            <td colspan="2" align="center"><span id='lang_71'>lier
-										a</span></td>
-
-                        </tr>
-                        <tr>
-                            <td><span id="linkTargetLabel"></span></td>
-                            <td><input id="linkTargetNode"></td>
-                        </tr>
-
-
-                        <tr>
-
-                            <td colspan="2">
-                                <hr>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td colspan="2"></td>
-
-
-                        </tr>
-                        <tr>
-
-                            <td colspan="2">
-                                <hr>
-                                <button onclick="modifyData.createRelation()">
-                                    <span id='lang_51'>Enregistrer le lien</span>
-                                </button>
-                            </td>
-                        </tr>
-
-                    </table>
-
-
+                <div id="relInfosDivWrapper">
+                    Relation&nbsp;
+                    <span cclass="infoTitle" id="relationType"></span>
+                    <div id="relInfosDiv"></div>
                 </div>
 
-
+                <div id="nodeInfosDivWrapper">
+                    Node &nbsp;
+                    <span id="nodeLabel" class="infoTitle"></span>
+                </div>
+                <div id="nodeInfosDiv"></div>
             </div>
         </div>
 
 
         <!--  ****************************************************nodeDetailsTab***************************-->
-
+        <div id="infosControlsDiv">
+            <button onclick="cards.save();">Save</button>
+            <button onclick="cards.delete();">Delete</button>
+            <button onclick="cards.add();">Add</button>
+        </div>
 
         <div id="nodeDetailsTab">
 
@@ -1091,13 +1122,13 @@
 
 <div id="dialog" title="dialog"></div>
 <div id="dialogAdvancedSearch" title="advancedSearch">
-    <iframe id="advancedSearchIframe" src="advancedSearchDialogModules.html"></iframe>
+    <iframe id="advancedSearchIframe" src="advancedSearchDialog.html"></iframe>
 </div>
 <div id="dialogAdvancedDisplay" title="advancedDisplay">
-    <iframe id="advancedDisplayIframe" src="advancedDisplayDialogModules.html"></iframe>
+    <iframe id="advancedDisplayIframe" src="advancedDisplayDialog.html"></iframe>
 </div>
 <div id="dialogGantt" title="Gantt">
-    <iframe id="dialogGanttIframe" src="ganttDialog.html"></iframe>
+    <!--   <iframe id="dialogGanttIframe" src="ganttDialog.html"></iframe>-->
 </div>
 
 <input type="hidden" id="graphTravReturnEvaluator">

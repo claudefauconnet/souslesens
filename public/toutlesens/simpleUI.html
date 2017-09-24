@@ -59,26 +59,26 @@
 <script src="../common/js/neo4jDataModel.js"></script>
 
 
-<script src="js/toutlesensController.js"></script>
-<script src="js/toutlesensData.js"></script>
-<script src="js/toutlesensDialogsController.js"></script>
+<script src="oldJs/toutlesensController.js"></script>
+<script src="oldJs/toutlesensData.js"></script>
+<script src="oldJs/toutlesensDialogsController.js"></script>
 
 
-<script src="js/textOutputs.js"></script>
+<script src="oldJs/textOutputs.js"></script>
 
-<script src="js/advancedDisplay.js"></script>
-<script src="js/advancedSearch.js"></script>
-<script src="js/selection.js"></script>
+<script src="oldJs/advancedDisplay.js"></script>
+<script src="oldJs/advancedSearch.js"></script>
+<script src="oldJs/selection.js"></script>
 
 
 <script src="resources/help.js"></script>
 <script src="resources/lang.js"></script>
 <script src="resources/lang_FR.js"></script>
 <script src="resources/lang_EN.js"></script>
-<script src="js/functionalities.js"></script>
+<script src="oldJs/functionalities.js"></script>
 
 
-<script src="js/simpleUI.js"></script>
+<script src="oldJs/simpleUI.js"></script>
 
 
 <script src="../common/js/d3/d3.js"></script>
@@ -98,7 +98,7 @@
         var queryParams = getQueryParams(document.location.search);
 
 
-        initNeoModel(subGraph, [initLabels, showBulkGraph]);
+        dataModel.initNeoModel(subGraph, [initLabels, showBulkGraph]);
         initFunctionalities();
         var mode = queryParams.mode;
         if (mode == "write")

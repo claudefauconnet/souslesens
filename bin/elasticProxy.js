@@ -1,21 +1,43 @@
-/**
- * Created by claud on 04/02/2017.
- */
+/*******************************************************************************
+ * SOUSLESENS LICENSE************************
+ *
+ * The MIT License (MIT)
+ *
+ * Copyright (c) 2016-2017 Claude Fauconnet claude.fauconnet@neuf.fr
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ *
+ ******************************************************************************/
 var elasticsearch = require('elasticsearch');
 var serverParams=require('./serverParams.js');
 var mongoProxy=require('./mongoProxy.js');
 var fs=require('fs');
 
 
-var client = new elasticsearch.Client({
-    host: serverParams.elasticUrl,
-    log: 'trace'
-});
-
+var client = null;
 var elasticProy= {
+    
+    
+    
 
     ping: function () {
-        client.ping({
+        getClient().ping({
             // ping usually has a 3000ms timeout
             requestTimeout: Infinity
         }, function (error) {
@@ -28,7 +50,7 @@ var elasticProy= {
 
     },
     searchWordAll: function (word,callback) {
-        client.search({
+        getClient().search({
             q: word
         }).then(function (body) {
             var hits = body.hits.hits;
@@ -40,7 +62,7 @@ var elasticProy= {
 
     , search: function (index, type, query,callback) {
 
-        client.search({
+        getClient().search({
             index: index,
             type: type,
             body: {
@@ -58,7 +80,7 @@ var elasticProy= {
         });
     },
     index:function(index,type,id,payload,callback){
-        client.index({
+        getClient().index({
             index: index,
             type: type,
             id: id,
@@ -87,7 +109,7 @@ var elasticProy= {
      // no document needed for this delete
      ]*/
     bulk:function(payload,callback){
-        client.bulk({
+        getClient().bulk({
             body:payload
         }, function (err, resp) {
             if (err) {
@@ -122,7 +144,7 @@ var elasticProy= {
                     elasticPayload.push(payload);
 
             }
-            client.bulk({
+            getClient().bulk({
                 body:elasticPayload
             }, function (err, resp) {
                 if (err) {
@@ -138,6 +160,16 @@ var elasticProy= {
     }
 }
 
+
+function getClient(){
+
+    if(client)
+        return client;
+    return new elasticsearch.Client({
+     host: serverParams.elasticUrl,
+     log: 'trace'
+     });
+}
 function indexJsonFile(filePath,ealasticUrl){
     var payload=fs.readFileSync(filePath);
     payload=""+payload,

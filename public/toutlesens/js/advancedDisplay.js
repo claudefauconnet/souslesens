@@ -24,26 +24,29 @@
  * SOFTWARE.
  *
  ******************************************************************************/
-var data;
-var propertyType = "";
-var nClasses = 5;
-var distinctPropertyValues = [];
-var currentlabel;
-var propertyRange = {
+var advancedDisplay = (function(){
+ var self = {};
+
+//moved  var data;
+//moved  var propertyType = "";
+//moved  var nClasses = 5;
+//moved  var distinctPropertyValues = [];
+//moved  var currentlabel;
+/*moved  var propertyRange = {
     min: 10000000,
     max: -10000000
-};
+};*/
 
-var intPattern = /-?[0-9]+/
-var rangePattern = /-?[0-9]+~-?[0-9]+/
-var decorationObjs = [];
-
-
+//moved  var intPattern = /-?[0-9]+/
+//moved  var rangePattern = /-?[0-9]+~-?[0-9]+/
+//moved  var decorationObjs = [];
 
 
 
 
-function loadGraphDisplaylabels() {
+
+
+   self.loadGraphDisplaylabels=function() {
     var labels = [];
     if (!data)
         return;
@@ -56,10 +59,10 @@ function loadGraphDisplaylabels() {
                 labels.push(nodeLabel);
         }
     }
-    fillSelectOptionsWithStringArray(nodesLabelsSelect, labels);
+common.fillSelectOptionsWithStringArray(nodesLabelsSelect, labels);
 
 }
-function onLabelClick(select) {
+   self.onLabelClick=function(select) {
     $("#graphDecorationTabsDiv").tabs("option", "active", 0);
     propertyType = "";
     distinctPropertyValues = [];
@@ -73,15 +76,15 @@ function onLabelClick(select) {
     // data=testData;
     var label = $(select).val();
     var props = dataModel.labels[label];
-    fillSelectOptionsWithStringArray(nodesLabelsPropertiesSelect, props);
+common.fillSelectOptionsWithStringArray(nodesLabelsPropertiesSelect, props);
 
 }
 
-function setNoClasses(){
+   self.setNoClasses=function(){
     nClasses=-1;
-    onPropertyClick(nodesLabelsPropertiesSelect,true)
+self.onPropertyClick(nodesLabelsPropertiesSelect,true)
 }
-function onPropertyClick(select, noClasses) {
+   self.onPropertyClick=function(select, noClasses) {
     propertyRange = {
         min: 10000000,
         max: -10000000,
@@ -101,11 +104,11 @@ function onPropertyClick(select, noClasses) {
                 continue;
             var node = nodes[j].properties;
             if (!node.name)
-                node.name = node.nom;
+                node.name = node[Gparams.defaultnodeNameField];
             if (pattern.test(node.name) == true)
                 continue;
             if (node[property] && !propertyType) {
-                if ( !noClasses && isInt(node[property]) && nClasses > 0) {
+if( !noClasses && self.isInt(node[property]) && nClasses > 0) {
                     propertyType = "number"
                 } else
                     propertyType = "string"
@@ -125,22 +128,22 @@ function onPropertyClick(select, noClasses) {
     }
 
     if (propertyType == "string") {
-        fillSelectOptionsWithStringArray(graphDecorationValues, distinctPropertyValues);
+common.fillSelectOptionsWithStringArray(graphDecorationValues, distinctPropertyValues);
 
     }
     else if (propertyType == "number") {
      //   propertyRange=roundRange(propertyRange);
      //   setNumberOfclasses(propertyRange.nClasses)
        // $("#nClasses").val(propertyRange.nClasses)
-        var classes = buildRangeClasses(propertyRange, nClasses);
-        fillSelectOptionsWithStringArray(graphDecorationValues, classes);
+self.buildRangeClasses(propertyRange, nClasses);
+common.fillSelectOptionsWithStringArray(graphDecorationValues, classes);
 
     } else
 
-        fillSelectOptionsWithStringArray(graphDecorationValues, []);
+common.fillSelectOptionsWithStringArray(graphDecorationValues, []);
 }
 
-function buildRangeClasses(propertyRange, n) {
+   self.buildRangeClasses=function(propertyRange, n) {
     var size = propertyRange.max - propertyRange.min;
     var classes = [];
     for (var i = 0; i < n; i++) {
@@ -155,7 +158,7 @@ function buildRangeClasses(propertyRange, n) {
 }
 
 
-function setPropertyValueOptionColor() {
+   self.setPropertyValueOptionColor=function() {
     document.getElementById('graphDecorationColor').jscolor.hide()
 
     var color = "#" + $("#colorInput").val();
@@ -165,23 +168,23 @@ function setPropertyValueOptionColor() {
     var i = $("#graphDecorationValues").prop('selectedIndex');
     $("#graphDecorationValues").val("");
     $("#graphDecorationValues option:eq(" + i + ")").css("backgroundColor", color);
-    setPropertyValueAttr(value, color, "none", "none");
+self.setPropertyValueAttr(value, color, "none", "none");
 
 }
 
 
-function setPropertyValueOptionSize() {
+   self.setPropertyValueOptionSize=function() {
     var size = $("#graphDecorationSize").val();
     var value = $("#graphDecorationValues").val();
     if (!value)
         return;
     var i = $("#graphDecorationValues").prop('selectedIndex');
     $("#graphDecorationValues option:eq(" + (i++) + ")").text(value + ";size" + size);
-    setPropertyValueAttr(value, "none", size, "none");
+self.setPropertyValueAttr(value, "none", size, "none");
 }
 
 
-function setAutoRangeColors() {
+   self.setAutoRangeColors=function() {
     var p = d3.scale.category10();
     var r = p.range();
     var i = 0;
@@ -189,11 +192,11 @@ function setAutoRangeColors() {
         var value = $(this).val();
         //  $(this).css("fill", r[i])
         $("#graphDecorationValues option:eq(" + i + ")").css("backgroundColor", r[i]);
-        setPropertyValueAttr(value, r[i++], "none", "none");
+self.setPropertyValueAttr(value, r[i++], "none", "none");
     });
-    showGraphDecorationObjs();
+self.showGraphDecorationObjs();
 }
-function setAutoRangeSize() {
+   self.setAutoRangeSize=function() {
     var size = $("#graphDecorationSize").val();
     if (!size || size == "")
         size = 20;
@@ -204,44 +207,44 @@ function setAutoRangeSize() {
         var value = $(this).val()
         $("#graphDecorationValues option:eq(" + (i++) + ")").text(value + ";size" + size);
 
-        setPropertyValueAttr(value, "none", size += 10, "none");
+self.setPropertyValueAttr(value, "none", size += 10, "none");
     });
-    showGraphDecorationObjs();
+self.showGraphDecorationObjs();
 }
 
 
-function setAutoAllColors() {
+   self.setAutoAllColors=function() {
     var color = "#" + $("#colorInput").val();
     var i = 0;
     $("#graphDecorationValues option").each(function () {
         var value = $(this).val();
         $("#graphDecorationValues option:eq(" + (i++) + ")").css("backgroundColor", color);
-        setPropertyValueAttr(value, color, "none", "none");
+self.setPropertyValueAttr(value, color, "none", "none");
     });
-    showGraphDecorationObjs();
+self.showGraphDecorationObjs();
 }
 
-function setAutoAllSize() {
+   self.setAutoAllSize=function() {
     var size = $("#graphDecorationSize").val();
     var i = 0;
     $("#graphDecorationValues option").each(function () {
         var value = $(this).val();
-        setPropertyValueAttr(value, "none", size, "none");
+self.setPropertyValueAttr(value, "none", size, "none");
     });
-    showGraphDecorationObjs();
+self.showGraphDecorationObjs();
 }
-function setAutoAllShape() {
+   self.setAutoAllShape=function() {
     var shape = $("#graphDecorationShape").val();
     var i = 0;
     $("#graphDecorationValues option").each(function () {
         var value = $(this).val();
-        setPropertyValueAttr(value, "none", "none", shape);
+self.setPropertyValueAttr(value, "none", "none", shape);
     });
-    showGraphDecorationObjs();
+self.showGraphDecorationObjs();
 }
 
 
-function setPropertyValueAttr(value, color, size, shape) {
+   self.setPropertyValueAttr=function(value, color, size, shape) {
 
     var label = $("#nodesLabelsSelect").val();
     var property = $("#nodesLabelsPropertiesSelect").val();
@@ -249,7 +252,7 @@ function setPropertyValueAttr(value, color, size, shape) {
         value = $("#graphDecorationValues").val();
     if (rangePattern.test(value))
         value = value;
-    else if (isInt(value))
+if(self.isInt(value))
         value = parseInt(value);
     if (!color)
         color = $("#graphDecorationColor").val();
@@ -305,12 +308,12 @@ function setPropertyValueAttr(value, color, size, shape) {
 
 }
 
-function clearGraphDecorationValues() {
+   self.clearGraphDecorationValues=function() {
     decorationObjs = [];
     document.getElementById("graphDecorationValues").options.length = 0;
 }
 
-function showGraphDecorationObjs(_decorationObjs) {
+   self.showGraphDecorationObjs=function(_decorationObjs) {
     /*    if (_decorationObjs)
      decorationObjs = decorationObjs;
      var strArray = [];
@@ -319,30 +322,29 @@ function showGraphDecorationObjs(_decorationObjs) {
      strArray.push(JSON.stringify(obj));
 
      }
-     fillSelectOptionsWithStringArray(graphDecorationDoneValues, strArray);*/
+     common.fillSelectOptionsWithStringArray(graphDecorationDoneValues, strArray);*/
 }
 
 
-function showPaletteDialog() {// ??
+   self.showPaletteDialog=function() {// ??
 
 }
 
-function setNumberOfclasses(nClasses) {
+   self.setNumberOfclasses=function(nClasses) {
     if(!nClasses)
         nClasses = parseInt($("nClassesInput").val());
-    var classes = buildRangeClasses(propertyRange, nClasses);
-    onPropertyClick(nodesLabelsPropertiesSelect);
+self.buildRangeClasses(propertyRange, nClasses);
+self.onPropertyClick(nodesLabelsPropertiesSelect);
     // fillSelectOptionsWithStringArray(graphDecorationValues, classes);
 }
 
 
-function initDecorationDiv() {
+   self.initDecorationDiv=function() {
     data = window.parent.cachedResultArray;
     dataModel = window.parent.dataModel;
-    loadStoredParams("decoration");
-    // initNeoModel(subGraph);
+storedParams.loadStoredParams("decoration");
     if (!currentlabel) {
-        loadGraphDisplaylabels();
+self.loadGraphDisplaylabels();
     }
     else {
         $("#graphDecorationTabsDiv").tabs("option", "active", 0);
@@ -352,38 +354,38 @@ function initDecorationDiv() {
 }
 
 
-function executeDisplay() {
+   self.executeDisplay=function() {
     var groupByClass = $("#groupByClassCBx").prop("checked");
-    setDataDecoration(groupByClass);
+self.setDataDecoration(groupByClass);
     if(false && $("#crossLabel").prop("checked"))
     $('#groupByLabelsCbx', window.parent.document).prop("checked","checked");
 
-    window.parent.hideAdvancedDisplay();
-    window.parent.prepareRawDataAndDisplay(data);
-    window.parent.drawDecorationLegend(decorationObjs);
+    window.parent.toutlesensDialogsController.hideAdvancedDisplay();
+    window.parent.toutlesensData.prepareRawDataAndDisplay(data);
+    window.parent.d3legend.drawDecorationLegend(decorationObjs);
 
 
 }
 
-function executeStoredDecorationObjs() {
+   self.executeStoredDecorationObjs=function() {
     var name = $("#storedDecorationObjsSelect").val();
     decorationObjs = storedDecorationObjs[name].value;
     execute();
 }
 
 
-function onStoredDecorationObjsSelect() {
+   self.onStoredDecorationObjsSelect=function() {
 
 
 
     var name = $("#storedDecorationObjsSelect").val();
     var text = storedDecorationObjs[name].description;
-    setPropertyValueAttr(storedDecorationObjs[name].value)
+self.setPropertyValueAttr(storedDecorationObjs[name].value)
     $("#storedDecorationObjsTA").html(text);
 }
 
 
-function setDataDecoration(groupByClass) {
+   self.setDataDecoration=function(groupByClass) {
     console.log(JSON.stringify(decorationObjs));
     var isCrossLabel = $("#crossLabel").prop("checked")
     for (var k = 0; k < decorationObjs.length; k++) {
@@ -400,7 +402,7 @@ function setDataDecoration(groupByClass) {
                         decorationObj.groupOnGraph = true;
 
 
-                    if (isInt(value) && decorationObj.type == "range") {
+if(self.isInt(value) && decorationObj.type == "range") {
 
                         if (value >= decorationObj.RangeMin && value <= decorationObj.RangeMax)
                             data[i].nodes[j].decoration = decorationObj;
@@ -424,11 +426,11 @@ function setDataDecoration(groupByClass) {
 }
 
 
-function isInt(value) {
+   self.isInt=function(value) {
     return intPattern.test("" + value);
 }
 
-function roundRange(range) {
+   self.roundRange=function(range) {
 
     var magnMin = ("" + Math.abs(range.min)).length;
     var magnMax = ("" + Math.abs(range.max)).length;
@@ -442,9 +444,9 @@ function roundRange(range) {
 
 function saveStoredDecorationObjsDialog() {
     $("#dialog").dialog("option", "title", "enregistrer une representation");
-    var str = "<table><tr><td>nom</td><td><input id='storedDecorationObjsName'></input></td></tr>" +
+    var str = "<table><tr><td>name</td><td><input id='storedDecorationObjsName'></input></td></tr>" +
         " <tr><td>description</td><td><textArea id='storedDecorationObjsDescription' <row='3' cols='30'></textArea></td></tr>" +
-        " <tr><td>scope</td><td><select id='storedDecorationObjsScope'><option>public</option><option>prive</option><option>groupe</option></select></td></tr>" +
+        " <tr><td>scope</td><td><select id='storedDecorationObjsScope'><option>public</option><option>private</option><option>groupe</option></select></td></tr>" +
         "<tr><td colspan=2'><span id='dialogMessage'></span></td></tr>"
     str += "</table><button onclick= saveDisplaySet()>OK</button>";
     $("#dialog").html(str);
@@ -452,12 +454,15 @@ function saveStoredDecorationObjsDialog() {
 }
 
 
-function saveDisplaySet(){
+   self.saveDisplaySet=function(){
     var obj={
         name:$("#storedDecorationObjsName").val(),
         description:$("#storedDecorationObjsDescription").val(),
         scope:$("#storedDecorationObjsScope").val(),
         type:"decoration"
     }
-    saveStoredParams(obj);
+storedParams.saveStoredParams(obj);
 }
+
+ return self;
+})()

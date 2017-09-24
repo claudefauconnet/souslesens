@@ -47,7 +47,6 @@
 
     <!-- script src="js/adminMongo.js"></script> -->
     <script src="js/admin.js"></script>
-    <script src="js/csvToNeo.js"></script>
     <script src=js/graphD3.js></script>
     <script src=js/params.js></script>
     <script src="js/export.js"></script>
@@ -472,15 +471,6 @@
                                     <button onclick="showHelp('distinctValues')">?</button>
                                 </td>
                             </tr>
-                            <tr class="source0">
-                                <td align="right">Query</td>
-                                <td><input name="nodeInput" id="mongoQuery" value="{}"></td>
-                                <td>
-                                    <button onclick="showHelp('mongoQuery')">?</button>
-                                </td>
-                            </tr>
-
-
                             <tr class="neoTarget0">
                                 <td align="right">label
 
@@ -492,6 +482,16 @@
                                     <button onclick="showHelp('label')">?</button>
                                 </td>
                             </tr>
+                            <tr class="source0">
+                                <td align="right">Query</td>
+                                <td><input name="nodeInput" id="mongoQuery" value="{}"></td>
+                                <td>
+                                    <button onclick="showHelp('mongoQuery')">?</button>
+                                </td>
+                            </tr>
+
+
+
 
                         </table>
                         <br>
@@ -628,7 +628,7 @@
                             <tr>
                                 <td>Import</td>
                                 <td>
-                                    <form enctype="multipart/form-data" action="/uploadToNeo" method="post"
+                                    <form enctype="multipart/form-data" action="../rest/" method="post"
                                           target="votar">
                                         <input type="file" name="cypher" class='exportNeo' onblur= 'onFileButton()';>
                                         <input type="submit" value="upload" name="submit" class='exportNeo'/>
@@ -699,7 +699,7 @@
                                         size="10"></select>
                                 <br>
                                 <button onclick="loadLabels($('#subGraphSelect').val())">Reload labels</button>
-
+                                <button onclick="deleteLabel()">Delete label</button>
                             </td>
                         </tr>
                     </table>

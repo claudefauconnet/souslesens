@@ -1,0 +1,263 @@
+{
+    "labels": {
+        "Oeuvre": {
+            "icon": "default.png",
+            "color": "#B39BAB"
+        },
+        "Evenement": {
+            "icon": "default.png",
+            "color": "#FF78FF"
+        },
+        "Periode": {
+            "icon": "default.png",
+            "color": "#A84F02"
+        },
+        "Personne": {
+            "icon": "default.png",
+            "color": "#A8A302"
+        },
+        "Groupe": {
+            "icon": "default.png",
+            "color": "#0056B3"
+        },
+        "Civilisation": {
+            "icon": "default.png",
+            "color": "#B354B3"
+        },
+        "MotCle": {
+            "icon": "default.png",
+            "color": "#FFD900"
+        },
+        "Musee": {
+            "icon": "default.png",
+            "color": "#B37A00"
+        },
+        "Dieu": {
+            "icon": "default.png",
+            "color": "#B3B005"
+        },
+        "Monstre": {
+            "icon": "default.png",
+            "color": "#007DFF"
+        },
+        "Heros": {
+            "icon": "default.png",
+            "color": "#F5ED02"
+        },
+        "Art": {
+            "icon": "default.png",
+            "color": "#F67502"
+        },
+        "Lieu": {
+            "icon": "default.png",
+            "color": "#B35905"
+        },
+        "Materiau": {
+            "icon": "default.png",
+            "color": "#FFFB08"
+        }
+    },
+    "relations": {
+        "OU_PRESENCE": {
+            "startLabel": "Evenement",
+            "endLabel": "Lieu",
+            "type": "OU_PRESENCE"
+        }
+    },
+    "properties": {
+        "Oeuvre": {
+            "hauteur": {
+                "type": "text"
+            },
+            "subGraph": {
+                "type": "text"
+            },
+            "datedebut": {
+                "type": "text"
+            },
+            "datefin": {
+                "type": "text"
+            },
+            "nom": {
+                "type": "text"
+            },
+            "note": {
+                "type": "text"
+            },
+            "imageBlog": {
+                "type": "text"
+            },
+            "largeur": {
+                "type": "text"
+            },
+            "longueur": {
+                "type": "text"
+            },
+            "nombreelements": {
+                "type": "text"
+            }
+        },
+        "Evenement": {
+            "datefin": {
+                "type": "text"
+            },
+            "nom": {
+                "type": "text"
+            },
+            "subGraph": {
+                "type": "text"
+            },
+            "datedebut": {
+                "type": "text"
+            },
+            "urlDbpedia": {
+                "type": "text"
+            }
+        },
+        "Periode": {
+            "subGraph": {
+                "type": "text"
+            },
+            "datedebut": {
+                "type": "text"
+            },
+            "nom": {
+                "type": "text"
+            },
+            "datefin": {
+                "type": "text"
+            }
+        },
+        "Personne": {
+            "datefin": {
+                "type": "text"
+            },
+            "motifDuDeces": {
+                "type": "text"
+            },
+            "type": {
+                "type": "text"
+            },
+            "datedebut": {
+                "type": "text"
+            },
+            "fonction": {
+                "type": "text"
+            },
+            "nom": {
+                "type": "text"
+            },
+            "subGraph": {
+                "type": "text"
+            },
+            "uri_DbPedia": {
+                "type": "text"
+            }
+        },
+        "Groupe": {
+            "nom": {
+                "type": "text"
+            },
+            "subGraph": {
+                "type": "text"
+            },
+            "name": {
+                "type": "text"
+            }
+        },
+        "Civilisation": {
+            "name": {
+                "type": "text"
+            },
+            "subGraph": {
+                "type": "text"
+            },
+            "nom": {
+                "type": "text"
+            }
+        },
+        "MotCle": {
+            "nom": {
+                "type": "text"
+            },
+            "subGraph": {
+                "type": "text"
+            },
+            "fonction": {
+                "type": "text"
+            }
+        },
+        "Musee": {
+            "subGraph": {
+                "type": "text"
+            },
+            "nom": {
+                "type": "text"
+            }
+        },
+        "Dieu": {
+            "subGraph": {
+                "type": "text"
+            },
+            "nom": {
+                "type": "text"
+            },
+            "uri_BNF": {
+                "type": "text"
+            },
+            "fonction": {
+                "type": "text"
+            },
+            "uri_DbPedia": {
+                "type": "text"
+            },
+            "name": {
+                "type": "text"
+            }
+        },
+        "Monstre": {
+            "nom": {
+                "type": "text"
+            },
+            "subGraph": {
+                "type": "text"
+            }
+        },
+        "Heros": {
+            "name": {
+                "type": "text"
+            },
+            "subGraph": {
+                "type": "text"
+            },
+            "nom": {
+                "type": "text"
+            }
+        },
+        "Art": {
+            "nom": {
+                "type": "text"
+            },
+            "subGraph": {
+                "type": "text"
+            }
+        },
+        "Lieu": {
+            "nom": {
+                "type": "text"
+            },
+            "subGraph": {
+                "type": "text"
+            }
+        },
+        "Materiau": {
+            "nom": {
+                "type": "text"
+            },
+            "subGraph": {
+                "type": "text"
+            }
+        }
+    },
+    "defaultnodeNameField": "name"
+}

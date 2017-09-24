@@ -1,7 +1,31 @@
-/**
- * Created by claud on 10/01/2017.
- */
+/*******************************************************************************
+ * SOUSLESENS LICENSE************************
+ *
+ * The MIT License (MIT)
+ *
+ * Copyright (c) 2016-2017 Claude Fauconnet claude.fauconnet@neuf.fr
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ *
+ ******************************************************************************/
 var mongoProxy = require("./mongoProxy.js");
+var ObjectID = require('mongodb').ObjectID;
 var httpProxy = require("./httpProxy.js");
 var neoProxy = require("./neoProxy.js");
 var socket = require('../routes/socket.js');
@@ -16,10 +40,9 @@ var exportMongoToNeo = {
 
     clearVars: function () {
         distinctNames = [];
-         totalLines = 0;
-         neoMappings = [];
-         distinctNames = [];
-         countNodes = 0;
+        totalLines = 0;
+        neoMappings = [];
+        countNodes = 0;
     },
     exportNodes: function (params, callback) {
         var totalImported = 0;
@@ -41,19 +64,28 @@ var exportMongoToNeo = {
 
         loadAndFetchDataToImport(params, importNodes, callback);
 
+
+
+
         function importNodes(params, data, callback) {
+
 
             var objs = [];
             for (var i = 0; i < data.length; i++) {
                 var obj = data[i];
+                if (obj._id)
+                    obj.mongoId = "" + obj._id;
                 delete obj._id;
                 var nameMongoFieldValue = obj[nameMongoField];
                 //   console.log(nameMongoFieldValue+"   "+(countNodes++));
-                if (!nameMongoFieldValue)
+                if (!nameMongoFieldValue) {
                     continue;
+                }
 
-                if (isDistinct & distinctNames.indexOf(nameMongoFieldValue) > -1)
+                if (isDistinct & distinctNames.indexOf(nameMongoFieldValue) > -1) {
+                  //  console.log( "---!!!!!!!!!!!!   B   ");
                     continue;
+                }
                 if (obj[mongoKey]) {// on stocke dans neo et neoMappings dans id la valeur de mongoKey
                     obj.id = obj[mongoKey];
                 } else {
@@ -62,8 +94,10 @@ var exportMongoToNeo = {
                 totalImported += 1;
                 distinctNames.push(nameMongoFieldValue);
 
-                if (!obj.nom)
-                    obj.nom = nameMongoFieldValue;
+                if (!params.defaultnodeNameField)
+                    params.defaultnodeNameField = "name";
+                obj[params.defaultnodeNameField] = nameMongoFieldValue;
+
                 obj.subGraph = subGraph;
                 if (label.indexOf("#") == 0) {
                     var labelField = label.substring(1);
@@ -99,6 +133,7 @@ var exportMongoToNeo = {
 
 
             function writeNodesToNeoNodes(label, _objs, callback) {
+
                 var objs = _objs;
                 var path = "/db/data/transaction/commit";
 
@@ -123,6 +158,7 @@ var exportMongoToNeo = {
 
                 var payload = {statements: statements};
                 var neo4jUrl = serverParams.neo4jUrl;
+                var nodeMappings = [];
                 neoProxy.cypher(neo4jUrl, path, payload, function (err, result) {
                     if (err) {
 
@@ -131,7 +167,7 @@ var exportMongoToNeo = {
 
                     }
 
-                    var nodeMappings = [];
+
                     for (var i = 0; i < result.results.length; i++) {
                         var obj = result.results[i]
                         var label = obj.data[0].row[2][0];
@@ -171,11 +207,11 @@ var exportMongoToNeo = {
         var relationType = params.relationType;
         params.fields = setRelationsMongoFieldsToExport(params);
 
-        if(!neoSourceKey){
-            neoSourceKey=mongoSourceField;
+        if (!neoSourceKey) {
+            neoSourceKey = mongoSourceField;
         }
-        if(!neoTargetKey){
-            neoTargetKey=mongoTargetField;
+        if (!neoTargetKey) {
+            neoTargetKey = mongoTargetField;
         }
 
 
@@ -185,21 +221,20 @@ var exportMongoToNeo = {
         var mongoNeoSourceIdsMap = {};
         var mongoNeoTargetIdsMap = {};
         try {
-            var sourceFilePath="./uploads/neoNodesMapping_" + subGraph + "_" + neoSourceLabel + "_" + neoSourceKey + ".js";
-                      if(!fs.existsSync(sourceFilePath)){
-                callback("sourceNodeMappings "+sourceFilePath+" does not exists ");
+            var sourceFilePath = "./uploads/neoNodesMapping_" + subGraph + "_" + neoSourceLabel + "_" + neoSourceKey + ".js";
+            if (!fs.existsSync(sourceFilePath)) {
+                callback("sourceNodeMappings " + sourceFilePath + " does not exists ");
                 return;
             }
 
-            var targetFilePath="./uploads/neoNodesMapping_" + subGraph + "_" + neoTargetLabel + "_" + neoTargetKey + ".js";
-            if(!fs.existsSync(targetFilePath)){
-                callback("targetNodeMappings"+targetFilePath+"  does not exists ");
+            var targetFilePath = "./uploads/neoNodesMapping_" + subGraph + "_" + neoTargetLabel + "_" + neoTargetKey + ".js";
+            if (!fs.existsSync(targetFilePath)) {
+                callback("targetNodeMappings" + targetFilePath + "  does not exists ");
                 return;
             }
             var sourceNodeMappings = fs.readFileSync(sourceFilePath);
 
-            var targetNodeMappings= fs.readFileSync(targetFilePath);
-
+            var targetNodeMappings = fs.readFileSync(targetFilePath);
 
 
         } catch (e) {
@@ -232,6 +267,7 @@ var exportMongoToNeo = {
             for (var i = 0; i < data.length; i++) {
 
                 var obj = data[i];
+                obj.neoId = obj._id;
                 delete obj._id;
 
 
@@ -469,23 +505,34 @@ var exportMongoToNeo = {
 
 }
 function cleanFieldsForNeo(obj) {
+    var obj2 = {};
     for (var key in obj) {
 
         var key2 = key.replace(/-/g, "_");
 
         key2 = key2.replace(/ /g, "_");
-        var valueObj = obj[key];
+        if (key2 != "") {
+            var valueObj = obj[key];
 
-        var value = "" + valueObj;
-        value = value.replace(/[\n|\r|\t]/g, " ");
-        value = value.replace(/&/g, " and ");
-        value = value.replace(/"/g, "'");
-        value = value.replace(/,/g, "\\,");
-        value = value.replace(/\//g, "%2F");
-        obj[key] = value;
+            var value = "" + valueObj;
+            if (isNaN(valueObj)) {
+                value = value.replace(/[\n|\r|\t]+/g, " ");
+                value = value.replace(/&/g, " and ");
+                value = value.replace(/"/g, "'");
+                value = value.replace(/,/g, "\\,");
+                value = value.replace(/\//g, "%2F");
+            }
+            else if (value.indexOf(".") > -1)
+                value = parseFloat(value)
+            else
+                value = parseInt(value)
+
+
+            obj2[key2] = value;
+        }
     }
 
-    return obj;
+    return obj2;
 
 }
 
@@ -496,7 +543,7 @@ function getLoadParams(params) {
     if (params.mongoDB.toLowerCase().indexOf(".csv") > -1) {//|| params.mongoDB.toLowerCase().indexOf(".txt") > -1) {
         loadParams.type = "csv";
         loadParams.filePath = "./uploads/" + params.mongoCollection + ".json";
-        loadParams.fetchSize = 50;
+        loadParams.fetchSize = 5000;
     } else {
         loadParams = params;
         loadParams.type = "MongoDB";
@@ -543,6 +590,8 @@ function loadAndFetchDataToImport(params, importFn, _rootCallBack) {
 
         async.eachSeries(dataSubsets, function (subset, _callback) {
                 var callback = _callback;
+                if(subset.length==0)
+                    callback(null);
                 importFn(params, subset, function (err, result) {
                         if (err)
                             return callback(err);
@@ -603,15 +652,19 @@ function loadAndFetchDataToImport(params, importFn, _rootCallBack) {
                 return resultSize > 0;
             },
             function (_callback) {//iterate
-                var callBack = _callback;
+                var callback = _callback;
                 mongoProxy.pagedFind(currentIndex, serverParams.mongoFetchSize, dbName, collection, query, params.fields, function (err, resultMongo) {
                     if (err)
                         return rootCallBack(err);
 
+                    for (var i = 0; i < resultMongo.length; i++) {
+                        cleanFieldsForNeo(resultMongo[i])
+                    }
                     importFn(params, resultMongo, function (err, result) {
-                        if (err)
+                        if (err) {
                             return callback(err);
 
+                        }
                         //
                         if (params.label) {//nodes
                             if (result.length > 0) {
@@ -626,8 +679,8 @@ function loadAndFetchDataToImport(params, importFn, _rootCallBack) {
                         currentIndex += serverParams.mongoFetchSize;
                         resultSize = resultMongo.length;
                         totalLines += result.length;
-                        if (callBack)
-                            callBack(null, resultSize);
+                        if (callback)
+                            callback(null, resultSize);
 
                     });
 
@@ -635,9 +688,16 @@ function loadAndFetchDataToImport(params, importFn, _rootCallBack) {
                 })
             }
             ,
-            function () {//end
+            function (err, result) {//end
                 var message = "";
+                if (err) {
+                    var message = "  mongoDB:" + dbName + "  , collection:" + collection + "  ; " + JSON.stringify(err[0].message).substring(0, Math.min(200, err[0].message.length)) + "...";
+                    socket.message(message);
+                    console.log(message);
+                    rootCallBack(message);
+                    return;
 
+                }
                 if (params.label) {//nodes
                     mergeNodesMappingsAndSaveFile("./uploads/neoNodesMapping_" + params.subGraph + "_" + params.label + "_" + params.mongoKey + ".js", nodeMappings, params.label, rootCallBack)
 
@@ -660,7 +720,7 @@ function loadAndFetchDataToImport(params, importFn, _rootCallBack) {
 function setNodeMongoFieldsToExport(params) {
     var exportedFields = params.exportedFields;
     var fields = [];
-    if (!exportedFields || exportedFields=="all")
+    if (!exportedFields || exportedFields == "all")
         return null;// on exporte tous les champs mongo
 
     fields = exportedFields.trim().split(";");
@@ -693,7 +753,7 @@ function setRelationsMongoFieldsToExport(params) {
 
 function mergeNodesMappingsAndSaveFile(path, nodeMappings, label, callback) {
     if (nodeMappings.length == 0)
-        return;
+        return callback(null);
 
     /*  if (fs.existsSync(path)) {// we add existing mappings in new mapping replacing old records with old mongoId by new Neo Value
      try {
@@ -718,9 +778,10 @@ function mergeNodesMappingsAndSaveFile(path, nodeMappings, label, callback) {
      // Do something
      }*/
     try {
-        if(fs.existsSync(path))
+        if (fs.existsSync(path)) {
             fs.unlinkSync(path);
-
+        }
+console.log("mergeNodesMappingsAndSaveFile"+path)
         fs.writeFileSync(path, JSON.stringify(nodeMappings));
         var message = "Imported " + nodeMappings.length + " lines with label " + label;
         socket.message(message);

@@ -494,6 +494,15 @@ table.dataTable thead th div.DataTables_sort_wrapper {
     padding: 1px;
     width: 150px;
 }
+.vertVisButtonTable {
+    background-color: #e78f08;
+    background-color: #ca842e;
+
+    margin: 1px;
+    padding: 1px;
+
+}
+
 
 #nodeDetailsDiv {
     width: 90%;

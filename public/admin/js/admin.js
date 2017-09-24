@@ -29,7 +29,7 @@ var dbName;
 var neoApiUrl = "../exportMongoToNeo";
 var currentRequests;
 var importType = "LINK";
-
+var currentCsvObject;
 var help = {
 
     mongoField: "field that will give its name attribute to the created node in Neo",
@@ -91,7 +91,7 @@ function callMongo(urlSuffix, payload, callback) {
             callback(data);
         },
         error: function (xhr, err, msg) {
-            $("#message").css("color", red);
+            $("#message").css("color", "red");
             $("#message").html(err);
             console.log(xhr);
             console.log(err);
@@ -208,6 +208,11 @@ function onDBselect() {
     var dbName = $("#dbSelect").val();
     clearInputs('nodeInput');
     clearInputs('linkInput');
+    var type = $("#importSourceType").val();
+    if (type == "CSV") {
+        loadRequests();
+        return;
+    }
     callMongo("", {listCollections: 1, dbName: dbName}, function (data) {
         data.sort();
         for (var i = 0; i < data.length; i++) {
@@ -224,6 +229,10 @@ function onDBselect() {
 }
 
 function onCollSelect() {
+    var type = $("#importSourceType").val();
+    if (type == "CSV") {
+        return;
+    }
     var collectionName = $("#collSelect").val();
     $("#mongoCollectionNode").val(collectionName);
     $("#mongoCollectionRel").val(collectionName);
@@ -231,17 +240,17 @@ function onCollSelect() {
     var dbName = $("#dbSelect").val();
 
     callMongo("", {listFields: 1, dbName: dbName, collectionName: collectionName}, function (data) {
-
-        fillSelectOptionsWithStringArray(fieldSelect, data);
         data.sort();
-        for (var i = 0; i < data.length; i++) {
-            var str = data[i];
+        fillSelectOptionsWithStringArray(fieldSelect, data);
 
-            $("#collSelect").append($('<option/>', {
-                value: str,
-                text: str
-            }));
-        }
+        /*  for (var i = 0; i < data.length; i++) {
+         var str = data[i];
+
+         $("#collSelect").append($('<option/>', {
+         value: str,
+         text: str
+         }));
+         }*/
     });
 
 
@@ -276,7 +285,7 @@ function setMongoField() {
 
 
 }
-function setMongoKey(){
+function setMongoKey() {
     var fieldSelect = $("#fieldSelect").val();
     $("#mongoKey").val(fieldSelect);
 
@@ -411,7 +420,7 @@ function clearImportFields() {
     $("#mongoKey").val("");
     $("#label").val("");
     $("#mongoQuery").val("");
-    $("#distinctValues").prop("checked","checked");
+    $("#distinctValues").prop("checked", "checked");
 
 
     $("#mongoSourceField").val("");
@@ -545,11 +554,15 @@ function deleteRequest() {
 
     if (confirm("delete request :" + request)) {
         if (db.indexOf(".csv") > -1) {
-            var requestsObj = {}
+            var requestsObj = {};
+            var index=-1;
             for (var i = 0; i < currentRequests.length; i++) {
                 if (currentRequests[i].name != request)
                     requestsObj[currentRequests[i].name] = currentRequests[i];
+                else
+                    index=i;
             }
+
 
             var path = "./uploads/requests_" + $("#collSelect").val() + ".json";
             var paramsObj = {
@@ -565,6 +578,8 @@ function deleteRequest() {
                 success: function (data, textStatus, jqXHR) {
                     setMessage("request " + request + " deleted", "green");
                     $("#requests option:contains(" + request + ")").remove();
+                   if(index>-1)
+                    currentRequests.splice(index, 1);
                 },
 
                 error: function (xhr, err, msg) {
@@ -659,6 +674,12 @@ function saveRequest(json) {
             dataType: "json",
             success: function (data, textStatus, jqXHR) {
                 setMessage(data.result, "green");
+                try {
+                    loadRequests();
+                }
+                catch (e) {
+                    console("!!!loadRequests!!!" + e);
+                }
                 return;
             },
 
@@ -677,8 +698,8 @@ function saveRequest(json) {
             updateOrCreate: 1,
             dbName: mongoDB,
             collectionName: "requests",
-            query: JSON.stringify(query),
-            data: JSON.stringify(data)
+            query: query,
+            data: data
         }, function (result) {
 
             loadRequests()
@@ -695,7 +716,7 @@ function loadRequests() {
         var path = "./uploads/requests_" + $("#collSelect").val() + ".json";
         var paramsObj = {
             path: path,
-            retreive: true,
+            retrieve: true,
 
         }
         $.ajax({
@@ -756,8 +777,8 @@ function loadRequests() {
             for (var i = 0; i < currentRequests.length; i++) {
                 if (currentRequests[i].request) {
                     currentRequests[i].request = JSON.parse(currentRequests[i].request);
-                    if(currentRequests[i].mongoIdField)//patch
-                        currentRequests[i].mongoKey=currentRequests.mongoIdField
+                    if (currentRequests[i].mongoIdField)//patch
+                        currentRequests[i].mongoKey = currentRequests.mongoIdField
                 }
             }
 
@@ -1042,6 +1063,27 @@ function onLabelSelect(select) {
 
 }
 
+function deleteLabel() {
+    var label = $('#labelsSelect').val();
+    var subGraph = $("#subGraphSelect").val();
+    if (!label || label.length == 0) {
+        $("#message").html("select a label first", "red");
+        $("#message").css("color", "red");
+        return;
+    }
+
+    if (confirm("delete all nodes and relations  with selected label?")) {
+        var match = "Match (n:" + label + ") where n.subGraph='" + subGraph + "' DETACH delete n";
+        callNeoMatch(match, null, function (data) {
+            $("#message").html("nodes with label=" + label + "deleted");
+            $("#message").css("color", "green");
+
+        });
+    }
+
+
+}
+
 function addSubGraph() {
     var newSubGraph = prompt("New Subgraph name ");
     if (!newSubGraph || newSubGraph.length == 0)
@@ -1105,6 +1147,25 @@ function setImportSourceType() {
 function showHelp(fieldName) {
     $("#message").html(help[fieldName]);
     //setMessage(help[fieldName],"blue");
+
+
+}
+
+
+
+function setCsvImportFields(json) {
+    currentCsvObject = json;
+
+    fillSelectOptionsWithStringArray(fieldSelect, json.header);
+    fillSelectOptionsWithStringArray(collSelect,[json.name]);
+    $("#collSelect").val(json.name);
+    $("#mongoCollectionRel").val(json.name);
+    $("#mongoCollectionNode").val(json.name);
+
+    fillSelectOptionsWithStringArray(dbSelect,  [json.name]);
+//  $("#dbSelect").val('CSV');
+    loadRequests();
+    onCollSelect();
 
 
 }

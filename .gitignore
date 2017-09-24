@@ -29,11 +29,13 @@ $RECYCLE.BIN/
 uploads/*.js
 uploads/*
 uploads/*.json
+schemas/*.json
 bin/sinequa/*
 bin/jfm/*
 bin/discogs/*
 bin/test.js
-public/toutlesens/js/modules/*
+public/toutlesens/js/oldJs/*
 !bin/sinequa/entities2Neo.js
-public/toutlesens/js/icons/*
+public/toutlesens/icons/*
+
 

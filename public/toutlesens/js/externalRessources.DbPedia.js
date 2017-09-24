@@ -1,3 +1,5 @@
+var externalRessourcesDbPedia = (function(){
+ var self = {};
 /*******************************************************************************
  * TOUTLESENS LICENCE************************
  * 
@@ -24,12 +26,12 @@
  * SOFTWARE.
  * 
  ******************************************************************************/
-function searchInTitleDbPedia(word,target){
-listDbPediaPerson({name:word },target) 
+   self.searchInTitleDbPedia=function(word,target){
+self.listDbPediaPerson({name:word },target) 
 }
 
 
-function listDbPediaPerson(obj,target) {
+   self.listDbPediaPerson=function(obj,target) {
 
 	
 	if (!obj){
@@ -47,12 +49,12 @@ function listDbPediaPerson(obj,target) {
 	else
 		word=obj.name;
 	if(!word)
-		word=obj.nom;
+		word=obj[Gparams.defaultnodeNameField];
 	if(!word)
 		return "";
 
 	
-	word=encode_utf8(word);
+externalRessourcesCommon.encode_utf8(word);
 	var label = obj.label;
 
 	var props = {}
@@ -100,7 +102,7 @@ function listDbPediaPerson(obj,target) {
 
 
 	var query2 = "&format=json&timeout=30000";// &debug=on"
-	$("#urlPanel").html(htmlEncode(query));
+externalRessourcesCommon.htmlEncode("#urlPanel").html(htmlEncode(query));
 	console.log(query);
 
 	var url = "http://dbpedia.org/sparql?default-graph-uri=http%3A%2F%2Fdbpedia.org&query="
@@ -123,7 +125,7 @@ function listDbPediaPerson(obj,target) {
 					//var objs = _data.result.results.bindings;
                     var objs = JSON.parse(_data.result);
                     objs=objs.results.bindings;
-					showExternalressourcesList(objs,target);
+externalRessourcesCommon.showExternalressourcesList(objs,target);
 					
 
 				},
@@ -143,3 +145,6 @@ function listDbPediaPerson(obj,target) {
 }
 
 
+
+ return self;
+})()

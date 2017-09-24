@@ -1,3 +1,5 @@
+var externalRessourcesBNF = (function(){
+ var self = {};
 
 /*******************************************************************************
  * TOUTLESENS LICENCE************************
@@ -25,7 +27,7 @@
  * SOFTWARE.
  * 
  ******************************************************************************/
-function searchInTitleBNF(word,target){
+   self.searchInTitleBNF=function(word,target){
 	var query2 = "&format=json&timeout=30000";
 	var query = "PREFIX bnf-onto:   <http://data.bnf.fr/ontology/bnf-onto/> select * where { ?x dcterms:title ?title. ?title bif:contains '"+word+"' } limit 100";
 	var url = "http://data.bnf.fr/sparql?default-graph-uri=&query="
@@ -50,7 +52,7 @@ $.ajax({
 		// console.log(JSON.stringify(_data));
 		var objs = _data.results.bindings;
 		
-		showExternalressourcesList(objs,target);
+externalRessourcesCommon.showExternalressourcesList(objs,target);
 		
 		
 		
@@ -71,14 +73,14 @@ $.ajax({
 }
 
 
-function listBNFPerson(obj, target) {
+   self.listBNFPerson=function(obj, target) {
 	var word = "Freud"
 	if(obj){
 	 var word=obj.name;
-	if(!word) word=obj.nom;
+	if(!word) word=obj[Gparams.defaultnodeNameField];
 	if(!word) return "";
 	}
-	word=encode_utf8(word);
+externalRessourcesCommon.encode_utf8(word);
 	var query2 = "&format=json&timeout=30000";
 	var query = "PREFIX bnf-onto: <http://data.bnf.fr/ontology/bnf-onto/>"
 			+ "PREFIX dcterms: <http://purl.org/dc/terms/>"
@@ -105,7 +107,7 @@ function listBNFPerson(obj, target) {
 			// console.log(JSON.stringify(_data));
 			var objs = _data.results.bindings;
 			
-			showExternalressourcesList(objs,target);
+externalRessourcesCommon.showExternalressourcesList(objs,target);
 			
 			
 			var dbPediaHtmlArray = "<table>";
@@ -126,11 +128,11 @@ function listBNFPerson(obj, target) {
 }
 
 //listBNFBook({name:"Freud"});
-function listBNFBook(obj, target) {
+   self.listBNFBook=function(obj, target) {
 	var word = "Freud"
 	if(obj){
 	 var word=obj.name;
-	if(!word) word=obj.nom;
+	if(!word) word=obj[Gparams.defaultnodeNameField];
 	if(!word) return "";
 	}
 	//word=encode_utf8(word);
@@ -205,7 +207,7 @@ function listBNFBook(obj, target) {
 			}
 		
 			
-			showExternalressourcesList(objs,target);
+externalRessourcesCommon.showExternalressourcesList(objs,target);
 			
 			
 			var dbPediaHtmlArray = "<table>";
@@ -231,7 +233,7 @@ function listBNFBook(obj, target) {
 
 	
 
-function getPersonInfos(uri) {
+   self.getPersonInfos=function(uri) {
 	var query2 = "&format=json&timeout=30000";
 	uri = "<http://data.bnf.fr/ark:/12148/cb11907966z#foaf:Person> ";
 
@@ -290,3 +292,6 @@ function getPersonInfos(uri) {
 	});
 
 }
+
+ return self;
+})()

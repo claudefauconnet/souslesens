@@ -82,11 +82,11 @@ var currentSubGraph;
 var isReadOnly = false;
 
 function drawNeoModel(subGraph) {
-    initNeoModel(subGraph, drawNeoModel2);
+    dataModel.initNeoModel(subGraph, drawNeoModel2);
 }
 
 
-function drawNeoModel2(subGraph) {
+function drawNeoModel2() {
 
 
     var dataLabels = [];
@@ -174,7 +174,7 @@ function drawNeoModel2(subGraph) {
 }
 
 
-function draw(data, dataRels) {
+function draw(graphDiv) {
 
     var lineFunction = d3.svg.line()
         .x(function (d) {
@@ -194,24 +194,10 @@ function draw(data, dataRels) {
             "height", h);
     }
 
-    /*
-     * hoverRect = svgGraph.append("rect").attr("x", 100).attr("y", 100).attr(
-     * "width", 100).attr("height", 20).attr("rx", 10).attr("ry", 10) .style("fill",
-     * "yellow").attr("visibility", "hidden"); hoverText =
-     * svgGraph.append("text").attr("x", 100).attr("y", 100).attr( "dy",
-     * ".35em").text("ABBBBBA").attr("class", "textHover").style( "fill",
-     * "black").attr("visibility", "hidden");
-     */
 
 
-    var resetButton = svgGraph.append("g").on("click", resetLabelsPosition).attr("transform", function (d) {
-        var d = {x: 10, y: 30};
-        return "translate(" + d.x + "," + d.y + ")";
-    });
 
-    resetButton.append("rect").attr("width", 100).attr("height", 20).attr("rx", 10).attr("ry", 10)
-        .style("fill", "white");
-    resetButton.append("text").text("reset").attr("width", 40).attr("height", 20).attr("dy", 15);
+
 
 
     var infoZone = svgGraph.append("g").on("click", onLabelInfoClick).attr("transform", function (d) {
@@ -275,7 +261,7 @@ function draw(data, dataRels) {
     });
 
 
-    points = svgGraph.selectAll(".pointsRadar").data(data).enter().append(
+    points = svgGraph.selectAll(".pointsRadar").data(dataLabels).enter().append(
         "svg:g").on("dblclick", dblclickPoint).on("click", clickPoint)
         .attr("class", "pointsRadar").attr("id", function (d) {
             return "P_" + d.id;

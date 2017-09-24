@@ -43,13 +43,13 @@
 
     <script src="../common/js/jquery/jquery.min.js"></script>
     <script src="../common/js/jquery/theme_humanity/jquery-ui.min.js "></script>
-
-    <script src="../common/js/common.js"></script>
     <script src="../common/js/others/jscolor.min.js"></script>
-    <script src="../common/js/neo4jDataModel.js"></script>
-    <script src="../common/js/common.js"></script>
     <script src="../common/js/d3/d3.js"></script>
+    <script src="../common/js/neo4jDataModel.js"></script>
+    <script src="js/common.js"></script>
 
+
+    <script src="js/globalVars.js"></script>
     <script src="js/toutlesensController.js"></script>
     <script src="js/toutlesensData.js"></script>
     <script src="resources/params.js"></script>
@@ -58,8 +58,8 @@
     <script src="js/toutlesensDialogsController.js"></script>
 
 
-    <script src="resources/help.js"></script>
-    <script src="resources/lang.js"></script>
+    <script src="js/help.js"></script>
+    <script src="js/lang.js"></script>
     <script src="resources/lang_FR.js"></script>
     <script src="resources/lang_EN.js"></script>
     <script src="resources/params.js"></script>
@@ -96,7 +96,7 @@
     <script>
         var isSouslesensIframe=true;
         $(function () {
-            initDecorationDiv();
+            advancedDisplay.initDecorationDiv();
 
             $("#graphDecorationTabsDiv").tabs({
                 activate: function (event, ui) {
@@ -148,7 +148,7 @@
 
         <tr >
             <td><select id="nodesLabelsSelect" size="8"
-                        onclick="onLabelClick(this)"></select></td>
+                        onclick="advancedDisplay.onLabelClick(this)"></select></td>
 
         </tr>
 
@@ -160,7 +160,7 @@
         <tr>
 
             <td><select id="nodesLabelsPropertiesSelect" size="8"
-                        onclick="onPropertyClick(this)">
+                        onclick="advancedDisplay.onPropertyClick(this)">
                 <option><span id='lang_139'>------</span>----</option>
             </select></td>
 
@@ -183,7 +183,7 @@
 
             <tr>
                 <td>
-                    <span id='lang_144'>Valeurs</span><button onclick="clearGraphDecorationValues()">X</button>
+                    <span id='lang_144'>Valeurs</span><button onclick="advancedDisplay.clearGraphDecorationValues()">X</button>
                 </td>
 
                 <td>
@@ -192,7 +192,7 @@
                 </td>
                 <td>
                     number of classes<br>
-                    <input id="nClassesInput" onclick="setNumberOfclasses()">
+                    <input id="nClassesInput" onclick="advancedDisplay.setNumberOfclasses()">
                     <button onclick="setNoClasses()">No classes</button>
 
                 </td>
@@ -207,11 +207,11 @@
                 <td>
                     <button id="graphDecorationColor" class="jscolor {valueElement:colorInput,value:'66ccff'}">choose
                     </button>
-                    <input type="hidden" id="colorInput" onchange="setPropertyValueOptionColor()">
+                    <input type="hidden" id="colorInput" onchange="advancedDisplay.setPropertyValueOptionColor()">
                 </td>
                 <td>
-                    <button onclick="setAutoRangeColors()">Range</button>
-                    <button onclick="setAutoAllColors()">All</button>
+                    <button onclick="advancedDisplay.setAutoRangeColors()">Range</button>
+                    <button onclick="advancedDisplay.setAutoAllColors()">All</button>
                     <!--  <button onclick="showPaletteDialog()">Palette...</button>-->
                 </td>
             </tr>
@@ -224,29 +224,29 @@
                     <div id="graphDecorationSizeSlider" style="width: 130px;"></div>
                 </td>
                 <td>
-                    <button onclick="setAutoRangeSize()">Range</button>
-                    <button onclick="setAutoAllSize()">All</button>
+                    <button onclick="advancedDisplay.setAutoRangeSize()">Range</button>
+                    <button onclick="advancedDisplay.setAutoAllSize()">All</button>
 
 
                 </td>
             </tr>
-  <!--          <tr>
-                <td>
-                    <span id='lang_147'>Symbole</span>
-                </td>
+            <!--          <tr>
+                          <td>
+                              <span id='lang_147'>Symbole</span>
+                          </td>
 
-                <td>
-                    <select id="graphDecorationShape">
-                        <option value="circle"><span id='lang_148'>aucun</span></option>
-                        <option value="square"><span id='lang_154'>carre</span></option>
-                        <option value="triangleUp"><span id='lang_149'>triangle</span></option>
-                        <option value="triangleDown"><span id='lang_150'>triangle inverse</span></option>
-                    </select>
-                </td>
-                <td>
-                -->
-                    <button onclick="setAutoAllShape()"> All</button>
-                </td>
+                          <td>
+                              <select id="graphDecorationShape">
+                                  <option value="circle"><span id='lang_148'>aucun</span></option>
+                                  <option value="square"><span id='lang_154'>carre</span></option>
+                                  <option value="triangleUp"><span id='lang_149'>triangle</span></option>
+                                  <option value="triangleDown"><span id='lang_150'>triangle inverse</span></option>
+                              </select>
+                          </td>
+                          <td>
+                          -->
+            <button onclick="advancedDisplay.setAutoAllShape()"> All</button>
+            </td>
             </tr>
             <!--   <tr>
                    <td>
@@ -267,19 +267,19 @@
 
 
         <div>
-            <button oncLick="executeDisplay()"><span id='lang_152'>Executer</span></button>
-            <button oncLick="saveStoredDecorationObjsDialog()"><span id='lang_155'>Enregistrer</span></button>
-            <button oncLick="window.parent.hideAdvancedSearch()"><span id='lang_153'>Annuler</span></button>
+            <button oncLick="advancedDisplay.executeDisplay()"><span id='lang_152'>Executer</span></button>
+            <button oncLick="advancedDisplay.saveStoredDecorationObjsDialog()"><span id='lang_155'>Enregistrer</span></button>
+            <button oncLick="window.parent.toutlesensController.hideAdvancedDisplay()"><span id='lang_153'>Annuler</span></button>
             <input type="checkbox" id="groupByClassCBx"> grouper les valeurs &nbsp;<input type="checkbox" checked="checked"   id="crossLabel"> pour tous les labels
         </div>
 
     </div>
     <div id="graphSavedPropsDiv">
-        <select id="storedDecorationObjsSelect" onclick="onStoredDecorationObjsSelect()" size="10">
+        <select id="storedDecorationObjsSelect" onclick="advancedDisplay.onStoredDecorationObjsSelect()" size="10">
         </select>
         description
         <div id="storedDecorationObjsTA"></div>
-        <button onclick="executeStoredDecorationObjs()">executer</button>
+        <button onclick="advancedDisplay.executeStoredDecorationObjs()">executer</button>
 
 
     </div>

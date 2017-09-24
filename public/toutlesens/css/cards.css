@@ -1,0 +1,116 @@
+#infosDiv{
+    display: inline-block;
+    font-size: 14px;
+    font-weight: bold;
+    font-family: verdana, sans-serif;
+    height: 800px;
+    height: 800px;
+    overflow: auto;
+
+}
+
+infosControlsDiv{
+    visibility: visible;
+}
+.parent{
+    display: inline-block;
+//  width:350px;
+//  height:400px;
+    align-content: center;
+    background-color: #93aeca;
+    margin: 10px;
+    top:100px;
+    border-radius: 10px;
+    border-color: #0c0c0c;
+    vertical-align:top;
+    text-align: center;
+    padding: 10px;
+    overflow: auto;
+    position:relative;
+    background-color: lightgrey;
+ //   opacity: 0.8;
+
+}
+
+.child,.childLabel{
+    min-width:280px;
+    min-height:50px;
+    background-color: #68a1d6;
+    margin: 10px;
+    border-style: solid;
+    border-color: #0c0c0c;
+    border-width: 1px;
+    border-radius: 10px;
+    vertical-align:middle;
+    text-align: center;
+    padding: 5px;
+    font-weight: normal;
+    opacity: 1;
+
+    background-color: #888DA0;
+  //  opacity: 0.8;
+
+
+
+
+}
+#nodeInfosDiv {
+/ / display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#nodeInfosDiv {
+    padding: 20px;
+    border-width: 0px;
+    border-color: #5f3f3f;
+    border-style: groove;
+    margin: 20px;
+
+    overflow: auto;
+    height: 500px;
+    background-color: seashell;
+    font-size: 14px;
+    font-family: verdana, sans-serif;
+    font-weight: normal;
+
+}
+
+#infosHeaderDiv {
+    background-color: burlywood;
+    font-size: 14px;
+    font-weight: bold;
+}
+
+.objAttrInput ,#newNodeName{
+
+    width: 500px;
+
+}
+
+
+.imgframe  {
+    border-style: solid;
+    border-width: 5px;
+    border-radius: 5px;
+    border-color: yellow;
+    vertical-align: middle;
+}
+
+
+.imgframeQQ {
+    border: 1px solid;
+    display: block;
+ //   display:grid;
+    margin: 5px;
+    text-align:center;
+    height: 20px;
+}
+.imgframeQQ img {
+    border: 0px solid #FFFFFF;
+    margin: 0;
+
+    padding: 3px;
+   -moz-box-shadow: 2px 2px 5px #CCCCCC;
+   -webkit-box-shadow: 2px 2px 5px #CCCCCC;
+}

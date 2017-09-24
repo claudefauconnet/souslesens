@@ -18,10 +18,10 @@ var restAPI=require("../bin/restAPI.js");
 var socket=require('./socket.js');
 
 
-const cors = require('cors');
+/*const cors = require('cors');
 var app = express();
-app.use(cors());
-app.options('*', cors());
+app.use(cors()); // use CORS for all requests and all routes*/
+
 
 
 
@@ -31,12 +31,6 @@ router.get('/', function (req, res) {
     res.render('index', {title: 'Express'});
 });
 
-router.get('/rest', function (req, response) {
-    if (req.query && req.query.desc_updateNeo) {
-        restAPI.desc_updateNeo(function(error,result){processResponse(response,error,result)});
-    }
-
-});
 
 
 router.post('/neo', function (req, response) {
@@ -55,6 +49,8 @@ router.post('/mongo', function (req, response) {
         mongoProxy.distinct (req.body.dbName, req.body.collectionName,  req.body.field,req.body.mongoQuery, function(error,result){processResponse(response,error,result)});
     if (req.body && req.body.insert)
         mongoProxy.insert (req.body.dbName, req.body.collectionName, req.body.data, function(error,result){processResponse(response,error,result)});
+    if (req.body && req.body.insertOne)
+        mongoProxy.insertOne (req.body.dbName, req.body.collectionName, req.body.data, function(error,result){processResponse(response,error,result)});
     if (req.body && req.body.updateOrCreate)
         mongoProxy.updateOrCreate (req.body.dbName, req.body.collectionName, req.body.query, req.body.data, function(error,result){processResponse(response,error,result)});
     if (req.body && req.body.delete)
@@ -83,7 +79,7 @@ router.post('/elastic', function (req, response) {
 router.post('/exportMongoToNeo', function (req, response) {
     exportMongoToNeo.clearVars();
     if ( req.body.type=="batch")
-        exportToNeoBatch.exportBatch(req.body.sourceType,req.body.dbName,req.body.subGraph,JSON.parse(req.body.data), function(error,result){processResponse(response,error,result)});
+        exportToNeoBatch.exportBatch(req.body.sourceType,req.body.dbName,req.body.subGraph,JSON.parse(req.body.data),null, function(error,result){processResponse(response,error,result)});
     if ( req.body.type=="node")
         exportMongoToNeo.exportNodes(JSON.parse(req.body.data), function(error,result){processResponse(response,error,result)});
     if ( req.body.type=="relation")
@@ -124,6 +120,10 @@ router.post('/upload', function(req, response) {
     fileUpload.upload(req, function(error,result){processResponse(response,error,result)});
 });
 
+router.post('/uploadData', function(req, response) {
+    fileUpload.uploadData(req, function(error,result){processResponse(response,error,result)});
+});
+
 router.post('/uploadToNeo', function(req, response) {
     uploadToNeo.uploadAndImport(req,function(error,result){processResponse(response,error,result)});
 });
@@ -136,11 +136,58 @@ router.post('/uploadCsvForNeo', function(req, response) {
 
 
 router.post('/rest', function(req, response) {
-    if (req.query && req.query.updateNeo) {
-        restAPI.updateNeo(req.body, function(error,result){processResponse(response,error,result)});
+    if (req.query && req.query.updateNeoFromCSV) {
+        restAPI.updateNeoFromCSV(req.body, function(error,result){processResponse(response,error,result)});
+    }
+    else if (req.query && req.query.updateNeoFromMongo) {
+        restAPI.updateNeoFromMongo(req.body, function(error,result){processResponse(response,error,result)});
+    }
+    if (req.query && req.query.createNode) {
+        restAPI.createNode(req.body,function(error,result){processResponse(response,error,result)});
+    }
+    if (req.query && req.query.createRelation) {
+        restAPI.createRelation( req.body,function(error,result){processResponse(response,error,result)});
+    }
+    if (req.query && req.query.createNodeAndRelation) {
+        restAPI.createNodeAndRelation( req.body,function(error,result){processResponse(response,error,result)});
+    }
+    if (req.query && req.query.updateNode) {
+        restAPI.updateNode(req.body,function(error,result){processResponse(response,error,result)});
+    }
+    if (req.query && req.query.deleteNode) {
+        restAPI.deleteNode(req.body,function(error,result){processResponse(response,error,result)});
+    }
+    if (req.query && req.query.deleteRelation) {
+        restAPI.deleteRelation( req.body,function(error,result){processResponse(response,error,result)});
     }
 
+    if (req.query && req.query.updateRelationById) {
+        restAPI.updateRelationById( req.body,function(error,result){processResponse(response,error,result)});
+    }
+
+
+    if (req.query && req.query.retrieve) {
+        restAPI.retrieve( req.body,function(error,result){processResponse(response,error,result)});
+    }
+
+
+
 });
+router.get('/rest', function (req, response) {
+    if (req.query && req.query.desc_updateNeoFromCSV) {
+        restAPI.desc_updateNeoFromCSV( function(error,result){processResponse(response,error,result)});
+    }
+    if (req.query && req.query.desc_updateNeoFromMongo) {
+        restAPI.desc_updateNeoFromMongo( function(error,result){processResponse(response,error,result)});
+    }
+    if (req.query && req.query.exportMappings) {
+        restAPI.exportMappings(req.query, function(error,result){processResponse(response,error,result)});
+    }
+
+
+
+});
+
 
 router.post('/exportMongoToElastic', function(req, response) {
    elasticProxy.exportMongoToElastic( req.body.mongoDB,req.body.mongoCollection,req.body.mongoQuery,req.body.elasticIndex,req.body.elasticFields,req.body.elasticType,function(error,result){processResponse(response,error,result)});
@@ -148,38 +195,62 @@ router.post('/exportMongoToElastic', function(req, response) {
 
 
 router.post('/jsonFileStorage', function(req, response) {
+    console.log("!!!!!!!!!!!!!!!!!!!!!!!!!!"+JSON.stringify(req.body));
     if(req.body.store)
         jsonFileStorage.store( req.body.path,req.body.data,function(error,result){processResponse(response,error,result)});
-    if(req.body.retreive)
-        jsonFileStorage.retreive( req.body.path,function(error,result){processResponse(response,error,result)});
+    if(req.body.retrieve)
+        jsonFileStorage.retrieve( req.body.path,function(error,result){processResponse(response,error,result)});
 });
 
 
 
 function processResponse(response,error,result){
     if (response && !response.finished) {
-        response.setHeader('Content-Type', 'application/json');
-        if(error) {
-            console.log("ERROR !!"+error);
-            socket.message("ERROR !!"+error);
-         response.send({ERROR: error});
+        /* res.setHeader('Access-Control-Allow-Origin', '*');
+         res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE'); // If needed
+         res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,contenttype'); // If needed
+         res.setHeader('Access-Control-Allow-Credentials', true); // If needed.setHeader('Content-Type', 'application/json');
+         */
+        response.setHeader('Access-Control-Allow-Origin', '*');
+        response.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE'); // If needed
+        response.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,contenttype'); // If needed
+        response.setHeader('Access-Control-Allow-Credentials', true); // If needed
+
+
+        if (error) {
+            console.log("ERROR !!" + error);
+            socket.message("ERROR !!" + error);
+            response.status(404).send({ERROR: error});
 
         }
-        else if(!result) {
-            ;
-        } else{
-                var resultObj=result;
-                if( typeof result =="string"){
-                    resultObj={result:result}
-                }
+        else if (!result) {
+            response.status(404).send("no result");
+        } else {
+
+            if (typeof result == "string") {
+                resultObj = {result: result};
                 socket.message(resultObj);
                 response.send(JSON.stringify(resultObj));
             }
+            else {
+                if (result.contentType && result.data) {
+                    response.setHeader('Content-type', result.contentType);
+                    if (typeof result.data == "object")
+                        response.send(JSON.stringify(result.data));
+                    else
+                        response.send(result.data);
+                }
+                else {
+                    var resultObj = result;
+                    response.send(JSON.stringify(resultObj));
+                }
+            }
+        }
 
-
-        response.end();
 
     }
+
+
 
 }
 

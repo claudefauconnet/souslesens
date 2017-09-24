@@ -1,55 +1,292 @@
+<!-- *******************************************************************************
+ * SOUSLESENS LICENSE************************
+ *
+ * The MIT License (MIT)
+ *
+ * Copyright (c) 2016-2017 Claude Fauconnet claude.fauconnet@neuf.fr
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ *
+ ******************************************************************************-->
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
+
+    <link rel="stylesheet" type="text/css" title="Design"
+          href="../common/js/jquery/theme_humanity/jquery-ui.min.css"/>
+    <script src="../common/js/jquery/jquery.min.js"></script>
+    <script src="../common/js/jquery/jquery-ui.min.js"></script>
+    <script>
+
+        $(function () {
+
+            $("#tabs").tabs();
+        })
+        function updateNeofromCSV() {
+            var subGraph = $("#subGraph").val();
+            var fileName = $("#fileName").val();
+            var mappings = $("#mappings").val();
+            var csv = $("#csv").val();
+            csv = csv.replace(/"/g, "'");
+            csv = encodeURIComponent(csv);
+            var payload = {
+
+                subGraph: subGraph,
+                csvData: csv
+            }
+            if(!fileName || fileName==""){
+                alert ("file name ismandatory")
+                return;
+            }
+            if (mappings && mappings.length > 0)
+                payload.mappings = mappings;
+
+                payload.fileName = fileName;
+
+
+            $.ajax({
+                url: '/rest/?updateNeoFromCSV=1',
+                data: payload,
+                dataType: "json",
+                type: 'POST',
+                error: function (error, ajaxOptions, thrownError) {
+                    console.log(error);
+                    console.log(thrownError);
+                    $("#message").html("server error" + thrownError);
+                }
+                ,
+                success: function (result) {
+                     if ($.isArray(result) || $.isPlainObject(result))
+                         result=JSON.stringify(result)
+                    $("#message").html(result)
+
+                }
+            });
+
+
+        }
+
+        function getExistingMappings(){
+            var fileName = $("#fileName").val();
+            document.location.href='/rest/?exportMappings=1&fileName='+encodeURIComponent(fileName);
+        }
+
+        function sendForm(button, method) {
+            var form = button.parentElement;
+            var payload = getFormData($(form))//.serializeObject();
+
+            $.ajax('/rest/?' + method + '=1', {
+                data: payload,
+                dataType: "json",
+                type: 'POST',
+                error: function (error, ajaxOptions, thrownError) {
+
+                    console.log(error.responseText);
+
+                    $("#message").html("ERROR " + method + " : " + error.responseText);
+
+                }
+                ,
+                success: function (data) {
+                    console.log(data);
+                    if ($.isArray(data))
+                        data = JSON.stringify(data[0]);
+                    $("#message").html(method + " : " + data);
+
+
+                }
+            });
+
+        }
+
+        function getFormData($form) {
+            var unindexed_array = $form.serializeArray();
+            var indexed_array = {};
+
+            $.map(unindexed_array, function (n, i) {
+                var value=formatJSON( n['value']);
+                n['name']=n['name'].replace("X_","")
+                indexed_array[n['name']] =value;
+            });
+
+            return indexed_array;
+        }
+
+        function formatJSON(value){
+
+            if(value.indexOf("{")==0 || value.indexOf("[")==0){
+                var objKeysRegex = /({|,)(?:\s*)(?:')?([A-Za-z_$\.][A-Za-z0-9_ \-\.$]*)(?:')?(?:\s*):/g;// look for object names
+                var value = value.replace(objKeysRegex, "$1\"$2\":");// all object names should be double quoted
+                try {
+                    var newObject = JSON.parse(value);
+                }
+                catch(e){
+$("#message").html(e);
+return false;
+                }
+            }
+            return value;
+
+        }
+
+
+    </script>
+    <style>
+
+        td {
+
+            padding: 20px;
+        }
+        body {
+
+            padding: 10px;
+        }
+
+
+        table {
+
+        }
+
+    </style>
 </head>
-<script src="../common/js/jquery/jquery.min.js"></script>
-<script>
-function updateNeofromCSV(){
- var subGraph=$("#subGraph").val();
-    var fileName=$("#fileName").val();
-    var csv=$("#csv").val();
-    csv=csv.replace(/"/g,"'");
-    csv= encodeURIComponent(csv);
-    var payload={
-        sourceType:"CSV",
-        fileName:fileName,
-        subGraph:subGraph,
-        csvData:csv
-    }
-    $.ajax({
-        url : '/rest/?updateNeo=1',
-        data : payload,
-        dataType: "json",
-        type : 'POST',
-        error : function(error ,ajaxOptions, thrownError){
-
-            console.log(error);
-            console.log(thrownError);
-            setMessage("server error" + thrownError);
-        }
-        ,
-        success : function(data) {
-$("#message").html(data)
-
-        }
-    });
-}
-
-
-</script>
 <body>
 
+<div id="tabs">
+    <ul>
+        <li><a href="#updateNeofromCSVdiv">updateNeofromCSV</a></li>
+        <li><a href="#CRUDapiDiv">CRUDapi</a></li>
 
-<textarea cols="200" rows="20" id="csv">
+    </ul>
+    <div id="updateNeofromCSVdiv">
+
+        <a href="/rest?desc_updateNeoFromCSV=1"> updateNeoFromCSV description</a>
+        <a href="/rest?desc_updateNeoFromMongo=1"> updateNeoFromMongo description</a>
+      <br>
+        <br>
+        <br>
+        CSV data<textarea cols="200" rows="20" id="csv"></textarea>
+        <br>
+        Mappings<textarea cols="200" rows="3" id="mappings"></textarea>
 
 
-</textarea>
-<br>
-fileName<input id="fileName" value="UCtestAPI.csv"/>
-subGraph<input id="subGraph" value="testAPI1"/>
-<button onclick="updateNeofromCSV()">Import</button>
+        <br>
+        fileName<input id="fileName" value="testNormesImportNeo.csv"/>
+        or <br>
+        subGraph<input id="subGraph" value="refMS"/>
+        <button onclick="updateNeofromCSV()">update</button><br>
+        <button onclick="getExistingMappings()">getExistingMappings for this file</button>
+
+
+    </div>
+    <div id="CRUDapiDiv">
+        <table>
+            <tr>
+                <td>
+                    retrieve graph<br>
+                </td>
+                <td>
+                    <form onsubmit="return false;">
+                        match<input size="100" name="match">
+
+                        <button onclick='sendForm(this,"retrieve")'>retrieve</button>
+                    </form>à
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    Node
+                </td>
+                <td>
+                    <form onsubmit="return false;">
+                        attrs<input name="nodeAttrs">
+                        label<input name="nodeLabel">
+                        subGraph<input name="nodeSubGraph" value="testAPI">
+                        <br>
+                        <button onclick='sendForm(this,"createNode")'>create</button>
+                        set<input name="nodeSet">
+                        <button onclick='sendForm(this,"updateNode")'>alter</button>
+                        <button onclick='sendForm(this,"deleteNode")'>delete</button>
+                    </form>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <br>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    Relation <br>
+                </td>
+                <td>
+
+                    <form onsubmit="return false;">
+                        sourceNodeQuery<input name="sourceNodeQuery">
+                        sourceNodeLabel<input name="sourceNodeLabel">
+                        <br>
+                        targetNodeQuery<input name="targetNodeQuery">
+                        targetNodeLabel<input name="targetNodeLabel">
+                        <br>
+                        relType<input name="relType">
+                        relAttrs<input name="relAttrs">
+                        <br>
+                        <button onclick='sendForm(this,"createRelation")'>create</button>
+                        <button onclick='sendForm(this,"deleteRelation")'>delete</button>
+                        <br>
+                        <button onclick='sendForm(this,"createNodeAndRelation")'>createNodeAndRelation</button>
+
+                    </form>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    Node and Relation <br>
+                </td>
+
+                <td>
+
+                    <form onsubmit="return false;">
+
+                        Node attrs<input name="X_nodeAttrs">
+                        Node label<input name="X_nodeLabel">
+                        subGraph<input name="X_nodeSubGraph" value="testAPI">
+                        <br>
+                       Relation  sourceNodeQuery<input name="X_sourceNodeQuery">
+                       Relation sourceNodeLabel<input name="X_sourceNodeLabel">
+                       <br>
+                        Relation relType<input name="X_relType">
+                        Relation attrs<input name="X_relAttrs">
+                        <button onclick='sendForm(this,"createNodeAndRelation")'>createNodeAndRelation</button>
+
+                    </form>
+                </td>
+            </tr>
+
+        </table>
+
+
+    </div>
+</div>
+messages
 <div id="message"></div>
 </body>
 </html>

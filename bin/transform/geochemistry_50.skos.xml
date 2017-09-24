@@ -1,0 +1,4448 @@
+
+<?xml version="1.0" encoding="utf-8"?>
+<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"  xmlns:skos="http://www.w3.org/2004/02/skos/core#">
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/289">
+   <skos:prefLabel>ABIOGENESIS</skos:prefLabel>
+   <SA>ABIOGENIC GAS</SA>
+   <SA>OIL AND GAS ORIGIN</SA>
+   <SA>SERPENTINIZATION</SA>
+   <BT>ORIGIN</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/387">
+   <skos:prefLabel>ABYSSAL ENVIRONMENT</skos:prefLabel>
+   <SA>APHOTIC ZONE</SA>
+   <SA>BATHYAL ENVIRONMENT</SA>
+   <SA>DEEP SEA</SA>
+   <SA>DEEP WATER</SA>
+   <SA>NERITIC ENVIRONMENT</SA>
+   <SA>QUIET WATER ENVIRONMENT</SA>
+   <SA>SHALLOW WATER ENVIRONMENT</SA>
+   <BT>MARINE ENVIRONMENT</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/442">
+   <skos:prefLabel>ACENTRIC FACTOR</skos:prefLabel>
+   <SA>MOLECULAR STRUCTURE</SA>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/593">
+   <skos:prefLabel>ACTIVATION ENERGY</skos:prefLabel>
+   <SA>KINETICS</SA>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/595">
+   <skos:prefLabel>ACTIVITY COEFFICIENT</skos:prefLabel>
+   <SA>KINETICS</SA>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/806">
+   <skos:prefLabel>AEROBIC ENVIRONMENT</skos:prefLabel>
+   <SA>DEPOSITIONAL ENVIRONMENT</SA>
+   <SA>DYSOXIC ENVIRONMENT</SA>
+   <SA>EUPHOTIC ZONE</SA>
+   <SA>EUXINIC ENVIRONMENT</SA>
+   <SA>MARINE ENVIRONMENT</SA>
+   <SA>NONMARINE ENVIRONMENT</SA>
+   <BT>ENVIRONMENT</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/909">
+   <skos:prefLabel>AGGREGATION NUMBER</skos:prefLabel>
+   <SA>MICELLE</SA>
+   <SA>MOLECULAR STRUCTURE</SA>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/924">
+   <skos:prefLabel>AGITATED WATER ENVIRONMENT</skos:prefLabel>
+   <SA>MARINE ENVIRONMENT</SA>
+   <SA>NEAR SHORE ENVIRONMENT</SA>
+   <SA>NERITIC ENVIRONMENT</SA>
+   <SA>NONMARINE ENVIRONMENT</SA>
+   <SA>QUIET WATER ENVIRONMENT</SA>
+   <SA>REEF COMPLEX ENVIRONMENT</SA>
+   <SA>SHALLOW WATER ENVIRONMENT</SA>
+   <BT>DEPOSITIONAL ENVIRONMENT</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/1545">
+   <skos:prefLabel>ALGINITE</skos:prefLabel>
+   <SA>KEROGEN</SA>
+   <SA>LIPID</SA>
+   <SA>SAPROPEL</SA>
+   <SA>TORBANITE</SA>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/1583">
+   <skos:prefLabel>ALIPHATIC HYDROCARBON</skos:prefLabel>
+   <SA>AROMATIC HYDROCARBON</SA>
+   <SA>MOLECULAR STRUCTURE</SA>
+   <SA>NAPHTHENIC HYDROCARBON</SA>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/1864">
+   <skos:prefLabel>ALTERATION</skos:prefLabel>
+   <NT>HYDROTHERMAL ALTERATION</NT>
+   <NT>THERMAL ALTERATION</NT>
+   <BT>PHENOMENON</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/2285">
+   <skos:prefLabel>AMORPHOUS</skos:prefLabel>
+   <SA>CRYSTALLOGRAPHY</SA>
+   <SA>MOLECULAR STRUCTURE</SA>
+   <BT>STRUCTURE</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/2308">
+   <skos:prefLabel>AMPLITUDE ANOMALY</skos:prefLabel>
+   <SA>DIRECT HYDROCARBON INDICTR</SA>
+   <SA>GEOPHYSICAL ANOMALY</SA>
+   <SA>HYDROCARBON POTENTIAL</SA>
+   <BT>ANOMALY</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/2401">
+   <skos:prefLabel>ANALYTICAL METHOD</skos:prefLabel>
+   <SA>COMPOSITION</SA>
+   <SA>STREAM ANALYZER</SA>
+   <NT>ASSAY</NT>
+   <NT>ELEMENTAL ANALYSIS</NT>
+   <NT>GAS ANALYSIS</NT>
+   <NT>GEOLOGIC AGE DETERMINATION</NT>
+   <NT>HYDROCARBON ANALYSIS</NT>
+   <NT>ISOTOPIC METHOD</NT>
+   <NT>MINERAL ANALYSIS</NT>
+   <NT>ROCK ANALYSIS</NT>
+   <NT>SAMPLE ANALYSIS</NT>
+   <NT>SEDIMENT ANALYSIS</NT>
+   <NT>SOIL ANALYSIS</NT>
+   <NT>WATER ANALYSIS</NT>
+   <BT>TESTING</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/2684">
+   <skos:prefLabel>ANOMALY</skos:prefLabel>
+   <NT>AMPLITUDE ANOMALY</NT>
+   <NT>GEOCHEMICAL ANOMALY</NT>
+   <NT>GEOPHYSICAL ANOMALY</NT>
+   <BT>PHENOMENON</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/2890">
+   <skos:prefLabel>APHOTIC ZONE</skos:prefLabel>
+   <SA>ABYSSAL ENVIRONMENT</SA>
+   <SA>BATHYAL ENVIRONMENT</SA>
+   <SA>BRACKISH ENVIRONMENT</SA>
+   <SA>DEEP SEA</SA>
+   <SA>DEEP WATER</SA>
+   <SA>DEPOSITIONAL ENVIRONMENT</SA>
+   <SA>ECOLOGY</SA>
+   <SA>EUPHOTIC ZONE</SA>
+   <SA>EUXINIC ENVIRONMENT</SA>
+   <SA>NERITIC ENVIRONMENT</SA>
+   <SA>PALEOECOLOGY</SA>
+   <SA>PELAGIC ENVIRONMENT</SA>
+   <SA>REEF COMPLEX ENVIRONMENT</SA>
+   <SA>SHALLOW WATER ENVIRONMENT</SA>
+   <BT>LIFE ZONE</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/3028">
+   <skos:prefLabel>AQUIFER RECHARGE</skos:prefLabel>
+   <SA>HYDRODYNAMICS (GEOLOGY)</SA>
+   <SA>MIGRATION</SA>
+   <SA>RESERVOIR FLUID FLOW</SA>
+   <BT>HYDROLOGY</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/3429">
+   <skos:prefLabel>AROMATIC HYDROCARBON</skos:prefLabel>
+   <SA>ALIPHATIC HYDROCARBON</SA>
+   <SA>MOLECULAR STRUCTURE</SA>
+   <SA>NAPHTHENIC HYDROCARBON</SA>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/3517">
+   <skos:prefLabel>ARTIFICIAL CORE</skos:prefLabel>
+   <SA>RESERVOIR FLUID FLOW</SA>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/3795">
+   <skos:prefLabel>ASSAY</skos:prefLabel>
+   <SA>COMPOSITION</SA>
+   <NT>CRUDE ASSAY</NT>
+   <BT>ANALYTICAL METHOD</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/4276">
+   <skos:prefLabel>AVULSION</skos:prefLabel>
+   <SA>DRAINAGE PATTERN</SA>
+   <SA>MARINE ENVIRONMENT</SA>
+   <SA>NONMARINE ENVIRONMENT</SA>
+   <BT>NATURAL EARTH PHENOMENON</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/4740">
+   <skos:prefLabel>BALANCED SECTION</skos:prefLabel>
+   <SA>PALEOGEOGRAPHY</SA>
+   <SA>STRATIGRAPHY</SA>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/5340">
+   <skos:prefLabel>BASIN DEVELOPMENT</skos:prefLabel>
+   <SA>BACKSTRIPPING</SA>
+   <SA>BURIAL HISTORY</SA>
+   <BT>PHENOMENON</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/5341">
+   <skos:prefLabel>BASIN ENVIRONMENT</skos:prefLabel>
+   <SA>BRACKISH ENVIRONMENT</SA>
+   <SA>MARINE ENVIRONMENT</SA>
+   <SA>NONMARINE ENVIRONMENT</SA>
+   <SA>REEF COMPLEX ENVIRONMENT</SA>
+   <SA>SHALLOW WATER ENVIRONMENT</SA>
+   <BT>DEPOSITIONAL ENVIRONMENT</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/5439">
+   <skos:prefLabel>BATHYAL ENVIRONMENT</skos:prefLabel>
+   <SA>ABYSSAL ENVIRONMENT</SA>
+   <SA>APHOTIC ZONE</SA>
+   <SA>DEEP WATER</SA>
+   <SA>NERITIC ENVIRONMENT</SA>
+   <SA>QUIET WATER ENVIRONMENT</SA>
+   <SA>SHALLOW WATER ENVIRONMENT</SA>
+   <BT>MARINE ENVIRONMENT</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/5511">
+   <skos:prefLabel>BAY</skos:prefLabel>
+   <SA>BRACKISH ENVIRONMENT</SA>
+   <SA>DEPOSITIONAL ENVIRONMENT</SA>
+   <SA>EVAPORITIC ENVIRONMENT</SA>
+   <SA>NONMARINE ENVIRONMENT</SA>
+   <SA>PALEOGEOGRAPHY</SA>
+   <SA>QUIET WATER ENVIRONMENT</SA>
+   <SA>TRANSITIONAL ENVIRONMENT</SA>
+   <NT>EMBAYMENT</NT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/5606">
+   <skos:prefLabel>BEACH ENVIRONMENT</skos:prefLabel>
+   <SA>BRACKISH ENVIRONMENT</SA>
+   <SA>LITTORAL ENVIRONMENT</SA>
+   <SA>MARINE ENVIRONMENT</SA>
+   <SA>NEAR SHORE ENVIRONMENT</SA>
+   <SA>NONMARINE ENVIRONMENT</SA>
+   <SA>SUPRATIDAL ENVIRONMENT</SA>
+   <BT>DEPOSITIONAL ENVIRONMENT</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/5796">
+   <skos:prefLabel>BED GEOMETRY</skos:prefLabel>
+   <SA>STRATIGRAPHY</SA>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/6689">
+   <skos:prefLabel>BIODEGRADATION</skos:prefLabel>
+   <SA>BIOLOGICAL INDICATOR</SA>
+   <SA>BIOLOGICAL MARKER</SA>
+   <SA>OXYGEN DEMAND</SA>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/6696">
+   <skos:prefLabel>BIOGENESIS</skos:prefLabel>
+   <SA>BIOGENIC GAS</SA>
+   <SA>BIOLOGICAL MARKER</SA>
+   <SA>METHANOGENESIS</SA>
+   <SA>OIL AND GAS ORIGIN</SA>
+   <BT>ORIGIN</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/6698">
+   <skos:prefLabel>BIOGENIC GAS</skos:prefLabel>
+   <SA>BIOGENESIS</SA>
+   <SA>METHANOGENESIS</SA>
+   <SA>OIL AND GAS ORIGIN</SA>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/6714">
+   <skos:prefLabel>BIOLOGICAL INDICATOR</skos:prefLabel>
+   <SA>BIODEGRADATION</SA>
+   <SA>BIOLOGICAL MARKER</SA>
+   <SA>ECOLOGY</SA>
+   <BT>CHARACTERIZATION</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/6715">
+   <skos:prefLabel>BIOLOGICAL MARKER</skos:prefLabel>
+   <SA>BIODEGRADATION</SA>
+   <SA>BIOGENESIS</SA>
+   <SA>BIOLOGICAL INDICATOR</SA>
+   <SA>CARBON ISOTOPE RATIO</SA>
+   <SA>CRUDE DIAGENESIS</SA>
+   <SA>HYDROCARBON RATIO</SA>
+   <SA>MATURATION</SA>
+   <SA>OIL FAMILY</SA>
+   <SA>SOURCE ROCK</SA>
+   <BT>CRUDE OIL CHARACTERIZATION</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/6718">
+   <skos:prefLabel>BIOMASS</skos:prefLabel>
+   <BT>ORGANIC MATTER</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/6726">
+   <skos:prefLabel>BIOSTRATIGRAPHY</skos:prefLabel>
+   <SA>CHEMOSTRATIGRAPHY</SA>
+   <SA>PALEOECOLOGY</SA>
+   <SA>ZONATION</SA>
+   <BT>STRATIGRAPHY</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/6890">
+   <skos:prefLabel>BITUMEN</skos:prefLabel>
+   <SA>KEROGEN</SA>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/8003">
+   <skos:prefLabel>BRACKISH ENVIRONMENT</skos:prefLabel>
+   <SA>APHOTIC ZONE</SA>
+   <SA>BASIN ENVIRONMENT</SA>
+   <SA>BAY</SA>
+   <SA>BEACH ENVIRONMENT</SA>
+   <SA>CHANNEL</SA>
+   <SA>DELTA</SA>
+   <SA>DEPOSITIONAL ENVIRONMENT</SA>
+   <SA>ECOLOGY</SA>
+   <SA>EMBAYMENT</SA>
+   <SA>ESTUARY</SA>
+   <SA>EUPHOTIC ZONE</SA>
+   <SA>FRESH WATER ENVIRONMENT</SA>
+   <SA>LAGOON</SA>
+   <SA>LITTORAL ENVIRONMENT</SA>
+   <SA>MARINE ENVIRONMENT</SA>
+   <SA>NONMARINE ENVIRONMENT</SA>
+   <SA>OCEAN ENVIRONMENT</SA>
+   <SA>PALEOECOLOGY</SA>
+   <SA>PALEOENVIRONMENT</SA>
+   <SA>QUIET WATER ENVIRONMENT</SA>
+   <SA>SALT CONTENT</SA>
+   <SA>SEDIMENTATION</SA>
+   <SA>SHALLOW WATER ENVIRONMENT</SA>
+   <SA>SHOAL</SA>
+   <SA>SPIT</SA>
+   <SA>SWAMP</SA>
+   <SA>TIDAL FLAT</SA>
+   <SA>TIDAL INLET</SA>
+   <SA>TOMBOLO</SA>
+   <SA>TRANSITIONAL ENVIRONMENT</SA>
+   <BT>ENVIRONMENT</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/8951">
+   <skos:prefLabel>BURIAL HISTORY</skos:prefLabel>
+   <SA>BACKSTRIPPING</SA>
+   <SA>BASIN DEVELOPMENT</SA>
+   <SA>CLUMPED ISOTOPE THERMOMETR</SA>
+   <SA>DIAGENESIS</SA>
+   <SA>GAS WINDOW</SA>
+   <SA>OIL WINDOW</SA>
+   <SA>PALEOPRESSURE</SA>
+   <SA>SUBSURFACE PRESSURE</SA>
+   <SA>SUBSURFACE TEMPERATURE</SA>
+   <SA>TEMPERATURE MEASURING</SA>
+   <SA>THERMOCHRONOLOGY</SA>
+   <BT>DEPTH</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/9178">
+   <skos:prefLabel>BY COMPOSITION</skos:prefLabel>
+   <NT>CHEMICAL</NT>
+   <NT>ISOTOPOLOGUE</NT>
+   <NT>MINERAL</NT>
+   <NT>MONOMER</NT>
+   <NT>ORGANIC MATTER</NT>
+   <NT>PETROLEUM</NT>
+   <NT>WOOD</NT>
+   <BT>MATERIAL</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/10346">
+   <skos:prefLabel>CARBON CONTENT</skos:prefLabel>
+   <NT>ORGANIC CARBON</NT>
+   <BT>COMPOSITION</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/10363">
+   <skos:prefLabel>CARBON ISOTOPE RATIO</skos:prefLabel>
+   <SA>BIOLOGICAL MARKER</SA>
+   <SA>CLUMPED ISOTOPE THERMOMETR</SA>
+   <SA>GEOLOGIC AGE DETERMINATION</SA>
+   <SA>ISOTOPE</SA>
+   <SA>ISOTOPE DISTRIBUTION</SA>
+   <SA>ISOTOPIC METHOD</SA>
+   <SA>RADIOACTIVE AGE DETERMINAT</SA>
+   <SA>RADIOACTIVE ISOTOPE</SA>
+   <BT>ISOTOPE RATIO</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/10386">
+   <skos:prefLabel>CARBONATE CHEMISTRY</skos:prefLabel>
+   <SA>CARBONATE DEPOSITION</SA>
+   <SA>CARBONATE ROCK</SA>
+   <SA>CARBONATE SEDIMENT</SA>
+   <SA>CLUMPED ISOTOPE THERMOMETR</SA>
+   <SA>MINERAL CHEMISTRY</SA>
+   <SA>PETROCHEMISTRY</SA>
+   <BT>CHEMISTRY</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/10389">
+   <skos:prefLabel>CARBONATE DEPOSITION</skos:prefLabel>
+   <SA>CARBONATE CHEMISTRY</SA>
+   <SA>CARBONATE ROCK</SA>
+   <SA>CARBONATE SEDIMENT</SA>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/10390">
+   <skos:prefLabel>CARBONATE DIAGENESIS</skos:prefLabel>
+   <SA>CARBONATE ROCK</SA>
+   <SA>CARBONATE SEDIMENT</SA>
+   <SA>CLUMPED ISOTOPE THERMOMETR</SA>
+   <SA>SUPRATIDAL ENVIRONMENT</SA>
+   <NT>DEDOLOMITIZATION</NT>
+   <NT>DOLOMITIZATION</NT>
+   <BT>DIAGENESIS</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/10397">
+   <skos:prefLabel>CARBONATE ROCK</skos:prefLabel>
+   <SA>CARBONATE CHEMISTRY</SA>
+   <SA>CARBONATE DEPOSITION</SA>
+   <SA>CARBONATE DIAGENESIS</SA>
+   <SA>CARBONATE SEDIMENT</SA>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/10398">
+   <skos:prefLabel>CARBONATE SEDIMENT</skos:prefLabel>
+   <SA>CARBONATE CHEMISTRY</SA>
+   <SA>CARBONATE DEPOSITION</SA>
+   <SA>CARBONATE DIAGENESIS</SA>
+   <SA>CARBONATE ROCK</SA>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/10907">
+   <skos:prefLabel>CATAGENESIS</skos:prefLabel>
+   <SA>DIAGENESIS</SA>
+   <SA>THERMAL ALTERATION</SA>
+   <BT>POST DEPOSITIONAL PROCESS</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/11163">
+   <skos:prefLabel>CELLULOSE</skos:prefLabel>
+   <SA>ORGANIC MATTER</SA>
+   <SA>WOOD</SA>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/11708">
+   <skos:prefLabel>CHANNEL</skos:prefLabel>
+   <SA>BRACKISH ENVIRONMENT</SA>
+   <SA>DEPOSITIONAL ENVIRONMENT</SA>
+   <SA>MARINE ENVIRONMENT</SA>
+   <SA>NONMARINE ENVIRONMENT</SA>
+   <SA>PALEOGEOGRAPHY</SA>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/11744">
+   <skos:prefLabel>CHARACTERIZATION</skos:prefLabel>
+   <NT>BIOLOGICAL INDICATOR</NT>
+   <NT>CRUDE OIL CHARACTERIZATION</NT>
+   <NT>FINGERPRINTING</NT>
+   <BT>CLASSIFICATION</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/11928">
+   <skos:prefLabel>CHEMICAL</skos:prefLabel>
+   <NT>CHEMICAL FORMULA</NT>
+   <NT>ELEMENT (CHEMICAL)</NT>
+   <NT>PETROCHEMICAL</NT>
+   <BT>BY COMPOSITION</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/11934">
+   <skos:prefLabel>CHEMICAL BOND</skos:prefLabel>
+   <SA>CHEMICAL REACTION</SA>
+   <SA>CROSSLINKING</SA>
+   <SA>MOLECULAR MODEL</SA>
+   <BT>MOLECULAR STRUCTURE</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/11938">
+   <skos:prefLabel>CHEMICAL CORRELATION</skos:prefLabel>
+   <SA>COMPOSITION</SA>
+   <NT>CRUDE OIL CORRELATION</NT>
+   <BT>CORRELATION</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/11948">
+   <skos:prefLabel>CHEMICAL FORMULA</skos:prefLabel>
+   <SA>ELEMENTAL ANALYSIS</SA>
+   <SA>MOLECULAR STRUCTURE</SA>
+   <BT>CHEMICAL</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/11961">
+   <skos:prefLabel>CHEMICAL POTENTIAL</skos:prefLabel>
+   <SA>KINETICS</SA>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/11966">
+   <skos:prefLabel>CHEMICAL REACTION</skos:prefLabel>
+   <SA>CHEMICAL BOND</SA>
+   <SA>KINETICS</SA>
+   <SA>PROCESS</SA>
+   <SA>PROMOTER</SA>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/11992">
+   <skos:prefLabel>CHEMISTRY</skos:prefLabel>
+   <NT>CARBONATE CHEMISTRY</NT>
+   <NT>GEOCHEMISTRY</NT>
+   <NT>HYDROCHEMISTRY</NT>
+   <NT>MINERAL CHEMISTRY</NT>
+   <NT>PETROCHEMISTRY</NT>
+   <BT>TECHNOLOGY</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/11996">
+   <skos:prefLabel>CHEMOSTRATIGRAPHY</skos:prefLabel>
+   <SA>BIOSTRATIGRAPHY</SA>
+   <SA>CLUMPED ISOTOPE THERMOMETR</SA>
+   <SA>MAGNETOSTRATIGRAPHY</SA>
+   <SA>SEISMIC STRATIGRAPHY</SA>
+   <SA>STRATIGRAPHIC CORRELATION</SA>
+   <BT>STRATIGRAPHY</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/12418">
+   <skos:prefLabel>CHLOROPHYLL</skos:prefLabel>
+   <BT>ORGANIC MATTER</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/12953">
+   <skos:prefLabel>CLASSIFICATION</skos:prefLabel>
+   <NT>CHARACTERIZATION</NT>
+   <BT>QUALITY</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/12995">
+   <skos:prefLabel>CLAY COMPOSITION</skos:prefLabel>
+   <SA>CRYSTALLOGRAPHY</SA>
+   <SA>MOLECULAR STRUCTURE</SA>
+   <BT>COMPOSITION</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/13072">
+   <skos:prefLabel>CLEAVAGE</skos:prefLabel>
+   <SA>CRYSTALLOGRAPHY</SA>
+   <SA>MINERALOGY</SA>
+   <NT>MINERAL CLEAVAGE</NT>
+   <NT>ROCK CLEAVAGE</NT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/13074">
+   <skos:prefLabel>CLEAVAGE FLAKE</skos:prefLabel>
+   <SA>CLEAVAGE PLANE</SA>
+   <SA>CRYSTALLOGRAPHY</SA>
+   <SA>MINERALOGY</SA>
+   <BT>MINERAL CLEAVAGE</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/13075">
+   <skos:prefLabel>CLEAVAGE PLANE</skos:prefLabel>
+   <SA>CLEAVAGE FLAKE</SA>
+   <SA>CRYSTALLOGRAPHY</SA>
+   <SA>MINERALOGY</SA>
+   <BT>ROCK CLEAVAGE</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/13118">
+   <skos:prefLabel>CLIMATE</skos:prefLabel>
+   <SA>CLIMATE CYCLE</SA>
+   <SA>ECOLOGY</SA>
+   <SA>ENVIRONMENT</SA>
+   <NT>PALEOCLIMATE</NT>
+   <BT>METEOROLOGICAL PHENOMENON</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/13119">
+   <skos:prefLabel>CLIMATE CYCLE</skos:prefLabel>
+   <SA>CLIMATE</SA>
+   <SA>EARTH ORBIT</SA>
+   <SA>ECCENTRICITY</SA>
+   <SA>GLOBAL COOLING</SA>
+   <SA>GLOBAL WARMING</SA>
+   <SA>INSOLATION</SA>
+   <SA>OBLIQUITY</SA>
+   <SA>PALEOCLIMATE</SA>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/13269">
+   <skos:prefLabel>COALIFICATION</skos:prefLabel>
+   <SA>MATURATION</SA>
+   <SA>ORGANIC DIAGENESIS</SA>
+   <BT>DIAGENESIS</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/13306">
+   <skos:prefLabel>COASTAL PLAIN</skos:prefLabel>
+   <SA>NONMARINE ENVIRONMENT</SA>
+   <SA>PALEOGEOGRAPHY</SA>
+   <SA>TRANSITIONAL ENVIRONMENT</SA>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/13697">
+   <skos:prefLabel>COLUMNAR SECTION</skos:prefLabel>
+   <SA>STRATIGRAPHIC CHART</SA>
+   <SA>STRATIGRAPHY</SA>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/13780">
+   <skos:prefLabel>COMMON ATTRIBUTE</skos:prefLabel>
+   <NT>LOCATION</NT>
+   <NT>QUALITY</NT>
+   <NT>TECHNOLOGY</NT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/13878">
+   <skos:prefLabel>COMPOSITION</skos:prefLabel>
+   <SA>ANALYTICAL METHOD</SA>
+   <SA>ASSAY</SA>
+   <SA>CHEMICAL CORRELATION</SA>
+   <SA>CRUDE ASSAY</SA>
+   <SA>ELEMENTAL ANALYSIS</SA>
+   <SA>MOLECULAR WEIGHT</SA>
+   <SA>STRUCTURE</SA>
+   <SA>WATER ANALYSIS</SA>
+   <NT>CARBON CONTENT</NT>
+   <NT>CLAY COMPOSITION</NT>
+   <NT>ELEMENT RATIO</NT>
+   <NT>ISOTOPIC COMPOSITION</NT>
+   <NT>NITROGEN CONTENT</NT>
+   <NT>OIL CONTENT</NT>
+   <NT>ORGANIC CONTENT</NT>
+   <NT>PARAFFIN NAPHTHENE RATIO</NT>
+   <NT>ROCK COMPOSITION</NT>
+   <NT>SALT CONTENT</NT>
+   <NT>SEDIMENT COMPOSITION</NT>
+   <NT>SHELL COMPOSITION</NT>
+   <NT>WATER CONTENT</NT>
+   <BT>PROPERTY</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/14104">
+   <skos:prefLabel>CONING</skos:prefLabel>
+   <BT>RESERVOIR FLUID FLOW</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/14262">
+   <skos:prefLabel>CONTINENTAL MARGIN</skos:prefLabel>
+   <SA>MARGINAL BASIN</SA>
+   <SA>MARINE ENVIRONMENT</SA>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/14279">
+   <skos:prefLabel>CONTINUITY EQUATION</skos:prefLabel>
+   <SA>RESERVOIR FLUID FLOW</SA>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/14698">
+   <skos:prefLabel>CORRELATION</skos:prefLabel>
+   <SA>SUPERPOSITION</SA>
+   <NT>CHEMICAL CORRELATION</NT>
+   <NT>STRATIGRAPHIC CORRELATION</NT>
+   <BT>PHYSICAL OPERATION</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/15131">
+   <skos:prefLabel>CRETACEOUS</skos:prefLabel>
+   <BT>MESOZOIC</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/15230">
+   <skos:prefLabel>CROSS FLOW</skos:prefLabel>
+   <SA>RESERVOIR FLUID FLOW</SA>
+   <BT>FLUID FLOW</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/15254">
+   <skos:prefLabel>CROSSHOLE METHOD</skos:prefLabel>
+   <SA>MINERALOGY</SA>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/15257">
+   <skos:prefLabel>CROSSLINKING</skos:prefLabel>
+   <SA>CHEMICAL BOND</SA>
+   <SA>MOLECULAR STRUCTURE</SA>
+   <SA>MOLECULE</SA>
+   <BT>PHENOMENON</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/15296">
+   <skos:prefLabel>CRUDE ASSAY</skos:prefLabel>
+   <SA>COMPOSITION</SA>
+   <SA>CRUDE OIL</SA>
+   <SA>CRUDE OIL CHARACTERIZATION</SA>
+   <SA>CRUDE OIL CORRELATION</SA>
+   <SA>DEAD OIL</SA>
+   <SA>HYDROCARBON ANALYSIS</SA>
+   <SA>HYDROCARBON RATIO</SA>
+   <SA>LIGHT CRUDE OIL</SA>
+   <SA>LIVE OIL</SA>
+   <SA>MIXED BASE CRUDE</SA>
+   <SA>NAPHTHENE BASE CRUDE</SA>
+   <SA>OIL CONTENT</SA>
+   <SA>OIL PROPERTY</SA>
+   <SA>PARAFFIN BASE CRUDE</SA>
+   <SA>PARAFFIN NAPHTHENE RATIO</SA>
+   <BT>ASSAY</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/15299">
+   <skos:prefLabel>CRUDE DIAGENESIS</skos:prefLabel>
+   <SA>BIOLOGICAL MARKER</SA>
+   <SA>CRUDE OIL</SA>
+   <SA>EVAPORATIVE FRACTIONATION</SA>
+   <SA>MATURATION</SA>
+   <SA>ORGANIC DIAGENESIS</SA>
+   <SA>THERMOGENIC GAS</SA>
+   <NT>GAS WASHING (GEOLOGY)</NT>
+   <NT>WATER WASHING (GEOLOGY)</NT>
+   <BT>DIAGENESIS</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/15300">
+   <skos:prefLabel>CRUDE OIL</skos:prefLabel>
+   <SA>CRUDE ASSAY</SA>
+   <SA>CRUDE DIAGENESIS</SA>
+   <SA>CRUDE OIL CORRELATION</SA>
+   <SA>EVAPORATIVE FRACTIONATION</SA>
+   <SA>HYDROCARBON RATIO</SA>
+   <NT>DEAD OIL</NT>
+   <NT>LIGHT CRUDE OIL</NT>
+   <NT>LIVE OIL</NT>
+   <NT>MIXED BASE CRUDE</NT>
+   <NT>NAPHTHENE BASE CRUDE</NT>
+   <NT>OIL FAMILY</NT>
+   <NT>PARAFFIN BASE CRUDE</NT>
+   <NT>SHALE OIL</NT>
+   <BT>PETROLEUM</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/15302">
+   <skos:prefLabel>CRUDE OIL CHARACTERIZATION</skos:prefLabel>
+   <SA>CRUDE ASSAY</SA>
+   <SA>CRUDE OIL CORRELATION</SA>
+   <SA>FINGERPRINTING</SA>
+   <SA>HYDROCARBON RATIO</SA>
+   <SA>LIGHT CRUDE OIL</SA>
+   <SA>MIXED BASE CRUDE</SA>
+   <SA>NAPHTHENE BASE CRUDE</SA>
+   <SA>PARAFFIN BASE CRUDE</SA>
+   <SA>VITRINITE REFLECTANCE</SA>
+   <NT>BIOLOGICAL MARKER</NT>
+   <BT>CHARACTERIZATION</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/15304">
+   <skos:prefLabel>CRUDE OIL CORRELATION</skos:prefLabel>
+   <SA>CRUDE ASSAY</SA>
+   <SA>CRUDE OIL</SA>
+   <SA>CRUDE OIL CHARACTERIZATION</SA>
+   <SA>FINGERPRINTING</SA>
+   <SA>OIL FAMILY</SA>
+   <BT>CHEMICAL CORRELATION</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/15404">
+   <skos:prefLabel>CRYSTALLOGRAPHY</skos:prefLabel>
+   <SA>AMORPHOUS</SA>
+   <SA>CLAY COMPOSITION</SA>
+   <SA>CLEAVAGE</SA>
+   <SA>CLEAVAGE FLAKE</SA>
+   <SA>CLEAVAGE PLANE</SA>
+   <SA>LIQUID CRYSTAL</SA>
+   <SA>MINERAL CLEAVAGE</SA>
+   <SA>MINERALOGY</SA>
+   <SA>MOLECULAR MODEL</SA>
+   <SA>PIEZOELECTRICITY</SA>
+   <SA>ROCK CLEAVAGE</SA>
+   <SA>UNDULATORY EXTINCTION</SA>
+   <BT>TECHNOLOGY</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/15734">
+   <skos:prefLabel>CYCLOSTRATIGRAPHY</skos:prefLabel>
+   <SA>EARTH ORBIT</SA>
+   <SA>ECCENTRICITY</SA>
+   <SA>INSOLATION</SA>
+   <SA>OBLIQUITY</SA>
+   <SA>PRECESSION</SA>
+   <BT>STRATIGRAPHY</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/16023">
+   <skos:prefLabel>DARCYS LAW</skos:prefLabel>
+   <SA>NONDARCY FLOW</SA>
+   <SA>RESERVOIR FLUID FLOW</SA>
+   <BT>FLUID FLOW EQUATION</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/16235">
+   <skos:prefLabel>DEAD OIL</skos:prefLabel>
+   <SA>CRUDE ASSAY</SA>
+   <SA>HYDROCARBON ANALYSIS</SA>
+   <SA>HYDROCARBON RATIO</SA>
+   <SA>LIVE OIL</SA>
+   <SA>MOBILITY</SA>
+   <BT>CRUDE OIL</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/16346">
+   <skos:prefLabel>DEDOLOMITIZATION</skos:prefLabel>
+   <SA>DOLOMITIZATION</SA>
+   <BT>CARBONATE DIAGENESIS</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/16378">
+   <skos:prefLabel>DEEP SEA</skos:prefLabel>
+   <SA>ABYSSAL ENVIRONMENT</SA>
+   <SA>APHOTIC ZONE</SA>
+   <SA>DEEP WATER</SA>
+   <SA>MARINE ENVIRONMENT</SA>
+   <SA>OCEANOGRAPHY</SA>
+   <SA>PELAGIC ENVIRONMENT</SA>
+   <BT>SEA</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/16397">
+   <skos:prefLabel>DEEP WATER</skos:prefLabel>
+   <SA>ABYSSAL ENVIRONMENT</SA>
+   <SA>APHOTIC ZONE</SA>
+   <SA>BATHYAL ENVIRONMENT</SA>
+   <SA>DEEP SEA</SA>
+   <SA>DEPOSITIONAL ENVIRONMENT</SA>
+   <SA>EVAPORITIC ENVIRONMENT</SA>
+   <SA>LAKE</SA>
+   <SA>MARINE ENVIRONMENT</SA>
+   <SA>NONMARINE ENVIRONMENT</SA>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/16587">
+   <skos:prefLabel>DELTA</skos:prefLabel>
+   <SA>BRACKISH ENVIRONMENT</SA>
+   <SA>MARINE ENVIRONMENT</SA>
+   <SA>NONMARINE ENVIRONMENT</SA>
+   <SA>PALEOGEOGRAPHY</SA>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/16730">
+   <skos:prefLabel>DEPOSITIONAL ENVIRONMENT</skos:prefLabel>
+   <SA>AEROBIC ENVIRONMENT</SA>
+   <SA>APHOTIC ZONE</SA>
+   <SA>BAY</SA>
+   <SA>BRACKISH ENVIRONMENT</SA>
+   <SA>CHANNEL</SA>
+   <SA>DEEP WATER</SA>
+   <SA>DESERT</SA>
+   <SA>ECOLOGY</SA>
+   <SA>EUXINIC ENVIRONMENT</SA>
+   <SA>FLOOD PLAIN</SA>
+   <SA>FRESH WATER ENVIRONMENT</SA>
+   <SA>LAGOON</SA>
+   <SA>LAKE</SA>
+   <SA>LIFE ZONE</SA>
+   <SA>PALEOECOLOGY</SA>
+   <SA>PALEOENVIRONMENT</SA>
+   <SA>PELAGIC ENVIRONMENT</SA>
+   <SA>PLAYA</SA>
+   <SA>SALINA</SA>
+   <SA>SEDIMENTATION</SA>
+   <SA>STREAM</SA>
+   <SA>SUPRATIDAL ENVIRONMENT</SA>
+   <SA>SWAMP</SA>
+   <SA>TERRESTRIAL ENVIRONMENT</SA>
+   <SA>TIDAL FLAT</SA>
+   <NT>AGITATED WATER ENVIRONMENT</NT>
+   <NT>BASIN ENVIRONMENT</NT>
+   <NT>BEACH ENVIRONMENT</NT>
+   <NT>EVAPORITIC ENVIRONMENT</NT>
+   <NT>MARINE ENVIRONMENT</NT>
+   <NT>NEAR SHORE ENVIRONMENT</NT>
+   <NT>NONMARINE ENVIRONMENT</NT>
+   <NT>QUIET WATER ENVIRONMENT</NT>
+   <NT>SHALLOW WATER ENVIRONMENT</NT>
+   <BT>ENVIRONMENT</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/16743">
+   <skos:prefLabel>DEPTH</skos:prefLabel>
+   <SA>GAS WINDOW</SA>
+   <SA>OIL WINDOW</SA>
+   <NT>BURIAL HISTORY</NT>
+   <BT>LOCATION</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/16800">
+   <skos:prefLabel>DESERT</skos:prefLabel>
+   <SA>DEPOSITIONAL ENVIRONMENT</SA>
+   <SA>NONMARINE ENVIRONMENT</SA>
+   <SA>PALEOGEOGRAPHY</SA>
+   <SA>PLAYA</SA>
+   <SA>SALINA</SA>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/17018">
+   <skos:prefLabel>DIAGENESIS</skos:prefLabel>
+   <SA>BURIAL HISTORY</SA>
+   <SA>CATAGENESIS</SA>
+   <SA>PALEOPRESSURE</SA>
+   <SA>SEDIMENTATION</SA>
+   <NT>CARBONATE DIAGENESIS</NT>
+   <NT>COALIFICATION</NT>
+   <NT>CRUDE DIAGENESIS</NT>
+   <NT>LITHIFICATION</NT>
+   <NT>MATURATION</NT>
+   <NT>ORGANIC DIAGENESIS</NT>
+   <BT>POST DEPOSITIONAL PROCESS</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/17216">
+   <skos:prefLabel>DIFFUSIVITY EQUATION</skos:prefLabel>
+   <SA>RESERVOIR FLUID FLOW</SA>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/17290">
+   <skos:prefLabel>DIMERIZATION</skos:prefLabel>
+   <SA>MOLECULAR STRUCTURE</SA>
+   <SA>MONOMER</SA>
+   <BT>PHENOMENON</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/17390">
+   <skos:prefLabel>DIRECT HYDROCARBON INDICTR</skos:prefLabel>
+   <SA>AMPLITUDE ANOMALY</SA>
+   <SA>GAS CHIMNEY EFFECT</SA>
+   <SA>GEOCHEMICAL EXPLORATION</SA>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/17460">
+   <skos:prefLabel>DISPLACEMENT</skos:prefLabel>
+   <SA>FLUID FLOW</SA>
+   <SA>RESERVOIR FLUID FLOW</SA>
+   <SA>THRESHOLD PRESSURE</SA>
+   <SA>WATERFLOOD THEORY</SA>
+   <BT>PHYSICAL OPERATION</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/17732">
+   <skos:prefLabel>DOLOMITIZATION</skos:prefLabel>
+   <SA>DEDOLOMITIZATION</SA>
+   <SA>SUPRATIDAL ENVIRONMENT</SA>
+   <BT>CARBONATE DIAGENESIS</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/17893">
+   <skos:prefLabel>DOUBLE REFRACTION</skos:prefLabel>
+   <SA>MINERALOGY</SA>
+   <SA>REFRACTION (OPTICS)</SA>
+   <BT>WAVE PHENOMENON</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/18042">
+   <skos:prefLabel>DRAINAGE PATTERN</skos:prefLabel>
+   <SA>AVULSION</SA>
+   <SA>RESERVOIR FLUID FLOW</SA>
+   <NT>RADIAL DRAINAGE</NT>
+   <NT>SPHERICAL DRAINAGE</NT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/18791">
+   <skos:prefLabel>EARTH AGE</skos:prefLabel>
+   <SA>GEOLOGIC AGE DETERMINATION</SA>
+   <SA>RADIOACTIVE AGE DETERMINAT</SA>
+   <NT>PHANEROZOIC</NT>
+   <BT>EARTH AND SPACE CONCEPTS</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/18792">
+   <skos:prefLabel>EARTH AND SPACE CONCEPTS</skos:prefLabel>
+   <NT>EARTH AGE</NT>
+   <NT>ENVIRONMENT</NT>
+   <NT>FORMATION (GEOLOGY)</NT>
+   <NT>HYDROCARBON POTENTIAL</NT>
+   <NT>HYDROCARBON SEEP</NT>
+   <NT>INCLUSION (GEOLOGY)</NT>
+   <NT>MARKER BED</NT>
+   <NT>MEASURED SECTION</NT>
+   <NT>PETROLEUM SYSTEM</NT>
+   <NT>STRATA</NT>
+   <NT>STRATIGRAPHIC BOUNDARY</NT>
+   <NT>TIME STRATIGRAPHIC UNIT</NT>
+   <NT>TRANSECT</NT>
+   <NT>TYPE SECTION</NT>
+   <NT>UNIFORMITARIANISM</NT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/19093">
+   <skos:prefLabel>ECOLOGY</skos:prefLabel>
+   <SA>APHOTIC ZONE</SA>
+   <SA>BIOLOGICAL INDICATOR</SA>
+   <SA>BRACKISH ENVIRONMENT</SA>
+   <SA>CLIMATE</SA>
+   <SA>DEPOSITIONAL ENVIRONMENT</SA>
+   <SA>ENVIRONMENT</SA>
+   <SA>EUPHOTIC ZONE</SA>
+   <SA>EVAPORITIC ENVIRONMENT</SA>
+   <SA>LIFE ZONE</SA>
+   <SA>MARINE ENVIRONMENT</SA>
+   <SA>NONMARINE ENVIRONMENT</SA>
+   <SA>PALEOECOLOGY</SA>
+   <SA>TERRESTRIAL ENVIRONMENT</SA>
+   <SA>UPWELLING</SA>
+   <NT>MARINE ECOLOGY</NT>
+   <BT>TECHNOLOGY</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/19104">
+   <skos:prefLabel>ECONOMIC MINERAL</skos:prefLabel>
+   <SA>MINERAL</SA>
+   <SA>MINERALOGY</SA>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/19689">
+   <skos:prefLabel>ELECTROKINETICS</skos:prefLabel>
+   <BT>KINETICS</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/19780">
+   <skos:prefLabel>ELEMENT (CHEMICAL)</skos:prefLabel>
+   <SA>ELEMENT RATIO</SA>
+   <SA>ELEMENTAL ANALYSIS</SA>
+   <SA>ISOTOPE</SA>
+   <SA>MOLECULAR STRUCTURE</SA>
+   <SA>SUBATOMIC PARTICLE</SA>
+   <NT>TRACE ELEMENT</NT>
+   <BT>CHEMICAL</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/19781">
+   <skos:prefLabel>ELEMENT RATIO</skos:prefLabel>
+   <SA>ELEMENT (CHEMICAL)</SA>
+   <SA>ELEMENTAL ANALYSIS</SA>
+   <SA>GEOLOGIC AGE DETERMINATION</SA>
+   <SA>ISOTOPE RATIO</SA>
+   <SA>RHENIUM OSMIUM DATING</SA>
+   <BT>COMPOSITION</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/19783">
+   <skos:prefLabel>ELEMENTAL ANALYSIS</skos:prefLabel>
+   <SA>CHEMICAL FORMULA</SA>
+   <SA>COMPOSITION</SA>
+   <SA>ELEMENT (CHEMICAL)</SA>
+   <SA>ELEMENT RATIO</SA>
+   <SA>GEOCHEMICAL LOGGING</SA>
+   <BT>ANALYTICAL METHOD</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/20003">
+   <skos:prefLabel>EMBAYMENT</skos:prefLabel>
+   <SA>BRACKISH ENVIRONMENT</SA>
+   <SA>EVAPORITIC ENVIRONMENT</SA>
+   <SA>NONMARINE ENVIRONMENT</SA>
+   <BT>BAY</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/20385">
+   <skos:prefLabel>ENVIRONMENT</skos:prefLabel>
+   <SA>CLIMATE</SA>
+   <SA>ECOLOGY</SA>
+   <SA>GLOBAL WARMING</SA>
+   <SA>PALEOECOLOGY</SA>
+   <NT>AEROBIC ENVIRONMENT</NT>
+   <NT>BRACKISH ENVIRONMENT</NT>
+   <NT>DEPOSITIONAL ENVIRONMENT</NT>
+   <NT>DYSOXIC ENVIRONMENT</NT>
+   <NT>EUXINIC ENVIRONMENT</NT>
+   <NT>FRESH WATER ENVIRONMENT</NT>
+   <NT>LIFE ZONE</NT>
+   <NT>OCEAN ENVIRONMENT</NT>
+   <NT>PALEOENVIRONMENT</NT>
+   <NT>PELAGIC ENVIRONMENT</NT>
+   <NT>SUPRATIDAL ENVIRONMENT</NT>
+   <NT>TERRESTRIAL ENVIRONMENT</NT>
+   <BT>EARTH AND SPACE CONCEPTS</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/20396">
+   <skos:prefLabel>ENVIRONMENTAL GEOLOGY</skos:prefLabel>
+   <SA>HYDROLOGY</SA>
+   <SA>ROCK ANALYSIS</SA>
+   <SA>SOIL ANALYSIS</SA>
+   <SA>TRACE ELEMENT</SA>
+   <SA>WATER ANALYSIS</SA>
+   <BT>GEOLOGY</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/20527">
+   <skos:prefLabel>ERGUN EQUATION</skos:prefLabel>
+   <SA>RESERVOIR FLUID FLOW</SA>
+   <BT>FLUID FLOW EQUATION</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/20737">
+   <skos:prefLabel>ESTUARY</skos:prefLabel>
+   <SA>BRACKISH ENVIRONMENT</SA>
+   <SA>MARINE ENVIRONMENT</SA>
+   <SA>PALEOGEOGRAPHY</SA>
+   <SA>TRANSITIONAL ENVIRONMENT</SA>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/20926">
+   <skos:prefLabel>EUPHOTIC ZONE</skos:prefLabel>
+   <SA>AEROBIC ENVIRONMENT</SA>
+   <SA>APHOTIC ZONE</SA>
+   <SA>BRACKISH ENVIRONMENT</SA>
+   <SA>ECOLOGY</SA>
+   <SA>FRESH WATER ENVIRONMENT</SA>
+   <SA>LITTORAL ENVIRONMENT</SA>
+   <SA>MARINE ENVIRONMENT</SA>
+   <SA>NERITIC ENVIRONMENT</SA>
+   <SA>NONMARINE ENVIRONMENT</SA>
+   <SA>PALEOECOLOGY</SA>
+   <SA>PALEOENVIRONMENT</SA>
+   <SA>PELAGIC ENVIRONMENT</SA>
+   <BT>LIFE ZONE</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/20978">
+   <skos:prefLabel>EUXINIC ENVIRONMENT</skos:prefLabel>
+   <SA>AEROBIC ENVIRONMENT</SA>
+   <SA>APHOTIC ZONE</SA>
+   <SA>DEPOSITIONAL ENVIRONMENT</SA>
+   <SA>DYSOXIC ENVIRONMENT</SA>
+   <SA>MARINE ENVIRONMENT</SA>
+   <SA>NONMARINE ENVIRONMENT</SA>
+   <SA>OCEANIC ANOXIC EVENT</SA>
+   <BT>ENVIRONMENT</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/20992">
+   <skos:prefLabel>EVAPORATION PAN</skos:prefLabel>
+   <SA>EVAPORITIC ENVIRONMENT</SA>
+   <SA>HYDROLOGY</SA>
+   <SA>NONMARINE ENVIRONMENT</SA>
+   <SA>PLAYA</SA>
+   <SA>SALINA</SA>
+   <SA>SUPRATIDAL ENVIRONMENT</SA>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/20999">
+   <skos:prefLabel>EVAPORITIC ENVIRONMENT</skos:prefLabel>
+   <SA>BAY</SA>
+   <SA>DEEP WATER</SA>
+   <SA>ECOLOGY</SA>
+   <SA>EMBAYMENT</SA>
+   <SA>EVAPORATION PAN</SA>
+   <SA>LAGOON</SA>
+   <SA>LAKE</SA>
+   <SA>MARINE ENVIRONMENT</SA>
+   <SA>MESSINIAN SALINITY CRISIS</SA>
+   <SA>NONMARINE ENVIRONMENT</SA>
+   <SA>PALEOECOLOGY</SA>
+   <SA>PALEOENVIRONMENT</SA>
+   <SA>PLAYA</SA>
+   <SA>QUIET WATER ENVIRONMENT</SA>
+   <SA>SALINA</SA>
+   <SA>SHALLOW WATER ENVIRONMENT</SA>
+   <BT>DEPOSITIONAL ENVIRONMENT</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/21002">
+   <skos:prefLabel>EVENT STRATIGRAPHY</skos:prefLabel>
+   <BT>STRATIGRAPHY</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/21105">
+   <skos:prefLabel>EXPERIMENT</skos:prefLabel>
+   <SA>LABORATORY SCALE</SA>
+   <NT>STRUCTURAL EXPERIMENT</NT>
+   <BT>TESTING</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/21115">
+   <skos:prefLabel>EXPLORATION</skos:prefLabel>
+   <SA>HYDROCARBON POTENTIAL</SA>
+   <SA>TRANSECT</SA>
+   <NT>GEOBOTANICAL EXPLORATION</NT>
+   <NT>GEOCHEMICAL EXPLORATION</NT>
+   <NT>MICROBIOLOGICAL EXPLORATN</NT>
+   <NT>RADIOACTIVITY EXPLORATION</NT>
+   <BT>PHYSICAL OPERATION</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/21166">
+   <skos:prefLabel>EXSOLUTION</skos:prefLabel>
+   <SA>MINERALOGY</SA>
+   <BT>PHENOMENON</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/21803">
+   <skos:prefLabel>FINGERING</skos:prefLabel>
+   <SA>FLOOD FRONT</SA>
+   <BT>RESERVOIR FLUID FLOW</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/22126">
+   <skos:prefLabel>FLOOD FRONT</skos:prefLabel>
+   <SA>FINGERING</SA>
+   <SA>FRACTIONAL FLOW EQUATION</SA>
+   <SA>FRONTAL ADVANCE EQUATION</SA>
+   <SA>RESERVOIR FLUID FLOW</SA>
+   <SA>RESERVOIR MONITORING</SA>
+   <SA>STILES METHOD</SA>
+   <SA>WATERFLOOD THEORY</SA>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/22128">
+   <skos:prefLabel>FLOOD PLAIN</skos:prefLabel>
+   <SA>DEPOSITIONAL ENVIRONMENT</SA>
+   <SA>NONMARINE ENVIRONMENT</SA>
+   <SA>PALEOGEOGRAPHY</SA>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/22217">
+   <skos:prefLabel>FLOW PATTERN</skos:prefLabel>
+   <SA>FLUID FLOW EQUATION</SA>
+   <SA>RESERVOIR FLUID FLOW</SA>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/22225">
+   <skos:prefLabel>FLOW UNIT</skos:prefLabel>
+   <SA>RESERVOIR FLUID FLOW</SA>
+   <SA>RESERVOIR ZONATION</SA>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/22277">
+   <skos:prefLabel>FLUID FLOW</skos:prefLabel>
+   <SA>DISPLACEMENT</SA>
+   <SA>FLUID FLOW EQUATION</SA>
+   <SA>HYDRODYNAMICS (GEOLOGY)</SA>
+   <SA>LAPLACE EQUATION</SA>
+   <SA>MOBILITY</SA>
+   <NT>CROSS FLOW</NT>
+   <NT>LAMINAR FLOW</NT>
+   <NT>NONDARCY FLOW</NT>
+   <NT>PERCOLATION</NT>
+   <NT>RESERVOIR FLUID FLOW</NT>
+   <NT>STEADY STATE FLOW</NT>
+   <NT>UNSTEADY STATE FLOW</NT>
+   <BT>PHENOMENON</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/22279">
+   <skos:prefLabel>FLUID FLOW EQUATION</skos:prefLabel>
+   <SA>FLOW PATTERN</SA>
+   <SA>FLUID FLOW</SA>
+   <SA>RESERVOIR FLUID FLOW</SA>
+   <NT>DARCYS LAW</NT>
+   <NT>ERGUN EQUATION</NT>
+   <NT>FRACTIONAL FLOW EQUATION</NT>
+   <NT>FRONTAL ADVANCE EQUATION</NT>
+   <NT>LAPLACE EQUATION</NT>
+   <NT>NAVIER STOKES EQUATION</NT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/22284">
+   <skos:prefLabel>FLUID INCLUSION</skos:prefLabel>
+   <SA>CLUMPED ISOTOPE THERMOMETR</SA>
+   <SA>PALEOPRESSURE</SA>
+   <SA>PALEOTEMPERATURE</SA>
+   <BT>INCLUSION (GEOLOGY)</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/22562">
+   <skos:prefLabel>FORMATION (GEOLOGY)</skos:prefLabel>
+   <SA>FORMATION THICKNESS</SA>
+   <SA>STRATA</SA>
+   <SA>STRATIGRAPHIC TERM</SA>
+   <SA>STRATIGRAPHY</SA>
+   <SA>TIME STRATIGRAPHIC UNIT</SA>
+   <BT>EARTH AND SPACE CONCEPTS</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/22591">
+   <skos:prefLabel>FORMATION THICKNESS</skos:prefLabel>
+   <SA>FORMATION (GEOLOGY)</SA>
+   <SA>OIL COLUMN</SA>
+   <SA>STRATIGRAPHY</SA>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/22878">
+   <skos:prefLabel>FRACTIONAL FLOW EQUATION</skos:prefLabel>
+   <SA>FLOOD FRONT</SA>
+   <SA>FRONTAL ADVANCE EQUATION</SA>
+   <SA>RESERVOIR ENGINEERING</SA>
+   <SA>RESERVOIR FLUID FLOW</SA>
+   <SA>WATERFLOOD THEORY</SA>
+   <BT>FLUID FLOW EQUATION</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/22880">
+   <skos:prefLabel>FRACTIONATION</skos:prefLabel>
+   <NT>EVAPORATIVE FRACTIONATION</NT>
+   <NT>ISOTOPE FRACTIONATION</NT>
+   <BT>PHYSICAL SEPARATION</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/23048">
+   <skos:prefLabel>FREE RADICAL</skos:prefLabel>
+   <SA>MOLECULAR STRUCTURE</SA>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/23121">
+   <skos:prefLabel>FRESH WATER ENVIRONMENT</skos:prefLabel>
+   <SA>BRACKISH ENVIRONMENT</SA>
+   <SA>DEPOSITIONAL ENVIRONMENT</SA>
+   <SA>EUPHOTIC ZONE</SA>
+   <SA>LAKE</SA>
+   <SA>NONMARINE ENVIRONMENT</SA>
+   <SA>STREAM</SA>
+   <BT>ENVIRONMENT</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/23201">
+   <skos:prefLabel>FRONTAL ADVANCE EQUATION</skos:prefLabel>
+   <SA>FLOOD FRONT</SA>
+   <SA>FRACTIONAL FLOW EQUATION</SA>
+   <SA>RESERVOIR ENGINEERING</SA>
+   <SA>RESERVOIR FLUID FLOW</SA>
+   <SA>WATERFLOOD THEORY</SA>
+   <BT>FLUID FLOW EQUATION</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/23294">
+   <skos:prefLabel>FULL TENSOR GRADIENT METHD</skos:prefLabel>
+   <SA>HYDROCARBON POTENTIAL</SA>
+   <SA>RESERVOIR MONITORING</SA>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/23765">
+   <skos:prefLabel>GAS ANALYSIS</skos:prefLabel>
+   <SA>GEOCHEMICAL EXPLORATION</SA>
+   <SA>HYDROCARBON ANALYSIS</SA>
+   <NT>SOIL GAS ANALYSIS</NT>
+   <BT>ANALYTICAL METHOD</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/23776">
+   <skos:prefLabel>GAS CHIMNEY EFFECT</skos:prefLabel>
+   <SA>DIRECT HYDROCARBON INDICTR</SA>
+   <SA>OIL AND GAS MIGRATION</SA>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/23914">
+   <skos:prefLabel>GAS SHOW</skos:prefLabel>
+   <SA>HYDROCARBON POTENTIAL</SA>
+   <SA>HYDROCARBON SEEP</SA>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/23946">
+   <skos:prefLabel>GAS WINDOW</skos:prefLabel>
+   <SA>BURIAL HISTORY</SA>
+   <SA>DEPTH</SA>
+   <SA>HYDROCARBON POTENTIAL</SA>
+   <SA>MATURATION</SA>
+   <SA>ORGANIC DIAGENESIS</SA>
+   <SA>ORGANIC GEOCHEMISTRY</SA>
+   <SA>SOURCE ROCK</SA>
+   <BT>LOCATION</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/24270">
+   <skos:prefLabel>GEOBOTANICAL EXPLORATION</skos:prefLabel>
+   <SA>GEOCHEMICAL EXPLORATION</SA>
+   <BT>EXPLORATION</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/24276">
+   <skos:prefLabel>GEOCHEMICAL ANOMALY</skos:prefLabel>
+   <SA>GEOCHEMICAL DATA</SA>
+   <SA>GEOCHEMISTRY</SA>
+   <SA>GEOPHYSICAL ANOMALY</SA>
+   <SA>ROCK ANALYSIS</SA>
+   <SA>SEDIMENT ANALYSIS</SA>
+   <SA>SOURCE ROCK</SA>
+   <BT>ANOMALY</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/24279">
+   <skos:prefLabel>GEOCHEMICAL DATA</skos:prefLabel>
+   <SA>GEOCHEMICAL ANOMALY</SA>
+   <SA>GEOCHEMICAL INTERPRETATION</SA>
+   <SA>GEOCHEMISTRY</SA>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/24280">
+   <skos:prefLabel>GEOCHEMICAL EQUIPMENT</skos:prefLabel>
+   <SA>GEOCHEMICAL EXPLORATION</SA>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/24281">
+   <skos:prefLabel>GEOCHEMICAL EXPLORATION</skos:prefLabel>
+   <SA>DIRECT HYDROCARBON INDICTR</SA>
+   <SA>GAS ANALYSIS</SA>
+   <SA>GEOBOTANICAL EXPLORATION</SA>
+   <SA>GEOCHEMICAL EQUIPMENT</SA>
+   <SA>GEOCHEMICAL INTERPRETATION</SA>
+   <SA>GEOCHEMICAL LOGGING</SA>
+   <SA>GEOCHEMISTRY</SA>
+   <SA>MICROBIOLOGICAL EXPLORATN</SA>
+   <SA>MULTIDISCIPLINARY STUDY</SA>
+   <SA>RADIOACTIVITY EXPLORATION</SA>
+   <SA>SOIL ANALYSIS</SA>
+   <SA>SOIL GAS ANALYSIS</SA>
+   <BT>EXPLORATION</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/24282">
+   <skos:prefLabel>GEOCHEMICAL INTERPRETATION</skos:prefLabel>
+   <SA>GEOCHEMICAL DATA</SA>
+   <SA>GEOCHEMICAL EXPLORATION</SA>
+   <SA>GEOCHEMISTRY</SA>
+   <SA>VITRINITE REFLECTANCE</SA>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/24284">
+   <skos:prefLabel>GEOCHEMICAL LOGGING</skos:prefLabel>
+   <SA>ELEMENTAL ANALYSIS</SA>
+   <SA>GEOCHEMICAL EXPLORATION</SA>
+   <SA>GEOCHEMISTRY</SA>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/24291">
+   <skos:prefLabel>GEOCHEMISTRY</skos:prefLabel>
+   <SA>GEOCHEMICAL ANOMALY</SA>
+   <SA>GEOCHEMICAL DATA</SA>
+   <SA>GEOCHEMICAL EXPLORATION</SA>
+   <SA>GEOCHEMICAL INTERPRETATION</SA>
+   <SA>GEOCHEMICAL LOGGING</SA>
+   <SA>GEOLOGY</SA>
+   <SA>PETROCHEMISTRY</SA>
+   <SA>PETROGRAPHY</SA>
+   <SA>ROCK ANALYSIS</SA>
+   <SA>ROCK COMPOSITION</SA>
+   <SA>SEDIMENT COMPOSITION</SA>
+   <SA>TRANSECT</SA>
+   <NT>ISOTOPE GEOCHEMISTRY</NT>
+   <NT>ORGANIC GEOCHEMISTRY</NT>
+   <BT>CHEMISTRY</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/24336">
+   <skos:prefLabel>GEOLOGIC AGE DETERMINATION</skos:prefLabel>
+   <SA>CARBON ISOTOPE RATIO</SA>
+   <SA>EARTH AGE</SA>
+   <SA>ELEMENT RATIO</SA>
+   <SA>ISOTOPE RATIO</SA>
+   <SA>ISOTOPIC COMPOSITION</SA>
+   <SA>OXYGEN ISOTOPE RATIO</SA>
+   <SA>STRATIGRAPHIC BOUNDARY</SA>
+   <SA>STRATIGRAPHY</SA>
+   <NT>RADIOACTIVE AGE DETERMINAT</NT>
+   <BT>ANALYTICAL METHOD</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/24376">
+   <skos:prefLabel>GEOLOGIC HISTORY</skos:prefLabel>
+   <SA>OCEAN</SA>
+   <SA>PALEOCLIMATE</SA>
+   <SA>PALEOENVIRONMENT</SA>
+   <SA>PALEOGEOGRAPHY</SA>
+   <SA>SEA</SA>
+   <SA>UNIFORMITARIANISM</SA>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/24438">
+   <skos:prefLabel>GEOLOGY</skos:prefLabel>
+   <SA>GEOCHEMISTRY</SA>
+   <NT>ENVIRONMENTAL GEOLOGY</NT>
+   <NT>HYDRODYNAMICS (GEOLOGY)</NT>
+   <NT>HYDROLOGY</NT>
+   <NT>LITHOLOGY</NT>
+   <NT>MINERALOGY</NT>
+   <NT>PALEOECOLOGY</NT>
+   <NT>PALEOGEOGRAPHY</NT>
+   <NT>PETROGRAPHY</NT>
+   <NT>PETROLOGY</NT>
+   <NT>STRATIGRAPHY</NT>
+   <BT>TECHNOLOGY</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/24484">
+   <skos:prefLabel>GEOPHYSICAL ANOMALY</skos:prefLabel>
+   <SA>AMPLITUDE ANOMALY</SA>
+   <SA>GEOCHEMICAL ANOMALY</SA>
+   <BT>ANOMALY</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/24603">
+   <skos:prefLabel>GEOTHERMAL FEATURE</skos:prefLabel>
+   <SA>THERMAL ALTERATION</SA>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/24612">
+   <skos:prefLabel>GEOTHERMAL PROPERTY</skos:prefLabel>
+   <SA>THERMAL ALTERATION</SA>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/24931">
+   <skos:prefLabel>GLACIER</skos:prefLabel>
+   <SA>GLOBAL COOLING</SA>
+   <SA>NONMARINE ENVIRONMENT</SA>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/25088">
+   <skos:prefLabel>GLOBAL WARMING</skos:prefLabel>
+   <SA>CLIMATE CYCLE</SA>
+   <SA>ENVIRONMENT</SA>
+   <SA>PALEOCLIMATE</SA>
+   <SA>PALEOTEMPERATURE</SA>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/25375">
+   <skos:prefLabel>GOR EQUATION</skos:prefLabel>
+   <SA>RESERVOIR ENGINEERING</SA>
+   <SA>RESERVOIR FLUID FLOW</SA>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/25781">
+   <skos:prefLabel>GRAVITY DRAINAGE</skos:prefLabel>
+   <SA>RESERVOIR FLUID FLOW</SA>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/27124">
+   <skos:prefLabel>HARDNESS (WATER)</skos:prefLabel>
+   <SA>WATER ANALYSIS</SA>
+   <BT>SALT CONTENT</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/27576">
+   <skos:prefLabel>HEAVY LIQUID</skos:prefLabel>
+   <SA>MINERALOGY</SA>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/27664">
+   <skos:prefLabel>HELE SHAW MODEL</skos:prefLabel>
+   <SA>HYDROLOGY</SA>
+   <SA>RESERVOIR FLUID FLOW</SA>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/28071">
+   <skos:prefLabel>HIGH MOLECULAR WEIGHT</skos:prefLabel>
+   <SA>MOLECULAR STRUCTURE</SA>
+   <BT>MOLECULAR WEIGHT</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/29097">
+   <skos:prefLabel>HUMITE</skos:prefLabel>
+   <SA>SAPROPEL</SA>
+   <BT>ORGANIC MATTER</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/29106">
+   <skos:prefLabel>HUMUS</skos:prefLabel>
+   <BT>ORGANIC MATTER</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/29193">
+   <skos:prefLabel>HURST VAN EVERDINGEN EQUAT</skos:prefLabel>
+   <SA>RESERVOIR ENGINEERING</SA>
+   <SA>RESERVOIR FLUID FLOW</SA>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/29356">
+   <skos:prefLabel>HYDROCARBON ANALYSIS</skos:prefLabel>
+   <SA>CRUDE ASSAY</SA>
+   <SA>DEAD OIL</SA>
+   <SA>DOWNHOLE FLUID ANALYSIS</SA>
+   <SA>GAS ANALYSIS</SA>
+   <SA>HYDROCARBON RATIO</SA>
+   <SA>LIVE OIL</SA>
+   <SA>PARAFFIN NAPHTHENE RATIO</SA>
+   <SA>STREAM ANALYZER</SA>
+   <BT>ANALYTICAL METHOD</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/29369">
+   <skos:prefLabel>HYDROCARBON POTENTIAL</skos:prefLabel>
+   <SA>AMPLITUDE ANOMALY</SA>
+   <SA>EXPLORATION</SA>
+   <SA>FULL TENSOR GRADIENT METHD</SA>
+   <SA>GAS SHOW</SA>
+   <SA>GAS WINDOW</SA>
+   <SA>HYDROCARBON SEEP</SA>
+   <SA>OIL AND GAS ENTRAPMENT</SA>
+   <SA>OIL AND GAS MIGRATION</SA>
+   <SA>OIL SHOW</SA>
+   <SA>OIL WINDOW</SA>
+   <SA>PETROLEUM</SA>
+   <SA>PETROLIFEROUS BASIN</SA>
+   <SA>PROSPECT EVALUATION</SA>
+   <SA>RESOURCE ASSESSMENT</SA>
+   <SA>SWEET SPOT</SA>
+   <BT>EARTH AND SPACE CONCEPTS</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/29370">
+   <skos:prefLabel>HYDROCARBON RATIO</skos:prefLabel>
+   <SA>BIOLOGICAL MARKER</SA>
+   <SA>CRUDE ASSAY</SA>
+   <SA>CRUDE OIL</SA>
+   <SA>CRUDE OIL CHARACTERIZATION</SA>
+   <SA>DEAD OIL</SA>
+   <SA>HYDROCARBON ANALYSIS</SA>
+   <SA>LIVE OIL</SA>
+   <SA>PETROLEUM</SA>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/29375">
+   <skos:prefLabel>HYDROCARBON SEEP</skos:prefLabel>
+   <SA>GAS SHOW</SA>
+   <SA>HYDROCARBON POTENTIAL</SA>
+   <SA>OIL SHOW</SA>
+   <SA>PETROLIFEROUS BASIN</SA>
+   <BT>EARTH AND SPACE CONCEPTS</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/29380">
+   <skos:prefLabel>HYDROCHEMISTRY</skos:prefLabel>
+   <SA>HYDROLOGY</SA>
+   <SA>MESSINIAN SALINITY CRISIS</SA>
+   <SA>OXYGEN DEMAND</SA>
+   <SA>WATER ANALYSIS</SA>
+   <BT>CHEMISTRY</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/29399">
+   <skos:prefLabel>HYDRODYNAMICS (GEOLOGY)</skos:prefLabel>
+   <SA>AQUIFER RECHARGE</SA>
+   <SA>FLUID FLOW</SA>
+   <SA>HYDROLOGY</SA>
+   <SA>RESERVOIR FLUID FLOW</SA>
+   <SA>STRATIGRAPHIC BARRIER</SA>
+   <BT>GEOLOGY</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/29441">
+   <skos:prefLabel>HYDROLOGY</skos:prefLabel>
+   <SA>ENVIRONMENTAL GEOLOGY</SA>
+   <SA>EVAPORATION PAN</SA>
+   <SA>HELE SHAW MODEL</SA>
+   <SA>HYDROCHEMISTRY</SA>
+   <SA>HYDRODYNAMICS (GEOLOGY)</SA>
+   <SA>OCEAN</SA>
+   <SA>OCEANOGRAPHY</SA>
+   <SA>RESERVOIR ENGINEERING</SA>
+   <SA>SEA</SA>
+   <SA>STREAM</SA>
+   <NT>AQUIFER RECHARGE</NT>
+   <BT>GEOLOGY</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/29465">
+   <skos:prefLabel>HYDROSTRATIGRAPHIC UNIT</skos:prefLabel>
+   <SA>STRATIGRAPHIC TERM</SA>
+   <SA>STRATIGRAPHY</SA>
+   <BT>STRATA</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/29475">
+   <skos:prefLabel>HYDROTHERMAL ALTERATION</skos:prefLabel>
+   <SA>POST DEPOSITIONAL PROCESS</SA>
+   <SA>THERMAL ALTERATION</SA>
+   <NT>SERPENTINIZATION</NT>
+   <BT>ALTERATION</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/29799">
+   <skos:prefLabel>IMBIBITION</skos:prefLabel>
+   <SA>RESERVOIR FLUID FLOW</SA>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/29924">
+   <skos:prefLabel>INCLUSION (GEOLOGY)</skos:prefLabel>
+   <SA>MINERALOGY</SA>
+   <NT>FLUID INCLUSION</NT>
+   <BT>EARTH AND SPACE CONCEPTS</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/30985">
+   <skos:prefLabel>ISOMER</skos:prefLabel>
+   <BT>MOLECULAR STRUCTURE</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/31031">
+   <skos:prefLabel>ISOTOPE</skos:prefLabel>
+   <SA>CALCIUM ISOTOPE RATIO</SA>
+   <SA>CARBON ISOTOPE RATIO</SA>
+   <SA>ELEMENT (CHEMICAL)</SA>
+   <SA>IRON ISOTOPE RATIO</SA>
+   <SA>ISOTOPE DISTRIBUTION</SA>
+   <SA>ISOTOPE RATIO</SA>
+   <SA>ISOTOPIC COMPOSITION</SA>
+   <SA>ISOTOPIC METHOD</SA>
+   <SA>ISOTOPOLOGUE</SA>
+   <SA>MAGNESIUM ISOTOPE RATIO</SA>
+   <SA>MOLECULAR WEIGHT</SA>
+   <SA>OXYGEN ISOTOPE RATIO</SA>
+   <SA>RADIOACTIVE AGE DETERMINAT</SA>
+   <SA>SILICON ISOTOPE RATIO</SA>
+   <NT>RADIOACTIVE ISOTOPE</NT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/31035">
+   <skos:prefLabel>ISOTOPE DISTRIBUTION</skos:prefLabel>
+   <SA>CALCIUM ISOTOPE RATIO</SA>
+   <SA>CARBON ISOTOPE RATIO</SA>
+   <SA>IRON ISOTOPE RATIO</SA>
+   <SA>ISOTOPE</SA>
+   <SA>ISOTOPE FRACTIONATION</SA>
+   <SA>ISOTOPE RATIO</SA>
+   <SA>ISOTOPIC COMPOSITION</SA>
+   <SA>ISOTOPIC METHOD</SA>
+   <SA>MAGNESIUM ISOTOPE RATIO</SA>
+   <SA>OXYGEN ISOTOPE RATIO</SA>
+   <SA>SILICON ISOTOPE RATIO</SA>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/31036">
+   <skos:prefLabel>ISOTOPE FRACTIONATION</skos:prefLabel>
+   <SA>CLUMPED ISOTOPE THERMOMETR</SA>
+   <SA>IRON ISOTOPE RATIO</SA>
+   <SA>ISOTOPE DISTRIBUTION</SA>
+   <SA>ISOTOPE GEOCHEMISTRY</SA>
+   <SA>ISOTOPIC COMPOSITION</SA>
+   <SA>MAGNESIUM ISOTOPE RATIO</SA>
+   <SA>SILICON ISOTOPE RATIO</SA>
+   <BT>FRACTIONATION</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/31037">
+   <skos:prefLabel>ISOTOPE GEOCHEMISTRY</skos:prefLabel>
+   <SA>CALCIUM ISOTOPE RATIO</SA>
+   <SA>CLUMPED ISOTOPE THERMOMETR</SA>
+   <SA>ISOTOPE FRACTIONATION</SA>
+   <SA>ISOTOPIC COMPOSITION</SA>
+   <SA>ISOTOPOLOGUE</SA>
+   <SA>MAGNESIUM ISOTOPE RATIO</SA>
+   <SA>RHENIUM OSMIUM DATING</SA>
+   <SA>SILICON ISOTOPE RATIO</SA>
+   <BT>GEOCHEMISTRY</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/31039">
+   <skos:prefLabel>ISOTOPE RATIO</skos:prefLabel>
+   <SA>ELEMENT RATIO</SA>
+   <SA>GEOLOGIC AGE DETERMINATION</SA>
+   <SA>ISOTOPE</SA>
+   <SA>ISOTOPE DISTRIBUTION</SA>
+   <SA>ISOTOPIC METHOD</SA>
+   <SA>RADIOACTIVE AGE DETERMINAT</SA>
+   <NT>CALCIUM ISOTOPE RATIO</NT>
+   <NT>CARBON ISOTOPE RATIO</NT>
+   <NT>IRON ISOTOPE RATIO</NT>
+   <NT>MAGNESIUM ISOTOPE RATIO</NT>
+   <NT>OXYGEN ISOTOPE RATIO</NT>
+   <NT>SILICON ISOTOPE RATIO</NT>
+   <BT>ISOTOPIC COMPOSITION</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/31042">
+   <skos:prefLabel>ISOTOPIC COMPOSITION</skos:prefLabel>
+   <SA>GEOLOGIC AGE DETERMINATION</SA>
+   <SA>ISOTOPE</SA>
+   <SA>ISOTOPE DISTRIBUTION</SA>
+   <SA>ISOTOPE FRACTIONATION</SA>
+   <SA>ISOTOPE GEOCHEMISTRY</SA>
+   <SA>ISOTOPIC METHOD</SA>
+   <SA>ISOTOPOLOGUE</SA>
+   <SA>RADIOACTIVE AGE DETERMINAT</SA>
+   <NT>ISOTOPE RATIO</NT>
+   <BT>COMPOSITION</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/31043">
+   <skos:prefLabel>ISOTOPIC METHOD</skos:prefLabel>
+   <SA>CALCIUM ISOTOPE RATIO</SA>
+   <SA>CARBON ISOTOPE RATIO</SA>
+   <SA>CLUMPED ISOTOPE THERMOMETR</SA>
+   <SA>IRON ISOTOPE RATIO</SA>
+   <SA>ISOTOPE</SA>
+   <SA>ISOTOPE DISTRIBUTION</SA>
+   <SA>ISOTOPE RATIO</SA>
+   <SA>ISOTOPIC COMPOSITION</SA>
+   <SA>MAGNESIUM ISOTOPE RATIO</SA>
+   <SA>OXYGEN ISOTOPE RATIO</SA>
+   <SA>PALEOTEMPERATURE</SA>
+   <SA>RADIOACTIVE AGE DETERMINAT</SA>
+   <SA>SILICON ISOTOPE RATIO</SA>
+   <BT>ANALYTICAL METHOD</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/31342">
+   <skos:prefLabel>JAMIN EFFECT</skos:prefLabel>
+   <SA>RESERVOIR FLUID FLOW</SA>
+   <SA>THRESHOLD PRESSURE</SA>
+   <BT>PHENOMENON</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/31971">
+   <skos:prefLabel>JURASSIC</skos:prefLabel>
+   <BT>MESOZOIC</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/32894">
+   <skos:prefLabel>KEROGEN</skos:prefLabel>
+   <SA>ALGINITE</SA>
+   <SA>BITUMEN</SA>
+   <SA>HYDROGEN INDEX</SA>
+   <SA>KEROGENIC SHALE</SA>
+   <SA>SHALE OIL</SA>
+   <SA>SHALE OIL RECOVERY</SA>
+   <BT>ORGANIC MATTER</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/32895">
+   <skos:prefLabel>KEROGENIC SHALE</skos:prefLabel>
+   <SA>KEROGEN</SA>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/33205">
+   <skos:prefLabel>KINETIC ENERGY</skos:prefLabel>
+   <SA>KINETICS</SA>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/33207">
+   <skos:prefLabel>KINETICS</skos:prefLabel>
+   <SA>ACTIVATION ENERGY</SA>
+   <SA>ACTIVITY COEFFICIENT</SA>
+   <SA>CHEMICAL POTENTIAL</SA>
+   <SA>CHEMICAL REACTION</SA>
+   <SA>KINETIC ENERGY</SA>
+   <SA>LOPATIN METHOD</SA>
+   <SA>MOLECULAR DYNAMICS</SA>
+   <SA>MOLECULAR MECHANICS</SA>
+   <SA>PROMOTER</SA>
+   <SA>THERMOCHEMICAL PROCESS</SA>
+   <SA>VELOCITY</SA>
+   <NT>ELECTROKINETICS</NT>
+   <BT>TECHNOLOGY</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/33466">
+   <skos:prefLabel>KLINKENBERG EFFECT</skos:prefLabel>
+   <BT>RESERVOIR FLUID FLOW</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/34464">
+   <skos:prefLabel>LABORATORY SCALE</skos:prefLabel>
+   <SA>EXPERIMENT</SA>
+   <BT>OPERATING CONDITION</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/34591">
+   <skos:prefLabel>LAGOON</skos:prefLabel>
+   <SA>BRACKISH ENVIRONMENT</SA>
+   <SA>DEPOSITIONAL ENVIRONMENT</SA>
+   <SA>EVAPORITIC ENVIRONMENT</SA>
+   <SA>MARINE ENVIRONMENT</SA>
+   <SA>PALEOGEOGRAPHY</SA>
+   <SA>QUIET WATER ENVIRONMENT</SA>
+   <SA>REEF COMPLEX ENVIRONMENT</SA>
+   <SA>SHALLOW WATER ENVIRONMENT</SA>
+   <SA>TRANSITIONAL ENVIRONMENT</SA>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/34640">
+   <skos:prefLabel>LAKE</skos:prefLabel>
+   <SA>DEEP WATER</SA>
+   <SA>DEPOSITIONAL ENVIRONMENT</SA>
+   <SA>EVAPORITIC ENVIRONMENT</SA>
+   <SA>FRESH WATER ENVIRONMENT</SA>
+   <SA>NEAR SHORE ENVIRONMENT</SA>
+   <SA>NONMARINE ENVIRONMENT</SA>
+   <SA>PALEOGEOGRAPHY</SA>
+   <SA>QUIET WATER ENVIRONMENT</SA>
+   <SA>SHALLOW WATER ENVIRONMENT</SA>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/34861">
+   <skos:prefLabel>LAMINAR FLOW</skos:prefLabel>
+   <SA>RESERVOIR FLUID FLOW</SA>
+   <BT>FLUID FLOW</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/35010">
+   <skos:prefLabel>LAPLACE EQUATION</skos:prefLabel>
+   <SA>FLUID FLOW</SA>
+   <SA>RESERVOIR FLUID FLOW</SA>
+   <BT>FLUID FLOW EQUATION</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/35383">
+   <skos:prefLabel>LEASE DRAINAGE</skos:prefLabel>
+   <SA>OIL AND GAS MIGRATION</SA>
+   <SA>RESERVOIR FLUID FLOW</SA>
+   <SA>RULE OF CAPTURE</SA>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/35786">
+   <skos:prefLabel>LIFE ZONE</skos:prefLabel>
+   <SA>DEPOSITIONAL ENVIRONMENT</SA>
+   <SA>ECOLOGY</SA>
+   <SA>MARINE ENVIRONMENT</SA>
+   <SA>NEAR SHORE ENVIRONMENT</SA>
+   <SA>NONMARINE ENVIRONMENT</SA>
+   <SA>PALEOECOLOGY</SA>
+   <SA>PELAGIC ENVIRONMENT</SA>
+   <NT>APHOTIC ZONE</NT>
+   <NT>EUPHOTIC ZONE</NT>
+   <BT>ENVIRONMENT</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/35794">
+   <skos:prefLabel>LIGHT CRUDE OIL</skos:prefLabel>
+   <SA>CRUDE ASSAY</SA>
+   <SA>CRUDE OIL CHARACTERIZATION</SA>
+   <BT>CRUDE OIL</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/36028">
+   <skos:prefLabel>LIPID</skos:prefLabel>
+   <SA>ALGINITE</SA>
+   <BT>ORGANIC MATTER</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/36030">
+   <skos:prefLabel>LIPOID</skos:prefLabel>
+   <BT>ORGANIC MATTER</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/36052">
+   <skos:prefLabel>LIQUID CRYSTAL</skos:prefLabel>
+   <SA>CRYSTALLOGRAPHY</SA>
+   <SA>MOLECULAR STRUCTURE</SA>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/36128">
+   <skos:prefLabel>LITHIFICATION</skos:prefLabel>
+   <SA>MATURATION</SA>
+   <SA>SEDIMENTATION</SA>
+   <BT>DIAGENESIS</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/36155">
+   <skos:prefLabel>LITHOBIONTICS</skos:prefLabel>
+   <SA>LITHOLOGY</SA>
+   <SA>OIL AND GAS ORIGIN</SA>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/36168">
+   <skos:prefLabel>LITHOLOGY</skos:prefLabel>
+   <SA>LITHOBIONTICS</SA>
+   <SA>MEASURED SECTION</SA>
+   <SA>PETROCHEMISTRY</SA>
+   <SA>PETROGRAPHY</SA>
+   <SA>PETROLOGY</SA>
+   <SA>PHOTOELECTRIC EFFECT</SA>
+   <BT>GEOLOGY</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/36271">
+   <skos:prefLabel>LITTORAL ENVIRONMENT</skos:prefLabel>
+   <SA>BEACH ENVIRONMENT</SA>
+   <SA>BRACKISH ENVIRONMENT</SA>
+   <SA>EUPHOTIC ZONE</SA>
+   <SA>NEAR SHORE ENVIRONMENT</SA>
+   <SA>NERITIC ENVIRONMENT</SA>
+   <SA>SUPRATIDAL ENVIRONMENT</SA>
+   <SA>TIDAL FLAT</SA>
+   <BT>MARINE ENVIRONMENT</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/36288">
+   <skos:prefLabel>LIVE OIL</skos:prefLabel>
+   <SA>CRUDE ASSAY</SA>
+   <SA>DEAD OIL</SA>
+   <SA>HYDROCARBON ANALYSIS</SA>
+   <SA>HYDROCARBON RATIO</SA>
+   <BT>CRUDE OIL</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/36392">
+   <skos:prefLabel>LOCATION</skos:prefLabel>
+   <NT>DEPTH</NT>
+   <NT>GAS WINDOW</NT>
+   <NT>OFFSHORE</NT>
+   <NT>OIL HABITAT</NT>
+   <NT>OIL WINDOW</NT>
+   <BT>COMMON ATTRIBUTE</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/36684">
+   <skos:prefLabel>LOPATIN METHOD</skos:prefLabel>
+   <SA>KINETICS</SA>
+   <SA>MATURATION</SA>
+   <SA>OIL AND GAS ORIGIN</SA>
+   <SA>ORGANIC DIAGENESIS</SA>
+   <SA>PALEOTEMPERATURE</SA>
+   <SA>VITRINITE REFLECTANCE</SA>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/37315">
+   <skos:prefLabel>MACERAL</skos:prefLabel>
+   <BT>ORGANIC MATTER</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/37641">
+   <skos:prefLabel>MAGNETOSTRATIGRAPHY</skos:prefLabel>
+   <SA>CHEMOSTRATIGRAPHY</SA>
+   <BT>STRATIGRAPHY</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/38198">
+   <skos:prefLabel>MANURE</skos:prefLabel>
+   <SA>ORGANIC MATTER</SA>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/38347">
+   <skos:prefLabel>MARGINAL BASIN</skos:prefLabel>
+   <SA>CONTINENTAL MARGIN</SA>
+   <SA>MARINE ENVIRONMENT</SA>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/38411">
+   <skos:prefLabel>MARINE ECOLOGY</skos:prefLabel>
+   <SA>MARINE ENVIRONMENT</SA>
+   <SA>OCEAN ENVIRONMENT</SA>
+   <SA>PALEOECOLOGY</SA>
+   <BT>ECOLOGY</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/38415">
+   <skos:prefLabel>MARINE ENVIRONMENT</skos:prefLabel>
+   <SA>AEROBIC ENVIRONMENT</SA>
+   <SA>AGITATED WATER ENVIRONMENT</SA>
+   <SA>AVULSION</SA>
+   <SA>BASIN ENVIRONMENT</SA>
+   <SA>BEACH ENVIRONMENT</SA>
+   <SA>BRACKISH ENVIRONMENT</SA>
+   <SA>CHANNEL</SA>
+   <SA>CONTINENTAL MARGIN</SA>
+   <SA>DEEP SEA</SA>
+   <SA>DEEP WATER</SA>
+   <SA>DELTA</SA>
+   <SA>DYSOXIC ENVIRONMENT</SA>
+   <SA>ECOLOGY</SA>
+   <SA>ESTUARY</SA>
+   <SA>EUPHOTIC ZONE</SA>
+   <SA>EUXINIC ENVIRONMENT</SA>
+   <SA>EVAPORITIC ENVIRONMENT</SA>
+   <SA>LAGOON</SA>
+   <SA>LIFE ZONE</SA>
+   <SA>MARGINAL BASIN</SA>
+   <SA>MARINE ECOLOGY</SA>
+   <SA>NEAR SHORE ENVIRONMENT</SA>
+   <SA>NONMARINE ENVIRONMENT</SA>
+   <SA>OCEAN</SA>
+   <SA>OCEAN ENVIRONMENT</SA>
+   <SA>OCEANIC ANOXIC EVENT</SA>
+   <SA>OCEANOGRAPHY</SA>
+   <SA>OFFSHORE</SA>
+   <SA>PALEOECOLOGY</SA>
+   <SA>PALEOENVIRONMENT</SA>
+   <SA>PELAGIC ENVIRONMENT</SA>
+   <SA>QUIET WATER ENVIRONMENT</SA>
+   <SA>SEA</SA>
+   <SA>SEA FLOOR</SA>
+   <SA>SEA WATER</SA>
+   <SA>SEDIMENTATION</SA>
+   <SA>SHALLOW WATER ENVIRONMENT</SA>
+   <SA>SHOAL</SA>
+   <SA>SPIT</SA>
+   <SA>SUPRATIDAL ENVIRONMENT</SA>
+   <SA>SWAMP</SA>
+   <SA>TIDAL FLAT</SA>
+   <SA>TIDAL INLET</SA>
+   <SA>TOMBOLO</SA>
+   <SA>UNDERWATER</SA>
+   <NT>ABYSSAL ENVIRONMENT</NT>
+   <NT>BATHYAL ENVIRONMENT</NT>
+   <NT>LITTORAL ENVIRONMENT</NT>
+   <NT>NERITIC ENVIRONMENT</NT>
+   <NT>REEF COMPLEX ENVIRONMENT</NT>
+   <NT>TRANSITIONAL ENVIRONMENT</NT>
+   <BT>DEPOSITIONAL ENVIRONMENT</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/38534">
+   <skos:prefLabel>MARKER BED</skos:prefLabel>
+   <SA>STRATIGRAPHY</SA>
+   <BT>EARTH AND SPACE CONCEPTS</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/38842">
+   <skos:prefLabel>MATERIAL</skos:prefLabel>
+   <NT>BY COMPOSITION</NT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/38914">
+   <skos:prefLabel>MATURATION</skos:prefLabel>
+   <SA>BIOLOGICAL MARKER</SA>
+   <SA>COALIFICATION</SA>
+   <SA>CONODONT ALTERATION INDEX</SA>
+   <SA>CRUDE DIAGENESIS</SA>
+   <SA>GAS WINDOW</SA>
+   <SA>LITHIFICATION</SA>
+   <SA>LOPATIN METHOD</SA>
+   <SA>OIL WINDOW</SA>
+   <SA>ORGANIC DIAGENESIS</SA>
+   <SA>THERMAL ALTERATION</SA>
+   <SA>VITRINITE REFLECTANCE</SA>
+   <BT>DIAGENESIS</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/39294">
+   <skos:prefLabel>MEASURED SECTION</skos:prefLabel>
+   <SA>LITHOLOGY</SA>
+   <SA>STRATIGRAPHIC CHART</SA>
+   <SA>STRATIGRAPHY</SA>
+   <SA>TYPE SECTION</SA>
+   <BT>EARTH AND SPACE CONCEPTS</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/39743">
+   <skos:prefLabel>MESOZOIC</skos:prefLabel>
+   <NT>CRETACEOUS</NT>
+   <NT>JURASSIC</NT>
+   <BT>PHANEROZOIC</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/39833">
+   <skos:prefLabel>METEOROLOGICAL PHENOMENON</skos:prefLabel>
+   <NT>CLIMATE</NT>
+   <BT>PHENOMENON</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/39884">
+   <skos:prefLabel>METHANOGENESIS</skos:prefLabel>
+   <SA>BIOGENESIS</SA>
+   <SA>BIOGENIC GAS</SA>
+   <SA>OIL AND GAS ORIGIN</SA>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/40041">
+   <skos:prefLabel>MICELLE</skos:prefLabel>
+   <SA>AGGREGATION NUMBER</SA>
+   <SA>MOLECULAR STRUCTURE</SA>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/40082">
+   <skos:prefLabel>MICROBIOLOGICAL EXPLORATN</skos:prefLabel>
+   <SA>GEOCHEMICAL EXPLORATION</SA>
+   <BT>EXPLORATION</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/40260">
+   <skos:prefLabel>MIGRATION</skos:prefLabel>
+   <SA>AQUIFER RECHARGE</SA>
+   <SA>MOBILITY</SA>
+   <NT>OIL AND GAS MIGRATION</NT>
+   <BT>PHENOMENON</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/40263">
+   <skos:prefLabel>MIGRATION TIME</skos:prefLabel>
+   <SA>OIL AND GAS ORIGIN</SA>
+   <BT>OIL AND GAS MIGRATION</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/40444">
+   <skos:prefLabel>MINERAL</skos:prefLabel>
+   <SA>ECONOMIC MINERAL</SA>
+   <SA>MINERALOGY</SA>
+   <BT>BY COMPOSITION</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/40446">
+   <skos:prefLabel>MINERAL ANALYSIS</skos:prefLabel>
+   <SA>MINERALOGY</SA>
+   <SA>ROCK ANALYSIS</SA>
+   <SA>ROCK COMPOSITION</SA>
+   <BT>ANALYTICAL METHOD</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/40448">
+   <skos:prefLabel>MINERAL CHEMISTRY</skos:prefLabel>
+   <SA>CARBONATE CHEMISTRY</SA>
+   <SA>MINERALOGY</SA>
+   <BT>CHEMISTRY</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/40449">
+   <skos:prefLabel>MINERAL CLEAVAGE</skos:prefLabel>
+   <SA>CRYSTALLOGRAPHY</SA>
+   <SA>MINERALOGY</SA>
+   <SA>ROCK CLEAVAGE</SA>
+   <NT>CLEAVAGE FLAKE</NT>
+   <BT>CLEAVAGE</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/40469">
+   <skos:prefLabel>MINERAL MAP</skos:prefLabel>
+   <SA>MINERALOGY</SA>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/40490">
+   <skos:prefLabel>MINERALOGY</skos:prefLabel>
+   <SA>CLEAVAGE</SA>
+   <SA>CLEAVAGE FLAKE</SA>
+   <SA>CLEAVAGE PLANE</SA>
+   <SA>CROSSHOLE METHOD</SA>
+   <SA>CRYSTALLOGRAPHY</SA>
+   <SA>DOUBLE REFRACTION</SA>
+   <SA>ECONOMIC MINERAL</SA>
+   <SA>EXSOLUTION</SA>
+   <SA>HEAVY LIQUID</SA>
+   <SA>INCLUSION (GEOLOGY)</SA>
+   <SA>MINERAL</SA>
+   <SA>MINERAL ANALYSIS</SA>
+   <SA>MINERAL CHEMISTRY</SA>
+   <SA>MINERAL CLEAVAGE</SA>
+   <SA>MINERAL MAP</SA>
+   <SA>PIEZOELECTRICITY</SA>
+   <SA>REFRACTION (OPTICS)</SA>
+   <SA>ROCK CLEAVAGE</SA>
+   <SA>ROCK COMPOSITION</SA>
+   <SA>SEDIMENT COMPOSITION</SA>
+   <SA>SOLID SOLUTION</SA>
+   <SA>THERMOLUMINESCENCE</SA>
+   <SA>UNDULATORY EXTINCTION</SA>
+   <BT>GEOLOGY</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/40767">
+   <skos:prefLabel>MIXED BASE CRUDE</skos:prefLabel>
+   <SA>CRUDE ASSAY</SA>
+   <SA>CRUDE OIL CHARACTERIZATION</SA>
+   <BT>CRUDE OIL</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/40854">
+   <skos:prefLabel>MOBILITY</skos:prefLabel>
+   <SA>DEAD OIL</SA>
+   <SA>FLUID FLOW</SA>
+   <SA>MIGRATION</SA>
+   <SA>RESERVOIR FLUID FLOW</SA>
+   <NT>MOBILITY RATIO</NT>
+   <BT>OPERATING CONDITION</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/40856">
+   <skos:prefLabel>MOBILITY RATIO</skos:prefLabel>
+   <SA>RESERVOIR ENGINEERING</SA>
+   <SA>RESERVOIR FLUID FLOW</SA>
+   <SA>VISCOSITY RATIO</SA>
+   <BT>MOBILITY</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/40990">
+   <skos:prefLabel>MOLECULAR MODEL</skos:prefLabel>
+   <SA>CHEMICAL BOND</SA>
+   <SA>CRYSTALLOGRAPHY</SA>
+   <SA>MOLECULAR DYNAMICS</SA>
+   <SA>MOLECULAR MECHANICS</SA>
+   <SA>MOLECULAR STRUCTURE</SA>
+   <SA>MOLECULE</SA>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/40994">
+   <skos:prefLabel>MOLECULAR STRUCTURE</skos:prefLabel>
+   <SA>ACENTRIC FACTOR</SA>
+   <SA>AGGREGATION NUMBER</SA>
+   <SA>ALIPHATIC HYDROCARBON</SA>
+   <SA>AMORPHOUS</SA>
+   <SA>AROMATIC HYDROCARBON</SA>
+   <SA>CHEMICAL FORMULA</SA>
+   <SA>CLAY COMPOSITION</SA>
+   <SA>CROSSLINKING</SA>
+   <SA>DIMERIZATION</SA>
+   <SA>ELEMENT (CHEMICAL)</SA>
+   <SA>FREE RADICAL</SA>
+   <SA>HIGH MOLECULAR WEIGHT</SA>
+   <SA>LIQUID CRYSTAL</SA>
+   <SA>MICELLE</SA>
+   <SA>MOLECULAR DYNAMICS</SA>
+   <SA>MOLECULAR MECHANICS</SA>
+   <SA>MOLECULAR MODEL</SA>
+   <SA>MOLECULAR VOLUME</SA>
+   <SA>MOLECULAR WEIGHT</SA>
+   <SA>MOLECULE</SA>
+   <SA>MONOMER</SA>
+   <SA>NAPHTHENIC HYDROCARBON</SA>
+   <SA>NUCLEAR MAGNETIC RESONANCE</SA>
+   <SA>PHOTOELECTRIC EFFECT</SA>
+   <SA>POLAR MOLECULE</SA>
+   <SA>POLYWATER</SA>
+   <SA>RESONANCE</SA>
+   <SA>SPECTRAL DATA</SA>
+   <SA>SUBATOMIC PARTICLE</SA>
+   <NT>CHEMICAL BOND</NT>
+   <NT>ISOMER</NT>
+   <NT>POLYATOMIC</NT>
+   <BT>STRUCTURE</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/40995">
+   <skos:prefLabel>MOLECULAR VOLUME</skos:prefLabel>
+   <SA>MOLECULAR STRUCTURE</SA>
+   <SA>MOLECULAR WEIGHT</SA>
+   <SA>MOLECULE</SA>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/40996">
+   <skos:prefLabel>MOLECULAR WEIGHT</skos:prefLabel>
+   <SA>COMPOSITION</SA>
+   <SA>ISOTOPE</SA>
+   <SA>MOLECULAR STRUCTURE</SA>
+   <SA>MOLECULAR VOLUME</SA>
+   <SA>MOLECULE</SA>
+   <NT>HIGH MOLECULAR WEIGHT</NT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/40997">
+   <skos:prefLabel>MOLECULE</skos:prefLabel>
+   <SA>CROSSLINKING</SA>
+   <SA>MOLECULAR MODEL</SA>
+   <SA>MOLECULAR STRUCTURE</SA>
+   <SA>MOLECULAR VOLUME</SA>
+   <SA>MOLECULAR WEIGHT</SA>
+   <SA>POLYATOMIC</SA>
+   <SA>POLYWATER</SA>
+   <NT>POLAR MOLECULE</NT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/41110">
+   <skos:prefLabel>MONOMER</skos:prefLabel>
+   <SA>DIMERIZATION</SA>
+   <SA>MOLECULAR STRUCTURE</SA>
+   <BT>BY COMPOSITION</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/42018">
+   <skos:prefLabel>MULTIDISCIPLINARY STUDY</skos:prefLabel>
+   <SA>GEOCHEMICAL EXPLORATION</SA>
+   <SA>INTEGRATED ASSET MODEL</SA>
+   <SA>MOLECULAR DYNAMICS</SA>
+   <SA>RESERVOIR ENGINEERING</SA>
+   <SA>RESERVOIR MONITORING</SA>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/42545">
+   <skos:prefLabel>NAPHTHENE BASE CRUDE</skos:prefLabel>
+   <SA>CRUDE ASSAY</SA>
+   <SA>CRUDE OIL CHARACTERIZATION</SA>
+   <SA>PARAFFIN NAPHTHENE RATIO</SA>
+   <BT>CRUDE OIL</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/42549">
+   <skos:prefLabel>NAPHTHENIC HYDROCARBON</skos:prefLabel>
+   <SA>ALIPHATIC HYDROCARBON</SA>
+   <SA>AROMATIC HYDROCARBON</SA>
+   <SA>MOLECULAR STRUCTURE</SA>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/42743">
+   <skos:prefLabel>NATURAL EARTH PHENOMENON</skos:prefLabel>
+   <NT>AVULSION</NT>
+   <NT>OIL AND GAS ENTRAPMENT</NT>
+   <BT>PHENOMENON</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/42836">
+   <skos:prefLabel>NAVIER STOKES EQUATION</skos:prefLabel>
+   <SA>RESERVOIR FLUID FLOW</SA>
+   <BT>FLUID FLOW EQUATION</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/42898">
+   <skos:prefLabel>NEAR SHORE ENVIRONMENT</skos:prefLabel>
+   <SA>AGITATED WATER ENVIRONMENT</SA>
+   <SA>BEACH ENVIRONMENT</SA>
+   <SA>LAKE</SA>
+   <SA>LIFE ZONE</SA>
+   <SA>LITTORAL ENVIRONMENT</SA>
+   <SA>MARINE ENVIRONMENT</SA>
+   <SA>NERITIC ENVIRONMENT</SA>
+   <SA>NONMARINE ENVIRONMENT</SA>
+   <SA>PALEOENVIRONMENT</SA>
+   <SA>PARALIC DEPOSIT</SA>
+   <SA>SHALLOW WATER ENVIRONMENT</SA>
+   <SA>SUPRATIDAL ENVIRONMENT</SA>
+   <BT>DEPOSITIONAL ENVIRONMENT</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/43069">
+   <skos:prefLabel>NERITIC ENVIRONMENT</skos:prefLabel>
+   <SA>ABYSSAL ENVIRONMENT</SA>
+   <SA>AGITATED WATER ENVIRONMENT</SA>
+   <SA>APHOTIC ZONE</SA>
+   <SA>BATHYAL ENVIRONMENT</SA>
+   <SA>EUPHOTIC ZONE</SA>
+   <SA>LITTORAL ENVIRONMENT</SA>
+   <SA>NEAR SHORE ENVIRONMENT</SA>
+   <SA>PELAGIC ENVIRONMENT</SA>
+   <SA>QUIET WATER ENVIRONMENT</SA>
+   <SA>SHALLOW WATER ENVIRONMENT</SA>
+   <BT>MARINE ENVIRONMENT</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/43662">
+   <skos:prefLabel>NITROGEN CONTENT</skos:prefLabel>
+   <SA>ORGANIC CONTENT</SA>
+   <SA>ORGANIC DIAGENESIS</SA>
+   <SA>ORGANIC MATTER</SA>
+   <BT>COMPOSITION</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/43852">
+   <skos:prefLabel>NONDARCY FLOW</skos:prefLabel>
+   <SA>DARCYS LAW</SA>
+   <SA>RESERVOIR FLUID FLOW</SA>
+   <SA>SKIN EFFECT (WELL)</SA>
+   <BT>FLUID FLOW</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/43873">
+   <skos:prefLabel>NONMARINE ENVIRONMENT</skos:prefLabel>
+   <SA>AEROBIC ENVIRONMENT</SA>
+   <SA>AGITATED WATER ENVIRONMENT</SA>
+   <SA>AVULSION</SA>
+   <SA>BASIN ENVIRONMENT</SA>
+   <SA>BAY</SA>
+   <SA>BEACH ENVIRONMENT</SA>
+   <SA>BRACKISH ENVIRONMENT</SA>
+   <SA>CHANNEL</SA>
+   <SA>COASTAL PLAIN</SA>
+   <SA>DEEP WATER</SA>
+   <SA>DELTA</SA>
+   <SA>DESERT</SA>
+   <SA>DYSOXIC ENVIRONMENT</SA>
+   <SA>ECOLOGY</SA>
+   <SA>EMBAYMENT</SA>
+   <SA>EUPHOTIC ZONE</SA>
+   <SA>EUXINIC ENVIRONMENT</SA>
+   <SA>EVAPORATION PAN</SA>
+   <SA>EVAPORITIC ENVIRONMENT</SA>
+   <SA>FLOOD PLAIN</SA>
+   <SA>FRESH WATER ENVIRONMENT</SA>
+   <SA>GLACIER</SA>
+   <SA>LAKE</SA>
+   <SA>LIFE ZONE</SA>
+   <SA>MARINE ENVIRONMENT</SA>
+   <SA>NEAR SHORE ENVIRONMENT</SA>
+   <SA>PALEOECOLOGY</SA>
+   <SA>PALEOENVIRONMENT</SA>
+   <SA>PARALIC DEPOSIT</SA>
+   <SA>PLAYA</SA>
+   <SA>QUIET WATER ENVIRONMENT</SA>
+   <SA>SALINA</SA>
+   <SA>SEDIMENTATION</SA>
+   <SA>SHALLOW WATER ENVIRONMENT</SA>
+   <SA>STREAM</SA>
+   <SA>SUPRATIDAL ENVIRONMENT</SA>
+   <SA>SWAMP</SA>
+   <SA>TERRESTRIAL ENVIRONMENT</SA>
+   <SA>TRANSITIONAL ENVIRONMENT</SA>
+   <BT>DEPOSITIONAL ENVIRONMENT</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/44554">
+   <skos:prefLabel>NUCLEAR MAGNETIC RESONANCE</skos:prefLabel>
+   <SA>MOLECULAR STRUCTURE</SA>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/44804">
+   <skos:prefLabel>OCEAN</skos:prefLabel>
+   <SA>GEOLOGIC HISTORY</SA>
+   <SA>HYDROLOGY</SA>
+   <SA>MARINE ENVIRONMENT</SA>
+   <SA>OCEANOGRAPHY</SA>
+   <SA>PALEOGEOGRAPHY</SA>
+   <SA>SEA</SA>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/44825">
+   <skos:prefLabel>OCEAN ENVIRONMENT</skos:prefLabel>
+   <SA>BRACKISH ENVIRONMENT</SA>
+   <SA>MARINE ECOLOGY</SA>
+   <SA>MARINE ENVIRONMENT</SA>
+   <SA>OCEANOGRAPHY</SA>
+   <SA>SEA FLOOR</SA>
+   <SA>SEA WATER</SA>
+   <BT>ENVIRONMENT</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/44869">
+   <skos:prefLabel>OCEANOGRAPHY</skos:prefLabel>
+   <SA>DEEP SEA</SA>
+   <SA>HYDROLOGY</SA>
+   <SA>MARINE ENVIRONMENT</SA>
+   <SA>OCEAN</SA>
+   <SA>OCEAN ENVIRONMENT</SA>
+   <SA>SEA</SA>
+   <SA>SEA FLOOR</SA>
+   <SA>SHOAL</SA>
+   <SA>UPWELLING</SA>
+   <NT>PALEOCEANOGRAPHY</NT>
+   <BT>TECHNOLOGY</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/44957">
+   <skos:prefLabel>OEDOMETER</skos:prefLabel>
+   <SA>RADIAL DRAINAGE</SA>
+   <SA>RESERVOIR FLUID FLOW</SA>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/44979">
+   <skos:prefLabel>OFFSHORE</skos:prefLabel>
+   <SA>MARINE ENVIRONMENT</SA>
+   <SA>UNDERWATER</SA>
+   <BT>LOCATION</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/45123">
+   <skos:prefLabel>OIL AND GAS ENTRAPMENT</skos:prefLabel>
+   <SA>HYDROCARBON POTENTIAL</SA>
+   <SA>OIL COLUMN</SA>
+   <SA>OIL HABITAT</SA>
+   <SA>PERMEABILITY BARRIER</SA>
+   <SA>PETROLEUM SYSTEM</SA>
+   <SA>STRATIGRAPHIC BARRIER</SA>
+   <SA>TRAP (GEOLOGY)</SA>
+   <BT>NATURAL EARTH PHENOMENON</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/45127">
+   <skos:prefLabel>OIL AND GAS MIGRATION</skos:prefLabel>
+   <SA>EVAPORATIVE FRACTIONATION</SA>
+   <SA>GAS CHIMNEY EFFECT</SA>
+   <SA>HYDROCARBON POTENTIAL</SA>
+   <SA>LEASE DRAINAGE</SA>
+   <SA>OIL AND GAS ORIGIN</SA>
+   <SA>OIL HABITAT</SA>
+   <SA>PETROLEUM SYSTEM</SA>
+   <SA>RESERVOIR FLUID FLOW</SA>
+   <SA>RULE OF CAPTURE</SA>
+   <NT>MIGRATION TIME</NT>
+   <BT>MIGRATION</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/45128">
+   <skos:prefLabel>OIL AND GAS ORIGIN</skos:prefLabel>
+   <SA>ABIOGENESIS</SA>
+   <SA>ABIOGENIC GAS</SA>
+   <SA>BIOGENESIS</SA>
+   <SA>BIOGENIC GAS</SA>
+   <SA>LITHOBIONTICS</SA>
+   <SA>LOPATIN METHOD</SA>
+   <SA>METHANOGENESIS</SA>
+   <SA>MIGRATION TIME</SA>
+   <SA>OIL AND GAS MIGRATION</SA>
+   <SA>OIL HABITAT</SA>
+   <SA>SERPENTINIZATION</SA>
+   <SA>THERMOGENIC GAS</SA>
+   <NT>SOURCE ROCK</NT>
+   <BT>ORIGIN</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/45146">
+   <skos:prefLabel>OIL COLUMN</skos:prefLabel>
+   <SA>FORMATION THICKNESS</SA>
+   <SA>OIL AND GAS ENTRAPMENT</SA>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/45150">
+   <skos:prefLabel>OIL CONTENT</skos:prefLabel>
+   <SA>CRUDE ASSAY</SA>
+   <BT>COMPOSITION</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/45170">
+   <skos:prefLabel>OIL FAMILY</skos:prefLabel>
+   <SA>BIOLOGICAL MARKER</SA>
+   <SA>CRUDE OIL CORRELATION</SA>
+   <SA>ORGANIC GEOCHEMISTRY</SA>
+   <SA>SOURCE ROCK</SA>
+   <BT>CRUDE OIL</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/45207">
+   <skos:prefLabel>OIL HABITAT</skos:prefLabel>
+   <SA>OIL AND GAS ENTRAPMENT</SA>
+   <SA>OIL AND GAS MIGRATION</SA>
+   <SA>OIL AND GAS ORIGIN</SA>
+   <SA>PETROLEUM SYSTEM</SA>
+   <SA>TRAP (GEOLOGY)</SA>
+   <BT>LOCATION</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/45268">
+   <skos:prefLabel>OIL PROPERTY</skos:prefLabel>
+   <SA>CRUDE ASSAY</SA>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/45291">
+   <skos:prefLabel>OIL SHOW</skos:prefLabel>
+   <SA>HYDROCARBON POTENTIAL</SA>
+   <SA>HYDROCARBON SEEP</SA>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/45343">
+   <skos:prefLabel>OIL WINDOW</skos:prefLabel>
+   <SA>BURIAL HISTORY</SA>
+   <SA>DEPTH</SA>
+   <SA>HYDROCARBON POTENTIAL</SA>
+   <SA>MATURATION</SA>
+   <SA>ORGANIC DIAGENESIS</SA>
+   <SA>ORGANIC GEOCHEMISTRY</SA>
+   <SA>SOURCE ROCK</SA>
+   <BT>LOCATION</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/45737">
+   <skos:prefLabel>OPERATING CONDITION</skos:prefLabel>
+   <NT>LABORATORY SCALE</NT>
+   <NT>MOBILITY</NT>
+   <NT>TEMPERATURE</NT>
+   <NT>VELOCITY</NT>
+   <NT>VISCOSITY RATIO</NT>
+   <NT>ZONATION</NT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/45889">
+   <skos:prefLabel>ORGANIC ACID</skos:prefLabel>
+   <SA>ORGANIC MATTER</SA>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/45891">
+   <skos:prefLabel>ORGANIC CARBON</skos:prefLabel>
+   <SA>HYDROGEN INDEX</SA>
+   <BT>CARBON CONTENT</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/45893">
+   <skos:prefLabel>ORGANIC CONTENT</skos:prefLabel>
+   <SA>NITROGEN CONTENT</SA>
+   <SA>ORGANIC FACIES</SA>
+   <SA>ORGANIC MATTER</SA>
+   <BT>COMPOSITION</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/45895">
+   <skos:prefLabel>ORGANIC DIAGENESIS</skos:prefLabel>
+   <SA>COALIFICATION</SA>
+   <SA>CONODONT ALTERATION INDEX</SA>
+   <SA>CRUDE DIAGENESIS</SA>
+   <SA>GAS WINDOW</SA>
+   <SA>HYDROGEN INDEX</SA>
+   <SA>LOPATIN METHOD</SA>
+   <SA>MATURATION</SA>
+   <SA>NITROGEN CONTENT</SA>
+   <SA>OIL WINDOW</SA>
+   <SA>ORGANIC GEOCHEMISTRY</SA>
+   <SA>ORGANIC MATTER</SA>
+   <SA>THERMOGENIC GAS</SA>
+   <SA>VITRINITE REFLECTANCE</SA>
+   <BT>DIAGENESIS</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/45897">
+   <skos:prefLabel>ORGANIC FACIES</skos:prefLabel>
+   <SA>ORGANIC CONTENT</SA>
+   <SA>ORGANIC MATTER</SA>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/45898">
+   <skos:prefLabel>ORGANIC GEOCHEMISTRY</skos:prefLabel>
+   <SA>GAS FAMILY</SA>
+   <SA>GAS WINDOW</SA>
+   <SA>HYDROGEN INDEX</SA>
+   <SA>OIL FAMILY</SA>
+   <SA>OIL WINDOW</SA>
+   <SA>ORGANIC DIAGENESIS</SA>
+   <SA>ORGANIC MATTER</SA>
+   <SA>SOURCE ROCK</SA>
+   <SA>TORBANITE</SA>
+   <BT>GEOCHEMISTRY</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/45901">
+   <skos:prefLabel>ORGANIC MATTER</skos:prefLabel>
+   <SA>CELLULOSE</SA>
+   <SA>MANURE</SA>
+   <SA>NITROGEN CONTENT</SA>
+   <SA>ORGANIC ACID</SA>
+   <SA>ORGANIC CONTENT</SA>
+   <SA>ORGANIC DIAGENESIS</SA>
+   <SA>ORGANIC FACIES</SA>
+   <SA>ORGANIC GEOCHEMISTRY</SA>
+   <SA>WOOD</SA>
+   <NT>BIOMASS</NT>
+   <NT>CHLOROPHYLL</NT>
+   <NT>HUMITE</NT>
+   <NT>HUMUS</NT>
+   <NT>KEROGEN</NT>
+   <NT>LIPID</NT>
+   <NT>LIPOID</NT>
+   <NT>MACERAL</NT>
+   <NT>PEAT</NT>
+   <NT>SAPROPEL</NT>
+   <NT>SPOROPOLLENINE</NT>
+   <NT>TANNIN</NT>
+   <BT>BY COMPOSITION</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/45940">
+   <skos:prefLabel>ORIGIN</skos:prefLabel>
+   <SA>SOURCE ROCK</SA>
+   <NT>ABIOGENESIS</NT>
+   <NT>BIOGENESIS</NT>
+   <NT>OIL AND GAS ORIGIN</NT>
+   <BT>PHENOMENON</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/46423">
+   <skos:prefLabel>OXYGEN ISOTOPE RATIO</skos:prefLabel>
+   <SA>CLUMPED ISOTOPE THERMOMETR</SA>
+   <SA>GEOLOGIC AGE DETERMINATION</SA>
+   <SA>ISOTOPE</SA>
+   <SA>ISOTOPE DISTRIBUTION</SA>
+   <SA>ISOTOPIC METHOD</SA>
+   <BT>ISOTOPE RATIO</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/46682">
+   <skos:prefLabel>PALEOBOTANY</skos:prefLabel>
+   <SA>PALEOCLIMATE</SA>
+   <SA>PALEOECOLOGY</SA>
+   <SA>WOOD</SA>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/46683">
+   <skos:prefLabel>PALEOCEANOGRAPHY</skos:prefLabel>
+   <SA>CLUMPED ISOTOPE THERMOMETR</SA>
+   <SA>PALEOENVIRONMENT</SA>
+   <SA>PALEOGEOGRAPHY</SA>
+   <SA>UPWELLING</SA>
+   <NT>MESSINIAN SALINITY CRISIS</NT>
+   <NT>OCEANIC ANOXIC EVENT</NT>
+   <BT>OCEANOGRAPHY</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/46685">
+   <skos:prefLabel>PALEOCLIMATE</skos:prefLabel>
+   <SA>CLIMATE CYCLE</SA>
+   <SA>CLUMPED ISOTOPE THERMOMETR</SA>
+   <SA>EARTH ORBIT</SA>
+   <SA>ECCENTRICITY</SA>
+   <SA>GEOLOGIC HISTORY</SA>
+   <SA>GLOBAL COOLING</SA>
+   <SA>GLOBAL WARMING</SA>
+   <SA>INSOLATION</SA>
+   <SA>OBLIQUITY</SA>
+   <SA>OCEANIC ANOXIC EVENT</SA>
+   <SA>PALEOBOTANY</SA>
+   <SA>PALEOECOLOGY</SA>
+   <SA>PALEOTEMPERATURE</SA>
+   <SA>PRECESSION</SA>
+   <SA>TEMPERATURE MEASURING</SA>
+   <BT>CLIMATE</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/46692">
+   <skos:prefLabel>PALEOECOLOGY</skos:prefLabel>
+   <SA>APHOTIC ZONE</SA>
+   <SA>BIOSTRATIGRAPHY</SA>
+   <SA>BRACKISH ENVIRONMENT</SA>
+   <SA>DEPOSITIONAL ENVIRONMENT</SA>
+   <SA>ECOLOGY</SA>
+   <SA>ENVIRONMENT</SA>
+   <SA>EUPHOTIC ZONE</SA>
+   <SA>EVAPORITIC ENVIRONMENT</SA>
+   <SA>LIFE ZONE</SA>
+   <SA>MARINE ECOLOGY</SA>
+   <SA>MARINE ENVIRONMENT</SA>
+   <SA>NONMARINE ENVIRONMENT</SA>
+   <SA>PALEOBOTANY</SA>
+   <SA>PALEOCLIMATE</SA>
+   <SA>PALEOENVIRONMENT</SA>
+   <SA>PALEOTEMPERATURE</SA>
+   <SA>UPWELLING</SA>
+   <BT>GEOLOGY</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/46693">
+   <skos:prefLabel>PALEOENVIRONMENT</skos:prefLabel>
+   <SA>BRACKISH ENVIRONMENT</SA>
+   <SA>DEPOSITIONAL ENVIRONMENT</SA>
+   <SA>EUPHOTIC ZONE</SA>
+   <SA>EVAPORITIC ENVIRONMENT</SA>
+   <SA>GEOLOGIC HISTORY</SA>
+   <SA>MARINE ENVIRONMENT</SA>
+   <SA>NEAR SHORE ENVIRONMENT</SA>
+   <SA>NONMARINE ENVIRONMENT</SA>
+   <SA>PALEOCEANOGRAPHY</SA>
+   <SA>PALEOECOLOGY</SA>
+   <SA>PALEOTEMPERATURE</SA>
+   <SA>REEF COMPLEX ENVIRONMENT</SA>
+   <SA>TRANSITIONAL ENVIRONMENT</SA>
+   <BT>ENVIRONMENT</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/46697">
+   <skos:prefLabel>PALEOGEOGRAPHY</skos:prefLabel>
+   <SA>BALANCED SECTION</SA>
+   <SA>BAY</SA>
+   <SA>CHANNEL</SA>
+   <SA>COASTAL PLAIN</SA>
+   <SA>DELTA</SA>
+   <SA>DESERT</SA>
+   <SA>ESTUARY</SA>
+   <SA>FLOOD PLAIN</SA>
+   <SA>GEOLOGIC HISTORY</SA>
+   <SA>LAGOON</SA>
+   <SA>LAKE</SA>
+   <SA>OCEAN</SA>
+   <SA>PALEOCEANOGRAPHY</SA>
+   <SA>PLAYA</SA>
+   <SA>SALINA</SA>
+   <SA>SEA</SA>
+   <SA>SEA FLOOR</SA>
+   <SA>SHOAL</SA>
+   <SA>SPIT</SA>
+   <SA>SWAMP</SA>
+   <SA>TIDAL FLAT</SA>
+   <SA>TIDAL INLET</SA>
+   <SA>TOMBOLO</SA>
+   <BT>GEOLOGY</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/46715">
+   <skos:prefLabel>PALEOPRESSURE</skos:prefLabel>
+   <SA>BURIAL HISTORY</SA>
+   <SA>DIAGENESIS</SA>
+   <SA>FLUID INCLUSION</SA>
+   <SA>PALEOTEMPERATURE</SA>
+   <SA>SUBSURFACE PRESSURE</SA>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/46723">
+   <skos:prefLabel>PALEOTEMPERATURE</skos:prefLabel>
+   <SA>CLUMPED ISOTOPE THERMOMETR</SA>
+   <SA>CONODONT ALTERATION INDEX</SA>
+   <SA>FLUID INCLUSION</SA>
+   <SA>GLOBAL COOLING</SA>
+   <SA>GLOBAL WARMING</SA>
+   <SA>ISOTOPIC METHOD</SA>
+   <SA>LOPATIN METHOD</SA>
+   <SA>PALEOCLIMATE</SA>
+   <SA>PALEOECOLOGY</SA>
+   <SA>PALEOENVIRONMENT</SA>
+   <SA>PALEOPRESSURE</SA>
+   <SA>TEMPERATURE MEASURING</SA>
+   <SA>THERMOCHRONOLOGY</SA>
+   <BT>TEMPERATURE</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/46996">
+   <skos:prefLabel>PARAFFIN BASE CRUDE</skos:prefLabel>
+   <SA>CRUDE ASSAY</SA>
+   <SA>CRUDE OIL CHARACTERIZATION</SA>
+   <SA>PARAFFIN NAPHTHENE RATIO</SA>
+   <BT>CRUDE OIL</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/47003">
+   <skos:prefLabel>PARAFFIN NAPHTHENE RATIO</skos:prefLabel>
+   <SA>CRUDE ASSAY</SA>
+   <SA>HYDROCARBON ANALYSIS</SA>
+   <SA>NAPHTHENE BASE CRUDE</SA>
+   <SA>PARAFFIN BASE CRUDE</SA>
+   <BT>COMPOSITION</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/47408">
+   <skos:prefLabel>PEAT</skos:prefLabel>
+   <BT>ORGANIC MATTER</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/47516">
+   <skos:prefLabel>PELAGIC ENVIRONMENT</skos:prefLabel>
+   <SA>APHOTIC ZONE</SA>
+   <SA>DEEP SEA</SA>
+   <SA>DEPOSITIONAL ENVIRONMENT</SA>
+   <SA>EUPHOTIC ZONE</SA>
+   <SA>LIFE ZONE</SA>
+   <SA>MARINE ENVIRONMENT</SA>
+   <SA>NERITIC ENVIRONMENT</SA>
+   <SA>SEA WATER</SA>
+   <BT>ENVIRONMENT</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/47755">
+   <skos:prefLabel>PERCOLATION</skos:prefLabel>
+   <SA>RESERVOIR FLUID FLOW</SA>
+   <BT>FLUID FLOW</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/47847">
+   <skos:prefLabel>PERMEABILITY BARRIER</skos:prefLabel>
+   <SA>OIL AND GAS ENTRAPMENT</SA>
+   <SA>STRATIGRAPHIC TRAP</SA>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/48043">
+   <skos:prefLabel>PETROCHEMICAL</skos:prefLabel>
+   <SA>PETROCHEMISTRY</SA>
+   <BT>CHEMICAL</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/48044">
+   <skos:prefLabel>PETROCHEMISTRY</skos:prefLabel>
+   <SA>CARBONATE CHEMISTRY</SA>
+   <SA>GEOCHEMISTRY</SA>
+   <SA>LITHOLOGY</SA>
+   <SA>PETROCHEMICAL</SA>
+   <SA>PETROGRAPHY</SA>
+   <SA>PETROLOGY</SA>
+   <BT>CHEMISTRY</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/48067">
+   <skos:prefLabel>PETROGRAPHY</skos:prefLabel>
+   <SA>GEOCHEMISTRY</SA>
+   <SA>LITHOLOGY</SA>
+   <SA>PETROCHEMISTRY</SA>
+   <SA>PETROLOGY</SA>
+   <SA>ROCK COMPOSITION</SA>
+   <SA>UNDULATORY EXTINCTION</SA>
+   <BT>GEOLOGY</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/48094">
+   <skos:prefLabel>PETROLEUM</skos:prefLabel>
+   <SA>HYDROCARBON POTENTIAL</SA>
+   <SA>HYDROCARBON RATIO</SA>
+   <NT>CRUDE OIL</NT>
+   <BT>BY COMPOSITION</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/48143">
+   <skos:prefLabel>PETROLEUM SYSTEM</skos:prefLabel>
+   <SA>OIL AND GAS ENTRAPMENT</SA>
+   <SA>OIL AND GAS MIGRATION</SA>
+   <SA>OIL HABITAT</SA>
+   <SA>RESERVOIR FLUID FLOW</SA>
+   <SA>SOURCE ROCK</SA>
+   <SA>TRAP (GEOLOGY)</SA>
+   <BT>EARTH AND SPACE CONCEPTS</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/48151">
+   <skos:prefLabel>PETROLIFEROUS BASIN</skos:prefLabel>
+   <SA>HYDROCARBON POTENTIAL</SA>
+   <SA>HYDROCARBON SEEP</SA>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/48155">
+   <skos:prefLabel>PETROLOGY</skos:prefLabel>
+   <SA>LITHOLOGY</SA>
+   <SA>PETROCHEMISTRY</SA>
+   <SA>PETROGRAPHY</SA>
+   <BT>GEOLOGY</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/48235">
+   <skos:prefLabel>PHANEROZOIC</skos:prefLabel>
+   <NT>MESOZOIC</NT>
+   <BT>EARTH AGE</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/48291">
+   <skos:prefLabel>PHENOMENON</skos:prefLabel>
+   <NT>ALTERATION</NT>
+   <NT>ANOMALY</NT>
+   <NT>BASIN DEVELOPMENT</NT>
+   <NT>CROSSLINKING</NT>
+   <NT>DIMERIZATION</NT>
+   <NT>ECCENTRICITY</NT>
+   <NT>EXSOLUTION</NT>
+   <NT>FLUID FLOW</NT>
+   <NT>FLUID SUBSTITUTION</NT>
+   <NT>JAMIN EFFECT</NT>
+   <NT>METEOROLOGICAL PHENOMENON</NT>
+   <NT>MIGRATION</NT>
+   <NT>NATURAL EARTH PHENOMENON</NT>
+   <NT>OBLIQUITY</NT>
+   <NT>ORIGIN</NT>
+   <NT>POST DEPOSITIONAL PROCESS</NT>
+   <NT>PRECESSION</NT>
+   <NT>RESONANCE</NT>
+   <NT>SEDIMENTATION</NT>
+   <NT>SOURCE TO SINK</NT>
+   <NT>UPWELLING</NT>
+   <NT>WAVE PHENOMENON</NT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/48433">
+   <skos:prefLabel>PHOTOELECTRIC EFFECT</skos:prefLabel>
+   <SA>LITHOLOGY</SA>
+   <SA>MOLECULAR STRUCTURE</SA>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/48493">
+   <skos:prefLabel>PHYSICAL OPERATION</skos:prefLabel>
+   <NT>BACKSTRIPPING</NT>
+   <NT>CORRELATION</NT>
+   <NT>DISPLACEMENT</NT>
+   <NT>EXPLORATION</NT>
+   <NT>PHYSICAL SEPARATION</NT>
+   <NT>SUPERPOSITION</NT>
+   <BT>PROCESS</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/48495">
+   <skos:prefLabel>PHYSICAL SEPARATION</skos:prefLabel>
+   <NT>FRACTIONATION</NT>
+   <BT>PHYSICAL OPERATION</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/48636">
+   <skos:prefLabel>PIEZOELECTRICITY</skos:prefLabel>
+   <SA>CRYSTALLOGRAPHY</SA>
+   <SA>MINERALOGY</SA>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/49227">
+   <skos:prefLabel>PLAYA</skos:prefLabel>
+   <SA>DEPOSITIONAL ENVIRONMENT</SA>
+   <SA>DESERT</SA>
+   <SA>EVAPORATION PAN</SA>
+   <SA>EVAPORITIC ENVIRONMENT</SA>
+   <SA>NONMARINE ENVIRONMENT</SA>
+   <SA>PALEOGEOGRAPHY</SA>
+   <SA>SALINA</SA>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/49476">
+   <skos:prefLabel>POLAR MOLECULE</skos:prefLabel>
+   <SA>MOLECULAR STRUCTURE</SA>
+   <BT>MOLECULE</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/49580">
+   <skos:prefLabel>POLYATOMIC</skos:prefLabel>
+   <SA>MOLECULE</SA>
+   <BT>MOLECULAR STRUCTURE</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/49664">
+   <skos:prefLabel>POLYWATER</skos:prefLabel>
+   <SA>MOLECULAR STRUCTURE</SA>
+   <SA>MOLECULE</SA>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/49803">
+   <skos:prefLabel>POROUS MEDIA</skos:prefLabel>
+   <SA>RESERVOIR FLUID FLOW</SA>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/49947">
+   <skos:prefLabel>POST DEPOSITIONAL PROCESS</skos:prefLabel>
+   <SA>HYDROTHERMAL ALTERATION</SA>
+   <SA>SEDIMENTATION</SA>
+   <NT>CATAGENESIS</NT>
+   <NT>DIAGENESIS</NT>
+   <BT>PHENOMENON</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/50237">
+   <skos:prefLabel>PRECESSION</skos:prefLabel>
+   <SA>CYCLOSTRATIGRAPHY</SA>
+   <SA>EARTH ORBIT</SA>
+   <SA>ECCENTRICITY</SA>
+   <SA>INSOLATION</SA>
+   <SA>OBLIQUITY</SA>
+   <SA>PALEOCLIMATE</SA>
+   <BT>PHENOMENON</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/50329">
+   <skos:prefLabel>PRESSURE DECLINE</skos:prefLabel>
+   <SA>RESERVOIR FLUID FLOW</SA>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/50521">
+   <skos:prefLabel>PROCESS</skos:prefLabel>
+   <SA>CHEMICAL REACTION</SA>
+   <NT>PHYSICAL OPERATION</NT>
+   <NT>TESTING</NT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/50621">
+   <skos:prefLabel>PROFILE CONTROL</skos:prefLabel>
+   <SA>RESERVOIR FLUID FLOW</SA>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/50733">
+   <skos:prefLabel>PROPERTY</skos:prefLabel>
+   <NT>COMPOSITION</NT>
+   <NT>STRUCTURE</NT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/50789">
+   <skos:prefLabel>PROSPECT EVALUATION</skos:prefLabel>
+   <SA>HYDROCARBON POTENTIAL</SA>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/51014">
+   <skos:prefLabel>PULSE TESTING</skos:prefLabel>
+   <SA>RESERVOIR FLUID FLOW</SA>
+   <BT>TESTING</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/51338">
+   <skos:prefLabel>QUALITY</skos:prefLabel>
+   <NT>CLASSIFICATION</NT>
+   <BT>COMMON ATTRIBUTE</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/51484">
+   <skos:prefLabel>QUIET WATER ENVIRONMENT</skos:prefLabel>
+   <SA>ABYSSAL ENVIRONMENT</SA>
+   <SA>AGITATED WATER ENVIRONMENT</SA>
+   <SA>BATHYAL ENVIRONMENT</SA>
+   <SA>BAY</SA>
+   <SA>BRACKISH ENVIRONMENT</SA>
+   <SA>EVAPORITIC ENVIRONMENT</SA>
+   <SA>LAGOON</SA>
+   <SA>LAKE</SA>
+   <SA>MARINE ENVIRONMENT</SA>
+   <SA>NERITIC ENVIRONMENT</SA>
+   <SA>NONMARINE ENVIRONMENT</SA>
+   <SA>REEF COMPLEX ENVIRONMENT</SA>
+   <SA>SHALLOW WATER ENVIRONMENT</SA>
+   <BT>DEPOSITIONAL ENVIRONMENT</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/51596">
+   <skos:prefLabel>RADIAL DRAINAGE</skos:prefLabel>
+   <SA>OEDOMETER</SA>
+   <SA>RESERVOIR FLUID FLOW</SA>
+   <SA>SPHERICAL DRAINAGE</SA>
+   <BT>DRAINAGE PATTERN</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/51622">
+   <skos:prefLabel>RADIOACTIVE AGE DETERMINAT</skos:prefLabel>
+   <SA>CARBON ISOTOPE RATIO</SA>
+   <SA>EARTH AGE</SA>
+   <SA>ISOTOPE</SA>
+   <SA>ISOTOPE RATIO</SA>
+   <SA>ISOTOPIC COMPOSITION</SA>
+   <SA>ISOTOPIC METHOD</SA>
+   <NT>RHENIUM OSMIUM DATING</NT>
+   <NT>THERMOCHRONOLOGY</NT>
+   <BT>GEOLOGIC AGE DETERMINATION</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/51630">
+   <skos:prefLabel>RADIOACTIVE ISOTOPE</skos:prefLabel>
+   <SA>CARBON ISOTOPE RATIO</SA>
+   <SA>RHENIUM OSMIUM DATING</SA>
+   <BT>ISOTOPE</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/51652">
+   <skos:prefLabel>RADIOACTIVITY EXPLORATION</skos:prefLabel>
+   <SA>GEOCHEMICAL EXPLORATION</SA>
+   <BT>EXPLORATION</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/52359">
+   <skos:prefLabel>REEF COMPLEX ENVIRONMENT</skos:prefLabel>
+   <SA>AGITATED WATER ENVIRONMENT</SA>
+   <SA>APHOTIC ZONE</SA>
+   <SA>BASIN ENVIRONMENT</SA>
+   <SA>LAGOON</SA>
+   <SA>PALEOENVIRONMENT</SA>
+   <SA>QUIET WATER ENVIRONMENT</SA>
+   <SA>SHALLOW WATER ENVIRONMENT</SA>
+   <BT>MARINE ENVIRONMENT</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/52399">
+   <skos:prefLabel>REFLECTION</skos:prefLabel>
+   <NT>VITRINITE REFLECTANCE</NT>
+   <BT>WAVE PROPAGATION</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/52423">
+   <skos:prefLabel>REFRACTION (OPTICS)</skos:prefLabel>
+   <SA>DOUBLE REFRACTION</SA>
+   <SA>MINERALOGY</SA>
+   <BT>WAVE PROPAGATION</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/52679">
+   <skos:prefLabel>RESERVOIR ENGINEERING</skos:prefLabel>
+   <SA>FRACTIONAL FLOW EQUATION</SA>
+   <SA>FRONTAL ADVANCE EQUATION</SA>
+   <SA>GOR EQUATION</SA>
+   <SA>HURST VAN EVERDINGEN EQUAT</SA>
+   <SA>HYDROLOGY</SA>
+   <SA>MOBILITY RATIO</SA>
+   <SA>MULTIDISCIPLINARY STUDY</SA>
+   <SA>RESERVOIR FLUID FLOW</SA>
+   <SA>STILES METHOD</SA>
+   <SA>SUPERPOSITION</SA>
+   <SA>WATERFLOOD THEORY</SA>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/52683">
+   <skos:prefLabel>RESERVOIR FLUID FLOW</skos:prefLabel>
+   <SA>AQUIFER RECHARGE</SA>
+   <SA>ARTIFICIAL CORE</SA>
+   <SA>CONTINUITY EQUATION</SA>
+   <SA>CROSS FLOW</SA>
+   <SA>DARCYS LAW</SA>
+   <SA>DIFFUSIVITY EQUATION</SA>
+   <SA>DISPLACEMENT</SA>
+   <SA>DRAINAGE PATTERN</SA>
+   <SA>ERGUN EQUATION</SA>
+   <SA>FLOOD FRONT</SA>
+   <SA>FLOW PATTERN</SA>
+   <SA>FLOW UNIT</SA>
+   <SA>FLUID FLOW EQUATION</SA>
+   <SA>FLUID SUBSTITUTION</SA>
+   <SA>FRACTIONAL FLOW EQUATION</SA>
+   <SA>FRONTAL ADVANCE EQUATION</SA>
+   <SA>GOR EQUATION</SA>
+   <SA>GRAVITY DRAINAGE</SA>
+   <SA>HELE SHAW MODEL</SA>
+   <SA>HURST VAN EVERDINGEN EQUAT</SA>
+   <SA>HYDRODYNAMICS (GEOLOGY)</SA>
+   <SA>IMBIBITION</SA>
+   <SA>INTEGRATED ASSET MODEL</SA>
+   <SA>JAMIN EFFECT</SA>
+   <SA>LAMINAR FLOW</SA>
+   <SA>LAPLACE EQUATION</SA>
+   <SA>LEASE DRAINAGE</SA>
+   <SA>MOBILITY</SA>
+   <SA>MOBILITY RATIO</SA>
+   <SA>NAVIER STOKES EQUATION</SA>
+   <SA>NONDARCY FLOW</SA>
+   <SA>OEDOMETER</SA>
+   <SA>OIL AND GAS MIGRATION</SA>
+   <SA>PERCOLATION</SA>
+   <SA>PETROLEUM SYSTEM</SA>
+   <SA>POROUS MEDIA</SA>
+   <SA>PRESSURE DECLINE</SA>
+   <SA>PROFILE CONTROL</SA>
+   <SA>PULSE TESTING</SA>
+   <SA>RADIAL DRAINAGE</SA>
+   <SA>RESERVOIR ENGINEERING</SA>
+   <SA>RESERVOIR MONITORING</SA>
+   <SA>RESERVOIR ZONATION</SA>
+   <SA>SKIN EFFECT (WELL)</SA>
+   <SA>SPHERICAL DRAINAGE</SA>
+   <SA>STEADY STATE FLOW</SA>
+   <SA>STILES METHOD</SA>
+   <SA>THRESHOLD PRESSURE</SA>
+   <SA>UNSTEADY STATE FLOW</SA>
+   <SA>VISCOSITY RATIO</SA>
+   <SA>WATERFLOOD THEORY</SA>
+   <NT>CONING</NT>
+   <NT>FINGERING</NT>
+   <NT>KLINKENBERG EFFECT</NT>
+   <BT>FLUID FLOW</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/52696">
+   <skos:prefLabel>RESERVOIR MONITORING</skos:prefLabel>
+   <SA>FLOOD FRONT</SA>
+   <SA>FULL TENSOR GRADIENT METHD</SA>
+   <SA>MULTIDISCIPLINARY STUDY</SA>
+   <SA>RESERVOIR FLUID FLOW</SA>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/52712">
+   <skos:prefLabel>RESERVOIR ZONATION</skos:prefLabel>
+   <SA>FLOW UNIT</SA>
+   <SA>RESERVOIR FLUID FLOW</SA>
+   <BT>ZONATION</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/52765">
+   <skos:prefLabel>RESONANCE</skos:prefLabel>
+   <SA>MOLECULAR STRUCTURE</SA>
+   <BT>PHENOMENON</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/52770">
+   <skos:prefLabel>RESOURCE ASSESSMENT</skos:prefLabel>
+   <SA>HYDROCARBON POTENTIAL</SA>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/53489">
+   <skos:prefLabel>ROCK ANALYSIS</skos:prefLabel>
+   <SA>ENVIRONMENTAL GEOLOGY</SA>
+   <SA>GEOCHEMICAL ANOMALY</SA>
+   <SA>GEOCHEMISTRY</SA>
+   <SA>MINERAL ANALYSIS</SA>
+   <SA>ROCK COMPOSITION</SA>
+   <SA>SAMPLE ANALYSIS</SA>
+   <SA>SEDIMENT ANALYSIS</SA>
+   <BT>ANALYTICAL METHOD</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/53508">
+   <skos:prefLabel>ROCK CLEAVAGE</skos:prefLabel>
+   <SA>CRYSTALLOGRAPHY</SA>
+   <SA>MINERAL CLEAVAGE</SA>
+   <SA>MINERALOGY</SA>
+   <NT>CLEAVAGE PLANE</NT>
+   <BT>CLEAVAGE</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/53512">
+   <skos:prefLabel>ROCK COMPOSITION</skos:prefLabel>
+   <SA>GEOCHEMISTRY</SA>
+   <SA>MINERAL ANALYSIS</SA>
+   <SA>MINERALOGY</SA>
+   <SA>PETROGRAPHY</SA>
+   <SA>ROCK ANALYSIS</SA>
+   <SA>SEDIMENT COMPOSITION</SA>
+   <BT>COMPOSITION</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/53514">
+   <skos:prefLabel>ROCK CONTACT</skos:prefLabel>
+   <SA>STRATIGRAPHIC BOUNDARY</SA>
+   <SA>STRATIGRAPHY</SA>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/54165">
+   <skos:prefLabel>RULE OF CAPTURE</skos:prefLabel>
+   <SA>LEASE DRAINAGE</SA>
+   <SA>OIL AND GAS MIGRATION</SA>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/54655">
+   <skos:prefLabel>SALINA</skos:prefLabel>
+   <SA>DEPOSITIONAL ENVIRONMENT</SA>
+   <SA>DESERT</SA>
+   <SA>EVAPORATION PAN</SA>
+   <SA>EVAPORITIC ENVIRONMENT</SA>
+   <SA>NONMARINE ENVIRONMENT</SA>
+   <SA>PALEOGEOGRAPHY</SA>
+   <SA>PLAYA</SA>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/54717">
+   <skos:prefLabel>SALT CONTENT</skos:prefLabel>
+   <SA>BRACKISH ENVIRONMENT</SA>
+   <SA>WATER ANALYSIS</SA>
+   <NT>HARDNESS (WATER)</NT>
+   <BT>COMPOSITION</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/54853">
+   <skos:prefLabel>SAMPLE ANALYSIS</skos:prefLabel>
+   <SA>DOWNHOLE FLUID ANALYSIS</SA>
+   <SA>ROCK ANALYSIS</SA>
+   <SA>SEDIMENT ANALYSIS</SA>
+   <SA>SEDIMENT COMPOSITION</SA>
+   <SA>WATER ANALYSIS</SA>
+   <BT>ANALYTICAL METHOD</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/55506">
+   <skos:prefLabel>SAPROPEL</skos:prefLabel>
+   <SA>ALGINITE</SA>
+   <SA>HUMITE</SA>
+   <SA>TORBANITE</SA>
+   <BT>ORGANIC MATTER</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/56118">
+   <skos:prefLabel>SEA</skos:prefLabel>
+   <SA>GEOLOGIC HISTORY</SA>
+   <SA>HYDROLOGY</SA>
+   <SA>MARINE ENVIRONMENT</SA>
+   <SA>OCEAN</SA>
+   <SA>OCEANOGRAPHY</SA>
+   <SA>PALEOGEOGRAPHY</SA>
+   <NT>DEEP SEA</NT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/56126">
+   <skos:prefLabel>SEA FLOOR</skos:prefLabel>
+   <SA>MARINE ENVIRONMENT</SA>
+   <SA>OCEAN ENVIRONMENT</SA>
+   <SA>OCEANOGRAPHY</SA>
+   <SA>PALEOGEOGRAPHY</SA>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/56153">
+   <skos:prefLabel>SEA WATER</skos:prefLabel>
+   <SA>MARINE ENVIRONMENT</SA>
+   <SA>MESSINIAN SALINITY CRISIS</SA>
+   <SA>OCEAN ENVIRONMENT</SA>
+   <SA>PELAGIC ENVIRONMENT</SA>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/56308">
+   <skos:prefLabel>SEDIMENT ANALYSIS</skos:prefLabel>
+   <SA>GEOCHEMICAL ANOMALY</SA>
+   <SA>ROCK ANALYSIS</SA>
+   <SA>SAMPLE ANALYSIS</SA>
+   <SA>SEDIMENT COMPOSITION</SA>
+   <BT>ANALYTICAL METHOD</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/56310">
+   <skos:prefLabel>SEDIMENT COMPOSITION</skos:prefLabel>
+   <SA>GEOCHEMISTRY</SA>
+   <SA>MINERALOGY</SA>
+   <SA>ROCK COMPOSITION</SA>
+   <SA>SAMPLE ANALYSIS</SA>
+   <SA>SEDIMENT ANALYSIS</SA>
+   <BT>COMPOSITION</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/56327">
+   <skos:prefLabel>SEDIMENTATION</skos:prefLabel>
+   <SA>BRACKISH ENVIRONMENT</SA>
+   <SA>DEPOSITIONAL ENVIRONMENT</SA>
+   <SA>DIAGENESIS</SA>
+   <SA>LITHIFICATION</SA>
+   <SA>MARINE ENVIRONMENT</SA>
+   <SA>NONMARINE ENVIRONMENT</SA>
+   <SA>POST DEPOSITIONAL PROCESS</SA>
+   <SA>SOURCE TO SINK</SA>
+   <SA>SUPERPOSITION</SA>
+   <SA>UNIFORMITARIANISM</SA>
+   <BT>PHENOMENON</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/56447">
+   <skos:prefLabel>SEISMIC STRATIGRAPHY</skos:prefLabel>
+   <SA>CHEMOSTRATIGRAPHY</SA>
+   <BT>STRATIGRAPHY</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/56934">
+   <skos:prefLabel>SHALE OIL</skos:prefLabel>
+   <SA>KEROGEN</SA>
+   <SA>SHALE OIL RECOVERY</SA>
+   <BT>CRUDE OIL</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/56938">
+   <skos:prefLabel>SHALE OIL RECOVERY</skos:prefLabel>
+   <SA>KEROGEN</SA>
+   <SA>SHALE OIL</SA>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/56960">
+   <skos:prefLabel>SHALLOW WATER ENVIRONMENT</skos:prefLabel>
+   <SA>ABYSSAL ENVIRONMENT</SA>
+   <SA>AGITATED WATER ENVIRONMENT</SA>
+   <SA>APHOTIC ZONE</SA>
+   <SA>BASIN ENVIRONMENT</SA>
+   <SA>BATHYAL ENVIRONMENT</SA>
+   <SA>BRACKISH ENVIRONMENT</SA>
+   <SA>EVAPORITIC ENVIRONMENT</SA>
+   <SA>LAGOON</SA>
+   <SA>LAKE</SA>
+   <SA>MARINE ENVIRONMENT</SA>
+   <SA>NEAR SHORE ENVIRONMENT</SA>
+   <SA>NERITIC ENVIRONMENT</SA>
+   <SA>NONMARINE ENVIRONMENT</SA>
+   <SA>QUIET WATER ENVIRONMENT</SA>
+   <SA>REEF COMPLEX ENVIRONMENT</SA>
+   <BT>DEPOSITIONAL ENVIRONMENT</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/57142">
+   <skos:prefLabel>SHELL</skos:prefLabel>
+   <SA>SHELL COMPOSITION</SA>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/57150">
+   <skos:prefLabel>SHELL COMPOSITION</skos:prefLabel>
+   <SA>CLUMPED ISOTOPE THERMOMETR</SA>
+   <SA>SHELL</SA>
+   <BT>COMPOSITION</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/57392">
+   <skos:prefLabel>SHOAL</skos:prefLabel>
+   <SA>BRACKISH ENVIRONMENT</SA>
+   <SA>MARINE ENVIRONMENT</SA>
+   <SA>OCEANOGRAPHY</SA>
+   <SA>PALEOGEOGRAPHY</SA>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/58237">
+   <skos:prefLabel>SKIN EFFECT (WELL)</skos:prefLabel>
+   <SA>NONDARCY FLOW</SA>
+   <SA>RESERVOIR FLUID FLOW</SA>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/59033">
+   <skos:prefLabel>SOIL ANALYSIS</skos:prefLabel>
+   <SA>ENVIRONMENTAL GEOLOGY</SA>
+   <SA>GEOCHEMICAL EXPLORATION</SA>
+   <SA>SOIL GAS ANALYSIS</SA>
+   <BT>ANALYTICAL METHOD</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/59042">
+   <skos:prefLabel>SOIL GAS ANALYSIS</skos:prefLabel>
+   <SA>GEOCHEMICAL EXPLORATION</SA>
+   <SA>SOIL ANALYSIS</SA>
+   <BT>GAS ANALYSIS</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/59135">
+   <skos:prefLabel>SOLID SOLUTION</skos:prefLabel>
+   <SA>MINERALOGY</SA>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/59399">
+   <skos:prefLabel>SOURCE ROCK</skos:prefLabel>
+   <SA>BIOLOGICAL MARKER</SA>
+   <SA>FINGERPRINTING</SA>
+   <SA>GAS FAMILY</SA>
+   <SA>GAS WINDOW</SA>
+   <SA>GEOCHEMICAL ANOMALY</SA>
+   <SA>HYDROGEN INDEX</SA>
+   <SA>OIL FAMILY</SA>
+   <SA>OIL WINDOW</SA>
+   <SA>ORGANIC GEOCHEMISTRY</SA>
+   <SA>ORIGIN</SA>
+   <SA>PETROLEUM SYSTEM</SA>
+   <SA>TORBANITE</SA>
+   <BT>OIL AND GAS ORIGIN</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/59832">
+   <skos:prefLabel>SPECTRAL DATA</skos:prefLabel>
+   <SA>MOLECULAR STRUCTURE</SA>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/59903">
+   <skos:prefLabel>SPHERICAL DRAINAGE</skos:prefLabel>
+   <SA>RADIAL DRAINAGE</SA>
+   <SA>RESERVOIR FLUID FLOW</SA>
+   <BT>DRAINAGE PATTERN</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/59956">
+   <skos:prefLabel>SPIT</skos:prefLabel>
+   <SA>BRACKISH ENVIRONMENT</SA>
+   <SA>MARINE ENVIRONMENT</SA>
+   <SA>PALEOGEOGRAPHY</SA>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/59996">
+   <skos:prefLabel>SPOROPOLLENINE</skos:prefLabel>
+   <BT>ORGANIC MATTER</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/60504">
+   <skos:prefLabel>STEADY STATE FLOW</skos:prefLabel>
+   <SA>RESERVOIR FLUID FLOW</SA>
+   <SA>UNSTEADY STATE FLOW</SA>
+   <BT>FLUID FLOW</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/60694">
+   <skos:prefLabel>STILES METHOD</skos:prefLabel>
+   <SA>FLOOD FRONT</SA>
+   <SA>RESERVOIR ENGINEERING</SA>
+   <SA>RESERVOIR FLUID FLOW</SA>
+   <SA>WATERFLOOD THEORY</SA>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/60889">
+   <skos:prefLabel>STRATA</skos:prefLabel>
+   <SA>FORMATION (GEOLOGY)</SA>
+   <SA>STRATIGRAPHY</SA>
+   <NT>HYDROSTRATIGRAPHIC UNIT</NT>
+   <BT>EARTH AND SPACE CONCEPTS</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/60915">
+   <skos:prefLabel>STRATIGRAPHIC BARRIER</skos:prefLabel>
+   <SA>HYDRODYNAMICS (GEOLOGY)</SA>
+   <SA>OIL AND GAS ENTRAPMENT</SA>
+   <SA>STRATIGRAPHIC TRAP</SA>
+   <SA>STRATIGRAPHY</SA>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/60916">
+   <skos:prefLabel>STRATIGRAPHIC BOUNDARY</skos:prefLabel>
+   <SA>GEOLOGIC AGE DETERMINATION</SA>
+   <SA>ROCK CONTACT</SA>
+   <SA>STRATIGRAPHY</SA>
+   <SA>TIME STRATIGRAPHIC UNIT</SA>
+   <BT>EARTH AND SPACE CONCEPTS</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/60917">
+   <skos:prefLabel>STRATIGRAPHIC CHART</skos:prefLabel>
+   <SA>COLUMNAR SECTION</SA>
+   <SA>MEASURED SECTION</SA>
+   <SA>STRATIGRAPHIC CORRELATION</SA>
+   <SA>STRATIGRAPHY</SA>
+   <SA>TYPE SECTION</SA>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/60919">
+   <skos:prefLabel>STRATIGRAPHIC CONVERGENCE</skos:prefLabel>
+   <SA>STRATIGRAPHY</SA>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/60920">
+   <skos:prefLabel>STRATIGRAPHIC CORRELATION</skos:prefLabel>
+   <SA>CHEMOSTRATIGRAPHY</SA>
+   <SA>STRATIGRAPHIC CHART</SA>
+   <SA>STRATIGRAPHIC CROSS SECTN</SA>
+   <SA>STRATIGRAPHY</SA>
+   <BT>CORRELATION</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/60921">
+   <skos:prefLabel>STRATIGRAPHIC CROSS SECTN</skos:prefLabel>
+   <SA>STRATIGRAPHIC CORRELATION</SA>
+   <SA>STRATIGRAPHY</SA>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/60922">
+   <skos:prefLabel>STRATIGRAPHIC MAP</skos:prefLabel>
+   <SA>STRATIGRAPHY</SA>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/60924">
+   <skos:prefLabel>STRATIGRAPHIC MAPPING</skos:prefLabel>
+   <SA>STRATIGRAPHY</SA>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/60931">
+   <skos:prefLabel>STRATIGRAPHIC TERM</skos:prefLabel>
+   <SA>FORMATION (GEOLOGY)</SA>
+   <SA>HYDROSTRATIGRAPHIC UNIT</SA>
+   <SA>STRATIGRAPHY</SA>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/60934">
+   <skos:prefLabel>STRATIGRAPHIC TRAP</skos:prefLabel>
+   <SA>PERMEABILITY BARRIER</SA>
+   <SA>STRATIGRAPHIC BARRIER</SA>
+   <SA>STRATIGRAPHY</SA>
+   <BT>TRAP (GEOLOGY)</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/60935">
+   <skos:prefLabel>STRATIGRAPHY</skos:prefLabel>
+   <SA>BACKSTRIPPING</SA>
+   <SA>BALANCED SECTION</SA>
+   <SA>BED GEOMETRY</SA>
+   <SA>COLUMNAR SECTION</SA>
+   <SA>FORMATION (GEOLOGY)</SA>
+   <SA>FORMATION THICKNESS</SA>
+   <SA>GEOLOGIC AGE DETERMINATION</SA>
+   <SA>HYDROSTRATIGRAPHIC UNIT</SA>
+   <SA>MARKER BED</SA>
+   <SA>MEASURED SECTION</SA>
+   <SA>ROCK CONTACT</SA>
+   <SA>SOURCE TO SINK</SA>
+   <SA>STRATA</SA>
+   <SA>STRATIGRAPHIC BARRIER</SA>
+   <SA>STRATIGRAPHIC BOUNDARY</SA>
+   <SA>STRATIGRAPHIC CHART</SA>
+   <SA>STRATIGRAPHIC CONVERGENCE</SA>
+   <SA>STRATIGRAPHIC CORRELATION</SA>
+   <SA>STRATIGRAPHIC CROSS SECTN</SA>
+   <SA>STRATIGRAPHIC MAP</SA>
+   <SA>STRATIGRAPHIC MAPPING</SA>
+   <SA>STRATIGRAPHIC TERM</SA>
+   <SA>STRATIGRAPHIC TRAP</SA>
+   <SA>SUPERPOSITION</SA>
+   <SA>TIME STRATIGRAPHIC UNIT</SA>
+   <SA>TRANSECT</SA>
+   <SA>TYPE SECTION</SA>
+   <SA>TYPE WELL</SA>
+   <SA>UNIFORMITARIANISM</SA>
+   <SA>ZONATION</SA>
+   <NT>BIOSTRATIGRAPHY</NT>
+   <NT>CHEMOSTRATIGRAPHY</NT>
+   <NT>CYCLOSTRATIGRAPHY</NT>
+   <NT>EVENT STRATIGRAPHY</NT>
+   <NT>MAGNETOSTRATIGRAPHY</NT>
+   <NT>SEISMIC STRATIGRAPHY</NT>
+   <NT>TECTONOSTRATIGRAPHY</NT>
+   <BT>GEOLOGY</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/60947">
+   <skos:prefLabel>STREAM</skos:prefLabel>
+   <SA>DEPOSITIONAL ENVIRONMENT</SA>
+   <SA>FRESH WATER ENVIRONMENT</SA>
+   <SA>HYDROLOGY</SA>
+   <SA>NONMARINE ENVIRONMENT</SA>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/60948">
+   <skos:prefLabel>STREAM ANALYZER</skos:prefLabel>
+   <SA>ANALYTICAL METHOD</SA>
+   <SA>DOWNHOLE FLUID ANALYSIS</SA>
+   <SA>HYDROCARBON ANALYSIS</SA>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/61046">
+   <skos:prefLabel>STRUCTURAL EXPERIMENT</skos:prefLabel>
+   <BT>EXPERIMENT</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/61062">
+   <skos:prefLabel>STRUCTURE</skos:prefLabel>
+   <SA>COMPOSITION</SA>
+   <NT>AMORPHOUS</NT>
+   <NT>MOLECULAR STRUCTURE</NT>
+   <BT>PROPERTY</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/61141">
+   <skos:prefLabel>SUBATOMIC PARTICLE</skos:prefLabel>
+   <SA>ELEMENT (CHEMICAL)</SA>
+   <SA>MOLECULAR STRUCTURE</SA>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/61227">
+   <skos:prefLabel>SUBSURFACE PRESSURE</skos:prefLabel>
+   <SA>BURIAL HISTORY</SA>
+   <SA>PALEOPRESSURE</SA>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/61236">
+   <skos:prefLabel>SUBSURFACE TEMPERATURE</skos:prefLabel>
+   <SA>BURIAL HISTORY</SA>
+   <SA>CONODONT ALTERATION INDEX</SA>
+   <SA>TEMPERATURE MEASURING</SA>
+   <SA>THERMOCHRONOLOGY</SA>
+   <BT>TEMPERATURE</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/61642">
+   <skos:prefLabel>SUPERPOSITION</skos:prefLabel>
+   <SA>CORRELATION</SA>
+   <SA>RESERVOIR ENGINEERING</SA>
+   <SA>SEDIMENTATION</SA>
+   <SA>STRATIGRAPHY</SA>
+   <BT>PHYSICAL OPERATION</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/61661">
+   <skos:prefLabel>SUPRATIDAL ENVIRONMENT</skos:prefLabel>
+   <SA>BEACH ENVIRONMENT</SA>
+   <SA>CARBONATE DIAGENESIS</SA>
+   <SA>DEPOSITIONAL ENVIRONMENT</SA>
+   <SA>DOLOMITIZATION</SA>
+   <SA>EVAPORATION PAN</SA>
+   <SA>LITTORAL ENVIRONMENT</SA>
+   <SA>MARINE ENVIRONMENT</SA>
+   <SA>NEAR SHORE ENVIRONMENT</SA>
+   <SA>NONMARINE ENVIRONMENT</SA>
+   <SA>PARALIC DEPOSIT</SA>
+   <SA>TIDAL FLAT</SA>
+   <BT>ENVIRONMENT</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/61851">
+   <skos:prefLabel>SWAMP</skos:prefLabel>
+   <SA>BRACKISH ENVIRONMENT</SA>
+   <SA>DEPOSITIONAL ENVIRONMENT</SA>
+   <SA>MARINE ENVIRONMENT</SA>
+   <SA>NONMARINE ENVIRONMENT</SA>
+   <SA>PALEOGEOGRAPHY</SA>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/62487">
+   <skos:prefLabel>TANNIN</skos:prefLabel>
+   <BT>ORGANIC MATTER</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/62935">
+   <skos:prefLabel>TECHNOLOGY</skos:prefLabel>
+   <NT>CHEMISTRY</NT>
+   <NT>CRYSTALLOGRAPHY</NT>
+   <NT>ECOLOGY</NT>
+   <NT>GEOLOGY</NT>
+   <NT>KINETICS</NT>
+   <NT>MOLECULAR DYNAMICS</NT>
+   <NT>OCEANOGRAPHY</NT>
+   <BT>COMMON ATTRIBUTE</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/63121">
+   <skos:prefLabel>TEMPERATURE</skos:prefLabel>
+   <NT>PALEOTEMPERATURE</NT>
+   <NT>SUBSURFACE TEMPERATURE</NT>
+   <BT>OPERATING CONDITION</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/63131">
+   <skos:prefLabel>TEMPERATURE MEASURING</skos:prefLabel>
+   <SA>BURIAL HISTORY</SA>
+   <SA>PALEOCLIMATE</SA>
+   <SA>PALEOTEMPERATURE</SA>
+   <SA>SUBSURFACE TEMPERATURE</SA>
+   <SA>THERMOCHRONOLOGY</SA>
+   <NT>CLUMPED ISOTOPE THERMOMETR</NT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/63310">
+   <skos:prefLabel>TERRESTRIAL ENVIRONMENT</skos:prefLabel>
+   <SA>DEPOSITIONAL ENVIRONMENT</SA>
+   <SA>ECOLOGY</SA>
+   <SA>NONMARINE ENVIRONMENT</SA>
+   <BT>ENVIRONMENT</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/63357">
+   <skos:prefLabel>TESTING</skos:prefLabel>
+   <NT>ANALYTICAL METHOD</NT>
+   <NT>EXPERIMENT</NT>
+   <NT>PULSE TESTING</NT>
+   <BT>PROCESS</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/63608">
+   <skos:prefLabel>THERMAL ALTERATION</skos:prefLabel>
+   <SA>ABIOGENIC GAS</SA>
+   <SA>CATAGENESIS</SA>
+   <SA>GEOTHERMAL FEATURE</SA>
+   <SA>GEOTHERMAL PROPERTY</SA>
+   <SA>HYDROTHERMAL ALTERATION</SA>
+   <SA>MATURATION</SA>
+   <SA>THERMOCHEMICAL SULFATE RED</SA>
+   <SA>THERMOGENIC GAS</SA>
+   <NT>CONODONT ALTERATION INDEX</NT>
+   <BT>ALTERATION</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/63662">
+   <skos:prefLabel>THERMOCHEMICAL PROCESS</skos:prefLabel>
+   <SA>KINETICS</SA>
+   <SA>THERMOCHEMICAL SULFATE RED</SA>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/63670">
+   <skos:prefLabel>THERMOGENIC GAS</skos:prefLabel>
+   <SA>CRUDE DIAGENESIS</SA>
+   <SA>OIL AND GAS ORIGIN</SA>
+   <SA>ORGANIC DIAGENESIS</SA>
+   <SA>THERMAL ALTERATION</SA>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/63673">
+   <skos:prefLabel>THERMOLUMINESCENCE</skos:prefLabel>
+   <SA>MINERALOGY</SA>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/63871">
+   <skos:prefLabel>THRESHOLD PRESSURE</skos:prefLabel>
+   <SA>DISPLACEMENT</SA>
+   <SA>JAMIN EFFECT</SA>
+   <SA>RESERVOIR FLUID FLOW</SA>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/63961">
+   <skos:prefLabel>TIDAL FLAT</skos:prefLabel>
+   <SA>BRACKISH ENVIRONMENT</SA>
+   <SA>DEPOSITIONAL ENVIRONMENT</SA>
+   <SA>LITTORAL ENVIRONMENT</SA>
+   <SA>MARINE ENVIRONMENT</SA>
+   <SA>PALEOGEOGRAPHY</SA>
+   <SA>SUPRATIDAL ENVIRONMENT</SA>
+   <SA>TRANSITIONAL ENVIRONMENT</SA>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/63963">
+   <skos:prefLabel>TIDAL INLET</skos:prefLabel>
+   <SA>BRACKISH ENVIRONMENT</SA>
+   <SA>MARINE ENVIRONMENT</SA>
+   <SA>PALEOGEOGRAPHY</SA>
+   <SA>TRANSITIONAL ENVIRONMENT</SA>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/64090">
+   <skos:prefLabel>TIME STRATIGRAPHIC UNIT</skos:prefLabel>
+   <SA>FORMATION (GEOLOGY)</SA>
+   <SA>STRATIGRAPHIC BOUNDARY</SA>
+   <SA>STRATIGRAPHY</SA>
+   <BT>EARTH AND SPACE CONCEPTS</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/64424">
+   <skos:prefLabel>TOMBOLO</skos:prefLabel>
+   <SA>BRACKISH ENVIRONMENT</SA>
+   <SA>MARINE ENVIRONMENT</SA>
+   <SA>PALEOGEOGRAPHY</SA>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/64565">
+   <skos:prefLabel>TORBANITE</skos:prefLabel>
+   <SA>ALGINITE</SA>
+   <SA>ORGANIC GEOCHEMISTRY</SA>
+   <SA>SAPROPEL</SA>
+   <SA>SOURCE ROCK</SA>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/64771">
+   <skos:prefLabel>TRACE</skos:prefLabel>
+   <SA>TRACE ANALYSIS (CHEMICAL)</SA>
+   <SA>TRACE ELEMENT</SA>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/64773">
+   <skos:prefLabel>TRACE ANALYSIS (CHEMICAL)</skos:prefLabel>
+   <SA>TRACE</SA>
+   <SA>TRACE ELEMENT</SA>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/64777">
+   <skos:prefLabel>TRACE ELEMENT</skos:prefLabel>
+   <SA>ENVIRONMENTAL GEOLOGY</SA>
+   <SA>TRACE</SA>
+   <SA>TRACE ANALYSIS (CHEMICAL)</SA>
+   <BT>ELEMENT (CHEMICAL)</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/64885">
+   <skos:prefLabel>TRANSECT</skos:prefLabel>
+   <SA>EXPLORATION</SA>
+   <SA>GEOCHEMISTRY</SA>
+   <SA>STRATIGRAPHY</SA>
+   <BT>EARTH AND SPACE CONCEPTS</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/64907">
+   <skos:prefLabel>TRANSITIONAL ENVIRONMENT</skos:prefLabel>
+   <SA>BAY</SA>
+   <SA>BRACKISH ENVIRONMENT</SA>
+   <SA>COASTAL PLAIN</SA>
+   <SA>ESTUARY</SA>
+   <SA>LAGOON</SA>
+   <SA>NONMARINE ENVIRONMENT</SA>
+   <SA>PALEOENVIRONMENT</SA>
+   <SA>PARALIC DEPOSIT</SA>
+   <SA>TIDAL FLAT</SA>
+   <SA>TIDAL INLET</SA>
+   <BT>MARINE ENVIRONMENT</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/64964">
+   <skos:prefLabel>TRAP (GEOLOGY)</skos:prefLabel>
+   <SA>OIL AND GAS ENTRAPMENT</SA>
+   <SA>OIL HABITAT</SA>
+   <SA>PETROLEUM SYSTEM</SA>
+   <NT>STRATIGRAPHIC TRAP</NT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/65929">
+   <skos:prefLabel>TYPE SECTION</skos:prefLabel>
+   <SA>MEASURED SECTION</SA>
+   <SA>STRATIGRAPHIC CHART</SA>
+   <SA>STRATIGRAPHY</SA>
+   <SA>TYPE WELL</SA>
+   <BT>EARTH AND SPACE CONCEPTS</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/65931">
+   <skos:prefLabel>TYPE WELL</skos:prefLabel>
+   <SA>STRATIGRAPHY</SA>
+   <SA>TYPE SECTION</SA>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/66263">
+   <skos:prefLabel>UNDERWATER</skos:prefLabel>
+   <SA>MARINE ENVIRONMENT</SA>
+   <SA>OFFSHORE</SA>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/66293">
+   <skos:prefLabel>UNDULATORY EXTINCTION</skos:prefLabel>
+   <SA>CRYSTALLOGRAPHY</SA>
+   <SA>MINERALOGY</SA>
+   <SA>PETROGRAPHY</SA>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/66307">
+   <skos:prefLabel>UNIFORMITARIANISM</skos:prefLabel>
+   <SA>GEOLOGIC HISTORY</SA>
+   <SA>SEDIMENTATION</SA>
+   <SA>STRATIGRAPHY</SA>
+   <BT>EARTH AND SPACE CONCEPTS</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/66451">
+   <skos:prefLabel>UNSTEADY STATE FLOW</skos:prefLabel>
+   <SA>RESERVOIR FLUID FLOW</SA>
+   <SA>STEADY STATE FLOW</SA>
+   <BT>FLUID FLOW</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/66537">
+   <skos:prefLabel>UPWELLING</skos:prefLabel>
+   <SA>ECOLOGY</SA>
+   <SA>OCEANOGRAPHY</SA>
+   <SA>PALEOCEANOGRAPHY</SA>
+   <SA>PALEOECOLOGY</SA>
+   <BT>PHENOMENON</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/67244">
+   <skos:prefLabel>VELOCITY</skos:prefLabel>
+   <SA>KINETICS</SA>
+   <BT>OPERATING CONDITION</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/67729">
+   <skos:prefLabel>VISCOSITY RATIO</skos:prefLabel>
+   <SA>MOBILITY RATIO</SA>
+   <SA>RESERVOIR FLUID FLOW</SA>
+   <BT>OPERATING CONDITION</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/67767">
+   <skos:prefLabel>VITRINITE REFLECTANCE</skos:prefLabel>
+   <SA>CRUDE OIL CHARACTERIZATION</SA>
+   <SA>GEOCHEMICAL INTERPRETATION</SA>
+   <SA>LOPATIN METHOD</SA>
+   <SA>MATURATION</SA>
+   <SA>ORGANIC DIAGENESIS</SA>
+   <BT>REFLECTION</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/68522">
+   <skos:prefLabel>WATER ANALYSIS</skos:prefLabel>
+   <SA>COMPOSITION</SA>
+   <SA>ENVIRONMENTAL GEOLOGY</SA>
+   <SA>HARDNESS (WATER)</SA>
+   <SA>HYDROCHEMISTRY</SA>
+   <SA>SALT CONTENT</SA>
+   <SA>SAMPLE ANALYSIS</SA>
+   <SA>WATER CONTENT</SA>
+   <SA>WATER RESISTIVITY</SA>
+   <BT>ANALYTICAL METHOD</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/68544">
+   <skos:prefLabel>WATER CONTENT</skos:prefLabel>
+   <SA>WATER ANALYSIS</SA>
+   <BT>COMPOSITION</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/68608">
+   <skos:prefLabel>WATER RESISTIVITY</skos:prefLabel>
+   <SA>WATER ANALYSIS</SA>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/68634">
+   <skos:prefLabel>WATER WASHING (GEOLOGY)</skos:prefLabel>
+   <BT>CRUDE DIAGENESIS</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/68653">
+   <skos:prefLabel>WATERFLOOD THEORY</skos:prefLabel>
+   <SA>DISPLACEMENT</SA>
+   <SA>FLOOD FRONT</SA>
+   <SA>FRACTIONAL FLOW EQUATION</SA>
+   <SA>FRONTAL ADVANCE EQUATION</SA>
+   <SA>RESERVOIR ENGINEERING</SA>
+   <SA>RESERVOIR FLUID FLOW</SA>
+   <SA>STILES METHOD</SA>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/68728">
+   <skos:prefLabel>WAVE PHENOMENON</skos:prefLabel>
+   <NT>DOUBLE REFRACTION</NT>
+   <NT>WAVE PROPAGATION</NT>
+   <BT>PHENOMENON</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/68730">
+   <skos:prefLabel>WAVE PROPAGATION</skos:prefLabel>
+   <NT>REFLECTION</NT>
+   <NT>REFRACTION (OPTICS)</NT>
+   <BT>WAVE PHENOMENON</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/70257">
+   <skos:prefLabel>WOOD</skos:prefLabel>
+   <SA>CELLULOSE</SA>
+   <SA>ORGANIC MATTER</SA>
+   <SA>PALEOBOTANY</SA>
+   <BT>BY COMPOSITION</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/71341">
+   <skos:prefLabel>ZONATION</skos:prefLabel>
+   <SA>BIOSTRATIGRAPHY</SA>
+   <SA>STRATIGRAPHY</SA>
+   <NT>RESERVOIR ZONATION</NT>
+   <BT>OPERATING CONDITION</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/72797">
+   <skos:prefLabel>GAS FAMILY</skos:prefLabel>
+   <SA>ORGANIC GEOCHEMISTRY</SA>
+   <SA>SOURCE ROCK</SA>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/72804">
+   <skos:prefLabel>HYDROGEN INDEX</skos:prefLabel>
+   <SA>KEROGEN</SA>
+   <SA>ORGANIC CARBON</SA>
+   <SA>ORGANIC DIAGENESIS</SA>
+   <SA>ORGANIC GEOCHEMISTRY</SA>
+   <SA>SOURCE ROCK</SA>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/72862">
+   <skos:prefLabel>OCEANIC ANOXIC EVENT</skos:prefLabel>
+   <SA>EUXINIC ENVIRONMENT</SA>
+   <SA>MARINE ENVIRONMENT</SA>
+   <SA>PALEOCLIMATE</SA>
+   <BT>PALEOCEANOGRAPHY</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/73073">
+   <skos:prefLabel>TECTONOSTRATIGRAPHY</skos:prefLabel>
+   <BT>STRATIGRAPHY</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/73340">
+   <skos:prefLabel>THERMOCHRONOLOGY</skos:prefLabel>
+   <SA>BURIAL HISTORY</SA>
+   <SA>PALEOTEMPERATURE</SA>
+   <SA>SUBSURFACE TEMPERATURE</SA>
+   <SA>TEMPERATURE MEASURING</SA>
+   <BT>RADIOACTIVE AGE DETERMINAT</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/73520">
+   <skos:prefLabel>CALCIUM ISOTOPE RATIO</skos:prefLabel>
+   <SA>ISOTOPE</SA>
+   <SA>ISOTOPE DISTRIBUTION</SA>
+   <SA>ISOTOPE GEOCHEMISTRY</SA>
+   <SA>ISOTOPIC METHOD</SA>
+   <BT>ISOTOPE RATIO</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/73701">
+   <skos:prefLabel>PARALIC DEPOSIT</skos:prefLabel>
+   <SA>NEAR SHORE ENVIRONMENT</SA>
+   <SA>NONMARINE ENVIRONMENT</SA>
+   <SA>SUPRATIDAL ENVIRONMENT</SA>
+   <SA>TRANSITIONAL ENVIRONMENT</SA>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/73946">
+   <skos:prefLabel>MOLECULAR DYNAMICS</skos:prefLabel>
+   <SA>KINETICS</SA>
+   <SA>MOLECULAR MECHANICS</SA>
+   <SA>MOLECULAR MODEL</SA>
+   <SA>MOLECULAR STRUCTURE</SA>
+   <SA>MULTIDISCIPLINARY STUDY</SA>
+   <BT>TECHNOLOGY</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/73947">
+   <skos:prefLabel>MOLECULAR MECHANICS</skos:prefLabel>
+   <SA>KINETICS</SA>
+   <SA>MOLECULAR DYNAMICS</SA>
+   <SA>MOLECULAR MODEL</SA>
+   <SA>MOLECULAR STRUCTURE</SA>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/74121">
+   <skos:prefLabel>DYSOXIC ENVIRONMENT</skos:prefLabel>
+   <SA>AEROBIC ENVIRONMENT</SA>
+   <SA>EUXINIC ENVIRONMENT</SA>
+   <SA>MARINE ENVIRONMENT</SA>
+   <SA>NONMARINE ENVIRONMENT</SA>
+   <BT>ENVIRONMENT</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/74658">
+   <skos:prefLabel>THERMOCHEMICAL SULFATE RED</skos:prefLabel>
+   <SA>THERMAL ALTERATION</SA>
+   <SA>THERMOCHEMICAL PROCESS</SA>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/75539">
+   <skos:prefLabel>OXYGEN DEMAND</skos:prefLabel>
+   <SA>BIODEGRADATION</SA>
+   <SA>HYDROCHEMISTRY</SA>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/75558">
+   <skos:prefLabel>SOURCE TO SINK</skos:prefLabel>
+   <SA>SEDIMENTATION</SA>
+   <SA>STRATIGRAPHY</SA>
+   <BT>PHENOMENON</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/75883">
+   <skos:prefLabel>GLOBAL COOLING</skos:prefLabel>
+   <SA>CLIMATE CYCLE</SA>
+   <SA>GLACIER</SA>
+   <SA>PALEOCLIMATE</SA>
+   <SA>PALEOTEMPERATURE</SA>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/76116">
+   <skos:prefLabel>IRON ISOTOPE RATIO</skos:prefLabel>
+   <SA>ISOTOPE</SA>
+   <SA>ISOTOPE DISTRIBUTION</SA>
+   <SA>ISOTOPE FRACTIONATION</SA>
+   <SA>ISOTOPIC METHOD</SA>
+   <BT>ISOTOPE RATIO</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/76338">
+   <skos:prefLabel>EVAPORATIVE FRACTIONATION</skos:prefLabel>
+   <SA>CRUDE DIAGENESIS</SA>
+   <SA>CRUDE OIL</SA>
+   <SA>GAS WASHING (GEOLOGY)</SA>
+   <SA>OIL AND GAS MIGRATION</SA>
+   <BT>FRACTIONATION</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/76683">
+   <skos:prefLabel>GAS WASHING (GEOLOGY)</skos:prefLabel>
+   <SA>EVAPORATIVE FRACTIONATION</SA>
+   <BT>CRUDE DIAGENESIS</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/76904">
+   <skos:prefLabel>DOWNHOLE FLUID ANALYSIS</skos:prefLabel>
+   <SA>HYDROCARBON ANALYSIS</SA>
+   <SA>SAMPLE ANALYSIS</SA>
+   <SA>STREAM ANALYZER</SA>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/76966">
+   <skos:prefLabel>ABIOGENIC GAS</skos:prefLabel>
+   <SA>ABIOGENESIS</SA>
+   <SA>OIL AND GAS ORIGIN</SA>
+   <SA>SERPENTINIZATION</SA>
+   <SA>THERMAL ALTERATION</SA>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/77144">
+   <skos:prefLabel>CONODONT ALTERATION INDEX</skos:prefLabel>
+   <SA>MATURATION</SA>
+   <SA>ORGANIC DIAGENESIS</SA>
+   <SA>PALEOTEMPERATURE</SA>
+   <SA>SUBSURFACE TEMPERATURE</SA>
+   <BT>THERMAL ALTERATION</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/77161">
+   <skos:prefLabel>PROMOTER</skos:prefLabel>
+   <SA>CHEMICAL REACTION</SA>
+   <SA>KINETICS</SA>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/77163">
+   <skos:prefLabel>FINGERPRINTING</skos:prefLabel>
+   <SA>CRUDE OIL CHARACTERIZATION</SA>
+   <SA>CRUDE OIL CORRELATION</SA>
+   <SA>SOURCE ROCK</SA>
+   <BT>CHARACTERIZATION</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/77400">
+   <skos:prefLabel>BACKSTRIPPING</skos:prefLabel>
+   <SA>BASIN DEVELOPMENT</SA>
+   <SA>BURIAL HISTORY</SA>
+   <SA>STRATIGRAPHY</SA>
+   <BT>PHYSICAL OPERATION</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/77644">
+   <skos:prefLabel>SILICON ISOTOPE RATIO</skos:prefLabel>
+   <SA>ISOTOPE</SA>
+   <SA>ISOTOPE DISTRIBUTION</SA>
+   <SA>ISOTOPE FRACTIONATION</SA>
+   <SA>ISOTOPE GEOCHEMISTRY</SA>
+   <SA>ISOTOPIC METHOD</SA>
+   <BT>ISOTOPE RATIO</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/77673">
+   <skos:prefLabel>SERPENTINIZATION</skos:prefLabel>
+   <SA>ABIOGENESIS</SA>
+   <SA>ABIOGENIC GAS</SA>
+   <SA>OIL AND GAS ORIGIN</SA>
+   <BT>HYDROTHERMAL ALTERATION</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/78016">
+   <skos:prefLabel>CLUMPED ISOTOPE THERMOMETR</skos:prefLabel>
+   <SA>BURIAL HISTORY</SA>
+   <SA>CARBON ISOTOPE RATIO</SA>
+   <SA>CARBONATE CHEMISTRY</SA>
+   <SA>CARBONATE DIAGENESIS</SA>
+   <SA>CHEMOSTRATIGRAPHY</SA>
+   <SA>FLUID INCLUSION</SA>
+   <SA>ISOTOPE FRACTIONATION</SA>
+   <SA>ISOTOPE GEOCHEMISTRY</SA>
+   <SA>ISOTOPIC METHOD</SA>
+   <SA>OXYGEN ISOTOPE RATIO</SA>
+   <SA>PALEOCEANOGRAPHY</SA>
+   <SA>PALEOCLIMATE</SA>
+   <SA>PALEOTEMPERATURE</SA>
+   <SA>SHELL COMPOSITION</SA>
+   <BT>TEMPERATURE MEASURING</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/78021">
+   <skos:prefLabel>MAGNESIUM ISOTOPE RATIO</skos:prefLabel>
+   <SA>ISOTOPE</SA>
+   <SA>ISOTOPE DISTRIBUTION</SA>
+   <SA>ISOTOPE FRACTIONATION</SA>
+   <SA>ISOTOPE GEOCHEMISTRY</SA>
+   <SA>ISOTOPIC METHOD</SA>
+   <BT>ISOTOPE RATIO</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/78353">
+   <skos:prefLabel>MESSINIAN SALINITY CRISIS</skos:prefLabel>
+   <SA>EVAPORITIC ENVIRONMENT</SA>
+   <SA>HYDROCHEMISTRY</SA>
+   <SA>SEA WATER</SA>
+   <BT>PALEOCEANOGRAPHY</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/78421">
+   <skos:prefLabel>FLUID SUBSTITUTION</skos:prefLabel>
+   <SA>RESERVOIR FLUID FLOW</SA>
+   <BT>PHENOMENON</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/78542">
+   <skos:prefLabel>ECCENTRICITY</skos:prefLabel>
+   <SA>CLIMATE CYCLE</SA>
+   <SA>CYCLOSTRATIGRAPHY</SA>
+   <SA>INSOLATION</SA>
+   <SA>OBLIQUITY</SA>
+   <SA>PALEOCLIMATE</SA>
+   <SA>PRECESSION</SA>
+   <BT>PHENOMENON</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/78543">
+   <skos:prefLabel>OBLIQUITY</skos:prefLabel>
+   <SA>CLIMATE CYCLE</SA>
+   <SA>CYCLOSTRATIGRAPHY</SA>
+   <SA>ECCENTRICITY</SA>
+   <SA>INSOLATION</SA>
+   <SA>PALEOCLIMATE</SA>
+   <SA>PRECESSION</SA>
+   <BT>PHENOMENON</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/78544">
+   <skos:prefLabel>EARTH ORBIT</skos:prefLabel>
+   <SA>CLIMATE CYCLE</SA>
+   <SA>CYCLOSTRATIGRAPHY</SA>
+   <SA>INSOLATION</SA>
+   <SA>PALEOCLIMATE</SA>
+   <SA>PRECESSION</SA>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/78545">
+   <skos:prefLabel>INSOLATION</skos:prefLabel>
+   <SA>CLIMATE CYCLE</SA>
+   <SA>CYCLOSTRATIGRAPHY</SA>
+   <SA>EARTH ORBIT</SA>
+   <SA>ECCENTRICITY</SA>
+   <SA>OBLIQUITY</SA>
+   <SA>PALEOCLIMATE</SA>
+   <SA>PRECESSION</SA>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/79925">
+   <skos:prefLabel>INTEGRATED ASSET MODEL</skos:prefLabel>
+   <SA>MULTIDISCIPLINARY STUDY</SA>
+   <SA>RESERVOIR FLUID FLOW</SA>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/80052">
+   <skos:prefLabel>SWEET SPOT</skos:prefLabel>
+   <SA>HYDROCARBON POTENTIAL</SA>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/81387">
+   <skos:prefLabel>ISOTOPOLOGUE</skos:prefLabel>
+   <SA>ISOTOPE</SA>
+   <SA>ISOTOPE GEOCHEMISTRY</SA>
+   <SA>ISOTOPIC COMPOSITION</SA>
+   <BT>BY COMPOSITION</BT>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://PetroleumAbstractsThesaurus/81724">
+   <skos:prefLabel>RHENIUM OSMIUM DATING</skos:prefLabel>
+   <SA>ELEMENT RATIO</SA>
+   <SA>ISOTOPE GEOCHEMISTRY</SA>
+   <SA>RADIOACTIVE ISOTOPE</SA>
+   <BT>RADIOACTIVE AGE DETERMINAT</BT>
+
+ </skos:Concept>
+</rdf:RDF>

@@ -1,0 +1,102 @@
+<!DOCTYPE HTML>
+<!-- *******************************************************************************
+ * SOUSLESENS LICENSE************************
+ *
+ * The MIT License (MIT)
+ *
+ * Copyright (c) 2016-2017 Claude Fauconnet claude.fauconnet@neuf.fr
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ *
+ ******************************************************************************-->
+
+<html>
+<head>
+    <link rel="stylesheet" type="text/css" title="Design"
+          href="../common/js/jquery/theme_humanity/jquery-ui.min.css"/>
+    <lin
+    <script src="../common/js/jquery/jquery.min.js"></script>
+    <script src="../common/js/jquery/jquery-ui.min.js"></script>
+    <script src="./js/cards.js"></script>
+    <script src="./js/schema.js"></script>
+    <script src="./js/infosGenericDisplay.js"></script>
+    <script src="./js/common.js"></script>
+    <script src="./resources/params.js"></script>
+
+    <script>
+        var subGraph;
+        var nodeColors={}
+        $(function(){
+            infoGenericDisplay.initLabels(function(){
+                cards.subGraph=$("#dbName").val();
+                cards.defaultnodeNameField=Schema.schema.defaultnodeNameField;
+            });
+
+            $("#dialog").dialog({
+                autoOpen: false,
+                height: Gparams.bigDialogSize.h,
+                width: Gparams.bigDialogSize.w,
+                modal: true
+
+            });
+
+        });
+        function allowDrop(ev) {
+            ev.preventDefault();
+        }
+
+        function drag(ev) {
+            ev.dataTransfer.setData("text", ev.target.id);
+        }
+
+        function drop(ev) {
+            ev.preventDefault();
+            var data = ev.dataTransfer.getData("text");
+
+            ev.target.appendChild(document.getElementById(data));
+        }
+
+
+    </script>
+</head>
+
+<body>
+<input id="dbName" value="jemsIOT">
+<select id="nodesLabelsSelect" ></select>
+<button onclick='cards.drawCards($("#nodesLabelsSelect").val());'>draw</button>
+sort <select id="sortSelect">
+    <option> children-</option>
+    <option> children+</option>
+    <option> alphabetic</option>
+</select>
+<span id="filterDiv"></span>
+<div id="backgroundDiv">
+
+<!--
+<div id="parent2" class="parent" ondrop="drop(event)" ondragover="allowDrop(event)" width="336" height="69" color="red">drop</div>
+<div id="parent3" class="parent" ondrop="drop(event)" ondragover="allowDrop(event)" width="336" height="69" color="red">drop</div>
+
+<div id="child1"  class="child" draggable="true" ondragstart="drag(event)"  onclick="onClickchild(this)">drag</div>
+<div id="child2"  class="child" draggable="true" ondragstart="drag(event)"  onclick="onClickchild(this)>drag</div>-->
+</div>
+
+<div id="dialog"><div id="nodeInfosDiv"></div></div>
+</body>
+</html>
+Try it Yourself »
