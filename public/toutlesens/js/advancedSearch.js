@@ -552,11 +552,11 @@ var advancedSearch = (function () {
             names = list;
         var query = "MATCH path=(n)-[r]-(m) where n.id in ["
         for (var i = 0; i < names.length; i++) {
-            if (i > 0)
+            if (i > 0 && i<names.length)
                 query += ","
-            query += "\'" + names[i] + "\'";
+            // query += "\'" + names[i] + "\'"; //FIX by HCE 
+			query +=  names[i];
         }
-
 
         query += "] "+subGraphQuery+"return " + returnStr;
         self.executeCypherAndDisplayGraph(query, "searchByNameList");

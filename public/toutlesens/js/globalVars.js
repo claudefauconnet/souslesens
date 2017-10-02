@@ -47,7 +47,7 @@ var currentTabIndex=0;
 var currentActionObj=null;
 var currentLabel=null;
 var limit=300;
-var returnStr="EXTRACT(rel IN relationships(path) | type(rel))as rels,nodes(path)as nodes, EXTRACT(node IN nodes(path) | ID(node)) AS ids, EXTRACT(node IN nodes(path) | labels(node)) as labels ";
+var returnStr="EXTRACT(rel IN relationships(path) | type(rel)) as rels,nodes(path) as nodes, EXTRACT(node IN nodes(path) | ID(node)) AS ids, EXTRACT(node IN nodes(path) | labels(node)) as labels ";
 
 //*************common.js
 var dataPath="data";

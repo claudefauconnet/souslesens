@@ -31,10 +31,15 @@ var customizeUI = (function () {
     self.customInfo = function (obj) {
 
         if (queryParams.sinequaCallbackUrl) {
-
+			
             var str = "";
-            if (obj.neoAttrs.id_doc)
-                str = "<a href='" + queryParams.sinequaCallbackUrl + "?~~ID~~=" + obj.neoAttrs.id_doc + "target='_parent'>search in Sinequa</a>";
+            if (obj.neoAttrs.id_doc){
+				
+                // str = "<a href='" + queryParams.sinequaCallbackUrl + "?~~ID~~=" + obj.neoAttrs.id_doc + "target='_parent'>search in Sinequa</a>";
+				str = '<a href="'+
+					decodeURIComponent(queryParams.sinequaCallbackUrl).replace('~~ID~~',obj.neoAttrs.id_doc)+
+					'" target="_parent">Search in Sinequa</a>';
+			}
             return str;
 
         }
