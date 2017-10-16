@@ -26,7 +26,7 @@
 var cards = (function () {
     var self = {};
     self.currentNodes = {};
-    self.defaultnodeNameField = "name";
+    self.defaultNodeNameProperty = "name";
     //  self.currentState.currentDiv="";
     //  self.currentState.parentDiv="";
     self.currentChildrenLabels = {};
@@ -47,13 +47,13 @@ var cards = (function () {
 
 
     }
-    var infosControlsDivHtml = "";
+    var cardsInfosControlsDivHtml = "";
 
     self.init = function () {
-        infosControlsDivHtml = $("#infosControlsDiv").html();
+        cardsInfosControlsDivHtml = $("#cardsInfosControlsDiv").html();
         $("#backgroundDiv").html("");
         if (Schema)
-            self.defaultnodeNameField = Schema.getNameProperty();
+            self.defaultNodeNameProperty = Schema.getNameProperty();
         self.currentState = {
             selectedDiv: "",
             labelDiv: "",
@@ -216,11 +216,11 @@ var cards = (function () {
 
             var html = $("#nodeInfosDiv").html();
             if (self.write == 1) {
-                html = infosControlsDivHtml + html;
+                html = cardsInfosControlsDivHtml + html;
             }
 
             return callback(html);
-            //   $("#dialog").dialog("option", "title","["+node.label+"] "+node[self.defaultnodeNameField]);
+            //   $("#dialog").dialog("option", "title","["+node.label+"] "+node[self.defaultNodeNameProperty]);
             //  $("#dialog").dialog("open")
 
 
@@ -252,13 +252,10 @@ var cards = (function () {
 
             function getChildNodeHtml(child) {
 
-                var title = child[self.defaultnodeNameField];
-
-                var style = " style='z-index:" + (self.currentState.zIndex++) + "' ";
-                var icon = "";
-                var color = "#eee";
+                var title = child[self.defaultNodeNameProperty];
+                var color="";
                 if (Schema.schema.labels[child.label]) {
-                    color = Schema.schema.labels[child.label].color;
+                    color = ";background-color:"+Schema.schema.labels[child.label].color;
 
                     /*   var icon2 = Schema.schema.labels[child.label].icon;
                      if (icon2) {
@@ -269,9 +266,13 @@ var cards = (function () {
 
 
                 }
+                var style = " style='z-index:" + (self.currentState.zIndex++) +color+ "' ";
+                var icon = "";
+                var color = "#eee";
 
 
-                var childDivId = getDivFromNeoId("C", child.neoId);
+
+                var childDivId = getDivFromNeoId("C", child.neoId,child.label);
                 self.currentNodes[childKey].divId = childDivId;
 
                 var html = ' <div id=' + childDivId + style + ' class="child"  draggable="true" ondragstart="drag(event)"  ondblclick="cards.onDblClickchild(this)" onclick="cards.onDivClick(event,this)" >' + icon + title + closeDivHtml + '</div>';
@@ -319,8 +320,14 @@ var cards = (function () {
                         icon = "<img  class='imgframe' style='border-color:" + color + "' src='/toutlesens/icons/" + icon2 + "' width=" + self.iconSize + " >";
                     }
 
-                    var nodeId = labelClusters[childLabel];
-                    var labelDivId = getDivFromNeoId("L", list.parent, childLabel);
+                  //  var nodeId = labelClusters[childLabel];
+                    //  var nodeId = labelClusters[childLabel];
+                    var neoId=list.parent
+                    if(!neoId)
+                        neoId=labelClusters[childLabel].neoId
+
+
+                    var labelDivId = getDivFromNeoId("L", neoId, childLabel);
                     html += ' <div id=' + labelDivId + style + ' class="childLabel"   onclick="cards.onDivClick(event,this)"  >' + icon + childLabel + " (" + count + ") " + closeDivHtml + '</div>';
                 }
                 return html;
@@ -377,9 +384,9 @@ var cards = (function () {
                     else if (sort == "children-")
                         return b.nChildren - a.nChildren;
                     else if (sort == "alphabetic") {
-                        if (a[defaultnodeNameField] > b[defaultnodeNameField])
+                        if (a[defaultNodeNameProperty] > b[defaultNodeNameProperty])
                             return 1;
-                        else if (a[defaultnodeNameField] < b[defaultnodeNameField])
+                        else if (a[defaultNodeNameProperty] < b[defaultNodeNameProperty])
                             return -1
                         else
                             return 0;
@@ -393,7 +400,7 @@ var cards = (function () {
 
                     var list = lists[i];
                     if (list.isParent) {
-                        var title = "[" + list.label + "]" + list[self.defaultnodeNameField];
+                        var title = "[" + list.label + "]" + list[self.defaultNodeNameProperty];
                         var backInput = "";
 
 
@@ -445,7 +452,7 @@ var cards = (function () {
 
 
                          }
-                         var title = "[" + child.label + "]" + child[self.defaultnodeNameField];
+                         var title = "[" + child.label + "]" + child[self.defaultNodeNameProperty];
                          var childDivId = getDivFromNeoId("C", child.neoId);
                          self.currentNodes[childKey].divId = childDivId;
                          html += ' <div id=' + childDivId + style + ' class="child"  draggable="true" ondragstart="drag(event)" ondblclick="cards.onDblClickchild(this)" onclick="cards.onDivClick(event,this)" >' + icon + title + closeDivHtml + '</div>';

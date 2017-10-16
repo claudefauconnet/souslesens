@@ -55,7 +55,7 @@ langResources['FR'] = {
 	"lang_56" : "Modifier",
 	"lang_57" : "X",
 	"lang_59" : "Vue",
-	"lang_60" : "Recherche",
+	"lang_60" : "Graphe",
 	"lang_61" : "Recherche avancee",
 	"lang_62" : "Peindre des proprietes...",
 	"lang_63" : "affiche tous les autour du noeud dedepart (sans filtres)",
@@ -147,6 +147,9 @@ langResources['FR'] = {
     "lang_174": "Selection",
     "lang_175": "Supprimer le lien",
     "lang_176": " Selectionner  tous les noeuds du graphe",
+    "lang_177": " Plus...",
+    "lang_178": " BI",
+    "lang_179": " RDF",
 
 
 }

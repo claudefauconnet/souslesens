@@ -56,7 +56,7 @@ langResources['EN'] = {
 	"lang_56" : "Modify",
 	"lang_57" : "X",
 	"lang_59" : "View",
-	"lang_60" : "Search",
+	"lang_60" : "Graph",
 	"lang_61" : "Advanced search...",
 	"lang_62" : "Display proprerties...",
 	"lang_63" : "Show all nodes around source node",
@@ -147,5 +147,7 @@ langResources['EN'] = {
     "lang_174": "Selection",
     "lang_175": "Delete link",
     "lang_176": " Select all graph nodes",
-
+    "lang_177": " More...",
+    "lang_178": " BI",
+    "lang_179": " RDF",
 }

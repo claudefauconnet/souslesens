@@ -144,7 +144,7 @@ var selection = (function () {
                     node = nodes[j];
                 node.id = nodes[j]._id;
                 if (!node.name)
-                    node.name = node[Gparams.defaultnodeNameField];
+                    node.name = node[Gparams.defaultNodeNameProperty];
                 node.label = nodes[j].labels[0]
                 if (ids.indexOf(node.id) < 0) {
                     ids.push(node.id)
@@ -159,7 +159,7 @@ var selection = (function () {
 
 
     self.selectAllGraphNodes = function () {
-        var json = cachedResultArray;
+        var json = toutlesensData.cachedResultArray;
         self.setSelectionFromQuery(json);
     }
     return self;

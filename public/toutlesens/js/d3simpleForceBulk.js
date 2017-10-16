@@ -27,6 +27,7 @@
 
 var d3simpleForceBulk = (function () {
     var self = {};
+    self.force;
 
     self.initSimpleForceBulk = function (json) {
 
@@ -105,7 +106,10 @@ var d3simpleForceBulk = (function () {
 
         var svg0 = d3.select(selector).append("svg:svg")
             .attr('width', w)
-            .attr('height', h);
+            .attr('height', h)
+           .on("click", function(){
+               self.force.stop()
+           })
         svg = svg0.append("svg:g").attr("id", "canvas").call(zoomListener);
 
 
@@ -129,6 +133,8 @@ var d3simpleForceBulk = (function () {
             .gravity(gravity)
 
             .start();
+
+        self.force = force;
 
 
         self.update = function () {
@@ -197,6 +203,9 @@ var d3simpleForceBulk = (function () {
                         })
 
                         .style("stroke", function (d) {
+                            if (d.target.relType) {
+                                return linkColors[d.target.relType];
+                            }
                             return "brown";
                         })
                         .attr("stroke-width", function (d) {
@@ -228,6 +237,12 @@ var d3simpleForceBulk = (function () {
 
                     var anode = d3.select(this);
                     anode.append('svg:circle')
+                        .on("click", function(){
+                            currentObject=d;
+                           // currentDisplayType=
+                            toutlesensController.onVisButton("SIMPLE_FORCE_GRAPH",graphButton);
+                         //  d3common.d3CommonClick(d);
+                        })
                         .attr("r", "5px")
                         .style("stroke", "black")
                         .style("stroke-width", 1)

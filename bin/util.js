@@ -24,37 +24,37 @@
  * SOFTWARE.
  *
  ******************************************************************************/
-
+var fs = require('fs');
 var ObjectID = require('mongodb').ObjectID;
 Util = {
 
     prepareJsonForMongo: function (obj) {
-      /*  if (!(typeof obj === "object"))
-            obj = JSON.parse(obj);*/
+        /*  if (!(typeof obj === "object"))
+         obj = JSON.parse(obj);*/
 
         for (var key in obj) {
 
             var value = obj[key];
             if (!(typeof value === "object")) {
                 if (key == "_id") {
-                  /*  if(ObjectID.isValid(value))
-                        obj[key] = new ObjectID(id);*/
+                    /*  if(ObjectID.isValid(value))
+                     obj[key] = new ObjectID(id);*/
                     var id = "" + obj[key];
                     if (id.length > 24)
                         id = substring(id.length - 24);
 
 
-                    while (id.length < 24){
+                    while (id.length < 24) {
                         id = "F" + id;
                     }
                     console.log(id);
-                      obj[key] = new ObjectID.createFromHexString(id);
-                   // obj[key] = new ObjectID(id);
+                    obj[key] = new ObjectID.createFromHexString(id);
+                    // obj[key] = new ObjectID(id);
 
                 }
 
                 else if (!isNaN(value) && value.indexOf) {
-                    if ( value.indexOf(".") > -1)
+                    if (value.indexOf(".") > -1)
                         value = parseFloat(value)
                     else
                         value = parseInt(value)
@@ -63,6 +63,42 @@ Util = {
             }
         }
     }
+    ,
+    base64_encodeFile: function (file) {
+        // read binary data
+        var bitmap = fs.readFileSync(file);
+        // convert binary data to base64 encoded string
+        return new Buffer(bitmap).toString('base64');
+    }
+    ,
+    convertNumStringToNumber: function (value) {
+        if (value.match && value.match(/.*[a-zA-Z\/\\$].*/))
+            return value;
+        if (Util.isInt(value))
+            return parseInt(value)
+        if (Util.isFloat(value))
+            return parseFloat(value)
+        if (value == "true")
+            return true;
+        if (value == "false")
+            return false;
+        return value;
+
+    },
+    isNumber: function (n) {
+        return !isNaN(parseFloat(n)) && isFinite(n);
+    }
+    ,
+
+    isInt: function (value) {
+        return /-?[0-9]+/.test("" + value);
+
+    },
+    isFloat: function (value) {
+        return /-?[0-9]+[.,]+[0-9]?/.test("" + value);
+
+    }
+
 }
 
 

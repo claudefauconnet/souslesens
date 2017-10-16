@@ -30,10 +30,12 @@ var customizeUI = (function () {
 
     self.customInfo = function (obj) {
 
+
+
         if (queryParams.sinequaCallbackUrl) {
 
             var str = "";
-            if (obj.neoAttrs.id_doc)
+            if ( obj.neoAttrs  && obj.neoAttrs.id_doc)
                 str = "<a href='" + queryParams.sinequaCallbackUrl + "?~~ID~~=" + obj.neoAttrs.id_doc + "target='_parent'>search in Sinequa</a>";
             return str;
 
@@ -44,7 +46,7 @@ var customizeUI = (function () {
     }
     self.init = function () {
     if( queryParams.sinequaCallbackUrl)
-        isSouslesensIframe=true;
+        customizeUI.customizationName="Sinequa";
     }
 
     self.customize = function () {
@@ -99,9 +101,9 @@ var customizeUI = (function () {
         $("#formButton").css("visibility", "hidden")
 
         //  $("#verticalVisButtonsDiv").css("width",100)
-        $("#verticalVisButtonsDiv").css("height", 300)
+        $("#verticalVisButtonsDiv").css("height", 400)
         $("#verticalVisButtonsDiv").css("left", (totalWidth + 0) - Gparams.legendWidth)
-        $("#verticalVisButtonsDiv").css("top", 200)
+        $("#verticalVisButtonsDiv").css("top", 300)
         $("#verticalVisButtonsDiv").css("visibility", "visible")
         $("#verticalVisButtonsDiv").css("z-index", 100);
 
@@ -112,7 +114,7 @@ var customizeUI = (function () {
     }
     self.setDepth = function (select) {
         $("#depth").val($(select).val());
-        toutlesensController.drawGraphGeneral();
+        toutlesensController.generateGraph();
     }
 
 

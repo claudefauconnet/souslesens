@@ -48,7 +48,7 @@ var d3simpleForceSinequa = (function(){
             var nodeNeo = nodes[j].properties;
             labels = nodes[j].labels;
             var nodeObj = {
-                name: nodeNeo[Gparams.defaultnodeNameField],
+                name: nodeNeo[Gparams.defaultNodeNameProperty],
 
                 myId: nodeNeo.id,
                 label: nodes[j].labels[0],

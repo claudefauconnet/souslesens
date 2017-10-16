@@ -47,8 +47,8 @@ common.fillSelectOptionsWithStringArray(currentQueriesSelect, array);
 }
 
    self.initLabelsCurrentQueries=function() {
-toutlesensController.initLabels(subGraph, "currentQueriesSourceLabelSelect");
-toutlesensController.initLabels(subGraph, "currentQueriesTargetLabelSelect");
+toutlesensController.initLabels( "currentQueriesSourceLabelSelect");
+toutlesensController.initLabels( "currentQueriesTargetLabelSelect");
 }
 
 
@@ -104,9 +104,9 @@ self.buildStatTree(queryName, query, function (jsonTree) {
 
         currentDataStructure = "tree";
         currentDisplayType = "TREEMAP";
-        window.parent.toutlesensDialogsController.hideAdvancedSearch();
-        window.parent.cachedResultTree = jsonTree;
-        window.parent.toutlesensController.displayGraph(jsonTree, currentDisplayType, null)
+        toutlesensDialogsController.hideAdvancedSearch();
+        toutlesensData.cachedResultTree = jsonTree;
+        toutlesensController.displayGraph(jsonTree, currentDisplayType, null)
     })
 
 }
@@ -148,7 +148,7 @@ self.buildStatTree(queryName, query, function (jsonTree) {
             for (var i = 0; i < data.length; i++) {
                 var name=data[i].node.properties.name;
                 if(!name){
-                    data[i].node.properties.name=data[i].node.properties[Gparams.defaultnodeNameField]
+                    data[i].node.properties.name=data[i].node.properties[Gparams.defaultNodeNameProperty]
                 }
 
                 var neoAttrs= data[i].node.properties;

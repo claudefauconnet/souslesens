@@ -9,8 +9,8 @@
 
 }
 
-infosControlsDiv{
-    visibility: visible;
+cardsInfosControlsDiv{
+    visibility: hidden;
 }
 .parent{
     display: inline-block;
@@ -51,6 +51,12 @@ infosControlsDiv{
   //  opacity: 0.8;
 
 
+
+
+}
+
+.child{
+    background-color: #5e7f5f;
 
 
 }

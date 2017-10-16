@@ -108,7 +108,7 @@ var textOutputs = (function () {
         var attrs = "";
         if (withAttrs)
             self.getNodeAttrsInfo(node);
-        var anchor = "<a href='javascript:onLinkClick(" + node.id + ")'>";
+        var anchor = "<a href='javascript:toutlesensController.onLinkClick(" + node.id + ")'>";
         str += "<li>" + rel + label + anchor + name + "</a>" + deco + attrs + "</li>";
 
 
@@ -473,7 +473,7 @@ var textOutputs = (function () {
             "SiteArcheologique"];
         if (labelsWithImages.indexOf(obj.label) > -1) {
             str += "<hr>";
-            var tag = obj[Gparams.defaultnodeNameField].sansAccent().toLowerCase();
+            var tag = obj[Gparams.defaultNodeNameProperty].sansAccent().toLowerCase();
             var strLinkArticle = "<a target='article' href='http://www.histoiredelantiquite.net/tag/"
                 + tag + "'>articles</a>";
             var strLinkImage = "<a target='images' href='http://www.histoiredelantiquite.net/recherche-de-photos-par-tag/nggallery/tags/"
@@ -486,8 +486,8 @@ var textOutputs = (function () {
 
 
         // lien Sinequa)
-        if (typeof isSouslesensIframe != 'undefined') {
-            var name = obj[Gparams.defaultnodeNameField];
+        if (typeof customizeUI.customizationName == 'Sinequa') {
+            var name = obj[Gparams.defaultNodeNameProperty];
             if (!name)
                 name = obj.name;
             var p = name.lastIndexOf(".");
@@ -533,13 +533,13 @@ var textOutputs = (function () {
 
     self.formatNode = function (node) {
         if (node.name)
-            self.formatNodeName(node.name);
+            node.name=self.formatNodeName(node.name);
 
         return node;
     }
 
     self.formatNodeName = function (name) {
-        var match = /__[0-9]*/.exec(name);// on enleve le suffixe des names ajoutés pour l'unicité des noeuds dans d3js
+        var match = /#[0-9]*/.exec(name);// on enleve le suffixe des names ajoutés pour l'unicité des noeuds dans d3js
         if (match) {
             var p = match.index;
             if (p > -1)

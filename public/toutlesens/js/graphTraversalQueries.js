@@ -124,11 +124,11 @@ self.getRelationsByIds(RelIds, data, startNodeId, endNodeId);
             }
 
         }
-        window.parent. cachedResultArray=data;
-        window.parent.toutlesensController.hideAdvancedSearch();
-        window.parent.currentDisplayType= "SIMPLE_FORCE_GRAPH";
-        window.parent.currentDataStructure = "flat";
-        window.parent.toutlesensController.displayGraph(data, "SIMPLE_FORCE_GRAPH", null);
+         toutlesensData.cachedResultArray=data;
+        toutlesensController.hideAdvancedSearch();
+        currentDisplayType= "SIMPLE_FORCE_GRAPH";
+        currentDataStructure = "flat";
+        toutlesensController.displayGraph(data, "SIMPLE_FORCE_GRAPH", null);
 
     });
 
@@ -204,7 +204,7 @@ self.getRelationsByIds(RelIds, data, startNodeId, endNodeId);
                         + currentDepth + ")?");
                     if (more === true) {
                         $("#depth").val(++currentDepth);
-toutlesensController.drawGraphGeneral()
+toutlesensController.generateGraph()
 
                     }
 

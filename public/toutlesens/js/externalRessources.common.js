@@ -71,8 +71,8 @@ if(typeof fn === 'function') {
 	var word="";
 	if(currentObject && currentObject.name)
 	var word0= currentObject.name;
-	if(!word0 && currentObject && currentObject[Gparams.defaultnodeNameField])
-		var word0= currentObject[Gparams.defaultnodeNameField];
+	if(!word0 && currentObject && currentObject[Gparams.defaultNodeNameProperty])
+		var word0= currentObject[Gparams.defaultNodeNameProperty];
 	var word=prompt ("chercher",word0);
 	if(source && source.length>0 && word && word.length>3){
 		var fnName="searchInTitle"+source;

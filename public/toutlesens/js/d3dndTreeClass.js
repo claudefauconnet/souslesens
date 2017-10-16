@@ -534,7 +534,7 @@ toutlesensController.showPopupMenu(x, y);
 toutlesensController.dispatchAction('setAsRootNode');
                 return true;
             }
-toutlesensController.getGraphDataAroundNode(id);
+toutlesensController.generateGraph(id);
         }
 
         this.update = function (source) {

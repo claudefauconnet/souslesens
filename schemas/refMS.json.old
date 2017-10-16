@@ -1,0 +1,56 @@
+{
+    "labels": {
+        "norme": {
+            "icon": "directive.png",
+            "color": "#007DFF"
+        },
+        "ref": {
+
+            "color": "#F67502"
+        }
+    },
+    "relations": {
+        "refferedIn_1": {
+            "startLabel": "ref",
+            "endLabel": "norme",
+            "type": "refferedIn_1",
+            "color": "#B354B3"
+        }
+    },
+    "properties": {
+        "norme": {
+            "id_doc": {
+                "type": "text"
+            },
+            "norme": {
+                "type": "text"
+            },
+            "name": {
+                "type": "text",
+                "isName":true
+            },
+            "subGraph": {
+                "type": "text"
+            },
+            "id": {
+                "type": "text"
+            }
+        },
+        "ref": {
+            "ref": {
+                "type": "text",
+                "isName":true
+            },
+            "id": {
+                "type": "text"
+            },
+            "subGraph": {
+                "type": "text"
+            },
+            "name": {
+                "type": "text"
+            }
+        }
+    },
+    "defaultNodeNameProperty": "name"
+}

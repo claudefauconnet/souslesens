@@ -25,7 +25,7 @@ To run Souslesens you need to have  [Node.js](https://nodejs.org/en/) and  [Neo4
 4. click on **souslesens.bat** (Windows) : this command does **node ./bin/www**
 5. browse to http:/localhost:3002/toutlesens 
   - 3002 is the default port, you can change it in ./bin/www file
-  -the first time you load a subGraph souslesens creates a schema (/schema/subGraphName.json). Edit this file to configure graphe appearence, specifically the fields "defaultnodeNameField": "name" . This field sets the neo4j property used to name the nodes in souslesens. You can also set a property "isName:1" on each object discribing the nodes properties .
+  -the first time you load a subGraph souslesens creates a schema (/schema/subGraphName.json). Edit this file to configure graphe appearence, specifically the fields "defaultNodeNameProperty": "name" . This field sets the neo4j property used to name the nodes in souslesens. You can also set a property "isName:1" on each object discribing the nodes properties .
   
   example :
   "properties": {

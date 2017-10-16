@@ -531,7 +531,7 @@ function d3treeGraph(_graphDiv, _nodesData, distance) {
                 dispatchAction('setAsRootNode');
                 return true;
             }
-            getGraphDataAroundNode(id);
+            generateGraph(id);
         }
 
         this.update = function (source) {

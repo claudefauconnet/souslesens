@@ -38,6 +38,7 @@ var d3legend = (function () {
     var visLeg;
     var excludedLabels = [];
     self.drawLegend = function (legendDivId) {
+        return;
         var legendDiv;
 
 
@@ -92,8 +93,8 @@ var d3legend = (function () {
             }
 
         }
-        for (var i = 0; i < collapseTargetLabels.length; i++) {
-            var key = [key] = collapseTargetLabels[i];
+        for (var i = 0; i < toutlesensController.collapseTargetLabels.length; i++) {
+            var key = [key] = toutlesensController.collapseTargetLabels[i];
             legendNodeLabels[key] = {label: key};
         }
 
@@ -328,15 +329,15 @@ var d3legend = (function () {
          else// bascule
          excludedLabels.splice(p, 1);
 
-         graphQueryExcludeNodeFilters = "";
+         toutlesensData.queryExcludeNodeFilters = "";
          for (var i = 0; i < excludedLabels.length; i++) {
          //if (i > 0)
-         graphQueryExcludeNodeFilters += " and not ";
-         graphQueryExcludeNodeFilters += "m:" + excludedLabels[i];
+         toutlesensData.queryExcludeNodeFilters += " and not ";
+         toutlesensData.queryExcludeNodeFilters += "m:" + excludedLabels[i];
          }*/
 
-        collapseTargetLabels = [e.name];
-        //  prepareRawDataAndDisplay(cachedResultArray);
+        toutlesensController.collapseTargetLabels = [e.name];
+        //  prepareRawDataAndDisplay(toutlesensData.cachedResultArray);
         /* if (legendNodeLabels.currentActionObj)//call from advancedSearch
          executeSearch();
          else //callfrom toutlesensData*/

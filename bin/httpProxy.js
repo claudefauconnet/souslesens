@@ -89,7 +89,7 @@ var httpProxy = {
             }
         };
 
-         http.request(options, function(res){
+        var post_req =   http.request(options, function(res){
         res.setEncoding('utf8');
 
              var rawData = '';
@@ -104,9 +104,14 @@ var httpProxy = {
                    callback(err);
                  }
              });
-         })
+         });
+
+        post_req.write(postData);
+        post_req.end(postData);
 
     }
+
+
 
 }
 

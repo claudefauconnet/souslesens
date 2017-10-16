@@ -1,0 +1,36 @@
+
+info [Sat Oct 14 2017 16:21:58 GMT+0200 (Paris, Madrid (heure d’été))]  searching most frequent words in index test
+
+info [Sat Oct 14 2017 16:22:50 GMT+0200 (Paris, Madrid (heure d’été))]  searching most frequent words in index test
+
+info [Sat Oct 14 2017 16:23:17 GMT+0200 (Paris, Madrid (heure d’été))]  searching most frequent words in index test
+
+info [Sat Oct 14 2017 16:25:03 GMT+0200 (Paris, Madrid (heure d’été))]  searching most frequent words in index test
+info [Sat Oct 14 2017 16:25:33 GMT+0200 (Paris, Madrid (heure d’été))]  searching most frequent words in index test
+
+info [Sat Oct 14 2017 16:25:45 GMT+0200 (Paris, Madrid (heure d’été))]  searching most frequent words in index test
+
+info [Sat Oct 14 2017 16:27:52 GMT+0200 (Paris, Madrid (heure d’été))]  searching most frequent words in index test
+
+info [Sat Oct 14 2017 16:31:44 GMT+0200 (Paris, Madrid (heure d’été))]  searching most frequent words in index test
+info [Sat Oct 14 2017 16:31:52 GMT+0200 (Paris, Madrid (heure d’été))]  Most frequentwords ["and","ci","de","chose","adat","années","approche","aujourd’hui","autant","bakal","berkah","bersih","celles","central","centre","chacun","chercher","cikal","comment","communauté","comprendre","compte","culture","culturelle","côté","dieu","dire","dès","d’après","d’être","ensemble","esprits","ethnographique","fabrique","fonction","acteurs","an","assimilés","attention","auprès","caractère","cependant","clifford","collectives","consiste","coup","dan","deuxième","différence","distinction","décrire","d’où","fallait","hommes","in","of","pensée","religion","social","the","voir","être","agit","agonistique","analyser","besoin","cause","cherche","collectif","commune"]
+info [Sat Oct 14 2017 16:31:52 GMT+0200 (Paris, Madrid (heure d’été))]  searching  concepts in BNF... 
+info [Sat Oct 14 2017 16:32:02 GMT+0200 (Paris, Madrid (heure d’été))]  concepts found Dieu,Esprits,Acteurs,Attention,Hommes,Pensée
+info [Sat Oct 14 2017 16:32:02 GMT+0200 (Paris, Madrid (heure d’été))]  count docs for each concepts 
+info [Sat Oct 14 2017 16:32:02 GMT+0200 (Paris, Madrid (heure d’été))]  count docs for each concepts 
+info [Sat Oct 14 2017 16:32:02 GMT+0200 (Paris, Madrid (heure d’été))]  count docs for each concepts 
+info [Sat Oct 14 2017 16:32:02 GMT+0200 (Paris, Madrid (heure d’été))]  count docs for each concepts 
+info [Sat Oct 14 2017 16:32:02 GMT+0200 (Paris, Madrid (heure d’été))]  count docs for each concepts 
+info [Sat Oct 14 2017 16:32:02 GMT+0200 (Paris, Madrid (heure d’été))]  count docs for each concepts 
+info [Sat Oct 14 2017 16:32:02 GMT+0200 (Paris, Madrid (heure d’été))]  classifier done :D:\GitHub\souslesens\bin\rdf\classifiers\test_BNF.json
+
+info [Sat Oct 14 2017 16:33:08 GMT+0200 (Paris, Madrid (heure d’été))]  searching most frequent words in index test
+
+info [Sat Oct 14 2017 16:34:18 GMT+0200 (Paris, Madrid (heure d’été))]  searching most frequent words in index test
+info [Sat Oct 14 2017 16:34:18 GMT+0200 (Paris, Madrid (heure d’été))]  Most frequentwords ["and","ci","de","chose","adat","années","approche","aujourd’hui","autant","bakal","berkah","bersih","celles","central","centre","chacun","chercher","cikal","comment","communauté","comprendre","compte","culture","culturelle","côté","dieu","dire","dès","d’après","d’être","ensemble","esprits","ethnographique","fabrique","fonction","acteurs","an","assimilés","attention","auprès","caractère","cependant","clifford","collectives","consiste","coup","dan","deuxième","différence","distinction","décrire","d’où","fallait","hommes","in","of","pensée","religion","social","the","voir","être","agit","agonistique","analyser","besoin","cause","cherche","collectif","commune"]
+info [Sat Oct 14 2017 16:34:18 GMT+0200 (Paris, Madrid (heure d’été))]  searching  concepts in BNF... 
+info [Sat Oct 14 2017 16:34:30 GMT+0200 (Paris, Madrid (heure d’été))]  concepts found Dieu,Esprits,Acteurs,Attention,Hommes,Pensée
+info [Sat Oct 14 2017 16:34:30 GMT+0200 (Paris, Madrid (heure d’été))]  put doc ids for each concepts 
+info [Sat Oct 14 2017 16:34:30 GMT+0200 (Paris, Madrid (heure d’été))]  classifier done :D:\GitHub\souslesens\bin\rdf\classifiers\test_BNF.json
+
+

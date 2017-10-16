@@ -189,7 +189,7 @@ var d3flower = (function () {
                 .attr("stroke-width", function(d){
                     if(d.target.relProperties.strength)
                         return d.target.relProperties.strength*Gparams.relStrokeWidth;
-                   return; Gparams.relStrokeWidth;
+                   return  Gparams.relStrokeWidth;
                 })
                 .attr("stroke", "#65dbf1").attr("fill", "none")
                 .attr("stroke", function (d) {
@@ -197,6 +197,10 @@ var d3flower = (function () {
                         if (d.target.decoration.color)
                             return d.target.decoration.color;
                         return "purple";
+                    }
+
+                    if(d.target.relType) {
+                        return linkColors[d.target.relType];
                     }
                     if (d.target.color)
                         return d.target.color;
@@ -214,54 +218,25 @@ var d3flower = (function () {
 
         this.link.each(function (d) {
             var drawRelAttr = null;
-            if (Gparams.showRelationNames == false)
-                return;
+            var relAttrsStr = "";
+            if (Gparams.showRelationAttrs) {
+                for (var key in d.target.relProperties) {
+                    if (key != "subGraph") {
+                        if (relAttrsStr.length > 0)
+                            relAttrsStr += "-";
+                        relAttrsStr += d.target.relProperties[key];
+                        drawRelAttr = true;
+                    }
+                }
+
+            }
+
 
             if (d.source.shape == "textBox" || d.target.level > 2)
                 return;
-            var aLine = d3.select(this).append("text").attr("dy", -5)
-                .append("textPath")
-                .text(function (d) {
-                    var relAttrsStr = "";
-                    if (Gparams.showRelationAttrs)
-                        for (var key in d.target.relProperties) {
-                            if (key != "subGraph") {
-                                if (relAttrsStr.length > 0)
-                                    relAttrsStr += "-";
-                                relAttrsStr += d.target.relProperties[key];
-                                drawRelAttr = true;
-                            }
-                        }
-                    return relAttrsStr;
-                    if (d.target.relDir == "normal")
-                        return d.target.relType + " ->";
-                    else
-                        return "<- " + d.target.relType;
-                })
-                .attr("xlink:href", "#path_" + d.target.id)
-                .attr("marker-end", "url(#arrowhead)")
-                .style("text-anchor", "middle") // place the text halfway on the arc
-                .attr("startOffset", "50%")
-                .style("font-size", function (d) {
-                    if (drawRelAttr)
-                        return "18px";
-                    return "12px";
-                })
-                .style("font-weight", "bold")
-                .style("fill", function (d) {
-                    if (d.target.color)
-                        return d.target.color;
-                    else
-                        return nodeColors[d.target.label];
 
-                })
-                .style("opacity", function (d) {
-                    if (d.target.decoration)
-                        return .4;
-                    return .6
-                });
 
-            ;
+          d3common.showRelationsOnGraph( d3.select(this),d)  ;
 
         });
 
@@ -328,7 +303,7 @@ var d3flower = (function () {
                 shape = anode.append("svg:image")
                     .attr('x', -9)
                     .attr('y', -12)
-                    .attr('width', 30)
+                    .attr('width', 25)
                     //.attr('height', 24)
                     .attr("xlink:href", Gparams.imagesRootPath + d.neoAttrs.path.replace("photos2016", "thumbnails2016"));
             }
@@ -336,7 +311,7 @@ var d3flower = (function () {
                 shape = anode.append('svg:circle')
                     .attr("r", function (d) {
                         if (hasIcon === true)
-                            return 20;
+                            return 15;
                         if (d.decoration && d.decoration.size)
                             return d.decoration.size;
 
@@ -403,9 +378,9 @@ var d3flower = (function () {
 
             if (hasIcon ) {
                 shape = anode.append("svg:image")
-                    .attr('x', -15)
-                    .attr('y', -15)
-                    .attr('width', 30)
+                    .attr('x', -12)
+                    .attr('y', -12)
+                    .attr('width', 25)
                     .attr('opacity', 0.7)
                     //.attr('height', 24)
                     .attr("xlink:href", "icons/" +icon);

@@ -29,42 +29,21 @@ var toutlesensData = (function () {
     var self = {};
     var navigationPath = [];
 
-//moved  var excludeLabels = {};
-//moved  var cachedResultArray;
-//moved  var cachedResultArray2;
+    self.cachedResultArray = null;
+    self.cachedResultTree = null;
 
-//moved  var isZoomed = false;
-//moved  var hoverRect;
-//moved  var hoverText;
-//moved  var legendNodeLabels = {}
-//moved  var legendRelTypes = {};
+    self.queryExcludeRelFilters = "";
+    self.queryNodeFilters = "";
+    self.queryRelFilters = "";
+    self.queryExcludeNodeFilters = "";
 
 
-//moved  var maxEffectiveLevels = 0;
-//moved  var currentFlattenedData;
-//moved  var foldedTreeChildren = [];
-//moved  var exploredTree = null;
-//moved  var CSVWithLabel = true;
-//moved  var graphQueryNodeFilters = "";
-//moved  var graphQueryRelFilters = "";
-//moved  var graphQueryTargetFilter = "";
-//moved  var graphQueryExcludeNodeFilters = "";
-//moved  var graphQueryExcludeRelFilters = "";
-//moved  var graphQueryUnionStatement = "";
-//moved  var currentQueryParams;
-
-//moved  var totalNodesToDraw = 0;
-    self.executeQuery = function (queryType, str, successFunction) {
+    self.executeNeoQuery = function (queryType, str, successFunction) {
         currentQueryType = queryType;
         if (str.indexOf("DELETE") < 0 && str.toLowerCase().indexOf("limit ") < 0) {
             str += " limit " + limitResult;
         }
 
-        nameLength = 30; // 0; parseInt($("#labelLength").val());
-        var paramsObj = {};
-
-        var urlSuffix = "";
-        var params = "";
 
         if (queryType == QUERY_TYPE_MATCH) {
             var payload = {match: str};
@@ -83,7 +62,7 @@ var toutlesensData = (function () {
             dataType: "json",
             success: function (data, textStatus, jqXHR) {
                 currentDataStructure = "flat";
-                cachedResultArray = data;
+                toutlesensData.cachedResultArray = data;
                 if (!data || data.length == 0) {
                     toutlesensController.setMessage("No results", "green");
                     return;
@@ -94,7 +73,7 @@ var toutlesensData = (function () {
                     var str = "ERROR :";
                     for (var i = 0; i < errors.length; i++) {
                         str += errors[i].code + " : " + errors[i].message + "<br>"
-                            + JSON.stringify(paramsObj);
+
                     }
                     toutlesensController.setMessage(str, red);
                     return;
@@ -148,9 +127,9 @@ var toutlesensData = (function () {
         currentRootId = id;
         legendNodeLabels = {}
         legendRelTypes = {};
-        var subGraphWhere = ""
+        var subGraphWhere;
         if (subGraph)
-            subGraphWhere = " and node1.subGraph=\"" + subGraph + "\" "
+            subGraphWhere = "  node1.subGraph=\"" + subGraph + "\" "
         // http://graphaware.com/graphaware/2015/05/19/neo4j-cypher-variable-length-relationships-by-example.html
 
 
@@ -163,6 +142,18 @@ var toutlesensData = (function () {
             if (!currentDisplayType || currentDisplayType == "FLOWER" || currentDisplayType == "TREE" || currentDisplayType == "SIMPLE_FORCE_GRAPH" || currentDisplayType == "TREEMAP")
                 numberOfLevelsVal += 1;
         }
+        var whereStatement = "";
+        if (id)
+            whereStatement = " WHERE ID(node1)=" + id;
+        if (subGraphWhere) {
+            if (id)
+                whereStatement += " AND ";
+            else
+                whereStatement += "WHERE ";
+            whereStatement += subGraphWhere;
+
+        }
+
         var returnStatement = " RETURN EXTRACT(rel IN relationships(path) | type(rel)) as rels," +
             "EXTRACT(rel IN relationships(path) | rel)  as relProperties," +
             "nodes(path) as nodes," +
@@ -171,16 +162,15 @@ var toutlesensData = (function () {
             + ", EXTRACT(rel IN relationships(path) | labels(startNode(rel))) as startLabels"
         var statement = "MATCH path=(node1"
             + ")-[r"
-            + graphQueryRelFilters
+            + toutlesensData.queryRelFilters
             + "*.."
             + numberOfLevelsVal
-            + "]-(m) where ID(node1)="
-            + id
-            + subGraphWhere
+            + "]-(m) "
+            + whereStatement
             + graphQueryTargetFilter
-            + graphQueryNodeFilters
-            + graphQueryExcludeNodeFilters
-            + graphQueryExcludeRelFilters
+            + toutlesensData.queryNodeFilters
+            + toutlesensData.queryExcludeNodeFilters
+            + toutlesensData.queryExcludeRelFilters
             + returnStatement;
         if (graphQueryUnionStatement)
             statement += " UNION " + graphQueryUnionStatement + returnStatement;
@@ -190,10 +180,10 @@ var toutlesensData = (function () {
             console.log(statement);
         $("#neoQueriesTextArea").val(statement);
         $("#neoQueriesHistoryId").prepend(statement + "<br><br>");
-        graphQueryNodeFilters = "";
-        graphQueryRelFilters = "";
-        graphQueryExcludeNodeFilters = "";
-        graphQueryExcludeRelFilters = "";
+        toutlesensData.queryNodeFilters = "";
+        toutlesensData.queryRelFilters = "";
+        toutlesensData.queryExcludeNodeFilters = "";
+        toutlesensData.queryExcludeRelFilters = "";
         graphQueryUnionStatement = "";
 
         var payload = {match: statement};
@@ -215,24 +205,23 @@ var toutlesensData = (function () {
                 currentDataStructure = "flat";
                 var resultArray = data;
                 // data.log(JSON.stringify(resultArray))
-                if (addToExistingTree && cachedResultArray) {
+                if (addToExistingTree && toutlesensData.cachedResultArray) {
                     for (var i = 0; i < resultArray.length; i++) {
                         for (var j = 0; j < resultArray[i].nodes.length; j++) {
                             resultArray[i].nodes[j].show = true;
                         }
                     }
 
-                    resultArray = $.merge(resultArray, cachedResultArray);
+                    resultArray = $.merge(resultArray, toutlesensData.cachedResultArray);
 
                 }
-                cachedResultArray = resultArray;
 
-                self.prepareRawDataAndDisplay(resultArray, addToExistingTree, output, callback);
+                toutlesensData.cachedResultArray = resultArray;
+                return callback(null, resultArray)
+
             },
             error: function (xhr, err, msg) {
-                console.log(xhr);
-                console.log(err);
-                console.log(msg);
+                return (err);
             }
 
         });
@@ -240,10 +229,10 @@ var toutlesensData = (function () {
     }
 
     self.collapseResult = function (resultArray) {
-        //   collapseTargetLabels=[]//["cote"];
+        //   toutlesensController.collapseTargetLabels=[]//["cote"];
         var resultArrayTransitive = [];
-        for (var k = 0; k < collapseTargetLabels.length; k++) {
-            var targetLabel = collapseTargetLabels[k];
+        for (var k = 0; k < toutlesensController.collapseTargetLabels.length; k++) {
+            var targetLabel = toutlesensController.collapseTargetLabels[k];
             for (var i = 0; i < resultArray.length; i++) {
                 var rels = resultArray[i].rels;
                 var nodes = resultArray[i].nodes;
@@ -283,53 +272,62 @@ var toutlesensData = (function () {
 
 
         }
-        collapseTargetLabels = [];
+        toutlesensController.collapseTargetLabels = [];
         if (resultArrayTransitive.length > 0)
             return resultArrayTransitive;
         else
             return resultArray;
     }
-    self.prepareRawDataAndDisplay = function (resultArray, addToExistingTree, output, callback) {
-        resultArray = self.collapseResult(resultArray);
-        if (!output)
-            output = currentDisplayType;
-        var json;
-        if (output == "SIMPLE_UI") {
-            simpleUI.listResult(resultArray);
-            return;
-
-        }
-        else if (output == "SIMPLE_FORCE_GRAPH") {
-            totalNodesToDraw = resultArray.length;
-            json = resultArray;
-        }
-        else
-            self.toFlareJson(resultArray, addToExistingTree);
-        if (totalNodesToDraw >= Gparams.MaxResults) {
+    self.prepareRawData = function (resultArray, addToExistingTree, output, callback) {
+        totalNodesToDraw = resultArray.length;
+        if (totalNodesToDraw >= Gparams.MaxResults && currentDisplayType!="SIMPLE_FORCE_GRAPH_BULK") {
             alert("trop de resultats pour dessiner le graphe.Modifiez les parametres : > maximum "
                 + Gparams.MaxResults);
             return;
 
         }
+        var labels = [];
+        var relations = [];
+
+        for (var i = 0; i < resultArray.length; i++) {
+            if (!resultArray[i].labels) // !!!!bug à trouver
+                continue;
+            for (var j = 0; j < resultArray[i].nodes.length; j++) {
+                if( resultArray[i].nodes[j].properties.nom && !resultArray[i].nodes[j].properties.name)
+                    resultArray[i].nodes[j].properties.name=resultArray[i].nodes[j].properties.nom;
+            }
+
+            for (var j = 0; j < resultArray[i].labels.length; j++) {
+                var label = resultArray[i].labels[j][0];
+                if (labels.indexOf(label) < 0)
+                    labels.push(label)
+            }
+
+            for (var j = 0; j < resultArray[i].rels.length; j++) {
+                var relation = resultArray[i].rels[j];
+                if (relations.indexOf(relation) < 0)
+                    relations.push(relation)
+            }
+        }
+
+        if (!output)
+            output = currentDisplayType;
+        var json;
+
+        if (output == "SIMPLE_FORCE_GRAPH" || output == "SIMPLE_FORCE_GRAPH_BULK") {
+            totalNodesToDraw = resultArray.length;
+            json = resultArray;
+        }
+        else//tree structure
+            json = self.toFlareJson(resultArray, addToExistingTree);
+
         if (navigationPath.length > 0)
             exploredTree = json;
         else
             exploredTree = null;
-        var currentLabels = [];
-        for (var i = 0; i < resultArray.length; i++) {
-            if (!resultArray[i].labels) // !!!!bug à trouver
-                continue;
-            for (var j = 0; j < resultArray[i].labels.length; j++) {
-                var label = resultArray[i].labels[j][0];
-                if (currentLabels.indexOf(label) < 0)
-                    currentLabels.push(label)
 
-            }
-        }
-        if (callback)
-            callback(json, currentLabels);
-        else
-            toutlesensController.displayGraph(json, output, currentLabels);
+        callback(null, json, labels, relations);
+
 
     }
 
@@ -337,7 +335,7 @@ var toutlesensData = (function () {
     self.showInfos2 = function (id, callback) {
         query = "MATCH (n) WHERE ID(n) =" + id + " RETURN n ";
 
-        self.executeQuery(QUERY_TYPE_MATCH, query, function (d) {
+        self.executeNeoQuery(QUERY_TYPE_MATCH, query, function (d) {
             callback(d);
 
         });
@@ -356,7 +354,7 @@ var toutlesensData = (function () {
         if (!addToExistingTree)
             linksToSkip = [];
         if (!resultArray) {
-            resultArray = cachedResultArray;
+            resultArray = toutlesensData.cachedResultArray;
         } else {
 
         }
@@ -376,15 +374,15 @@ var toutlesensData = (function () {
 
                 var nodeNeo = nodes[j].properties;
                 //  console.log(JSON.stringify(nodeNeo))
-                if (distinctNodeName[nodeNeo[Gparams.defaultnodeNameField]] == null)
-                    distinctNodeName[nodeNeo[Gparams.defaultnodeNameField]] = 0;
+                if (distinctNodeName[nodeNeo[Gparams.defaultNodeNameProperty]] == null)
+                    distinctNodeName[nodeNeo[Gparams.defaultNodeNameProperty]] = 0;
                 else {
-                    distinctNodeName[nodeNeo[Gparams.defaultnodeNameField]] += 1;
-                    nodeNeo[Gparams.defaultnodeNameField] = nodeNeo[Gparams.defaultnodeNameField] + "__" + distinctNodeName[nodeNeo[Gparams.defaultnodeNameField]];
+                    distinctNodeName[nodeNeo[Gparams.defaultNodeNameProperty]] += 1;
+                    nodeNeo[Gparams.defaultNodeNameProperty] = nodeNeo[Gparams.defaultNodeNameProperty] + "#" + distinctNodeName[nodeNeo[Gparams.defaultNodeNameProperty]];
                 }
 
                 var nodeObj = {
-                    name: nodeNeo[Gparams.defaultnodeNameField],
+                    name: nodeNeo[Gparams.defaultNodeNameProperty],
                     myId: nodeNeo.id,
                     label: labels[j][0],
                     id: ids[j],
@@ -456,6 +454,10 @@ var toutlesensData = (function () {
 
 
                 }
+                if (!legendRelTypes)
+                    legendRelTypes = {};
+                if (!legendNodeLabels)
+                    legendNodeLabels = {};
 
                 if (!legendRelTypes[nodeObj.relType]) {
                     legendRelTypes[nodeObj.relType] = {
@@ -496,7 +498,7 @@ var toutlesensData = (function () {
 
         self.initThumbnails();
         // console.log (JSON.stringify(root));
-        cachedResultTree = root;
+        toutlesensData.cachedResultTree = root;
         return root;
     }
 
@@ -665,7 +667,7 @@ var toutlesensData = (function () {
                     // plusieurs
                     if (!labels[childLabel]) {
                         labels[childLabel] = {
-                            name: childLabel + "__" + levelX + (100 * layerIndex),
+                            name: childLabel + "#" + levelX + (100 * layerIndex),
                             children: [],
                             level: levelX,
                             value: 0,
@@ -966,7 +968,7 @@ var toutlesensData = (function () {
             + value
             + ".*' ] as doesMatch where size(doesMatch) > 0 return n limit "
             + limit;
-        self.executeQuery(QUERY_TYPE_MATCH, query, callback);
+        self.executeNeoQuery(QUERY_TYPE_MATCH, query, callback);
     }
 
 // }
@@ -991,7 +993,7 @@ var toutlesensData = (function () {
                 if (!nodes[node.id]) {
                     node.neoAttrs = data[i].nodes[j].properties;
                     if (!node.neoAttrs.name)
-                        node.neoAttrs.name = node.neoAttrs[Gparams.defaultnodeNameField];
+                        node.neoAttrs.name = node.neoAttrs[Gparams.defaultNodeNameProperty];
                     node.name = node.neoAttrs.name;
                     node.label = data[i].labels[j][0]
 
@@ -1046,7 +1048,7 @@ var toutlesensData = (function () {
 
 
     }
-    self.searchNodes = function (subGraph, label, word, resultType, limit, from,callback) {
+    self.searchNodes = function (subGraph, label, word, resultType, limit, from, callback) {
         currentQueryParams = {
             subGraph: subGraph, label: label, word: word, resultType: resultType, limit: limit, from: from
         }
@@ -1059,12 +1061,11 @@ var toutlesensData = (function () {
         if (resultType == "count")
             returnStr = " RETURN count(n) as count";
         else
-            cursorStr += " ORDER BY n."+Gparams.defaultnodeNameField;
-        if (from  && resultType!="allNodes")
+            cursorStr += " ORDER BY n." + Gparams.defaultNodeNameProperty;
+        if (from && resultType != "allNodes")
             cursorStr += " SKIP " + from;
-        if (limit && resultType!="allNodes")
+        if (limit && resultType != "allNodes")
             cursorStr += " LIMIT " + limit;
-
 
 
         var labelStr = "";
@@ -1084,8 +1085,8 @@ var toutlesensData = (function () {
         }
 
         str = "MATCH (n" + labelStr + ") " + whereStr + subGraphWhere + returnStr;
-        if(resultType=="matchStr" && callback){
-            return callback(null,str);
+        if (resultType == "matchStr" && callback) {
+            return callback(null, str);
         }
 
         str += cursorStr;
@@ -1099,8 +1100,8 @@ var toutlesensData = (function () {
             data: payload,
             dataType: "json",
             success: function (data, textStatus, jqXHR) {
-                if(callback){
-                    return callback(null,data);
+                if (callback) {
+                    return callback(null, data);
                 }
                 if (!resultType == "count")
                     startSearchNodesTime = null;
@@ -1133,7 +1134,7 @@ var toutlesensData = (function () {
 
             },
             error: function (xhr, err, msg) {
-                if(callback){
+                if (callback) {
                     return callback(null);
                 }
                 if (!resultType == "count")

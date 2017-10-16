@@ -59,7 +59,7 @@ var advancedDisplay = (function(){
                 labels.push(nodeLabel);
         }
     }
-common.fillSelectOptionsWithStringArray(nodesLabelsSelect, labels);
+common.fillSelectOptionsWithStringArray(nodesLabelsBISelect, labels);
 
 }
    self.onLabelClick=function(select) {
@@ -92,7 +92,7 @@ self.onPropertyClick(nodesLabelsPropertiesSelect,true)
     decorationObjs = [];
     distinctPropertyValues = [];
     var pattern = /__[0-9]*/;
-    currentlabel = $("#nodesLabelsSelect").val();
+    currentlabel = $("#nodesLabelsBISelect").val();
     var property = $(select).val();
     var propertyType = null;
     for (var i = 0; i < data.length; i++) {
@@ -104,7 +104,7 @@ self.onPropertyClick(nodesLabelsPropertiesSelect,true)
                 continue;
             var node = nodes[j].properties;
             if (!node.name)
-                node.name = node[Gparams.defaultnodeNameField];
+                node.name = node[Gparams.defaultNodeNameProperty];
             if (pattern.test(node.name) == true)
                 continue;
             if (node[property] && !propertyType) {
@@ -246,7 +246,7 @@ self.showGraphDecorationObjs();
 
    self.setPropertyValueAttr=function(value, color, size, shape) {
 
-    var label = $("#nodesLabelsSelect").val();
+    var label = $("#nodesLabelsBISelect").val();
     var property = $("#nodesLabelsPropertiesSelect").val();
     if (!value)
         value = $("#graphDecorationValues").val();
@@ -340,8 +340,8 @@ self.onPropertyClick(nodesLabelsPropertiesSelect);
 
 
    self.initDecorationDiv=function() {
-    data = window.parent.cachedResultArray;
-    dataModel = window.parent.dataModel;
+    data = toutlesensData.cachedResultArray;
+    dataModel = dataModel;
 storedParams.loadStoredParams("decoration");
     if (!currentlabel) {
 self.loadGraphDisplaylabels();
@@ -358,11 +358,11 @@ self.loadGraphDisplaylabels();
     var groupByClass = $("#groupByClassCBx").prop("checked");
 self.setDataDecoration(groupByClass);
     if(false && $("#crossLabel").prop("checked"))
-    $('#groupByLabelsCbx', window.parent.document).prop("checked","checked");
+    $('#groupByLabelsCbx', document).prop("checked","checked");
 
-    window.parent.toutlesensDialogsController.hideAdvancedDisplay();
-    window.parent.toutlesensData.prepareRawDataAndDisplay(data);
-    window.parent.d3legend.drawDecorationLegend(decorationObjs);
+    toutlesensDialogsController.hideAdvancedDisplay();
+    toutlesensData.prepareRawDataAndDisplay(data);
+    d3legend.drawDecorationLegend(decorationObjs);
 
 
 }

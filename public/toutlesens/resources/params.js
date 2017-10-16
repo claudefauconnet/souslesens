@@ -28,15 +28,16 @@ var Gparams = {
     logLevel:5,
     readOnly: true,
     showRelationAttrs:true,
+    maxNodesForRelNamesOnGraph:20,
     startWithBulkGraphView: true,
-    defaultnodeNameField:"name",
+    defaultNodeNameProperty:"name",
     defaultQueryDepth:2,
     bulkGraphViewMaxNodesToDrawLinks:1000,
     defaultGraphtype:"FLOWER",
     graphNavigationMode: "expandNode",
     wholeGraphViewMaxNodes: 5000,
     modifyMode: 'onList',//''onList'
-    MaxResults: 2000,
+    MaxResults: 5000,
     lang: "EN",
 
     profiles: {
@@ -53,6 +54,7 @@ var Gparams = {
     navigationStyle: "",// , "jpt" // Jean Paul
     httpProxyUrl: "../http",
     neo4jProxyUrl: "/neo",
+    rdfProxyUrl: "/rdf",
     mongoProxyUrl: "/mongo",
     storedParamsUrl: "/storedParams",
     imagesRootPath: "/files/albumPhotos/",
@@ -64,7 +66,7 @@ var Gparams = {
     nodeMaxTextLength: 40,
     user: "anonymous",
     curveOffset: 40,
-    relStrokeWidth: 2,
+    relStrokeWidth: 4,
     legendWidth: 200,
     minOpacity: .5,
     d3ForceParams: {distance: 200, charge: -500, gravity: .25},
@@ -72,16 +74,37 @@ var Gparams = {
     showRelationNames: false,
     isInframe: false,
     treeGraphVertSpacing: 35,
-    bigDialogSize: {w: 800, h: 500},
+    bigDialogSize: {w: 300, h: 400},
     gantt: {
         name: "nom",
         startField: "datedebut",
         endField: "datefin",
     },
 
-    palette: ['#B39BAB', '#FF78FF', '#A84F02', '#A8A302', '#0056B3',
+ /*   palette: ['#B39BAB', '#FF78FF', '#A84F02', '#A8A302', '#0056B3',
         '#B354B3', '#FFD900', '#B37A00', '#B3B005', '#007DFF', '#F5ED02',
         '#F67502', '#B35905', '#FFFB08', '#FF7D07', '#FFDEF4',]
+,*/
+    palette: [
+        '#B37A00',
+        '#B354B3',
+        '#0056B3',
+        '#A84F02',
+        '#A8A302',
+        '#B3B005',
+        '#007DFF',
+        '#B35905',
+        '#FFD900',
+        '#FF78FF',
+
+        '#007DFF',
+        '#F5ED02',
+        '#F67502',
+
+        '#FFFB08',
+        '#FF7D07',
+        '#B39BAB',
+        '#FFDEF4',]
 
 }
 

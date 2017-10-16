@@ -88,7 +88,7 @@ var modifyData = (function () {
         str += "</div>"
 
         $("#nodeInputDiv").append(str);
-        toutlesensController.initLabels(subGraph, "field_label");
+        toutlesensController.initLabels( "field_label");
         $("#field_label").val(currentLabel);
 
     }
@@ -110,7 +110,7 @@ var modifyData = (function () {
      obj.subGraph = subGraph;
      }
      for ( var key in obj) {
-     if (key == "id" || (key == "name" && obj[Gparams.defaultnodeNameField]))
+     if (key == "id" || (key == "name" && obj[Gparams.defaultNodeNameProperty]))
      continue;
      var hiddenStr="";
      if (key == "subGraph" || key == "label")
@@ -480,7 +480,7 @@ var modifyData = (function () {
             return;
         dataModel.labels[label] = [];
         dataModel.allLabels.push(label);
-        toutlesensController.initLabels(subGraph, "field_label");
+        toutlesensController.initLabels( "field_label");
         $("#labelTypesSelect").append(
             $('<option selected="selected"></option>').val(label).html(label));
         $("#nodesLabelsSelect").append(

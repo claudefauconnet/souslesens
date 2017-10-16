@@ -317,7 +317,7 @@ self.scrollToCenter();
 	   self.dblclick=function() {
 		selectedNode = d3.select(this).datum();
 		var id=selectedNode.id;
-toutlesensController.getGraphDataAroundNode(id);
+toutlesensController.generateGraph(id);
 
 	}
 

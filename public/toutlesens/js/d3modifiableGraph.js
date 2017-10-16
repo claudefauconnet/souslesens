@@ -75,7 +75,7 @@ var d3modifiableGraph = (function(){
 
 
    self.drawModifiableGraph=function(json){
-    var resultArray=cachedResultArray;
+    var resultArray=toutlesensData.cachedResultArray;
     var dataLabels=[];
     var labelsMap={};
 
@@ -92,11 +92,11 @@ var d3modifiableGraph = (function(){
         var ids = resultArray[i].row[2];
         var labels = resultArray[i].row[3];
         for (var j = 0; j < nodes.length; j++) {
-            var objNode=labelsMap[nodes[j][Gparams.defaultnodeNameField]];
+            var objNode=labelsMap[nodes[j][Gparams.defaultNodeNameProperty]];
             if(!objNode){
                 var objNode={
                     id:ids[j],
-                    label:nodes[j][Gparams.defaultnodeNameField],
+                    label:nodes[j][Gparams.defaultNodeNameProperty],
                     w:100,
                     h:30,
                     x:x,
@@ -110,7 +110,7 @@ var d3modifiableGraph = (function(){
                     color:nodeColors[labels[j]]
 
                 }
-                labelsMap[nodes[j][Gparams.defaultnodeNameField]]=objNode;
+                labelsMap[nodes[j][Gparams.defaultNodeNameProperty]]=objNode;
                 dataLabels.push(objNode);
                 y+=20;
                 x+=20;
@@ -119,8 +119,8 @@ var d3modifiableGraph = (function(){
 
 
             if(j<nodes.length-1){
-                var startLabel= nodes[j][Gparams.defaultnodeNameField];
-                var endLabel= nodes[j+1][Gparams.defaultnodeNameField];
+                var startLabel= nodes[j][Gparams.defaultNodeNameProperty];
+                var endLabel= nodes[j+1][Gparams.defaultNodeNameProperty];
 
                 var direction="normal";
 
@@ -140,8 +140,8 @@ var d3modifiableGraph = (function(){
 
         for (var j = 0; j < nodes.length; j++) {
             if(j<nodes.length-1){
-                var startLabel= nodes[j][Gparams.defaultnodeNameField];
-                var endLabel= nodes[j+1][Gparams.defaultnodeNameField];
+                var startLabel= nodes[j][Gparams.defaultNodeNameProperty];
+                var endLabel= nodes[j+1][Gparams.defaultNodeNameProperty];
                 var relType=rels[j];
                 var direction="normal";
 

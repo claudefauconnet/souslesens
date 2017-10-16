@@ -112,7 +112,7 @@
 
     <script>
         $(function () {
-            var isSouslesensIframe = true;
+
             var types = {0: "pathes", 1: "frequentQuery", 2: "pattern", 3: "cypher"}
             currentActionObj = {type: types[0], subGraph: subGraph};
             dataModel.initNeoModel(subGraph, [toutlesensController.initLabels, statistics.initLabelsCurrentQueries, advancedSearch.patternInitLabels, advancedSearch.patternInitRelTypes]);
@@ -126,8 +126,6 @@
 
                 }
             });
-
-           $("#requestTabsDiv").tabs("option", "disabled", [3,4]);
 
             $("#dialog").dialog({
                 autoOpen: false,
@@ -345,7 +343,7 @@
             id='lang_174'>Selection</span></button>
     <span id='lang_108'>Limite</span></td>
     <input id="cypherQueryLimitInput" size="5" value="2000">&nbsp;
-    <button onclick="currentActionObj.selection=false;window.parent.toutlesensDialogsController.hideAdvancedSearch()">
+    <button onclick="currentActionObj.selection=false;toutlesensDialogsController.hideAdvancedSearch()">
         <span id='lang_153'>Annuler</span></button>
     <div id="message"></div>
 </div>

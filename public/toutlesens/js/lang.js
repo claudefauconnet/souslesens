@@ -34,9 +34,7 @@ var lang = (function(){
    self.setLangage=function() {
 
 
-       //if (! Gparams.isInframe && !queryParams.lang && window.parent.toFlareJson)
-       if (typeof isSouslesensIframe == 'undefined') // voir html des iframe filles
-           queryParams.lang = window.parent.lang;
+
        if (queryParams.lang)
            Gparams.lang = queryParams.lang;
 	for ( var key in langResources[lang]) {

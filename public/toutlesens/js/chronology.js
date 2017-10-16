@@ -158,7 +158,7 @@ self.initEventsColors();
 
    self.initEventTypes=function() {
 	// .........................;;;
-	var limitation = "";//' where n[Gparams.defaultnodeNameField]="Rome Antique" ';// !!!!!!!!!!!!!!!!!!!!!!!Rome
+	var limitation = "";//' where n[Gparams.defaultNodeNameProperty]="Rome Antique" ';// !!!!!!!!!!!!!!!!!!!!!!!Rome
 	// Antique
 	var query = "MATCH (n:Civilisation) " + limitation
 			+ "return n,labels(n),ID(n)";
@@ -173,7 +173,7 @@ self.initEventsColors();
 		var civ = data[i].row[0];
 		var civId = data[i].row[2]
 		$("#chronoCivilisationSelect").append($('<option>', {
-			text : civ[Gparams.defaultnodeNameField],
+			text : civ[Gparams.defaultNodeNameProperty],
 			pointHeight : 30,
 			pointSpacingV : 10,
 			value : civ.civId
@@ -186,7 +186,7 @@ self.initEventsColors();
 	var whereCivilisation = "";
 	var civilisationId = $("#chronoCivilisationSelect").val();
 	if (civilisationId && civilisationId.length > 0)
-		whereCivilisation = " and m[Gparams.defaultnodeNameField]='" + civilisationId + "' ";
+		whereCivilisation = " and m[Gparams.defaultNodeNameProperty]='" + civilisationId + "' ";
 	else
 		return;
 
@@ -260,8 +260,8 @@ self.drawChronoHtml(objs);
 	for (var i = 0; i < objs.length; i++) {
 		var obj=objs[i];
 		var color=nodeColors[obj.label];
-	//	str+="<tr><td>"+obj.datedebut+"</td><td>"+obj.datefin+"</td><td><B><font color='"+color+"'> <a  href='javascript:showInfosById("+obj.id+")'>"+obj[Gparams.defaultnodeNameField]+"</font></B></td></tr>"
-		str+="<tr><td>"+obj.datedebut+"</td><td><B><font color='"+color+"'> <a  href='javascript:showInfosById("+obj.id+")'>"+obj[Gparams.defaultnodeNameField]+"</font></B></td></tr>"
+	//	str+="<tr><td>"+obj.datedebut+"</td><td>"+obj.datefin+"</td><td><B><font color='"+color+"'> <a  href='javascript:showInfosById("+obj.id+")'>"+obj[Gparams.defaultNodeNameProperty]+"</font></B></td></tr>"
+		str+="<tr><td>"+obj.datedebut+"</td><td><B><font color='"+color+"'> <a  href='javascript:showInfosById("+obj.id+")'>"+obj[Gparams.defaultNodeNameProperty]+"</font></B></td></tr>"
 		
 	}
 	str+="</table>";
@@ -308,7 +308,7 @@ self.drawChronoChartSpreadsheet();
 			+ ageFin
 			+ whereCivilisation
 			+ whereEvents
-			+ "   return n,labels(n),ID(n),per,ID(per),civ,ID(civ) ORDER BY civ[Gparams.defaultnodeNameField],civ.per, n.agedebut";
+			+ "   return n,labels(n),ID(n),per,ID(per),civ,ID(civ) ORDER BY civ[Gparams.defaultNodeNameProperty],civ.per, n.agedebut";
 	console.log(query);
 	executeQuery(QUERY_TYPE_MATCH, query, drawChronoChartCallback);
 }
@@ -428,7 +428,7 @@ self.mapToArray(mapToArray(graphData.periodes));
 			point.datedebut = point.datecreation
 		if (!point.datedebut) {
 			console
-					.log(point[Gparams.defaultnodeNameField]
+					.log(point[Gparams.defaultNodeNameProperty]
 							+ " n' a pas de date de debut ou de creation");
 			continue;
 		}
@@ -619,7 +619,7 @@ function draw(data) {
 	if (currentType == "civ") {
 
 		gPoint.append("text").text(function(d) {
-			return d[Gparams.defaultnodeNameField];
+			return d[Gparams.defaultNodeNameProperty];
 		}).attr("font-size", "24px").attr("text-anchor", "middle").attr("fill",
 				function(d) {
 					return d.color;
@@ -630,7 +630,7 @@ function draw(data) {
 	} else if (currentType == "per") {
 
 		gPoint.append("text").text(function(d) {
-			return d[Gparams.defaultnodeNameField];
+			return d[Gparams.defaultNodeNameProperty];
 		}).attr("font-size", "18px").attr("text-anchor", "middle").attr("fill",
 				function(d) {
 					return d.color;
@@ -641,7 +641,7 @@ function draw(data) {
 	} else {
 
 		gPoint.append("text").text(function(d) {
-			return d[Gparams.defaultnodeNameField];
+			return d[Gparams.defaultNodeNameProperty];
 		}).attr("font-size", "10px").attr("text-anchor", "start").attr("fill",
 				function(d) {
 					return d.color;//"purple";
@@ -712,7 +712,7 @@ d3forceGraphClass.scrollToCenter();
 function dblclick(d) {
 	selectedNode = d3.select(this).datum();
 	var id = selectedNode.id;
-toutlesensController.getGraphDataAroundNode(id);
+toutlesensController.generateGraph(id);
 }
 
    self.getObjXposition=function(obj) {

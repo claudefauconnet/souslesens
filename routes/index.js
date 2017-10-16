@@ -2,29 +2,26 @@ var express = require('express');
 var router = express.Router();
 
 
-
-
 var neoProxy = require('../bin/neoProxy.js');
 var mongoProxy = require('../bin/mongoProxy.js');
 var elasticProxy = require('../bin/elasticProxy.js');
 var httpProxy = require('../bin/httpProxy.js');
-var fileUpload= require('../bin/fileUpload.js');
-var jsonFileStorage=require('../bin/jsonFileStorage.js');
-var exportMongoToNeo= require('../bin/exportMongoToNeo.js');
-var exportToNeoBatch= require('../bin/exportToNeoBatch.js');
-var uploadToNeo= require('../bin/uploadToNeo.js');
-var uploadCsvForNeo= require('../bin/uploadCsvForNeo.js');
-var restAPI=require("../bin/restAPI.js");
-var socket=require('./socket.js');
+var fileUpload = require('../bin/fileUpload.js');
+var jsonFileStorage = require('../bin/jsonFileStorage.js');
+var exportMongoToNeo = require('../bin/exportMongoToNeo.js');
+var exportToNeoBatch = require('../bin/exportToNeoBatch.js');
+var uploadToNeo = require('../bin/uploadToNeo.js');
+var uploadCsvForNeo = require('../bin/uploadCsvForNeo.js');
+var restAPI = require("../bin/restAPI.js");
+var rdfProxy = require("../bin/rdf/rdfProxy.js");
+var classifierManager = require("../bin/rdf/classifierManager.js");
+
+var socket = require('./socket.js');
 
 
 /*const cors = require('cors');
-var app = express();
-app.use(cors()); // use CORS for all requests and all routes*/
-
-
-
-
+ var app = express();
+ app.use(cors()); // use CORS for all requests and all routes*/
 
 
 router.get('/', function (req, res) {
@@ -32,179 +29,290 @@ router.get('/', function (req, res) {
 });
 
 
-
 router.post('/neo', function (req, response) {
     if (req.body && req.body.match)
-        neoProxy.match(req.body.match, function(error,result){processResponse(response,error,result)});
-    if (req.body &&req.body.cypher) {
-        neoProxy.cypher("",req.body.urlSuffix,req.body.payload,function(error,result){processResponse(response,error,result)});
+        neoProxy.match(req.body.match, function (error, result) {
+            processResponse(response, error, result)
+        });
+    if (req.body && req.body.cypher) {
+        neoProxy.cypher("", req.body.urlSuffix, req.body.payload, function (error, result) {
+            processResponse(response, error, result)
+        });
     }
 
 });
 
 router.post('/mongo', function (req, response) {
     if (req.body && req.body.find)
-        mongoProxy.find (req.body.dbName, req.body.collectionName, req.body.mongoQuery, function(error,result){processResponse(response,error,result)});
+        mongoProxy.find(req.body.dbName, req.body.collectionName, req.body.mongoQuery, function (error, result) {
+            processResponse(response, error, result)
+        });
     if (req.body && req.body.distinct)
-        mongoProxy.distinct (req.body.dbName, req.body.collectionName,  req.body.field,req.body.mongoQuery, function(error,result){processResponse(response,error,result)});
+        mongoProxy.distinct(req.body.dbName, req.body.collectionName, req.body.field, req.body.mongoQuery, function (error, result) {
+            processResponse(response, error, result)
+        });
     if (req.body && req.body.insert)
-        mongoProxy.insert (req.body.dbName, req.body.collectionName, req.body.data, function(error,result){processResponse(response,error,result)});
+        mongoProxy.insert(req.body.dbName, req.body.collectionName, req.body.data, function (error, result) {
+            processResponse(response, error, result)
+        });
     if (req.body && req.body.insertOne)
-        mongoProxy.insertOne (req.body.dbName, req.body.collectionName, req.body.data, function(error,result){processResponse(response,error,result)});
+        mongoProxy.insertOne(req.body.dbName, req.body.collectionName, req.body.data, function (error, result) {
+            processResponse(response, error, result)
+        });
     if (req.body && req.body.updateOrCreate)
-        mongoProxy.updateOrCreate (req.body.dbName, req.body.collectionName, req.body.query, req.body.data, function(error,result){processResponse(response,error,result)});
+        mongoProxy.updateOrCreate(req.body.dbName, req.body.collectionName, req.body.query, req.body.data, function (error, result) {
+            processResponse(response, error, result)
+        });
     if (req.body && req.body.delete)
-        mongoProxy.delete (req.body.dbName, req.body.collectionName, req.body.query, function(error,result){processResponse(response,error,result)});
+        mongoProxy.delete(req.body.dbName, req.body.collectionName, req.body.query, function (error, result) {
+            processResponse(response, error, result)
+        });
     if (req.body && req.body.listDatabases)
-        mongoProxy.listDatabases ( function(error,result){processResponse(response,error,result)});
+        mongoProxy.listDatabases(function (error, result) {
+            processResponse(response, error, result)
+        });
     if (req.body && req.body.listCollections)
-        mongoProxy.listCollections (req.body.dbName, function(error,result){processResponse(response,error,result)});
+        mongoProxy.listCollections(req.body.dbName, function (error, result) {
+            processResponse(response, error, result)
+        });
     if (req.body && req.body.listFields)
-        mongoProxy.listFields (req.body.dbName, req.body.collectionName,  function(error,result){processResponse(response,error,result)});
-
+        mongoProxy.listFields(req.body.dbName, req.body.collectionName, function (error, result) {
+            processResponse(response, error, result)
+        });
 
 
 });
 router.post('/elastic', function (req, response) {
     if (req.body && req.body.searchWordAll)
-        elasticProxy.searchWordAll(req.body.searchWordAll,function(error,result){processResponse(response,error,result)});
+        elasticProxy.searchWordAll(req.body.searchWordAll, function (error, result) {
+            processResponse(response, error, result)
+        });
     else if (req.body && req.body.searchDo)
-        elasticProxy.search (req.body.indexName, req.body.type,req.body.payload,function(error,result){processResponse(response,error,result)});
+        elasticProxy.search(req.body.indexName, req.body.type, req.body.payload, function (error, result) {
+            processResponse(response, error, result)
+        });
     else if (req.body && req.body.indexDo)
-        elasticProxy.index (req.body.indexName, req.body.type,req.body.payload,function(error,result){processResponse(response,error,result)});
+        elasticProxy.index(req.body.indexName, req.body.type, req.body.payload, function (error, result) {
+            processResponse(response, error, result)
+        });
+    else if (req.body && req.body.findDocuments)
+        elasticProxy.findDocuments(req.body.indexName, req.body.word, req.body.from, req.body.size, req.body.slop, req.body.fields, req.body.andWords, req.body.withClassifier, function (error, result) {
+            processResponse(response, error, result)
+        });
+    else if (req.body && req.body.findDocumentsById)
+        elasticProxy.findDocumentsById(req.body.indexName, req.body.ids, req.body.words, req.body.withClassifier, function (error, result) {
+            processResponse(response, error, result)
+        });
+    else if (req.body && req.body.getAssociatedWords)
+        elasticProxy.getAssociatedWords(req.body.indexName, req.body.word, req.body.size, req.body.slop, req.body.andWords, function (error, result) {
+            processResponse(response, error, result)
+        });
+    else if (req.body && req.body.indexDocDirInNewIndex)
+        elasticProxy.indexDocDirInNewIndex(req.body.indexName, req.body.rootDir, req.body.doClassifier, function (error, result) {
+            processResponse(response, error, result)
+        });
+    else if (req.body && req.body.indexDirInExistingIndex)
+        elasticProxy.indexDirInExistingIndex(req.body.indexName, req.body.rootDir, req.body.doClassifier, function (error, result) {
+            processResponse(response, error, result)
+        });
+
+    else if (req.body && req.body.createIndexClassifier)
+        classifierManager.createIndexClassifier(req.body.indexName, parseInt(""+req.body.nWords),parseInt(""+ req.body.minFreq), req.body.ontologies, parseInt(""+req.body.nSkosAncestors), function (error, result) {
+            processResponse(response, error, result)
+        });
 
 });
 
 
 router.post('/exportMongoToNeo', function (req, response) {
     exportMongoToNeo.clearVars();
-    if ( req.body.type=="batch")
-        exportToNeoBatch.exportBatch(req.body.sourceType,req.body.dbName,req.body.subGraph,JSON.parse(req.body.data),null, function(error,result){processResponse(response,error,result)});
-    if ( req.body.type=="node")
-        exportMongoToNeo.exportNodes(JSON.parse(req.body.data), function(error,result){processResponse(response,error,result)});
-    if ( req.body.type=="relation")
-        exportMongoToNeo.exportRelations(JSON.parse(req.body.data), function(error,result){processResponse(response,error,result)});
-    if ( req.body.type=="copyNodes")
-        exportMongoToNeo.copyNodes(JSON.parse(req.body.data), function(error,result){processResponse(response,error,result)});
-    if ( req.body.type=="copyRelations")
-         exportMongoToNeo.copyRelations(JSON.parse(req.body.data), function(error,result){processResponse(response,error,result)});
-
-
+    if (req.body.type == "batch")
+        exportToNeoBatch.exportBatch(req.body.sourceType, req.body.dbName, req.body.subGraph, JSON.parse(req.body.data), null, function (error, result) {
+            processResponse(response, error, result)
+        });
+    if (req.body.type == "node")
+        exportMongoToNeo.exportNodes(JSON.parse(req.body.data), function (error, result) {
+            processResponse(response, error, result)
+        });
+    if (req.body.type == "relation")
+        exportMongoToNeo.exportRelations(JSON.parse(req.body.data), function (error, result) {
+            processResponse(response, error, result)
+        });
+    if (req.body.type == "copyNodes")
+        exportMongoToNeo.copyNodes(JSON.parse(req.body.data), function (error, result) {
+            processResponse(response, error, result)
+        });
+    if (req.body.type == "copyRelations")
+        exportMongoToNeo.copyRelations(JSON.parse(req.body.data), function (error, result) {
+            processResponse(response, error, result)
+        });
 
 
 });
 
 router.post('/http', function (req, response) {
     if (req.body && req.body.get)
-        httpProxy.get(req.body.get,  function(error,result){processResponse(response,error,result)});
+        httpProxy.get(req.body.get, function (error, result) {
+            processResponse(response, error, result)
+        });
+});
+
+router.post('/rdf', function (req, response) {
+    if (req.body && req.body.store == 'BNF') {
+        rdfProxy.queryBnfDataToNeoResult(req.body.word, req.body.relations, req.body.lang, req.body.contains, req.body.limit, function (error, result) {
+            processResponse(response, error, result)
+        });
+    }
+
 });
 
 
 router.post('/storedParams', function (req, response) {
     if (req.body && req.body.load) {
         //  var payload={"load": "displayParams","user":Gparams.user};
-        var type=req.body.load;
-        var user=req.body.user;
-        jsonFileProxy.load(type,user, function(error,result){processResponse(response,error,result)});
+        var type = req.body.load;
+        var user = req.body.user;
+        jsonFileProxy.load(type, user, function (error, result) {
+            processResponse(response, error, result)
+        });
     }
     if (req.body && req.body.save) {
-       // var payload={save:"displayParams",obj:JSON.stringify( obj),"user":Gparams.user}};
-        var type=req.body.save;
+        // var payload={save:"displayParams",obj:JSON.stringify( obj),"user":Gparams.user}};
+        var type = req.body.save;
         var obj = JSON.parse(req.body.obj);
-        var user=req.body.user;
-        jsonFileProxy.save(type,obj,user, function(error,result){processResponse(response,error,result)});
+        var user = req.body.user;
+        jsonFileProxy.save(type, obj, user, function (error, result) {
+            processResponse(response, error, result)
+        });
     }
 });
 
-router.post('/upload', function(req, response) {
-    fileUpload.upload(req, function(error,result){processResponse(response,error,result)});
+router.post('/upload', function (req, response) {
+    fileUpload.upload(req, function (error, result) {
+        processResponse(response, error, result)
+    });
 });
 
-router.post('/uploadData', function(req, response) {
-    fileUpload.uploadData(req, function(error,result){processResponse(response,error,result)});
+router.post('/uploadData', function (req, response) {
+    fileUpload.uploadData(req, function (error, result) {
+        processResponse(response, error, result)
+    });
 });
 
-router.post('/uploadToNeo', function(req, response) {
-    uploadToNeo.uploadAndImport(req,function(error,result){processResponse(response,error,result)});
+router.post('/uploadToNeo', function (req, response) {
+    uploadToNeo.uploadAndImport(req, function (error, result) {
+        processResponse(response, error, result)
+    });
 });
 
 
-router.post('/uploadCsvForNeo', function(req, response) {
-    uploadCsvForNeo.upload(req,function(error,result){processResponse(response,error,result)});
+router.post('/uploadCsvForNeo', function (req, response) {
+    uploadCsvForNeo.upload(req, function (error, result) {
+        processResponse(response, error, result)
+    });
 
 });
 
 
-router.post('/rest', function(req, response) {
+router.post('/rest', function (req, response) {
     if (req.query && req.query.updateNeoFromCSV) {
-        restAPI.updateNeoFromCSV(req.body, function(error,result){processResponse(response,error,result)});
+        restAPI.updateNeoFromCSV(req.body, function (error, result) {
+            processResponse(response, error, result)
+        });
     }
     else if (req.query && req.query.updateNeoFromMongo) {
-        restAPI.updateNeoFromMongo(req.body, function(error,result){processResponse(response,error,result)});
+        restAPI.updateNeoFromMongo(req.body, function (error, result) {
+            processResponse(response, error, result)
+        });
     }
     if (req.query && req.query.createNode) {
-        restAPI.createNode(req.body,function(error,result){processResponse(response,error,result)});
+        restAPI.createNode(req.body, function (error, result) {
+            processResponse(response, error, result)
+        });
     }
     if (req.query && req.query.createRelation) {
-        restAPI.createRelation( req.body,function(error,result){processResponse(response,error,result)});
+        restAPI.createRelation(req.body, function (error, result) {
+            processResponse(response, error, result)
+        });
     }
     if (req.query && req.query.createNodeAndRelation) {
-        restAPI.createNodeAndRelation( req.body,function(error,result){processResponse(response,error,result)});
+        restAPI.createNodeAndRelation(req.body, function (error, result) {
+            processResponse(response, error, result)
+        });
     }
     if (req.query && req.query.updateNode) {
-        restAPI.updateNode(req.body,function(error,result){processResponse(response,error,result)});
+        restAPI.updateNode(req.body, function (error, result) {
+            processResponse(response, error, result)
+        });
     }
     if (req.query && req.query.deleteNode) {
-        restAPI.deleteNode(req.body,function(error,result){processResponse(response,error,result)});
+        restAPI.deleteNode(req.body, function (error, result) {
+            processResponse(response, error, result)
+        });
     }
     if (req.query && req.query.deleteRelation) {
-        restAPI.deleteRelation( req.body,function(error,result){processResponse(response,error,result)});
+        restAPI.deleteRelation(req.body, function (error, result) {
+            processResponse(response, error, result)
+        });
     }
 
     if (req.query && req.query.updateRelationById) {
-        restAPI.updateRelationById( req.body,function(error,result){processResponse(response,error,result)});
+        restAPI.updateRelationById(req.body, function (error, result) {
+            processResponse(response, error, result)
+        });
     }
 
 
     if (req.query && req.query.retrieve) {
-        restAPI.retrieve( req.body,function(error,result){processResponse(response,error,result)});
+        restAPI.retrieve(req.body, function (error, result) {
+            processResponse(response, error, result)
+        });
     }
-
 
 
 });
 router.get('/rest', function (req, response) {
     if (req.query && req.query.desc_updateNeoFromCSV) {
-        restAPI.desc_updateNeoFromCSV( function(error,result){processResponse(response,error,result)});
+        restAPI.desc_updateNeoFromCSV(function (error, result) {
+            processResponse(response, error, result)
+        });
     }
     if (req.query && req.query.desc_updateNeoFromMongo) {
-        restAPI.desc_updateNeoFromMongo( function(error,result){processResponse(response,error,result)});
+        restAPI.desc_updateNeoFromMongo(function (error, result) {
+            processResponse(response, error, result)
+        });
     }
     if (req.query && req.query.exportMappings) {
-        restAPI.exportMappings(req.query, function(error,result){processResponse(response,error,result)});
+        restAPI.exportMappings(req.query, function (error, result) {
+            processResponse(response, error, result)
+        });
     }
 
 
-
 });
 
 
-router.post('/exportMongoToElastic', function(req, response) {
-   elasticProxy.exportMongoToElastic( req.body.mongoDB,req.body.mongoCollection,req.body.mongoQuery,req.body.elasticIndex,req.body.elasticFields,req.body.elasticType,function(error,result){processResponse(response,error,result)});
+router.post('/exportMongoToElastic', function (req, response) {
+    elasticProxy.exportMongoToElastic(req.body.mongoDB, req.body.mongoCollection, req.body.mongoQuery, req.body.elasticIndex, req.body.elasticFields, req.body.elasticType, function (error, result) {
+        processResponse(response, error, result)
+    });
 });
 
 
-router.post('/jsonFileStorage', function(req, response) {
-    console.log("!!!!!!!!!!!!!!!!!!!!!!!!!!"+JSON.stringify(req.body));
-    if(req.body.store)
-        jsonFileStorage.store( req.body.path,req.body.data,function(error,result){processResponse(response,error,result)});
-    if(req.body.retrieve)
-        jsonFileStorage.retrieve( req.body.path,function(error,result){processResponse(response,error,result)});
+router.post('/jsonFileStorage', function (req, response) {
+    console.log("!!!!!!!!!!!!!!!!!!!!!!!!!!" + JSON.stringify(req.body));
+    if (req.body.store)
+        jsonFileStorage.store(req.body.path, req.body.data, function (error, result) {
+            processResponse(response, error, result)
+        });
+    if (req.body.retrieve)
+        jsonFileStorage.retrieve(req.body.path, function (error, result) {
+            processResponse(response, error, result)
+        });
 });
 
 
-
-function processResponse(response,error,result){
+function processResponse(response, error, result) {
     if (response && !response.finished) {
         /* res.setHeader('Access-Control-Allow-Origin', '*');
          res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE'); // If needed
@@ -251,9 +359,7 @@ function processResponse(response,error,result){
     }
 
 
-
 }
-
 
 
 module.exports = router;

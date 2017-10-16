@@ -27,7 +27,7 @@
 //index.html
 var splitter;
 
-
+var currentActionObj=null;
 var Schema={};
 //*************advancedDisplay.js
 var data=null;
@@ -44,7 +44,7 @@ var currentCypherQueryTextArea="";
 var currentNodeRole=null;
 var matchIndex=0;
 var currentTabIndex=0;
-var currentActionObj=null;
+
 var currentLabel=null;
 var limit=300;
 var returnStr="EXTRACT(rel IN relationships(path) | type(rel))as rels,nodes(path)as nodes, EXTRACT(node IN nodes(path) | ID(node)) AS ids, EXTRACT(node IN nodes(path) | labels(node)) as labels ";
@@ -192,11 +192,10 @@ var currentLabel=null;
 var currentRelation=null;
 var currentMode=null;
 var currentSourceNode=null;
-var cachedResultTree=null;
+
 var currentHiddenChildren=null;
 var currentRelationActionTargetNode=null;
-//var currentThumbnails.currentIndex = -1;
-var collapseTargetLabels=[];
+
 var startSearchNodesTime=null;
 var nodeTypes=null;
 var oldRightTabIndex=null;
@@ -217,7 +216,7 @@ var dontReInitFilterGraph=false;
 var subGraph=null;
 var queryParams=null;
 var nodeColors={};
-var linkColors=null;
+var linkColors={};
 var green="green";
 var blue="purple";
 var red="red";
@@ -236,8 +235,8 @@ var currentDataStructure=null;
 var currentThumbnails=null;
 //*************toutlesensData.js
 var excludeLabels=[];
-var cachedResultArray=null;
-var cachedResultArray2=null;
+
+
 var isZoomed=false;
 var hoverRect=null;
 var hoverText=null;
@@ -249,11 +248,8 @@ var currentFlattenedData=null;
 var foldedTreeChildren=null;
 var exploredTree=null;
 var CSVWithLabel=true;
-var graphQueryNodeFilters="";
-var graphQueryRelFilters="";
 var graphQueryTargetFilter="";
-var graphQueryExcludeNodeFilters="";
-var graphQueryExcludeRelFilters="";
+
 var graphQueryUnionStatement="";
 var currentQueryParams=null;
 var totalNodesToDraw=0;

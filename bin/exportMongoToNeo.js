@@ -94,9 +94,9 @@ var exportMongoToNeo = {
                 totalImported += 1;
                 distinctNames.push(nameMongoFieldValue);
 
-                if (!params.defaultnodeNameField)
-                    params.defaultnodeNameField = "name";
-                obj[params.defaultnodeNameField] = nameMongoFieldValue;
+                if (!params.defaultNodeNameProperty)
+                    params.defaultNodeNameProperty = "name";
+                obj[params.defaultNodeNameProperty] = nameMongoFieldValue;
 
                 obj.subGraph = subGraph;
                 if (label.indexOf("#") == 0) {

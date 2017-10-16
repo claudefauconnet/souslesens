@@ -31,7 +31,7 @@ var Schema = (function () {
     self.serverUrl = "..";//Gparams.neo4jProxyUrl;
 
     self.schema = {
-        defaultnodeNameField: "name",
+        defaultNodeNameProperty: "name",
         labels: {},
         relations: {},
         properties: {},
@@ -86,8 +86,8 @@ var Schema = (function () {
                             data = JSON.parse(data);
 
 
-                        if (!data.defaultnodeNameField)
-                            data.defaultnodeNameField = "name";
+                        if (!data.defaultNodeNameProperty)
+                            data.defaultNodeNameProperty = "name";
 
                         for (var key in self.schema) {// pour completer le champs vides non enregistrés par Jquery
                             if (!data[key])
@@ -96,7 +96,8 @@ var Schema = (function () {
 
 
                         self.schema = data;
-
+                        if (Gparams)
+                            Gparams.defaultNodeNameProperty = self.schema.defaultNodeNameProperty;
                         //name  used in UI but not stored
                         for (var key in self.schema.relations) {
                             self.schema.relations[key].name = key
@@ -105,14 +106,16 @@ var Schema = (function () {
                         for (var key in self.schema.labels) {
                             if (!self.schema.properties[key])
                                 self.schema.properties[key] = {};
-                            if (!self.schema.properties[key][self.schema.defaultnodeNameField])
-                                self.schema.properties[key][self.schema.defaultnodeNameField] = {
+                            if (!self.schema.properties[key][self.schema.defaultNodeNameProperty])
+                                self.schema.properties[key][self.schema.defaultNodeNameProperty] = {
                                     "type": "text"
                                 }
                         }
 
+                        self.setLabelsColor();
+                        self.setLinkColors();
 
-                        Gparams.defaultnodeNameField = self.schema.defaultnodeNameField;
+                        Gparams.defaultNodeNameProperty = self.schema.defaultNodeNameProperty;
 
                         if (callback)
                             callback(null, self.schema);
@@ -136,8 +139,8 @@ var Schema = (function () {
         for (var key in self.schema.labels) {
             if (!self.schema.properties[key])
                 self.schema.properties[key] = {};
-            if (!self.schema.properties[key][self.schema.defaultnodeNameField])
-                self.schema.properties[key][self.schema.defaultnodeNameField] = {
+            if (!self.schema.properties[key][self.schema.defaultNodeNameProperty])
+                self.schema.properties[key][self.schema.defaultNodeNameProperty] = {
                     "type": "text"
                 }
 
@@ -166,6 +169,60 @@ var Schema = (function () {
             }
         })
 
+    }
+        ,
+        self.setLinkColors = function () {
+            linkColors = {};
+            if (Schema && Schema.schema) {
+                var i = 0;
+                for (var key in Schema.schema.relations) {
+                    var relation = Schema.schema.relations[key];
+                    var relKey = relation.name;
+                    var p = relKey.indexOf("#");
+                    if (p > -1)
+                        relKey = relKey.substring(0, p);
+                    if (relation.color)
+                        linkColors[relKey] = relation.color;
+                    else {
+
+                        var index = (i++) % Gparams.palette.length;
+
+
+                        linkColors[relKey] = Gparams.palette[index];
+                    }
+
+                }
+                var xxx = ';'
+            }
+            else {
+                for (var i = 0; i < dataModel.allRelationsArray.length; i++) {
+                    var index = (i) % Gparams.palette.length;
+                    linkColors[dataModel.allRelationsArray[i]] = Gparams.palette[index];
+
+                }
+            }
+        }
+    self.setLabelsColor = function () {
+        if (Schema && Schema.schema) {
+            var i = 0;
+            for (var key in Schema.schema.labels) {
+                if (Schema.schema.labels[key].color)
+                    nodeColors[key] = Schema.schema.labels[key].color;
+                else {
+                    var index = (i++) % Gparams.palette.length;
+                    nodeColors[key] = Gparams.palette[index];
+                }
+                if (Schema.schema.labels[key].icon == "default.png")
+                    delete Schema.schema.labels[key].icon;
+            }
+        }
+        else {
+            for (var i = 0; i < dataModel.allLabels.length; i++) {
+                var label = dataModel.allLabels[i];
+                var index = i % Gparams.palette.length;
+                nodeColors[label] = Gparams.palette[index];
+            }
+        }
     }
 
 
@@ -248,25 +305,25 @@ var Schema = (function () {
     self.getNameProperty = function (label) {
         if (!self.schema)
             return "name";
-        if(!label)
-            return self.schema.defaultnodeNameField;
+        if (!label)
+            return self.schema.defaultNodeNameProperty;
         var properties = self.schema.properties[label];
         for (var field in properties) {
             if (properties[field].isName)
                 return field
 
         }
-        return self.schema.defaultnodeNameField;
+        return self.schema.defaultNodeNameProperty;
     }
 
 
     self.updateRelationsModel = function (oldRelations) {
         var relationsNewModel = {}
-        var relationss = self.schema.relations;
+        var relations = self.schema.relations;
         if (oldRelations)
-            relationss = oldRelations;
-        for (var key in relationss) {
-            var relations = relationss[key];
+            relations = oldRelations;
+        for (var key in relations) {
+            var relations = relations[key];
             for (var i = 0; i < relations.length; i++) {
                 var relation = relations[i];
                 if (relation.direction == "inverse")
@@ -274,9 +331,9 @@ var Schema = (function () {
                 delete relation.direction;
                 var name = key;
                 if (i > 0)
-                    var name = key + "_" + (i);
+                    var name = key + "#" + (i);
 
-                relation.type = name;
+                relation.type = key;
                 relationsNewModel[name] = relation;
 
 
@@ -323,7 +380,7 @@ var Schema = (function () {
                 relations: self.updateRelationsModel(dataModel.allRelations),
                 properties: properties,
                 fieldsSelectValues: {},
-                defaultnodeNameField: "name"
+                defaultNodeNameProperty: "name"
 
             }
             if (save) {
@@ -378,11 +435,6 @@ var Schema = (function () {
 
 
     }
-
-
-
-
-
 
 
     return self;

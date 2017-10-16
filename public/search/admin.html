@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="../common/js/jquery/jquery.min.js"></script>
+    <script src="../common/js/jquery/jquery-ui.min.js"></script>
+    <script src="../common/js/socket.io.js"></script>
+
+    <script>
+        $(function () {
+            var url = window.location.href;
+            var p = url.indexOf('/search');
+            url = url.substring(0, p);
+            var socket = io.connect(url);
+            socket.on('connect', function (data) {
+                socket.emit('join', 'Hello World from client');
+            });
+            socket.on('messages', function (message) {
+                if (!message || message.length == 0)
+                    return;
+                if (typeof message == 'string') {
+                    color="blue";
+                    if (message.toLowerCase().indexOf("error") > -1)
+                        color = "red";
+
+
+                    $("#message").css("color", color);
+                    $("#message").append(message+"<br>");
+                }
+            })
+
+
+        });
+
+        function elasticExec(operation) {
+            $("#message").html("");
+            var indexName = $("#indexName").val();
+            var rootDir = $("#rootDir").val();
+            //  var doClassifier=$("#doClassifier").val();
+            var indexName = $("#indexName").val();
+
+
+            var payload;
+            if (operation == "indexDocDirInNewIndex") {
+                 payload = {
+                    indexDocDirInNewIndex: 1,
+                    indexName: indexName,
+                    rootDir: rootDir,
+                     doClassifier:"false"
+
+                };
+
+
+            }
+            else if (operation == "indexDirInExistingIndex") {
+                 payload = {
+                    indexDirInExistingIndex: 1,
+                    indexName: indexName,
+                    rootDir: rootDir,
+                     doClassifier:"false"
+
+                };
+
+            }
+            else if (operation == "createIndexClassifier") {
+                var nWords = $("#nWords").val();
+                nWords = parseInt(nWords);
+                var minFreq = $("#minFreq").val();
+                minFreq = parseInt(minFreq);
+                var ontologies=JSON.parse( $("#ontologies").val());
+                 payload = {
+                    createIndexClassifier: 1,
+                    indexName: indexName,
+                    nWords: nWords,
+                    minFreq: minFreq,
+                    ontologies: ontologies
+
+
+                };
+
+            }
+
+
+            $.ajax({
+                type: "POST",
+                url: "/elastic",
+                data: payload,
+                dataType: "json",
+                success: function (data, textStatus, jqXHR) {
+                    console.log("done")
+                }
+                , error: function (xhr, err, msg) {
+                    console.log("ERROR :" + err)
+                }
+
+            });
+        }
+
+    </script>
+</head>
+<body>
+<table>
+    <tr>
+        <td>
+            index
+        </td>
+        <td>
+            <input id="indexName">
+        </td>
+    </tr>
+    <tr>
+        <td>
+            rootDir
+        </td>
+        <td>
+            <input id="rootDir">
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <button onclick="elasticExec('indexDocDirInNewIndex')">indexDocDirInNewIndex</button>
+        </td>
+        <td>
+            <button onclick="elasticExec('indexDirInExistingIndex')">indexDirInExistingIndex</button>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            nWords
+        </td>
+        <td>
+            <input id="nWords" value="200">
+        </td>
+    </tr>
+
+    <tr>
+        <td>
+            minFreq
+        </td>
+        <td>
+            <input id="minFreq" value="10">
+        </td>
+    </tr>
+    <tr>
+        <td>
+            ontologies
+        </td>
+        <td>
+            <input id="ontologies" value='["BNF"]'>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <button onclick="elasticExec('createIndexClassifier')">createIndexClassifier</button>
+        </td>
+        <td>
+            &nbsp;
+        </td>
+    </tr>
+
+
+
+</table>
+<div id="message"></div>
+
+</body>
+</html>

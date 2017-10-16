@@ -82,6 +82,11 @@ input {
     background-color: white;
 }
 
+#filtersDiv{
+    visibility: visible;
+    margin-top: 30px;
+}
+
 #textDiv {
     width: 2000px;
     height: 10000px;
@@ -192,19 +197,19 @@ input {
 }
 
 #graphLegendDiv {
-    top: 25px;
+    top: 50px;
     left: 5px;
     width: 200px;
     padding: 3px;
     position: absolute;
 }
 
-#message {
+.message {
     visibility: visible;
-    font-size: 10px;
+    font-size: 12px;
     font-weight: normal;
     font-style: italic;
-    background-color: #eee;
+   color: #592003;
     width: 100%;
     height: 20px;
 }
@@ -516,6 +521,14 @@ table.dataTable thead th div.DataTables_sort_wrapper {
     font-size: 14px;
 
 }
+.relName{
+    font-weight: normal;
+    font-size: 12px;
+    stroke: none;
+    stroke-width: none;
+}
+
+
 
 
 

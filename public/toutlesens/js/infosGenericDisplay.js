@@ -41,12 +41,12 @@ var infoGenericDisplay = (function () {
     var currentMenuData;
     self.selectedNodeData;
     self.currentNodeChanges = [];
-    self.currentRelationChanges=[];
-    self.iconSize="20px";
-    self.isAddingRelation=false;
+    self.currentRelationChanges = [];
+    self.iconSize = "20px";
+    self.isAddingRelation = false;
 
 
-    self.initLabels = function (subGraph,callback) {
+    self.initLabels = function (subGraph, callback) {
         self.clearNodePropertiesDiv();
         if (self.Neo4jStorage) {
             if (subGraph)
@@ -62,17 +62,18 @@ var infoGenericDisplay = (function () {
                 for (var label in Schema.schema.labels) {
                     labels.push(label);
 
-                   if(! Schema.schema.labels[label].color  ) {
+                    if (!Schema.schema.labels[label].color) {
 
-                       var paletteColor=Gparams.palette[k % Gparams.palette.length];
-                       Schema.schema.labels[label].color =paletteColor;
-                       nodeColors[label] =paletteColor;
-                       k++;
-                   }
-                   else{
-                       nodeColors[label] =Schema.schema.labels[label].color ;
+                        var paletteColor = Gparams.palette[k % Gparams.palette.length];
+                        Schema.schema.labels[label].color = paletteColor;
+                        nodeColors[label] = paletteColor;
+                        k++;
+                    }
+                    else {
+                        nodeColors[label] = Schema.schema.labels[label].color;
                     }
 
+                    //  toutlesensController.setLinkColors();
 
 
                 }
@@ -98,7 +99,7 @@ var infoGenericDisplay = (function () {
 
 
         }
-        if(callback)
+        if (callback)
             callback();
     }
 
@@ -122,7 +123,7 @@ var infoGenericDisplay = (function () {
         var payload = {match: matchStr, nodeLabel: label, query: {}, limit: limit};
 
         self.callAPIproxy(payload, "retrieve", function (error, data) {
-
+            currentDisplayType = "FLOWER";
             if (error)
                 return;
 
@@ -137,7 +138,7 @@ var infoGenericDisplay = (function () {
             plugins.push("contextmenu");
             plugins.push("dnd");
 
-           self.selectedNodeDatas = {};
+            self.selectedNodeDatas = {};
             var types = {};
 
             var types = {};
@@ -377,58 +378,58 @@ var infoGenericDisplay = (function () {
 
     self.onMenuAdd = function (menuItem) {
 
-    //    setTimeout(function() {
-            self.isAddingRelation = true;
-            currentMenuData = menuItem.item.data;
-            currentMenuData.relation = menuItem.item.relation;
-            currentNameProperty = Schema.getNameProperty(currentMenuData.relation.endLabel);
-            var matchStr = "MATCH (n:" + currentMenuData.relation.endLabel + ") where n.subGraph='" + self.subGraph + "' return n order by n." + currentNameProperty;
-            var payload = {
-                match: matchStr,
-                nodeLabel: currentMenuData.relation.endLabel,
-                orderBy: currentNameProperty,
-                limit: limit,
-                relation: currentMenuData.relation//for Mongo
-            };
-            self.callAPIproxy(payload, "retrieve", function (err, result) {
-                if (err) {
-                    $("#message").html(err);
-                    return;
-                }
+        //    setTimeout(function() {
+        self.isAddingRelation = true;
+        currentMenuData = menuItem.item.data;
+        currentMenuData.relation = menuItem.item.relation;
+        currentNameProperty = Schema.getNameProperty(currentMenuData.relation.endLabel);
+        var matchStr = "MATCH (n:" + currentMenuData.relation.endLabel + ") where n.subGraph='" + self.subGraph + "' return n order by n." + currentNameProperty;
+        var payload = {
+            match: matchStr,
+            nodeLabel: currentMenuData.relation.endLabel,
+            orderBy: currentNameProperty,
+            limit: limit,
+            relation: currentMenuData.relation//for Mongo
+        };
+        self.callAPIproxy(payload, "retrieve", function (err, result) {
+            if (err) {
+                $("#message").html(err);
+                return;
+            }
 
-                var createRelationDialogStr = "new node with label " + currentMenuData.relation.endLabel + " <br><input id='newNodeName'><button onclick='infoGenericDisplay.createNodeAndRelation()'>Create</button><br>OR<br>" +
-                    " choose in existing nodes <br><select size='10' id='newRelationNodeSelect' onchange='infoGenericDisplay.createRelation(this)'></select><br><button onclick='infoGenericDisplay.cancelAddRelation()'>cancel</button>";
-                self.setEntityDiv(createRelationDialogStr);
-                var options = [{id: "", name: ""}];
-                for (var i = 0; i < result.length; i++) {
-                    var node = result[i];
-                    if (node.n) {//Neo
-                        var _id = node.n._id;
-                        node = node.n.properties;
-                        node._id = _id;
-                    }
-                    var option = {
-                        neoId: node._id,
-                        name: node[currentNameProperty]
-                    }
-                    options.push(option)
+            var createRelationDialogStr = "new node with label " + currentMenuData.relation.endLabel + " <br><input id='newNodeName'><button onclick='infoGenericDisplay.createNodeAndRelation()'>Create</button><br>OR<br>" +
+                " choose in existing nodes <br><select size='10' id='newRelationNodeSelect' onchange='infoGenericDisplay.createRelation(this)'></select><br><button onclick='infoGenericDisplay.cancelAddRelation()'>cancel</button>";
+            self.setEntityDiv(createRelationDialogStr);
+            var options = [{id: "", name: ""}];
+            for (var i = 0; i < result.length; i++) {
+                var node = result[i];
+                if (node.n) {//Neo
+                    var _id = node.n._id;
+                    node = node.n.properties;
+                    node._id = _id;
                 }
-                common.fillSelectOptions(newRelationNodeSelect, options, "name", "neoId");
-                if ($("#tabs-radarRight").length)
-                    $("#tabs-radarRight").tabs({active: 2});
-                $("#relInfosDivWrapper").css("visibility", "hidden");
-                $("#info").css("visibility", "hidden");
-                // self.clearNodePropertiesDiv()
+                var option = {
+                    neoId: node._id,
+                    name: node[currentNameProperty]
+                }
+                options.push(option)
+            }
+            common.fillSelectOptions(newRelationNodeSelect, options, "name", "neoId");
+            if ($("#tabs-radarRight").length)
+                $("#tabs-radarRight").tabs({active: 2});
+            $("#relInfosDivWrapper").css("visibility", "hidden");
+            $("#info").css("visibility", "hidden");
+            // self.clearNodePropertiesDiv()
 
-            });
-      //  },500);
+        });
+        //  },500);
 
 
     }
 
 
     self.createRelation = function () {//choice in list of existing nodes
-        self.isAddingRelation=false;
+        self.isAddingRelation = false;
         var targetDbId = $("#newRelationNodeSelect").val();
         if (!targetDbId || targetDbId == "")
             return;
@@ -464,7 +465,7 @@ var infoGenericDisplay = (function () {
 
 
     self.createNodeAndRelation = function () {
-        self.isAddingRelation=false;
+        self.isAddingRelation = false;
         var name = $("#newNodeName").val()
         if (!name || name.length == 0)
             return;
@@ -559,6 +560,7 @@ var infoGenericDisplay = (function () {
     }
 
     self.addNodeToJstree = function (obj, parentJtreeId, ancestors, draw) {
+
         var jtreeId;
         var neoId;
         var relation;
@@ -568,6 +570,8 @@ var infoGenericDisplay = (function () {
         }
 
         if (obj.m) {//Neo
+            if(obj.m.properties.nom && !obj.m.properties.name)
+                obj.m.properties.name=obj.m.properties.nom;
             jtreeId = obj.m._id;
             neoId = obj.m._id;
             var label = obj.m.labels[0];
@@ -576,6 +580,8 @@ var infoGenericDisplay = (function () {
 
         }
         else if (obj.n) {//Neo
+            if(obj.n.properties.nom && !obj.n.properties.name)
+                obj.n.properties.name=obj.n.properties.nom;
             jtreeId = obj.n._id;
             neoId = obj.n._id;
             var label = obj.n.labels[0];
@@ -634,7 +640,8 @@ var infoGenericDisplay = (function () {
 
             $('#' + jsTreeDivId).jstree().create_node(jstreeObj.parent, jstreeObj, "first", function (www) {
                 $('#' + jsTreeDivId).jstree('open_node', "#" + jstreeObj.parent);
-                self.showNodeData(obj.jtreeId)
+                var node = ids[obj.jtreeId];
+                self.showNodeData(node)
             });
         }
         return jstreeObj;
@@ -655,21 +662,24 @@ var infoGenericDisplay = (function () {
 
         self.selectedNodeData = node.data;
         self.selectedNodeData.parent = parent;
-        if (toutlesensController && currentDisplayType && currentDisplayType =="CARDS") {
-            currentObjectId=parentId;
+        currentObjectId = parentId;
+        if (toutlesensController && currentDisplayType && currentDisplayType == "CARDS") {
+
             toutlesensController.onVisButton("CARDS");
 
         }
         if (toutlesensController && currentDisplayType && currentDisplayType != "FORM") {
-            toutlesensController.getGraphDataAroundNode(parentId, toutlesensController.drawGraph);
+            toutlesensController.generateGraph(parentId, toutlesensController.drawGraph);
 
         }
 
         else {
-            self.showNodeData(parentJstreeId, node.parent);
+            var node = ids[parentJstreeId];
+            self.showNodeData(node);
         }
-
-        var label = node.data.label;
+        var label = node.label
+     /*   if (node.data.label)
+            var label = node.data.label;*/
         var matchStr = "match (n)-[r]-(m) where ID(m)=" + parentId + " and m.subGraph=\"" + self.subGraph + "\" return n,r limit " + limit;
         var payload = {match: matchStr, parentLabel: label, parentId: parentId, limit: limit};
         self.callAPIproxy(payload, "retrieve", function (error, data) {
@@ -689,12 +699,24 @@ var infoGenericDisplay = (function () {
 
     }
 
+    self.findNodeByNeoId=function(neoId){
+            for(var key in ids){
+                if(ids[key].neoId==neoId)
+                    return ids[key];
+            }
+        return null;
+    }
 
-    self.showNodeData = function (jstreeId, parent) {
+    self.showNodeData = function (node,neoId) {
+        if( !node) {
+            node=self.findNodeByNeoId(neoId);
+            if(!node)
+                return;
+        }
 
         self.currentNodeChanges = []
 
-        var node = ids[jstreeId];
+        //   var node = ids[jstreeId];
 
         self.showRelationData(node);
 
@@ -712,8 +734,6 @@ var infoGenericDisplay = (function () {
             $("#infosHeaderDiv").css("visibility", "visible");
 
 
-
-
         })
 
     }
@@ -728,13 +748,12 @@ var infoGenericDisplay = (function () {
                 var attrRelObject = relationSchema[0].properties;
 
                 if (attrRelObject) {
-                    var matchStr = "MATCH ()-[r]-() WHERE id(r)="+ node.relation._id+"  RETURN r";
+                    var matchStr = "MATCH ()-[r]-() WHERE id(r)=" + node.relation._id + "  RETURN r";
                     var payload = {match: matchStr};
                     self.callAPIproxy(payload, "retrieve", function (error, data) {
                         var relProperties = data[0].r.properties;
-                        self.setAttributesValue(node.relation.name, attrRelObject, relProperties,"relation");
+                        self.setAttributesValue(node.relation.name, attrRelObject, relProperties, "relation");
                         self.drawAttributes(attrRelObject, "relInfosDiv");
-
 
 
                     })
@@ -814,7 +833,6 @@ var infoGenericDisplay = (function () {
     }
 
 
-
     self.deleteNode = function () {
         if (confirm("delete editing node ?")) {
             var payload = {
@@ -838,7 +856,6 @@ var infoGenericDisplay = (function () {
     }
 
 
-
     self.saveRelation = function () {
         if (self.currentRelationChanges.length == 0)
             return;
@@ -854,7 +871,7 @@ var infoGenericDisplay = (function () {
 
         }
 
-       var relId= self.selectedNodeData.relation._id;
+        var relId = self.selectedNodeData.relation._id;
         var payload = {
             relAttrs: setObj,
             relId: relId
@@ -921,7 +938,7 @@ var infoGenericDisplay = (function () {
 
             var desc = attrObject[key].desc;
             if (desc) {
-                desc = "<img src='/toutlesens/icons/questionMark.png' width="+self.iconSize+" title='" + desc + "'>";
+                desc = "<img src='/toutlesens/icons/questionMark.png' width=" + self.iconSize + " title='" + desc + "'>";
             }
             else
                 desc = "";
@@ -947,9 +964,9 @@ var infoGenericDisplay = (function () {
         $("#" + zoneId).html(str);
 
     }
-    self.setAttributesValue = function (label, attrObject, obj,changeType) {
-     if(!changeType)
-         changeType="node";
+    self.setAttributesValue = function (label, attrObject, obj, changeType) {
+        if (!changeType)
+            changeType = "node";
         for (var key in attrObject) {
             var value = "";
             if (obj)
@@ -985,7 +1002,7 @@ var infoGenericDisplay = (function () {
 
             //if (type && type == 'select' && selectValues) {
             if (selectValues) {
-                var str = "<select  onblur='incrementChanges(this,\""+changeType+"\");' class='objAttrInput' id='attr_" + key + "'>"
+                var str = "<select  onblur='incrementChanges(this,\"" + changeType + "\");' class='objAttrInput' id='attr_" + key + "'>"
                 str += "<option  value=''></option>";
                 for (var i = 0; i < selectValues.length; i++) {
 
@@ -1013,7 +1030,7 @@ var infoGenericDisplay = (function () {
             }
 
             else if (type == 'password') {
-                value = "<input type='password' onblur='incrementChanges(this,\""+changeType+"\");' class='objAttrInput' " + strCols + "id='attr_"
+                value = "<input type='password' onblur='incrementChanges(this,\"" + changeType + "\");' class='objAttrInput' " + strCols + "id='attr_"
                     + key + "'value='" + value + "'>";
             }
             else if (!type || type == 'text') {
@@ -1025,12 +1042,12 @@ var infoGenericDisplay = (function () {
                     if (cols)
                         strCols = " cols='" + cols + "' ";
                     rows = " rows='" + rows + "' ";
-                    value = "<textArea  onblur='incrementChanges(this,\""+changeType+"\");' class='objAttrInput' " + strCols + rows
+                    value = "<textArea  onblur='incrementChanges(this,\"" + changeType + "\");' class='objAttrInput' " + strCols + rows
                         + "id='attr_" + key + "' > " + value + "</textarea>";
                 } else {
                     if (cols)
                         strCols = " size='" + cols + "' ";
-                    value = "<input onblur='incrementChanges(this,\""+changeType+"\");' class='objAttrInput' " + strCols + "id='attr_"
+                    value = "<input onblur='incrementChanges(this,\"" + changeType + "\");' class='objAttrInput' " + strCols + "id='attr_"
                         + key + "' value='" + value + "'>";
                 }
             }
@@ -1085,13 +1102,15 @@ var infoGenericDisplay = (function () {
         self.loadTree(null, null, matchStr);
     });
 
-    self.cancelAddRelation=function(){
-        self.isAddingRelation=false;
-        if(self.selectedNodeData){
-            self.showNodeData(self.selectedNodeData.jtreeId);
+    self.cancelAddRelation = function () {
+        self.isAddingRelation = false;
+        if (self.selectedNodeData) {
+            var node = ids[self.selectedNodeData.jtreeId];
+            self.showNodeData(node);
         }
-        else{
-           self.clearNodePropertiesDiv();s
+        else {
+            self.clearNodePropertiesDiv();
+            s
         }
     }
 
@@ -1102,9 +1121,9 @@ var infoGenericDisplay = (function () {
 ()
 
 
-incrementChanges = function (input,type) {
-    if(type && type=="relation")
+incrementChanges = function (input, type) {
+    if (type && type == "relation")
         infoGenericDisplay.currentRelationChanges.push({id: input.id, value: input.value})
     else
-    infoGenericDisplay.currentNodeChanges.push({id: input.id, value: input.value})
+        infoGenericDisplay.currentNodeChanges.push({id: input.id, value: input.value})
 }

@@ -756,7 +756,7 @@ self.zoomIn();
 toutlesensController.dispatchAction('setAsRootNode');
 			return true;
 		}
-toutlesensController.getGraphDataAroundNode(id);
+toutlesensController.generateGraph(id);
 	}
 
 	   self.mouseup=function() {
@@ -808,7 +808,7 @@ self.zoomIn();
 
    self.zoomIn=function() {
 
-	if (!cachedResultArray)
+	if (!toutlesensData.cachedResultArray)
 		return;
 
 	var el = $('#graphContainerDiv').detach();
@@ -819,14 +819,14 @@ self.zoomIn();
 	var scrollTop = ($("#graphDiv").parent().height() / 2);
 // $("#graphDiv").parent().scrollLeft(scrollLeft);
 // $("#graphDiv").parent().scrollTop(scrollTop);
-toutlesensData.toFlareJson(cachedResultArray)
+toutlesensData.toFlareJson(toutlesensData.cachedResultArray)
 	var w = 1500, h = 1200, charge = -200, distance = 150;
 self.drawForceCollapse(json, w, h, charge, distance);
 d3legend.drawLegend();
 	isZoomed = true;
 }
    self.zoomOut=function() {
-	if (!cachedResultArray)
+	if (!toutlesensData.cachedResultArray)
 		return;
 
 	var el = $('#graphContainerDiv').detach();
@@ -837,7 +837,7 @@ d3legend.drawLegend();
 	var scrollTop = ($("#graphDiv").parent().height() / 2) - 100;
 	$("#graphDiv").parent().scrollLeft(scrollLeft);
 	$("#graphDiv").parent().scrollTop(scrollTop);
-toutlesensData.toFlareJson(cachedResultArray)
+toutlesensData.toFlareJson(toutlesensData.cachedResultArray)
 	// var w=3000, h=1600, charge=-200,distance=150;
 self.drawForceCollapse(json);
 	isZoomed = false;

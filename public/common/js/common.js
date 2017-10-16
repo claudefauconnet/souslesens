@@ -316,9 +316,7 @@ String.prototype.replaceAll = function(find, replace) {
 
 function setMessage(message, color) {
 	var div=document.getElementById(messageDivId)
-	if (!div) {
-		 div=window.parent.document.getElementById(messageDivId)
-	}
+
 	if(!div){
 		console.log("No div  with ID stateDisplay  to display messages");
 		console.log(message);

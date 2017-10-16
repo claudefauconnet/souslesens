@@ -77,7 +77,7 @@ externalRessourcesCommon.showExternalressourcesList(objs,target);
 	var word = "Freud"
 	if(obj){
 	 var word=obj.name;
-	if(!word) word=obj[Gparams.defaultnodeNameField];
+	if(!word) word=obj[Gparams.defaultNodeNameProperty];
 	if(!word) return "";
 	}
 externalRessourcesCommon.encode_utf8(word);
@@ -132,7 +132,7 @@ externalRessourcesCommon.showExternalressourcesList(objs,target);
 	var word = "Freud"
 	if(obj){
 	 var word=obj.name;
-	if(!word) word=obj[Gparams.defaultnodeNameField];
+	if(!word) word=obj[Gparams.defaultNodeNameProperty];
 	if(!word) return "";
 	}
 	//word=encode_utf8(word);

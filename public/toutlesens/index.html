@@ -30,484 +30,479 @@
 <head>
     <meta charset="ISO-8859-1">
     <title>souslesens</title>
-    <script src="oldJs/toutlesensData.js"></script>
-</head>
-
-<link rel="stylesheet" type="text/css" title="Design"
-      href="../common/js/jquery/theme_humanity/jquery-ui.min.css"/>
-
-<link rel="stylesheet" type="text/css" title="Design"
-      href="js/jquery/jquery.splitter.css"/>
-
-<link rel="stylesheet" href="./js/jsTree/themes/default/style.min.css"/>
-
-<!--<link rel="stylesheet" href="js/Tree/themes/default/style.min.css"/>-->
-<!--<link rel="stylesheet" type="text/css"
-	href="../common/js/others/jquery.handsontable.full.min.css" />-->
-
-<link rel="stylesheet" type="text/css" href="css/d3tree.css"/>
-<link rel="stylesheet" type="text/css" href="css/index.css"/>
-<link rel="stylesheet" type="text/css" href="css/treemap.css"/>
-
-<link rel="stylesheet" type="text/css" href="css/cards.css"/>
-
-<script src="../common/js/jquery/jquery.min.js"></script>
-<script src="../common/js/jquery/jquery-ui.min.js"></script>
-<script src="../common/js/jquery/jquery.splitter.js"></script>
-<script src="../common/js/neo4jDataModel.js"></script>
-
-<script src="../common/js/d3/d3.js"></script>
-<!--<script src="https://d3js.org/d3.v4.min.js"></script>-->
-<!--<script src="https://d3js.org/d3.v4.min.js"></script>-->
-
-<script src="js/globalVars.js"></script>
-<script src="resources/params.js"></script>
-
-<script src="js/common.js"></script>
-
-<script src="js/customizeUI.js"></script>
-<script src="js/toutlesensController.js"></script>
-<script src="js/toutlesensData.js"></script>
-<script src="js/toutlesensDialogsController.js"></script>
 
 
-<script src="js/modifyData.js"></script>
+    <link rel="stylesheet" type="text/css" title="Design"
+          href="../common/js/jquery/theme_humanity/jquery-ui.min.css"/>
 
-<!--
-<script src="js//externalRessourcesCommon.js"></script>
-<script src="js//externalRessourcesDbPedia.js"></script>
-<script src="js//externalRessourcesBNF.js"></script>
--->
+    <link rel="stylesheet" type="text/css" title="Design"
+          href="../common/js/jquery/jquery.splitter.css"/>
 
-<script src="js/d3common.js"></script>
-<script src="js/d3legend.js"></script>
+    <link rel="stylesheet" href="../common/js/jsTree/themes/default/style.min.css"/>
 
-<script src="js/d3flower.js"></script>
+    <!--<link rel="stylesheet" href="js/Tree/themes/default/style.min.css"/>-->
+    <!--<link rel="stylesheet" type="text/css"
+        href="../common/js/others/jquery.handsontable.full.min.css" />-->
 
-<script src="js/d3simpleForce.js"></script>
-<script src="js/d3simpleForceBulk.js"></script>
-<script src="js/d3treemap.js"></script>
-<script src="js/d3forceCollapseClass.js"></script>
-<script src="js/d3tree.js"></script>
+    <link rel="stylesheet" type="text/css" href="css/d3tree.css"/>
+    <link rel="stylesheet" type="text/css" href="css/index.css"/>
+    <link rel="stylesheet" type="text/css" href="css/treemap.css"/>
 
-<script src="js/cards.js"></script>
+    <link rel="stylesheet" type="text/css" href="css/cards.css"/>
 
+    <script src="../common/js/jquery/jquery.min.js"></script>
+    <script src="../common/js/jquery/jquery-ui.min.js"></script>
+    <script src="../common/js/jquery/jquery.splitter.js"></script>
+    <script src="../common/js/neo4jDataModel.js"></script>
 
-<script src="../common/js/util.js"></script>
+    <script src="../common/js/d3/d3.js"></script>
+    <!--<script src="https://d3js.org/d3.v4.min.js"></script>-->
+    <!--<script src="https://d3js.org/d3.v4.min.js"></script>-->
 
+    <script src="js/globalVars.js"></script>
+    <script src="resources/params.js"></script>
 
+    <script src="js/common.js"></script>
 
-<!--<script src="js//d3.forceGraphClass.js"></script>
-<script src="js//d3.dndTreeClass.js"></script>
-<script src="js//d3.modifiableGraph.js"></script>
-<script src="js//d3.forceCollapseClass.js"></script>
-<script src="js//d3.gantt.js"></script>
-<script src="js//gant-chart-d3v2.js"></script>
-<script type="text/javascript" src="js//gant-chart-d3v2.js"></script>
-<script type="text/javascript" src="js//d3.gantt.js"></script>
+    <script src="js/customizeUI.js"></script>
+    <script src="js/toutlesensController.js"></script>
+    <script src="js/toutlesensData.js"></script>
+    <script src="js/toutlesensDialogsController.js"></script>
+    <script src="js/filters.js"></script>
 
-<script src="../admin/js//graphD3.js"></script>-->
-<script src="js/textOutputs.js"></script>
+    <script src="js/modifyData.js"></script>
 
-<script src="js/advancedDisplay.js"></script>
-<script src="js/advancedSearch.js"></script>
-<script src="js/selection.js"></script>
+    <!--
+    <script src="js//externalRessourcesCommon.js"></script>
+    <script src="js//externalRessourcesDbPedia.js"></script>
+    <script src="js//externalRessourcesBNF.js"></script>
+    -->
 
+    <script src="js/d3common.js"></script>
+    <script src="js/d3legend.js"></script>
 
-<script src="./js/schema.js"></script>
-<script src="./js/jsTree/jstree.min.js"></script>
-<!--<script src="./js/jsTree/treeController.js"></script>-->
-<script src="./js/infosGenericDisplay.js"></script>
+    <script src="js/d3flower.js"></script>
 
-<script src="./js/neoToMongo.js"></script>
-<script src="../common/js/devisuProxy.js"></script>
+    <script src="js/d3simpleForce.js"></script>
+    <script src="js/d3simpleForceBulk.js"></script>
+    <script src="js/d3treemap.js"></script>
+    <script src="js/d3forceCollapseClass.js"></script>
+    <script src="js/d3tree.js"></script>
 
-
-<script src="../common/js/others/tableFlip.js"></script>
-<!--<script src="js//jit-yc.js"></script>
-<link rel="stylesheet" type="text/css"
-	href="../common/js/others/jquery.datatables.min.css" />
-<script type="text/javascript"
-	src="../common/js/others/jquery.datatables.min.js"></script>-->
-
-
-<script src="js/help.js"></script>
-<script src="js/lang.js"></script>
-<script src="resources/lang_FR.js"></script>
-<script src="resources/lang_EN.js"></script>
-<script src="js/functionalities.js"></script>
+    <script src="js/cards.js"></script>
 
 
-<!-- test visjs---------------------------------------->
-<script src="js/visjs/visjs.js"></script>
-<script src="js/visjs/visJsGraph.js"></script>
-<link rel="stylesheet" type="text/css" href="js/visjs/vis-network.min.css.js"/>
-<!-- test visjs---------------------------------------->
-<style>
-    #treeContainer {
-        width: 500px;
-        overflow: auto;
-
-    }
-
-    #nodeInfosDiv {
-    / / display: flex;
-        justify-content: center;
-        align-items: center;
-    }
-
-    #word, #nodesLabelsSelect {
-        width: 130px;
-    }
-
-    #nodeInfosDiv, relationInfosDivWrapper {
-        padding: 20px;
-        border-width: 0px;
-        border-color: #5f3f3f;
-        border-style: groove;
-        margin: 20px;
-
-        overflow: auto;
-        height: 500px;
-        background-color: seashell;
-        font-size: 14px;
-        font-family: verdana, sans-serif;
-        font-weight: normal;
-
-    }
-
-    #infosHeaderDiv {
-        background-color: burlywood;
-        font-size: 14px;
-        font-weight: bold;
-    }
-
-    .objAttrInput, #newNodeName {
-
-        width: 500px;
-
-    }
-
-    .displayIcon-selected {
-        border-width: 6px;
-        border-color: #666;
-        border-style: solid;
-    }
-
-    .infoTitle {
-        font-size: 14px;
-        font-family: verdana, sans-serif;
-        font-weight: bold;
-    }
+    <script src="../common/js/util.js"></script>
 
 
-</style>
+    <!--<script src="js//d3.forceGraphClass.js"></script>
+    <script src="js//d3.dndTreeClass.js"></script>
+    <script src="js//d3.modifiableGraph.js"></script>
+    <script src="js//d3.forceCollapseClass.js"></script>
+    <script src="js//d3.gantt.js"></script>
+    <script src="js//gant-chart-d3v2.js"></script>
+    <script type="text/javascript" src="js//gant-chart-d3v2.js"></script>
+    <script type="text/javascript" src="js//d3.gantt.js"></script>
 
-<script>
+    <script src="../admin/js//graphD3.js"></script>-->
+    <script src="js/textOutputs.js"></script>
 
-    $(function () {
+    <script src="js/advancedDisplay.js"></script>
+    <script src="js/advancedSearch.js"></script>
+    <script src="js/selection.js"></script>
+    <script src="js/statistics.js"></script>
 
-        queryParams = toutlesensController.getQueryParams(document.location.search);
-        customizeUI.init();
-        subGraph = queryParams.subGraph;
-        functionalities.hideFunctionalities();
-        lang.setLangage();
-        dataModel.initNeoModel(queryParams.subGraph, [infoGenericDisplay.initLabels, customizeUI.customize, advancedSearch.showBulkGraph]);
-        functionalities.initFunctionalities();
-        var mode = queryParams.mode;
-        if (mode == "write")
-            Gparams.readOnly = false;
+    <script src="./js/schema.js"></script>
+    <script src="../common/js/jsTree/jstree.min.js"></script>
+    <!--<script src="./js/jsTree/treeController.js"></script>-->
+    <script src="./js/infosGenericDisplay.js"></script>
 
-        $("#tabs").tabs();
-        $(".fillScreenHeight").css("bottom", 600);
+    <script src="./js/neoToMongo.js"></script>
+    <script src="../common/js/devisuProxy.js"></script>
 
 
-        for (var i = 0; i < Gparams.palette.length; i++) {
-            /*	$("#colorTest").append("<div style='background-color:"+palette[i]+"'>"+palette[i]+"</div>");*/
+    <script src="../common/js/others/tableFlip.js"></script>
+    <!--<script src="js//jit-yc.js"></script>
+    <link rel="stylesheet" type="text/css"
+        href="../common/js/others/jquery.datatables.min.css" />
+    <script type="text/javascript"
+        src="../common/js/others/jquery.datatables.min.js"></script>-->
+
+
+    <script src="js/help.js"></script>
+    <script src="js/lang.js"></script>
+    <script src="resources/lang_FR.js"></script>
+    <script src="resources/lang_EN.js"></script>
+    <script src="js/functionalities.js"></script>
+
+
+    <!-- test visjs---------------------------------------->
+    <script src="js/visjs/visjs.js"></script>
+    <script src="js/visjs/visJsGraph.js"></script>
+    <link rel="stylesheet" type="text/css" href="js/visjs/vis-network.min.css.js"/>
+    <!-- test visjs---------------------------------------->
+    <style>
+        #treeContainer {
+            width: 500px;
+            overflow: auto;
+
         }
-        $("body").click(function (e) {
-            currentMousePosition = {
-                x: e.pageX,
-                y: e.pageY
+
+        #nodeInfosDiv {
+        / / display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        #word, #nodesLabelsSelect {
+            width: 130px;
+        }
+
+        #nodeInfosDiv, relationInfosDivWrapper {
+            padding: 20px;
+            border-width: 0px;
+            border-color: #5f3f3f;
+            border-style: groove;
+            margin: 20px;
+
+            overflow: auto;
+            height: 500px;
+            background-color: seashell;
+            font-size: 14px;
+            font-family: verdana, sans-serif;
+            font-weight: normal;
+
+        }
+
+        #infosHeaderDiv {
+            background-color: burlywood;
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        .objAttrInput, #newNodeName {
+
+            width: 500px;
+
+        }
+
+        .displayIcon-selected {
+            border-width: 6px;
+            border-color: #666;
+            border-style: solid;
+        }
+
+        .infoTitle {
+            font-size: 14px;
+            font-family: verdana, sans-serif;
+            font-weight: bold;
+        }
+
+
+    </style>
+
+    <script>
+
+        $(function () {
+
+            queryParams = toutlesensController.getQueryParams(document.location.search);
+            customizeUI.init();
+            subGraph = queryParams.subGraph;
+            functionalities.hideFunctionalities();
+            lang.setLangage();
+            dataModel.initNeoModel(queryParams.subGraph, [infoGenericDisplay.initLabels, customizeUI.customize, advancedSearch.showBulkGraph, statistics.initLabelsCurrentQueries, toutlesensController.afterGraphInit]);
+            functionalities.initFunctionalities();
+            var mode = queryParams.mode;
+            if (mode == "write")
+                Gparams.readOnly = false;
+
+            $("#tabs").tabs();
+            ///$("#advancedQueriesDiv").tabs(); see advancedSearch.js
+            $(".fillScreenHeight").css("bottom", 600);
+
+
+            for (var i = 0; i < Gparams.palette.length; i++) {
+                /*	$("#colorTest").append("<div style='background-color:"+palette[i]+"'>"+palette[i]+"</div>");*/
             }
+            $("body").click(function (e) {
+                currentMousePosition = {
+                    x: e.pageX,
+                    y: e.pageY
+                }
 
-        });
+            });
 
-        $("#graphDiv").click(function (e) {
-            var dat = e.target.__data__;
-            if (!dat) {
-                toutlesensController.hidePopupMenu();
-                return;
-            }
-            if (dat.id == null || dat.id == "")
-                toutlesensController.hidePopupMenu();
+            $("#graphDiv").click(function (e) {
+                var dat = e.target.__data__;
+                if (!dat) {
+                    toutlesensController.hidePopupMenu();
+                    return;
+                }
+                if (dat.id == null || dat.id == "")
+                    toutlesensController.hidePopupMenu();
 
-        });
+            });
 
-        totalWidth = $(window).width();
-        totalHeight = $(window).height();
-        var leftPanelRatio = 3
+            totalWidth = $(window).width();
+            totalHeight = $(window).height();
+            var leftPanelRatio = 3
 
-        $("#nodeInfosDiv").height(totalHeight - 200)
-        $("#nodeInfosDiv").width(totalWidth - 650)
-        $("#treeContainer").width((totalWidth / leftPanelRatio) - 30)
-        $("#treeContainer").height(totalHeight - 300)
-
-
-        $("body").height(totalHeight - 20);
-        $("#left").width(totalWidth / 4).height(totalHeight - 50);
-        $("#tabs-radarLeft").width(totalWidth / leftPanelRatio).height(totalHeight - 50);
-        $("#tabs-radarRight").height(totalHeight - 20);
-        $("#radarFiltersTab").width((totalWidth / leftPanelRatio) - 20).height(totalHeight - 50);
-        $("#info_panel").width(totalWidth / leftPanelRatio).height(totalHeight - 10);
-        $("#graphDiv").width((totalWidth / leftPanelRatio * 2) - Gparams.legendWidth).height(totalHeight - 50)
-        $("#graphLegendDiv").width(Gparams.legendWidth).height(totalHeight - 50).css("left", $("#graphDiv").width());
-        $("#table_Graph").width((totalWidth / leftPanelRatio * 2) - 50).height(totalHeight - 50);
-        $("#textDivContainer").width((totalWidth / leftPanelRatio * 2) - 50).height(totalHeight - 100);
-        $("#neoQueriesHistoryId").width((totalWidth / leftPanelRatio * 2) - 50).height(totalHeight - 100);
-        $("#center").width(totalWidth / 4 * 3).height(totalHeight - 100);
-        $("#nodeDetailsDiv").width((totalWidth / leftPanelRatio * 2) - 50).height(totalHeight - 150);
-        $("#graphDecorationPanel").height(totalHeight / 2);
+            $("#nodeInfosDiv").height(totalHeight - 200)
+            $("#nodeInfosDiv").width(totalWidth - 650)
+            $("#treeContainer").width((totalWidth / leftPanelRatio) - 30)
+            $("#treeContainer").height(totalHeight - 300)
 
 
-        $(".splitter_panel").width(totalWidth / leftPanelRatio * 2).height(totalHeight - 50);
-        //  $("#graphLegendDiv").width(totalWidth / 4 * 3).height(50);
-
-        $("#nodeIframe").width("100%").height(totalHeight - 100);
-        $("#modifyControls").width((totalWidth / 4 * 3) - 50).height(totalHeight - 300);
-
-
-        $(".accordionLeft").width((totalWidth / leftPanelRatio) - 30)//;.height(totalHeight-10);
-        $("#graphParametersPanel").height(totalHeight / 1.5).width((totalWidth / leftPanelRatio) - 35);
-        $("#graphFiltersPanel").height(totalHeight / 1.5).width((totalWidth / leftPanelRatio) - 35);
-        $("#graphPathsPanel").height(totalHeight / 1.5).width((totalWidth / leftPanelRatio) - 35);
-        $("#linkActionDiv").height(totalHeight / 1.5).width((totalWidth / leftPanelRatio) - 35);
-        $("#linkActionDiv").height(totalHeight - 150).width((totalWidth / leftPanelRatio) - 35);
-
-
-        //  $("#advancedSearchIframe").height(totalHeight / 3 * 2).width(totalWidth / 3 * 2);
-        //   $("#advancedDisplayIframe").height(totalHeight / 3 * 2).width(totalWidth / 3 * 2);
-
-        $("#advancedSearchIframe").height(Gparams.bigDialogSize.h - 100).width(Gparams.bigDialogSize.w - 40);
-        $("#advancedDisplayIframe").height(Gparams.bigDialogSize.h - 100).width(Gparams.bigDialogSize.w - 40);
-
-        splitter = $('#main').width("100%").height("100%").split({
-            orientation: 'vertical',
-            limit: 100,
-            position: (totalWidth / leftPanelRatio) + 5
-        });
-
-        $("#tabs-radarLeft").tabs({
-
-            activate: function (event, ui) {
-                var index = ui.newTab.index();
-                toutlesensController.onRadarLeftActivate(index);
-            }
-
-        });
-
-        $("#tabs-radarLeft").tabs("option", "disabled", [1, 2]);
+            $("body").height(totalHeight - 20);
+            $("#left").width(totalWidth / 4).height(totalHeight - 50);
+            $("#tabs-radarLeft").width(totalWidth / leftPanelRatio).height(totalHeight - 50);
+            $("#tabs-radarRight").height(totalHeight - 20);
+            $("#radarFiltersTab").width((totalWidth / leftPanelRatio) - 20).height(totalHeight - 50);
+            $("#info_panel").width(totalWidth / leftPanelRatio).height(totalHeight - 10);
+            $("#graphDiv").width((totalWidth / leftPanelRatio * 2) - Gparams.legendWidth).height(totalHeight - 50)
+            $("#graphLegendDiv").width(Gparams.legendWidth).height(totalHeight - 50).css("left", $("#graphDiv").width());
+            $("#table_Graph").width((totalWidth / leftPanelRatio * 2) - 50).height(totalHeight - 50);
+            $("#textDivContainer").width((totalWidth / leftPanelRatio * 2) - 50).height(totalHeight - 100);
+            $("#neoQueriesHistoryId").width((totalWidth / leftPanelRatio * 2) - 50).height(totalHeight - 100);
+            $("#center").width(totalWidth / 4 * 3).height(totalHeight - 100);
+            $("#nodeDetailsDiv").width((totalWidth / leftPanelRatio * 2) - 50).height(totalHeight - 150);
+            $("#graphDecorationPanel").height(totalHeight / 2);
 
 
-        $("#tabs-radarRight").tabs(
-            {
+            $(".splitter_panel").width(totalWidth / leftPanelRatio * 2).height(totalHeight - 50);
+            //  $("#graphLegendDiv").width(totalWidth / 4 * 3).height(50);
+
+            $("#nodeIframe").width("100%").height(totalHeight - 100);
+            $("#modifyControls").width((totalWidth / 4 * 3) - 50).height(totalHeight - 300);
+
+
+            $(".accordionLeft").width((totalWidth / leftPanelRatio) - 30)//;.height(totalHeight-10);
+            $("#graphParametersPanel").height(totalHeight / 1.5).width((totalWidth / leftPanelRatio) - 35);
+            $("#graphFiltersPanel").height(totalHeight / 1.5).width((totalWidth / leftPanelRatio) - 35);
+            $("#graphPathsPanel").height(totalHeight / 1.5).width((totalWidth / leftPanelRatio) - 35);
+            $("#linkActionDiv").height(totalHeight / 1.5).width((totalWidth / leftPanelRatio) - 35);
+            $("#linkActionDiv").height(totalHeight - 150).width((totalWidth / leftPanelRatio) - 35);
+
+
+            //  $("#advancedSearchIframe").height(totalHeight / 3 * 2).width(totalWidth / 3 * 2);
+            //   $("#advancedDisplayIframe").height(totalHeight / 3 * 2).width(totalWidth / 3 * 2);
+
+            $("#advancedSearchIframe").height(Gparams.bigDialogSize.h - 100).width(Gparams.bigDialogSize.w - 40);
+            $("#advancedDisplayIframe").height(Gparams.bigDialogSize.h - 100).width(Gparams.bigDialogSize.w - 40);
+
+            splitter = $('#main').width("100%").height("100%").split({
+                orientation: 'vertical',
+                limit: 100,
+                position: (totalWidth / leftPanelRatio) + 5
+            });
+
+            $("#tabs-radarLeft").tabs({
+
+                activate: function (event, ui) {
+                    var index = ui.newTab.index();
+                    toutlesensController.onRadarLeftActivate(index);
+                },
+                create: function (event, ui) {
+
+
+                }
+
+            });
+
+
+            $("#tabs-radarRight").tabs(
+                {
+                    activate: function (event, ui) {
+
+
+                        var index = ui.newTab.index();
+                        if (index == 2) {//data
+                            //   toutlesensController.onVisButton("FORM", "#formButton");
+                        }
+                        if (index == 1) {//list
+                            toutlesensController.onTextVisButton('HTML')
+                        }
+
+                    }
+                }
+            );
+
+            /*      if (queryParams.mode == "write")
+             $("#tabs-radarRight").tabs("option", "disabled", [0, 1, 2]);
+             else
+             $("#tabs-radarRight").tabs("option", "disabled", [0, 1]);*/
+
+            $("#table_Graph").tabs();
+            $("#linkNodesDivAccordion").accordion({
+                heightStyle: "content"
+            });
+
+
+            $("#accordionModifyPanel").accordion();
+
+            $("#accordionRepresentation").accordion({
+                active: function (eee) {
+                    return -1
+                }
+                ,
+
+                beforeActivate: function (event, ui) {
+                    var panel = ui.newPanel[0].id;
+
+                    h = totalHeight / 2;
+                    $(".accordionLeft .ui-accordion-content").height(h);
+                },
                 activate: function (event, ui) {
 
+                    var panel = ui.newPanel[0].id;
+                    $(".accordionLeft .ui-accordion-content").height($("#" + panel).height());
 
-                    var index = ui.newTab.index();
-                    if (index == 2) {
-                        toutlesensController.onVisButton("FORM", "#formButton");
-                    }
+
+                    /*  if (panel == "graphFiltersPanel" || panel == "graphSimplePanel") {
+                     $("#graphForceDistance").val(100);
+                     if ($("#depthSlider").val() > 3) {
+                     $("#depth").val(1);
+                     $("#depthSlider").slider({
+                     max: 3,
+                     value: 1
+                     });
+                     }
+                     }
+                     if (panel == "graphFiltersPanel") {
+                     currentGraphRequestType = currentGraphRequestType_FILTERED;
+                     isInPathGraphAction = false;
+                     }*/
+
+
                 }
-            }
-        );
-
-        /*      if (queryParams.mode == "write")
-         $("#tabs-radarRight").tabs("option", "disabled", [0, 1, 2]);
-         else
-         $("#tabs-radarRight").tabs("option", "disabled", [0, 1]);*/
-
-        $("#table_Graph").tabs();
-        $("#linkNodesDivAccordion").accordion({
-            heightStyle: "content"
-        });
 
 
-        $("#accordionModifyPanel").accordion();
-
-        $("#accordionRepresentation").accordion({
-            active: function (eee) {
-                return -1
-            }
-            ,
-
-            beforeActivate: function (event, ui) {
-                var panel = ui.newPanel[0].id;
-
-                h = totalHeight / 2;
-                $(".accordionLeft .ui-accordion-content").height(h);
-            },
-            activate: function (event, ui) {
-
-                var panel = ui.newPanel[0].id;
-                $(".accordionLeft .ui-accordion-content").height($("#" + panel).height());
+            });
 
 
-                if (panel == "graphFiltersPanel" || panel == "graphSimplePanel") {
-                    $("#graphForceDistance").val(100);
-                    if ($("#depthSlider").val() > 3) {
-                        $("#depth").val(1);
-                        $("#depthSlider").slider({
-                            max: 3,
-                            value: 1
-                        });
-                    }
-                }
-                if (panel == "graphFiltersPanel") {
-                    currentGraphRequestType = currentGraphRequestType_FILTERED;
-                    isInPathGraphAction = false;
-                }
-                /*  if (panel == "graphSimplePanel") {
-                 isInPathGraphAction = false;
-                 currentGraphRequestType = currentGraphRequestType_FROM_NODE;
-                 drawGraphGeneral();
-                 }
-                 if (panel == "graphTravPanel" || panel == "graphPathsPanel") {
+            filterDiv = "radarFiltersDiv";
+            bcsTreeDiv = "#bcsTreeDiv";
+            radarDiv = "#radarDiv";
+            attrsIFrame = "#attrsIframe";
 
-                 $("#depth").val(6);
-                 $("#depthSlider").slider({
-                 max: 15,
-                 value: 6
-                 });
 
-                 }
-                 if (panel == "graphTravPanel") {
-                 isInPathGraphAction = false;
-                 currentGraphRequestType = currentGraphRequestType_TRAVERSAL;
-                 }
-                 if (panel == "graphPathsPanel") {
-                 currentGraphRequestType = currentGraphRequestType_PATH;
-
-                 }*/
+            if (Gparams.readOnly === true) {
+                //   $("#li_modify").detach();
+                $("#li_nodeDetails").detach();
+                $("#li_neoQueries").detach();
 
 
             }
 
+            if (Gparams.navigationStyle == "jpt") {
+                $("#div_externalRessources").detach();
+            }
 
-        });
+            $("#graphForceDistanceSlider").slider({
+                min: 10,
+                max: 400,
+                range: "min",
+                value: 200,
+                slide: function (event, ui) {
+                    /*   if (false) {
+                     var h = $("#graphDiv").height();
+                     distance = h / (10 * depth) / (200 / distance);
+                     }*/
+                    Gparams.d3ForceParams.distance = ui.value;
+                    toutlesensController.displayGraph();
+                }
+            });
+
+            $("#graphForceChargeSlider").slider({
+                min: -1000,
+                max: -10,
+                range: "min",
+                value: -500,
+                slide: function (event, ui) {
+                    Gparams.d3ForceParams.charge = ui.value;
+                    toutlesensController.displayGraph();
+                }
+            });
 
 
-        filterDiv = "radarFiltersDiv";
-        bcsTreeDiv = "#bcsTreeDiv";
-        radarDiv = "#radarDiv";
-        attrsIFrame = "#attrsIframe";
+            $("#depthSlider").slider({
+                min: 1,
+                max: 3,
+                range: "min",
+                value: 1,
+                slide: function (event, ui) {
+                    $("#depth").val(ui.value);
+                    toutlesensController.generateGraph();
+                }
+            });
+
+            $("#dialog").dialog({
+                autoOpen: false,
+                height: Gparams.bigDialogSize.h,
+                width: Gparams.bigDialogSize.w,
+                modal: true
+
+            });
+
+            $("#dialogAdvancedSearch").dialog({
+                autoOpen: false,
+                height: Gparams.bigDialogSize.h,
+                width: Gparams.bigDialogSize.w,
+
+                appendTo: "#tabs-radarRight",
+                modal: true,
+
+            });
+            $("#dialogAdvancedDisplay").dialog({
+                autoOpen: false,
+                height: Gparams.bigDialogSize.h,
+                width: Gparams.bigDialogSize.w,
+                appendTo: "#tabs-radarRight",
+                modal: true,
+
+            });
+            $("#dialogGantt").dialog({
+                autoOpen: false,
+                height: Gparams.bigDialogSize.h,
+                width: Gparams.bigDialogSize.w,
+                appendTo: "#tabs-radarRight",
+                modal: true,
+
+            });
+
+            $("#popupMenuNodeInfoDiv").mouseleave(function () {
+                $(this).hide();
+            });
 
 
-        if (Gparams.readOnly === true) {
-            //   $("#li_modify").detach();
-            $("#li_nodeDetails").detach();
-            $("#li_neoQueries").detach();
+            advancedSearch.init();
+
+            /*     var str="";
+             for (var i=0;i< Gparams.palette.length;i++){
+
+             str+="<div style='background-color:"+Gparams.palette[i]+"'>Palette------"+i+"</div>";
+             }
+             $("#radarFiltersTab").prepend(str);*/
 
 
+        })
+
+
+        function onViewSelect(select) {
+
+            infoGenericDisplay.clearNodePropertiesDiv();
+            // $("#treeHeader").css("visibility", "hidden");
+
+            //  initUI();
+            //  dbName = $("#dbName").val();
+            var value = $(select).val();
+            if (value != "")
+                infoGenericDisplay.loadTree(value);
         }
 
-        if (Gparams.navigationStyle == "jpt") {
-            $("#div_externalRessources").detach();
-        }
 
-        $("#graphForceDistanceSlider").slider({
-            min: 10,
-            max: 400,
-            range: "min",
-            value: 200,
-            slide: function (event, ui) {
-                /*   if (false) {
-                 var h = $("#graphDiv").height();
-                 distance = h / (10 * depth) / (200 / distance);
-                 }*/
-                Gparams.d3ForceParams.distance = ui.value;
-                toutlesensController.displayGraph();
-            }
-        });
-
-        $("#graphForceChargeSlider").slider({
-            min: -1000,
-            max: -10,
-            range: "min",
-            value: -500,
-            slide: function (event, ui) {
-                Gparams.d3ForceParams.charge = ui.value;
-                toutlesensController.displayGraph();
-            }
-        });
-
-
-        $("#depthSlider").slider({
-            min: 1,
-            max: 3,
-            range: "min",
-            value: 1,
-            slide: function (event, ui) {
-                $("#depth").val(ui.value);
-                toutlesensController.drawGraphGeneral();
-            }
-        });
-
-        $("#dialog").dialog({
-            autoOpen: false,
-            height: Gparams.bigDialogSize.h,
-            width: Gparams.bigDialogSize.w,
-            modal: true
-
-        });
-
-        $("#dialogAdvancedSearch").dialog({
-            autoOpen: false,
-            height: Gparams.bigDialogSize.h,
-            width: Gparams.bigDialogSize.w,
-
-            appendTo: "#tabs-radarRight",
-            modal: true,
-
-        });
-        $("#dialogAdvancedDisplay").dialog({
-            autoOpen: false,
-            height: Gparams.bigDialogSize.h,
-            width: Gparams.bigDialogSize.w,
-            appendTo: "#tabs-radarRight",
-            modal: true,
-
-        });
-        $("#dialogGantt").dialog({
-            autoOpen: false,
-            height: Gparams.bigDialogSize.h,
-            width: Gparams.bigDialogSize.w,
-            appendTo: "#tabs-radarRight",
-            modal: true,
-
-        });
-
-        $("#popupMenuNodeInfoDiv").mouseleave(function () {
-            $(this).hide();
-        });
-
-
-    })
-    ;
-
-    function onViewSelect(select) {
-
-        infoGenericDisplay.clearNodePropertiesDiv();
-        // $("#treeHeader").css("visibility", "hidden");
-
-        //  initUI();
-        //  dbName = $("#dbName").val();
-        var value = $(select).val();
-        if (value != "")
-            infoGenericDisplay.loadTree(value);
-    }
-
-</script>
+    </script>
+</head>
 <body>
 
 
@@ -519,9 +514,15 @@
 
             <span id="radarTitle"></span>
             <div id="tabs-radarLeft">
+                <div id="dialog" title="dialog"></div>
                 <ul>
-                    <li><a href="#radarFiltersTab"><span id='lang_60'>Recherche</span></a></li>
-                    <li><a href="#graphQueryFiltersTab"><span id='lang_59'>Vue</span></a></li>
+                    <li><a href="#radarFiltersTab"><span id='lang_60'>Graphe</span></a></li>
+                    <li><a href="#advancedQueriesDiv"><span id='lang_177'>Plus...</span></a></li>
+
+                    <li><a href="#graphBIDiv"><span id='lang_178'>BI</span></a></li>
+
+                    <li><a href="#rdfDiv"><span id='lang_179'>RDF</span></a></li>
+
                     <!--  <li><a href="#attrsTab"><span id='lang_37'>Infos.</span></a></li>-->
                     <!--  <li><a href="#selectionTab"><span id='lang_170'>Selection</span></a></li>-->
                 </ul>
@@ -536,29 +537,13 @@
                         <input type="hidden" value="500" id="limitResult">
                         <table border="0">
 
-                            <tr align="center">
 
-                                <td colspan="2" valign="center">
-                                    <button onclick="toutlesensDialogsController.showAdvancedSearchDialog()"><span
-                                            id='lang_61'> Advanced Search</span></button>
-
-                            </tr>
                             <!--    <tr>
                                     <td><B></B> Labels</td>
                                     <td><select id="nodesLabelsSelect"
                                                 onchange=toutlesensController.onLabelSelect(this)></select></td>
 
                                 </tr>-->
-
-                            </tr>
-                            <tr colspan="3" valign="middle">
-                                <td><span id='lang_15'>Profondeur</span>&nbsp;<input
-                                        id="depth" value="1" size="1"></td>
-                                <td colspan="2">
-                                    <div id="depthSlider" style="width: 130px;"></div>
-                                </td>
-
-                            </tr>
 
 
                             <tr>
@@ -610,11 +595,26 @@
                                 </td>
 
                             </tr>
+                            </tr>
+                            <tr  valign="middle">
+                                <td><span id='lang_15'>Profondeur</span>&nbsp;<input
+                                        id="depth" value="1" size="1"></td>
+                                <td colspan="2">
+                                    <div id="depthSlider" style="width: 130px;"></div>
+                                </td>
+
+                            </tr>
+                            <tr>
+                                <td colspan="3">
+                                    <input type="checkbox" id="showRelationTypesCbx" onclick="toutlesensController.displayGraph()">nom des relations
+                                </td>
+                            </tr>
 
 
                             <tr>
 
                                 <td colspan="2">
+                                    <hr>
                                     <span id='lang_1'>Search</span>
                                     <input id="word"
                                            onkeyup="toutlesensController.searchNodesUI('matchStr',null,null, infoGenericDisplay.loadSearchResultIntree);"
@@ -625,7 +625,7 @@
                                                              src="images/search.png"/>
 
                                     <br> Label <select id="nodesLabelsSelect" onchange="onViewSelect(this)"> </select>
-                                    <button onclick="infoGenericDisplay.createNewRootNode()">Create Node</button>
+                                    <button id="createNodeButton" onclick="infoGenericDisplay.createNewRootNode()">Create Node</button>
                                     <!-- <button  onclick="showAdvancedSearchDialog()">+</button>-->
 
 
@@ -650,208 +650,479 @@
                     </div>
                 </div>
 
-                <!--  ****************************************************#graphQueryFilters***************************-->
+
+                <!--   /*******************************************************advancedQueriesDiv************************************************************/
+                   /*******************************************************advancedQueriesDiv************************************************************/
+                   /*******************************************************advancedQueriesDiv************************************************************/-->
+
+                <div id="advancedQueriesDiv">
+
+                    <ul>
+
+                        <li><a href="#graphPathDiv"><span id='lang_103'>Chemin entre  noeuds</span></a></li>
+                        <li><a href="#currentQueriesDiv"><span id='lang_168'>Current queries</span></a></li>
+                        <li><a href="#PatternVizDiv"><span id='lang_169'>Pattern viz</span></a></li>
+                        <li><a href="#cypherQueryDivX"><span id='lang_101'>Cypher query</span></a></li>
+
+                        <!--  <li><a href="#graphTraversalDiv"><span id='lang_102'>Traversee de graphe</span></a></li>-->
+                        <li><a href="#graphSavedRequestsDiv"><span id='lang_162'>requetes enregistrees</span></a></li>
+
+                    </ul>
+
+                    <div id="graphPathDiv">
+
+                        <br>
+                        <table border="0">
+                            <tr>
+                                <td><span id='lang_109'>noeud source</span></td>
+                                <td><input id="graphPathSourceNode" value=" ?"
+                                           onclick="advancedSearch.onSourceNodeClick()">
+                                    <button onclick="$('#graphPathSourceNode').val('?');advancedSearch.setTargetNodeVisibility(true)">
+                                        X
+                                    </button>
+                                    </input></td>
+
+                            </tr>
+                            <tr>
+
+                                <td><span id='lang_133' class="targetNode">noeud cible</span></td>
+
+                                <td><span class="targetNode"><input onclick="advancedSearch.onTargetNodeClick()"
+                                                                    id="graphPathTargetNode" value=" ?">
+                    <button onclick="$('#graphPathTargetNode').val('?'); ">X</button>
+                                    </input></span></td>
+                            <tr>
+                            <tr>
+
+                                <td><span id='lang_134' class='targetNode'>>distance maximum entre les noeuds</span>
+                                </td>
+                                <td><span class="targetNode"><input id="graphPathMaxDistance" value="3"/></span></td>
+                            </tr>
 
 
-                <div id="graphQueryFiltersTab">
+                        </table>
+                    </div>
+                    <div id="PatternVizDiv">
+                        <table>
+                            <tr>
 
-                    <div align="center">
-                        <span id="currentNodeSpan"></span><br>
+                                <td>
+                                    <table>
+                                        <tr>
+                                            <td>
+                                                Add Label
+                                            </td>
+                                            <td>
+                                                <select id="patternLabelSelect"
+                                                        onchange="advancedSearch.onPatternLabelSelect(this)">
+                                                    <option></option>
+                                                </select>
+                                                <button onclick="advancedSearch.patternResetLabel()">Reset</button>
+                                            </td>
+
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                Add relation type
+                                            </td>
+                                            <td>
+                                                <select id="patternRelTypeSelect"
+                                                        onchange="advancedSearch.onPatternRelTypeSelect(this)">
+                                                    <option></option>
+                                                </select>
+                                            </td>
+
+                                        </tr>
+                                        <!-- <tr>
+                                             <td>
+                                                 All RelType
+                                             </td>
+                                             <td>
+                                                 <select id="patternRelTypeSelect" onchange="patternAdd(this)"><option></option></select>
+                                             </td>
+
+                                         </tr>-->
+                                    </table>
+
+
+                                </td>
+                                <td>
+
+                                    Pattern
+                                    <br>
+                                    <select id="patternPatternSelect" size="10"></select>
+
+                                </td>
+
+                                <td>
+                                    <button onclick="advancedSearch.removeFromPatternSelect()">-</button>
+                                    <br>
+                                    <button onclick="advancedSearch.executePatternUI(true)">Count</button>
+                                    <br>
+                                    <input id="patternCount">
+                                </td>
+                            </tr>
+                        </table>
+
 
                     </div>
-                    <!--  	<button onclick="getSVG()">getSVG</button>-->
 
-                    <div id="accordionRepresentation" class="accordionLeft">
+                    <div id="cypherQueryDivX">
+                        <table>
+                            <tr>
 
-                        <h3>
-                            <span id='lang_3'>Apparence</span>
-                        </h3>
-                        <div id="graphDecorationPanel">
-                            <table>
-                                <tr valign="middle">
-
-                                    <td colspan="2" align="center">
-
-                                        <table class="visButtonTable" id=visButtonTableDiv">
-
-                                            <tr align="center">
-                                                <td width="100%" colspan="6"><span
-                                                        style="color: white">Representation</span></td>
-                                            </tr>
-                                            <tr>
-                                                <td><input type="image" height="30px" alt="fleur"
-                                                           onclick="toutlesensController.onVisButton('FLOWER')"
-                                                           id="treeFlowerButton2"
-                                                           src="images/flower.png"/></td>
-                                                <td><input type="image" height="30px" alt="graphBulk"
-                                                           onclick="toutlesensController.onVisButton('SIMPLE_FORCE_GRAPH_BULK')"
-                                                           id="graphBulkButton2"
-                                                           src="images/graphBulk.png"/></td>
-
-                                                <td><input type="image" height="30px"
-                                                           alt="<span id='lang_9'>carte</span>"
-                                                           onclick="toutlesensController.onVisButton('SIMPLE_FORCE_GRAPH')"
-                                                           id="graphButton2" src="images/graph.png"/></td>
-
-                                                <td><input type="image"
-                                                           alt="<span id='lang_7'>arbre</span>" height="30px"
-                                                           onclick="toutlesensController.onVisButton('TREE')"
-                                                           id="treeButton2"
-                                                           src="images/tree.png"/></td>
-
-                                                <td><input type="image" height="30px" alt="carte"
-                                                           onclick="toutlesensController.onVisButton('TREEMAP')"
-                                                           id="treemapButton2"
-                                                           src="images/treemap.png"/></td>
+                                <td><span id='lang_104'>Match</span></td>
+                                <td><textArea id="cypherQueryMatchTextArea"
+                                              ondblclick="advancedSearch.showLabelSelectionDialog('setCypherqueryMatch()')"
+                                              class="cypherQueryTextArea"></textArea></td>
 
 
-                                                <!--    <td><input type="image" height="30px" alt="carte"
-                                                    onclick="toutlesensController.onVisButton('MANUAL')" id="treemapButton"
-                                                    src="images/treeModif.jpg" /></td>
-
-                                                       <td><input type="image" alt="<span id='lang_14'>roue</span>"
-                                            onclick="toutlesensController.onVisButton('FORCE_COLLAPSE')" height="30px"
-                                            id="wheelButton" src="images/tree.png" /></td>-->
-
-                                            </tr>
-                                            <tr align="center">
-                                                <td valign="middle" colspan="6"><input type="checkbox"
-                                                                                       id="groupByLabelsCbx"
-
-                                                                                       onclick="toutlesensController.drawGraphGeneral()"><span
-                                                        style="color: white"><span id='lang_5'>Grouper
-																par labels</span></span></td>
-
-                                            </tr>
-                                            <tr align="center">
-                                                <td valign="middle" colspan="6"><input type="checkbox"
-                                                                                       id="showRelationTypesCbx"
-                                                                                       onclick="toutlesensController.drawGraphGeneral()"><span
-                                                        style="color: white"><span
-                                                        id='lang_163'>noms des relation</span></span></td>
-
-                                            </tr>
+                            </tr>
+                            <tr>
+                                <td><span id='lang_105'>Where</span></td>
+                                <td><textArea id="cypherQueryWhereTextArea"
+                                              class="cypherQueryTextArea"></textArea></td>
 
 
-                                        </table>
-                                        <select style="visibility: hidden;"
-                                                id="representationSelect"
-                                                onchange="toutlesensController.drawGraphGeneral()">
+                            </tr>
+                            <!--  <tr>
+                                  <td><span id='lang_106'>GroupBy</span></td>
+                                  <td><textArea id="cypherQueryGroupByTextArea"
+                                                onclick="onClickCypherQueryMatchTextArea(this)"
+                                                class="cypherQueryTextArea"></textArea></td>
 
 
-                                            <option value="FLOWER" selected="selected">flower</option>
-                                            <option value="TREE">arbre</option>
-                                            <option value="SIMPLE_FORCE_GRAPH">graphe</option>
-                                            <option value="TREEMAP">carte</option>
-                                            <option value="MANUAL">manual</option>
-                                            <option value="HTML">manual</option>
+                              </tr>
+                              <tr>
+                                  <td><span id='lang_107'>Return</span></td>
+                                  <td><textArea id="cypherQueryReturnTextArea"
+                                                class="cypherQueryTextArea"> </textArea></td>
 
-                                            <option value="CSV">tableau</option>
 
-                                            <!--  <option value="LIST">liste</option>
-                                                <option value="FORCE_COLLAPSE">roue</option>
-                                             -->
+                              </tr>-->
+
+
+                        </table>
+                    </div>
+
+
+                    <div id="graphSavedRequestsDiv">
+
+                    </div>
+
+
+                    <div id="currentQueriesDiv">
+                        <table>
+                            <tr>
+                                <td>
+                                    Source label
+                                </td>
+                                <td>
+                                    <select id="currentQueriesSourceLabelSelect"> </select>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    Target label(optional)
+                                </td>
+                                <td>
+                                    <select id="currentQueriesTargetLabelSelect"> </select>
+
+                                    &nbsp;direction <select id="currentQueriesDirectionSelect">
+                                    <option>any</option>
+                                    <option>outgoing</option>
+                                    <option>incoming</option>
+                                </select>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    Standard queries
+                                </td>
+                                <td>
+                                    <select id="currentQueriesSelect"
+                                            onchange="statistics.onCurrentQueriesSelect()"> </select>&nbsp;limit<input
+                                        id="currentQueriesLimit" value="100">
+                                </td>
+                            </tr>
+
+
+                        </table>
+
+
+                    </div>
+
+
+                    <div class="executeDiv">
+                        <button onclick="advancedSearch.executeSearch()"><span id='lang_152'>Draw Graph</span></button>
+                        <button onclick="currentActionObj.selection=true;advancedSearch.executeSearch()"><span
+                                id='lang_174'>Selection</span></button>
+                        <span id='lang_108'>Limite</span></td>
+                        <input id="cypherQueryLimitInput" size="5" value="2000">&nbsp;
+                        <button onclick="currentActionObj.selection=false;toutlesensDialogsController.hideAdvancedSearch()">
+                            <span id='lang_153'>Annuler</span></button>
+                        <div id="message" class="message"></div>
+                    </div>
+                </div>
+
+
+                <!--  /*******************************************************graphBIDiv************************************************************/
+                  /*******************************************************graphBIDiv************************************************************/
+                  /*******************************************************graphBIDiv************************************************************/-->
+
+                <div id="graphBIDiv">
+                    <div id="graphDecorationDiv">
+                        <table border="0" align="center">
+
+                            <tr>
+                                <td><span id='lang_100'><span id='lang_140'>Labels</span></span></td>
+                            </tr>
+
+                            <tr>
+                                <td><select id="nodesLabelsBISelect" size="8"
+                                            onclick="advancedDisplay.onLabelClick(this)"></select></td>
+
+                            </tr>
+
+
+                            <tr>
+                                <td><span id='lang_141'>Proprietes</span></td>
+                            </tr>
+
+                            <tr>
+
+                                <td><select id="nodesLabelsPropertiesSelect" size="8"
+                                            onclick="advancedDisplay.onPropertyClick(this)">
+                                    <option><span id='lang_139'>------</span>----</option>
+                                </select></td>
+
+                            </tr>
+
+
+                        </table>
+                    </div>
+
+                    <div id="graphDecorationTabsDiv">
+                        <ul>
+                            <li><a href="#graphDecorationNodeVal"><span id='lang_142'>proprietes</span></a></li>
+                            <li><a href="#graphSavedPropsDiv"><span id='lang_161'>proprietes enregistr?es</span></a>
+                            </li>
+
+                        </ul>
+
+                        <div id="graphDecorationNodeVal">
+                            <span class="help">Representer la valeur d'un parametre</span>
+                            <table border="0">
+
+                                <tr>
+                                    <td>
+                                        <span id='lang_144'>Valeurs</span>
+                                        <button onclick="advancedDisplay.clearGraphDecorationValues()">X</button>
+                                    </td>
+
+                                    <td>
+                                        <select id="graphDecorationValues" size="8">
                                         </select>
                                     </td>
-                                </tr>
-
-
-                                <tr valign="middle">
-                                    <td><B> <span id='lang_16'>ecartement</span>&nbsp;</B></td>
-                                    <td colspan="2">
-                                        <div id="graphForceDistanceSlider" style="width: 130px;"></div>
+                                    <td>
+                                        number of classes<br>
+                                        <input id="nClassesInput" onclick="advancedDisplay.setNumberOfclasses()">
+                                        <button onclick="setNoClasses()">No classes</button>
 
                                     </td>
-
                                 </tr>
 
 
                                 <tr>
-                                    <td><B> <span id='lang_17'>charge</span></B></td>
                                     <td>
-                                        <div id="graphForceChargeSlider"></div>
-                                    </td>
-                                </tr>
-
-                                <tr valign="middle">
-
-                                    <td colspan="2">
-                                        <div id="helpDiv" class="help"></div>
-
+                                        <span id='lang_145'>Couleur</span>
                                     </td>
 
+                                    <td>
+                                        <button id="graphDecorationColor"
+                                                class="jscolor {valueElement:colorInput,value:'66ccff'}">choose
+                                        </button>
+                                        <input type="hidden" id="colorInput"
+                                               onchange="advancedDisplay.setPropertyValueOptionColor()">
+                                    </td>
+                                    <td>
+                                        <button onclick="advancedDisplay.setAutoRangeColors()">Range</button>
+                                        <button onclick="advancedDisplay.setAutoAllColors()">All</button>
+                                        <!--  <button onclick="showPaletteDialog()">Palette...</button>-->
+                                    </td>
                                 </tr>
+                                <tr>
+                                    <td>
+                                        <span id='lang_146'>Taille</span> <input id="graphDecorationSize" size="3">
+                                    </td>
+                                    <td>
 
+                                        <div id="graphDecorationSizeSlider" style="width: 130px;"></div>
+                                    </td>
+                                    <td>
+                                        <button onclick="advancedDisplay.setAutoRangeSize()">Range</button>
+                                        <button onclick="advancedDisplay.setAutoAllSize()">All</button>
+
+
+                                    </td>
                                 </tr>
+                                <!--          <tr>
+                                              <td>
+                                                  <span id='lang_147'>Symbole</span>
+                                              </td>
+
+                                              <td>
+                                                  <select id="graphDecorationShape">
+                                                      <option value="circle"><span id='lang_148'>aucun</span></option>
+                                                      <option value="square"><span id='lang_154'>carre</span></option>
+                                                      <option value="triangleUp"><span id='lang_149'>triangle</span></option>
+                                                      <option value="triangleDown"><span id='lang_150'>triangle inverse</span></option>
+                                                  </select>
+                                              </td>
+                                              <td>
+                                              -->
+                                <button onclick="advancedDisplay.setAutoAllShape()"> All</button>
+                                </td>
+                                </tr>
+                                <!--   <tr>
+                                       <td>
+                                           <button onclick="setPropertyValueAttr()"><span id='lang_151'>Ajouter</span></button>
+                                       </td>
+
+                                       <td colspan="2">
+
+                                           <select id="graphDecorationDoneValues" size=8>
+                                           </select>
+
+
+                                       </td>
+                                   </tr>-->
+
+
                             </table>
 
-                        </div>
 
-
-                        <h3>
-                            <span id='lang_19'>Filtrer les noeud et les relations</span>
-                        </h3>
-                        <div id="graphFiltersPanel">
-								<span class="help"><span id='lang_20'>filtre les
-										noeud et les relations</span></span><br>
-                            <button onclick="toutlesensController.backToNonFilteredGraph()"><span id='lang_160'>supprimer les filtres</span>
-                            </button>
-                            <!-- <button id="drawFilteredGraphButton"
-                                    onclick="toutlesensController.drawGraphGeneral()">
-                                    <span id='lang_21'>Appliquer les filtres</span>
-                                </button> -->
-
-                            <div id="graphQueryFilters"></div>
+                            <div>
+                                <button oncLick="advancedDisplay.executeDisplay()"><span id='lang_152'>Executer</span>
+                                </button>
+                                <button oncLick="advancedDisplay.saveStoredDecorationObjsDialog()"><span id='lang_155'>Enregistrer</span>
+                                </button>
+                                <button oncLick="toutlesensController.hideAdvancedDisplay()"><span
+                                        id='lang_153'>Annuler</span></button>
+                                <input type="checkbox" id="groupByClassCBx"> grouper les valeurs &nbsp;<input
+                                    type="checkbox" checked="checked" id="crossLabel"> pour tous les labels
+                            </div>
 
                         </div>
+                        <div id="graphSavedPropsDiv">
+                            <select id="storedDecorationObjsSelect"
+                                    onclick="advancedDisplay.onStoredDecorationObjsSelect()"
+                                    size="10">
+                            </select>
+                            description
+                            <div id="storedDecorationObjsTA"></div>
+                            <button onclick="advancedDisplay.executeStoredDecorationObjs()">executer</button>
 
 
+                        </div>
                     </div>
+                </div>
+
+
+                <!-- /*******************************************************RDF************************************************************/
+                 /*******************************************************RDF************************************************************/
+                 /*******************************************************RDF************************************************************/-->
+
+                <div id="rdfDiv">
+                    <table>
+                        <tr>
+                            <td>
+                                Word
+                            </td>
+
+                            <td>
+                                <input id="rdfWordInput">
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                Relation
+                            </td>
+
+                            <td>
+                                narrower <input type="checkbox" checked="checked" value="narrower"
+                                                name="relationCBX"><br>
+                                broader<input type="checkbox" value="broader" name="relationCBX"><br>
+                                related <input type="checkbox" value="related" name="relationCBX"><br>
+                                <!--  <select id="rdfRelationSelect">
+                                       <option>narrower</option>
+                                       <option>broader</option>
+                                       <option>related</option>
+
+                                   </select>-->
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                Store
+                            </td>
+
+                            <td>
+                                <select id="rdfStoreSelect">
+                                    <option>BNF</option>
+                                </select>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                Langage
+                            </td>
+
+                            <td>
+                                <select id="rdfLangageSelect">
+                                    <option>fr</option>
+                                    <option>en</option>
+                                </select>
+                            </td>
+                        </tr>
+                        <td>
+                            Contains
+                        </td>
+
+                        <td>
+                            <select id="rdfContainsSelect">
+                                <option>false</option>
+                                <option>true</option>
+                            </select>
+                        </td>
+                        </tr>
+                        <td>
+                            <select id="rdfDisplaySelect">
+                                <option>FLOWER</option>
+                                <option>SIMPLE_FORCE_GRAPH</option>
+                                <option>TREE</option>
+                                <option>CARDS</option>
+                            </select>
+                        </td>
+                        </tr>
+                        <tr align="center">
+
+                            <td colspan="2" valign="center">
+                                <button onclick="toutlesensController.searchRDF()"><span
+                                        id='lang_61'> Search RDF</span></button>
+
+                        </tr>
+
+
+                    </table>
+
 
                 </div>
 
 
-                <!--  ****************************************************attrs***************************-->
-                <!--    <div id="attrsTab">
-
-
-                        <div class="title">proprietes</div>
-                        <div id="infoPanel"></div>
-                        <hr>
-                        <div id="imagePanel"></div>
-                        <div id="photoControls">
-                            <button onclick="toutlesensController.previousImage()">previous</button>
-                            image
-                            <button onclick="toutlesensController.nextImage()">next</button>
-                            <input type="checkbox" id="largeImageCBX" checked="true"> grandFormat
-                            <button onclick="toutlesensController.rotateImage(true)">rotate-</button>
-                            <button onclick="toutlesensController.rotateImage()">rotate+</button>
-                        </div>
-                        <div id="div_externalRessources">
-                            <div class="title">
-                                <span id='lang_23'>Ressources externes</span>
-                            </div>
-                            Source :<select id="externalSourceSelect"
-                                            onchange="toutlesensController.toutlesensController.loadExternalData(this)">
-                            <option></option>
-                            <option value="DbPedia">DBPedia</option>
-                            <option value="BNF">BNF</option>
-
-                        </select>
-                            <button onclick="externalRessourcesCommon.searhExternalResource()">
-                                <span id='lang_1'>Chercher</span>
-                            </button>
-                            <div id="externalInfoPanel"></div>
-                            <div id="chronoParams"></div>
-
-
-                        </div>
-
-
-
-                    </div>-->
-
-
+                <!-- /*******************************************************selection************************************************************/
+                 /*******************************************************selection************************************************************/
+                 /*******************************************************selection************************************************************/-->
                 <!--  ****************************************************selection***************************-->
                 <!-- <div id="selectionTab">
                      nodes
@@ -873,6 +1144,7 @@
 
 
                  </div>-->
+
 
             </div>
 
@@ -901,7 +1173,11 @@
         <div id="graphTab">
             <div id="center">
 
-                <div id="graphLegendDiv"></div>
+                <div id="graphLegendDiv">
+                    <div id="graphMessage" class="message"></div>
+                    <!--   <button style="font-size:12px" onclick="toutlesensController.stopAnimation()">stop animation</button>-->
+                    <div id="filtersDiv"></div>
+                </div>
 
                 <div id="graphDiv"></div>
                 <div id="popupMenuWrite" class="popupmenuDiv">
@@ -1029,10 +1305,10 @@
                             </button>
 
                         </td>
-                        <td><input type="image" height="30px" alt="table"
-                                   onclick="toutlesensDialogsController.showGanttDialog()" id="Gantt"
-                                   src="images/gantt.png"/></td>
-                        <td>
+                        <!--     <td><input type="image" height="30px" alt="table"
+                                        onclick="toutlesensDialogsController.showGanttDialog()" id="Gantt"
+                                        src="images/gantt.png"/></td>
+                             <td>-->
                     </tr>
                 </table>
 
@@ -1071,7 +1347,8 @@
 
 
         <!--  ****************************************************nodeDetailsTab***************************-->
-        <div id="infosControlsDiv">
+        <
+        <div id="cardsInfosControlsDiv">
             <button onclick="cards.save();">Save</button>
             <button onclick="cards.delete();">Delete</button>
             <button onclick="cards.add();">Add</button>
@@ -1113,26 +1390,15 @@
 
         </div>
 
-
     </div>
 
 
-</div>
+    <div id="dialogGantt" title="Gantt">
+        <!--   <iframe id="dialogGanttIframe" src="ganttDialog.html"></iframe>-->
+    </div>
 
-
-<div id="dialog" title="dialog"></div>
-<div id="dialogAdvancedSearch" title="advancedSearch">
-    <iframe id="advancedSearchIframe" src="advancedSearchDialog.html"></iframe>
-</div>
-<div id="dialogAdvancedDisplay" title="advancedDisplay">
-    <iframe id="advancedDisplayIframe" src="advancedDisplayDialog.html"></iframe>
-</div>
-<div id="dialogGantt" title="Gantt">
-    <!--   <iframe id="dialogGanttIframe" src="ganttDialog.html"></iframe>-->
-</div>
-
-<input type="hidden" id="graphTravReturnEvaluator">
-<input type="hidden" id="graphTravPruneEvaluator"></input>
-<input type="hidden" id="graphTravRelTypes"></input>
+    <input type="hidden" id="graphTravReturnEvaluator">
+    <input type="hidden" id="graphTravPruneEvaluator"></input>
+    <input type="hidden" id="graphTravRelTypes"></input>
 </body>
 </html>

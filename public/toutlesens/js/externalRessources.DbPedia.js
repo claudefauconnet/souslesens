@@ -49,7 +49,7 @@ self.listDbPediaPerson({name:word },target)
 	else
 		word=obj.name;
 	if(!word)
-		word=obj[Gparams.defaultnodeNameField];
+		word=obj[Gparams.defaultNodeNameProperty];
 	if(!word)
 		return "";
 

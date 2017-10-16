@@ -30,6 +30,7 @@ uploads/*.js
 uploads/*
 uploads/*.json
 schemas/*.json
+bin/rdf/classifiers/*.json
 bin/sinequa/*
 bin/jfm/*
 bin/discogs/*

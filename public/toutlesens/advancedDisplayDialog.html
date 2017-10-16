@@ -94,7 +94,7 @@
 
 
     <script>
-        var isSouslesensIframe=true;
+
         $(function () {
             advancedDisplay.initDecorationDiv();
 
@@ -114,7 +114,7 @@
             $("#dialog").dialog({
                 autoOpen: false,
                 height: 400,
-                width: 350,
+                width: 200,
                 modal: true
 
             });
@@ -269,7 +269,7 @@
         <div>
             <button oncLick="advancedDisplay.executeDisplay()"><span id='lang_152'>Executer</span></button>
             <button oncLick="advancedDisplay.saveStoredDecorationObjsDialog()"><span id='lang_155'>Enregistrer</span></button>
-            <button oncLick="window.parent.toutlesensController.hideAdvancedDisplay()"><span id='lang_153'>Annuler</span></button>
+            <button oncLick="toutlesensController.hideAdvancedDisplay()"><span id='lang_153'>Annuler</span></button>
             <input type="checkbox" id="groupByClassCBx"> grouper les valeurs &nbsp;<input type="checkbox" checked="checked"   id="crossLabel"> pour tous les labels
         </div>
 

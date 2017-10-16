@@ -59,7 +59,7 @@ self.clearCloud();
         for (var i = 0; i < resultArray.length; i++) {
             var nodes = resultArray[i].nodes;
             for (var j = 0; j < nodes.length; j++) {
-                var nom = nodes[j].properties[Gparams.defaultnodeNameField];
+                var nom = nodes[j].properties[Gparams.defaultNodeNameProperty];
                 var label = nodes[j].labels[0];
                 var str = nom + "_" + label;
                 if (!tagCloudObj[str]) {
@@ -85,7 +85,7 @@ self.clearCloud();
             tagCloudData.push({
                 freq: Math.round(maxFreq / [key].freq),
                 value: distinctLabelsLabels.indexOf(tagCloudObj[key].label),
-                key: tagCloudObj[key][Gparams.defaultnodeNameField],
+                key: tagCloudObj[key][Gparams.defaultNodeNameProperty],
             });
         }
         return tagCloudData;

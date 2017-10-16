@@ -1,5 +1,6 @@
 text {
     pointer-events: none;
+    font-size: 12px;
 }
 
 .grandparent text {
