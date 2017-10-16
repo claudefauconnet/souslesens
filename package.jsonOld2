@@ -1,0 +1,61 @@
+{
+  "name": "souslesens",
+  "version": "2.0.1",
+  "description": "Souslesens is a tool to visualize and manipulate graphs. It is based on Neo4j, D3js and Nodejs",
+  "main": "./bin/www",
+  "bin": {
+    "souslesens": "elasticProxy.js"
+  },
+  "dependencies": {
+    "async": "^2.5.0",
+    "body-parser": "^1.18.2",
+    "cmd": "^0.1.0",
+    "cmd-exec": "^0.1.0",
+    "cookie-parser": "^1.4.3",
+    "cors": "^2.8.4",
+    "csvtojson": "^1.1.7",
+    "debug": "^2.6.9",
+    "disconnect": "^1.0.2",
+    "elasticsearch": "^12.1.3",
+    "exif": "^0.6.0",
+    "exiftool": "^0.0.3",
+    "express": "^4.15.4",
+    "jade": "^1.11.0",
+    "jsonfile": "^2.4.0",
+    "jsontoxml": "^0.0.11",
+    "mongodb": "^2.2.31",
+    "morgan": "^1.8.2",
+    "multer": "^1.3.0",
+    "neo4j": "^2.0.0-alpha5",
+    "neo4j-driver": "^1.4.0",
+    "node-exiftool": "^2.1.1",
+    "node-xml-stream": "^1.0.2",
+    "pug": "^2.0.0-beta10",
+    "serve-favicon": "^2.4.4",
+    "socket.io": "^1.7.4",
+    "xml2js": "^0.4.19",
+    "xmlbuilder": "^9.0.4"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "node ./bin/wwww"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/claudefauconnet/souslesens.git"
+  },
+  "keywords": [
+    "Neo4j",
+    "Graph",
+    "Nodejs",
+    "D3js",
+    "jstree",
+    "dataviz"
+  ],
+  "author": "Claude.fauconnet",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/claudefauconnet/souslesens/issues"
+  },
+  "homepage": "https://github.com/claudefauconnet/souslesens#readme"
+}
