@@ -34,7 +34,8 @@
     "serve-favicon": "^2.4.4",
     "socket.io": "^1.7.4",
     "xml2js": "^0.4.19",
-    "xmlbuilder": "^9.0.4"
+    "xmlbuilder": "^9.0.4",
+     "logger":"latest"
   },
   "devDependencies": {},
   "scripts": {
