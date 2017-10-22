@@ -72,7 +72,8 @@ var customizeUI = (function () {
                 var graphDisplay = queryParams.graphDisplay;
                 if (graphDisplay && graphDisplay.length > 0) {
                     currentDisplayType = graphDisplay;
-                    $("#representationSelect").val(graphDisplay);
+               //     $("#representationSelect").val(graphDisplay);
+                    toutlesensController.generateGraph(null,true)
 
                     /*
                      FLOWER

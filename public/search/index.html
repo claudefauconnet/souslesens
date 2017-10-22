@@ -125,6 +125,7 @@
     <script src="../../common/js/jquery/jquery-ui.min.js"></script>
     <script src="../../common/js/jsTree/jstree.min.js"></script>
     <script src="../../common/js/common.js"></script>
+    <script src="./js/jsTreeController.js"></script>
     <link rel="stylesheet" href="../../common/js/jsTree/themes/default/style.min.css"/>
     <script>
         var associatedWords = [];
@@ -379,74 +380,14 @@
 
             $('#rightPanel').html("<br><br><br><br><br><br><br><br>Concepts associes<br><br> <div id='conceptDiv'></div>")
             currentClassifierData = data
-            $('#conceptDiv').jstree("destroy").empty();
-            var jsTree = $('#conceptDiv')
-                .on("select_node.jstree",
-                    function (evt, obj) {
-                        if (obj.node.children.length > 0) {
-                            for (var i = 0; i < currentClassifierData.length; i++) {
-                                if (currentClassifierData[i].text == obj.node.text) {
-                                    for (var j = 0; j < currentClassifierData[i].children.length; j++) {
-                                        addAssociatedWord(currentClassifierData[i].children[j].word);
-                                    }
-                                }
-                            }
-                        } else {
-                            var word = obj.node.original.word;
-
-                            addAssociatedWord(word);
-                        }
-                    })
-                .on("loaded.jstree", function (evt, obj) {
-                    $('.jstree-classic li[rel="Role"] > a ').css( "font-family" ,"verdana, sans-serif;");
-                    $('.jstree-classic li[rel="Role"] > a ').css( "font-size" ,"10px");
 
 
-                })
-                .jstree({
-                        'core': {
-                            data: data
-                        },
+            jsTreeController.load(data,'conceptDiv',function(functionName,data){
+                if( functionName=="addAssociatedWord")
+                    addAssociatedWord(data);
 
-                        // so that create works
-                        'check_callback': function (operation, node, node_parent, node_position, more) {
-                            // operation can be 'create_node', 'rename_node', 'delete_node', 'move_node' or 'copy_node'
-                            // in case of 'rename_node' node_position is filled with the new node name
-                            if (operation === "move_node") {
-                                var sourceNode = node.data;
-                                if (!more.ref)
-                                    return true;
-                                var targetNode = more.ref.data;
-                                return self.canDrop(sourceNode, targetNode);
-                            }
-                            return true;  //allow all other operations
+            });
 
-                        },
-                        'contextmenu': {
-                            'items': 'aaa'
-                        },
-                        "dnd": {
-                            // check_while_dragging: true
-                        },
-
-
-                        //  "types": types,
-                        //  "plugins": plugins,
-
-                    }
-                ).bind("move_node.jstree", function (e, data) {
-                    return self.ondDropEnd(data);
-
-
-                });
-
-
-            /*    var html="";
-             for (var i = 0; i < data.length; i++) {
-             html += "<li>" + "<a href='javascript:addAssociatedWord(\"" + data[i].text + "\")'>" + data[i].text + " (" + data[i].count + ")</a></li>"
-             }
-             html += "</ul>";
-             $("#conceptDiv").html(html);*/
 
         }
 

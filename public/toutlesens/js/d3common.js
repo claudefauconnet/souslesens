@@ -294,7 +294,10 @@ var d3common = (function () {
 
     }
     ,self.showRelationsOnGraph=function(link,d){
-    var linkId=link[0][0].children[0].id;
+      //  if(!link[0] || !link[0][0]  || !link[0][0].children  || !!link[0][0].children[0] )
+          //  return;
+    //var linkId=link[0][0].children[0].id;
+        var linkId=link[0][0].childNodes[0].id;
 
         if( Gparams.showRelationNames  ) {// ||  Gparams.showRelationAttrs
             var drawRelAttr = null;

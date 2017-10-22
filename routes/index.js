@@ -15,6 +15,7 @@ var uploadCsvForNeo = require('../bin/uploadCsvForNeo.js');
 var restAPI = require("../bin/restAPI.js");
 var rdfProxy = require("../bin/rdf/rdfProxy.js");
 var classifierManager = require("../bin/rdf/classifierManager.js");
+var skos= require("../bin/rdf/skos.js");
 
 var socket = require('./socket.js');
 
@@ -159,6 +160,13 @@ router.post('/http', function (req, response) {
 
 router.post('/rdf', function (req, response) {
     if (req.body && req.body.store == 'BNF') {
+        rdfProxy.queryBnfDataToNeoResult(req.body.word, req.body.relations, req.body.lang, req.body.contains, req.body.limit, function (error, result) {
+            processResponse(response, error, result)
+        });
+    }
+
+    if (req.body && req.body.treeToSkos) {
+        skos.treeDataToSkos(req.body.tree,req.body.identifier,req.body.date,description,creator,
         rdfProxy.queryBnfDataToNeoResult(req.body.word, req.body.relations, req.body.lang, req.body.contains, req.body.limit, function (error, result) {
             processResponse(response, error, result)
         });

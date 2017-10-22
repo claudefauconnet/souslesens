@@ -33,6 +33,7 @@ schemas/*.json
 bin/rdf/classifiers/*.json
 bin/sinequa/*
 bin/jfm/*
+bin/logs/*
 bin/discogs/*
 bin/test.js
 public/toutlesens/js/oldJs/*

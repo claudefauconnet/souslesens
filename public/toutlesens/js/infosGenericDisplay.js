@@ -152,6 +152,7 @@ var infoGenericDisplay = (function () {
             var jsTree = $('#' + jsTreeDivId)
                 .on("select_node.jstree",
                     function (evt, obj) {
+
                         $(".jstree-themeicon").css("background-size", self.iconSize);
                         self.onSelect(obj.node);
                     })
