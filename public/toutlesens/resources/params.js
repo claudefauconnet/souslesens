@@ -40,6 +40,7 @@ var Gparams = {
     MaxResults: 5000,
     lang: "EN",
 
+
     profiles: {
         minimum: {
             hide: ["lang_52", "lang_62", "listDownloadButton", "div_externalRessources", "photoControls"],

@@ -95,6 +95,8 @@ var customizeUI = (function () {
 
     }
 
+
+
     self.noLeftDivDisplay = function () {
 
 

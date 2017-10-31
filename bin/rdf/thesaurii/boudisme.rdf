@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="utf-8"?>
+<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"  xmlns:skos="http://www.w3.org/2004/02/skos/core#"> <skos:ConceptScheme rdf:about="http://www.souslesens.org/PLM"><skos:prefLabel xml:lang="fr">Projet de nomenclature pour la bibliothèque PLM </skos:prefLabel> </skos:ConceptScheme>
+ <skos:Concept rdf:about="http://data.bnf.fr/ark:/12148/cb11938935j">
+   <skos:prefLabel xml:lang="fr">Bouddhisme</skos:prefLabel>
+   <skos:narrower rdf:resource="http://data.bnf.fr/ark:/12148/cb119419906"/>
+   <skos:broader rdf:resource="http://data.bnf.fr/ark:/12148/cb119346708"/>
+   <skos:narrower rdf:resource="http://data.bnf.fr/ark:/12148/cb119420303"/>
+   <skos:narrower rdf:resource="http://data.bnf.fr/ark:/12148/cb119604188"/>
+   <skos:narrower rdf:resource="http://data.bnf.fr/ark:/12148/cb11931066n"/>
+   <skos:narrower rdf:resource="http://data.bnf.fr/ark:/12148/cb11963510h"/>
+   <skos:narrower rdf:resource="http://data.bnf.fr/ark:/12148/cb11963567g"/>
+   <skos:narrower rdf:resource="http://data.bnf.fr/ark:/12148/cb119650965"/>
+   <skos:narrower rdf:resource="http://data.bnf.fr/ark:/12148/cb11965154h"/>
+   <skos:narrower rdf:resource="http://data.bnf.fr/ark:/12148/cb12038353d"/>
+   <skos:narrower rdf:resource="http://data.bnf.fr/ark:/12148/cb11946173m"/>
+   <skos:narrower rdf:resource="http://data.bnf.fr/ark:/12148/cb12084099z"/>
+   <skos:narrower rdf:resource="http://data.bnf.fr/ark:/12148/cb11977072v"/>
+   <skos:narrower rdf:resource="http://data.bnf.fr/ark:/12148/cb119668253"/>
+   <skos:narrower rdf:resource="http://data.bnf.fr/ark:/12148/cb119750564"/>
+   <skos:narrower rdf:resource="http://data.bnf.fr/ark:/12148/cb11979560q"/>
+   <skos:narrower rdf:resource="http://data.bnf.fr/ark:/12148/cb11980170z"/>
+   <skos:narrower rdf:resource="http://data.bnf.fr/ark:/12148/cb11980965k"/>
+   <skos:narrower rdf:resource="http://data.bnf.fr/ark:/12148/cb12099114f"/>
+   <skos:narrower rdf:resource="http://data.bnf.fr/ark:/12148/cb12176683p"/>
+   <skos:narrower rdf:resource="http://data.bnf.fr/ark:/12148/cb12232486j"/>
+   <skos:narrower rdf:resource="http://data.bnf.fr/ark:/12148/cb12333257t"/>
+   <skos:narrower rdf:resource="http://data.bnf.fr/ark:/12148/cb12499113s"/>
+   <skos:narrower rdf:resource="http://data.bnf.fr/ark:/12148/cb125486221"/>
+   <skos:narrower rdf:resource="http://data.bnf.fr/ark:/12148/cb15504345g"/>
+   <skos:narrower rdf:resource="http://data.bnf.fr/ark:/12148/cb16677846p"/>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://data.bnf.fr/ark:/12148/cb119419906">
+   <skos:prefLabel xml:lang="fr">Bouddhisme hinayana</skos:prefLabel>
+   <skos:broader rdf:resource="http://data.bnf.fr/ark:/12148/cb11938935j"/>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://data.bnf.fr/ark:/12148/cb119346708">
+   <skos:prefLabel xml:lang="fr">Religions</skos:prefLabel>
+   <skos:narrower rdf:resource="http://data.bnf.fr/ark:/12148/cb11938935j"/>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://data.bnf.fr/ark:/12148/cb119420303">
+   <skos:prefLabel xml:lang="fr">Bouddhisme mahāyāna</skos:prefLabel>
+   <skos:broader rdf:resource="http://data.bnf.fr/ark:/12148/cb11938935j"/>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://data.bnf.fr/ark:/12148/cb119604188">
+   <skos:prefLabel xml:lang="fr">Dieux bouddhiques</skos:prefLabel>
+   <skos:broader rdf:resource="http://data.bnf.fr/ark:/12148/cb11938935j"/>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://data.bnf.fr/ark:/12148/cb11931066n">
+   <skos:prefLabel xml:lang="fr">Bouddhisme zen</skos:prefLabel>
+   <skos:broader rdf:resource="http://data.bnf.fr/ark:/12148/cb11938935j"/>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://data.bnf.fr/ark:/12148/cb11963510h">
+   <skos:prefLabel xml:lang="fr">Lamas (bouddhisme)</skos:prefLabel>
+   <skos:broader rdf:resource="http://data.bnf.fr/ark:/12148/cb11938935j"/>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://data.bnf.fr/ark:/12148/cb11963567g">
+   <skos:prefLabel xml:lang="fr">Réincarnation -- Bouddhisme</skos:prefLabel>
+   <skos:broader rdf:resource="http://data.bnf.fr/ark:/12148/cb11938935j"/>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://data.bnf.fr/ark:/12148/cb119650965">
+   <skos:prefLabel xml:lang="fr">Ordres monastiques et religieux bouddhiques</skos:prefLabel>
+   <skos:broader rdf:resource="http://data.bnf.fr/ark:/12148/cb11938935j"/>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://data.bnf.fr/ark:/12148/cb11965154h">
+   <skos:prefLabel xml:lang="fr">Prêtres bouddhistes</skos:prefLabel>
+   <skos:broader rdf:resource="http://data.bnf.fr/ark:/12148/cb11938935j"/>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://data.bnf.fr/ark:/12148/cb12038353d">
+   <skos:prefLabel xml:lang="fr">Morale bouddhique</skos:prefLabel>
+   <skos:broader rdf:resource="http://data.bnf.fr/ark:/12148/cb11938935j"/>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://data.bnf.fr/ark:/12148/cb11946173m">
+   <skos:prefLabel xml:lang="fr">Sectes bouddhiques</skos:prefLabel>
+   <skos:broader rdf:resource="http://data.bnf.fr/ark:/12148/cb11938935j"/>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://data.bnf.fr/ark:/12148/cb12084099z">
+   <skos:prefLabel xml:lang="fr">Saints bouddhistes</skos:prefLabel>
+   <skos:broader rdf:resource="http://data.bnf.fr/ark:/12148/cb11938935j"/>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://data.bnf.fr/ark:/12148/cb11977072v">
+   <skos:prefLabel xml:lang="fr">Bouddhisme tantrique</skos:prefLabel>
+   <skos:broader rdf:resource="http://data.bnf.fr/ark:/12148/cb11938935j"/>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://data.bnf.fr/ark:/12148/cb119668253">
+   <skos:prefLabel xml:lang="fr">Civilisation bouddhique</skos:prefLabel>
+   <skos:broader rdf:resource="http://data.bnf.fr/ark:/12148/cb11938935j"/>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://data.bnf.fr/ark:/12148/cb119750564">
+   <skos:prefLabel xml:lang="fr">Renouveau du bouddhisme</skos:prefLabel>
+   <skos:broader rdf:resource="http://data.bnf.fr/ark:/12148/cb11938935j"/>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://data.bnf.fr/ark:/12148/cb11979560q">
+   <skos:prefLabel xml:lang="fr">Bouddhisme tibétain</skos:prefLabel>
+   <skos:broader rdf:resource="http://data.bnf.fr/ark:/12148/cb11938935j"/>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://data.bnf.fr/ark:/12148/cb11980170z">
+   <skos:prefLabel xml:lang="fr">Bouddhisme -- Rituel</skos:prefLabel>
+   <skos:broader rdf:resource="http://data.bnf.fr/ark:/12148/cb11938935j"/>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://data.bnf.fr/ark:/12148/cb11980965k">
+   <skos:prefLabel xml:lang="fr">Sanctuaires bouddhiques</skos:prefLabel>
+   <skos:broader rdf:resource="http://data.bnf.fr/ark:/12148/cb11938935j"/>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://data.bnf.fr/ark:/12148/cb12099114f">
+   <skos:prefLabel xml:lang="fr">Dieu -- Bouddhisme</skos:prefLabel>
+   <skos:broader rdf:resource="http://data.bnf.fr/ark:/12148/cb11938935j"/>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://data.bnf.fr/ark:/12148/cb12176683p">
+   <skos:prefLabel xml:lang="fr">Conciles et synodes bouddhiques</skos:prefLabel>
+   <skos:broader rdf:resource="http://data.bnf.fr/ark:/12148/cb11938935j"/>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://data.bnf.fr/ark:/12148/cb12232486j">
+   <skos:prefLabel xml:lang="fr">Bouddhisme Theravāda</skos:prefLabel>
+   <skos:broader rdf:resource="http://data.bnf.fr/ark:/12148/cb11938935j"/>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://data.bnf.fr/ark:/12148/cb12333257t">
+   <skos:prefLabel xml:lang="fr">Bouddhisme -- Jusqu'à 100</skos:prefLabel>
+   <skos:broader rdf:resource="http://data.bnf.fr/ark:/12148/cb11938935j"/>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://data.bnf.fr/ark:/12148/cb12499113s">
+   <skos:prefLabel xml:lang="fr">Symbolisme bouddhique</skos:prefLabel>
+   <skos:broader rdf:resource="http://data.bnf.fr/ark:/12148/cb11938935j"/>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://data.bnf.fr/ark:/12148/cb125486221">
+   <skos:prefLabel xml:lang="fr">Tathāgatagarbha (bouddhisme)</skos:prefLabel>
+   <skos:broader rdf:resource="http://data.bnf.fr/ark:/12148/cb11938935j"/>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://data.bnf.fr/ark:/12148/cb15504345g">
+   <skos:prefLabel xml:lang="fr">Droit bouddhique</skos:prefLabel>
+   <skos:broader rdf:resource="http://data.bnf.fr/ark:/12148/cb11938935j"/>
+
+ </skos:Concept>
+ <skos:Concept rdf:about="http://data.bnf.fr/ark:/12148/cb16677846p">
+   <skos:prefLabel xml:lang="fr">Vie religieuse -- Bouddhisme</skos:prefLabel>
+   <skos:broader rdf:resource="http://data.bnf.fr/ark:/12148/cb11938935j"/>
+
+ </skos:Concept>
+</rdf:RDF>
