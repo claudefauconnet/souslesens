@@ -35,6 +35,7 @@ bin/rdf/thesaurii/*.json
 bin/sinequa/*
 bin/jfm/*
 bin/logs/*
+logs/*.log
 bin/discogs/*
 bin/test.js
 public/toutlesens/js/oldJs/*
