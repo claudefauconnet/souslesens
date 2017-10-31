@@ -35,8 +35,9 @@
     "socket.io": "^1.7.4",
     "xml2js": "^0.4.19",
     "xmlbuilder": "^9.0.4",
-     "logger":"latest",
+    "logger":"latest",
     "node-kmeans":"latest"
+     "logger":"latest"
   },
   "devDependencies": {},
   "scripts": {
