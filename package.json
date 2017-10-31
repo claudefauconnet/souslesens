@@ -37,6 +37,7 @@
     "xmlbuilder": "^9.0.4",
     "logger":"latest",
     "node-kmeans":"latest"
+     "logger":"latest"
   },
   "devDependencies": {},
   "scripts": {

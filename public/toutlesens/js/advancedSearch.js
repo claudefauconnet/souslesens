@@ -592,10 +592,14 @@ var advancedSearch = (function () {
 			query +=  names[i];
         }
 
+<<<<<<< HEAD
 
 
         query += "] " + subGraphQuery + "return " + returnStr;
 
+=======
+        query += "] "+subGraphQuery+"return " + returnStr;
+>>>>>>> d86d06cb5314ed36685e07eb171560daaa67aea1
         self.executeCypherAndDisplayGraph(query, "searchByNameList");
         callback(null, []);
 
