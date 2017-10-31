@@ -34,6 +34,8 @@ var async = require('async');
 var path = require('path');
 var classifierManager = require("./rdf/classifierManager.js");
 
+var elasticCustom = require("./elasticCustom.js");
+
 var socket = require('../routes/socket.js');
 var logger = require('logger').createLogger(path.resolve(__dirname, "../logs/elastic.log"));
 logger.setLevel('info');
@@ -44,6 +46,7 @@ logger.setLevel('info');
 
 var baseUrl = "http://vps254642.ovh.net:9200/"
 var baseUrl = "http://localhost:9200/"
+var maxContentLength = 150;
 
 var client = null;
 
@@ -181,7 +184,7 @@ var elasticProxy = {
         var indexedFiles = [];
 
         function getFilesRecursive(dir) {
-            elasticProxy.sendMessage("indexing " + dir );
+            elasticProxy.sendMessage("indexing " + dir);
             dir = path.normalize(dir);
             if (dir.charAt(dir.length - 1) != '/')
                 dir += '/';
@@ -341,7 +344,7 @@ var elasticProxy = {
                                 "properties": {
                                     "content": {
                                         "type": "text",
-                                         "index_options" : "offsets",
+                                        "index_options": "offsets",
 
                                         "fields": {
                                             "contentKeyWords": {
@@ -360,20 +363,20 @@ var elasticProxy = {
                     if (error)
                         return callback(error);
                     //******************************* initfielddata*******************************
-                    http://localhost:9200/my_index2/_mapping/my_type
-                        var options = {
-                            method: 'PUT',
-                            description: "init fielddata",
-                            url: baseUrl + index + "/_mapping/type_document",
-                            json: {
-                                "properties": {
-                                    "content": {
-                                        "type": "text",
-                                        "fielddata": true
-                                    }
+                    //    http://localhost:9200/my_index2/_mapping/my_type
+                    var options = {
+                        method: 'PUT',
+                        description: "init fielddata",
+                        url: baseUrl + index + "/_mapping/type_document",
+                        json: {
+                            "properties": {
+                                "content": {
+                                    "type": "text",
+                                    "fielddata": true
                                 }
                             }
                         }
+                    }
                     request(options, function (error, response, body) {
                         if (error)
                             return callback(error);
@@ -407,6 +410,7 @@ var elasticProxy = {
         }
         else {
             fileContent = "" + fs.readFileSync(file);
+            fileContent = elasticCustom.processContent(fileContent);
             var title = file.substring(file.lastIndexOf("/") + 1);
             options = {
                 method: 'PUT',
@@ -426,14 +430,14 @@ var elasticProxy = {
                 console.error(error);
                 return callback(error);
             }
-                if (body.error) {
-                    logger.error(body.error);
-                    console.error(body.error);
-                    if (body.error.reason) {
-                        logger.error(body.error.reason);
-                        console.error(body.error.reason);
-                    }
-                    return callback(body.error);
+            if (body.error) {
+                logger.error(body.error);
+                console.error(body.error);
+                if (body.error.reason) {
+                    logger.error(body.error.reason);
+                    console.error(body.error.reason);
+                }
+                return callback(body.error);
             }
             return callback(null, body);
 
@@ -464,7 +468,7 @@ var elasticProxy = {
 
             if (error)
                 return callback(error);
-            if(! body.hits || !body.hits.hits)
+            if (!body.hits || !body.hits.hits)
                 console.log("aaaaaaaaaaaaaaaaaaa")
             var hits = body.hits.hits;
             var result = [];
@@ -478,7 +482,7 @@ var elasticProxy = {
                 }
                 if (objElastic.attachment) {
                     newObj.content = objElastic.attachment.content;
-                    newObj.date=objElastic.attachment.date,
+                    newObj.date = objElastic.attachment.date,
                         newObj.title = objElastic.attachment.title;
                 }
                 else {
@@ -510,7 +514,7 @@ var elasticProxy = {
     }
     ,
 
-    findDocumentsById: function (index, ids,words, withClassifier, callback) {
+    findDocumentsById: function (index, ids, words, withClassifier, callback) {
 
         var payload =
             {
@@ -537,7 +541,7 @@ var elasticProxy = {
                 ,
                 "highlight": {
                     "fields": {
-                        "content" : {"number_of_fragments" : 100}
+                        "content": {"number_of_fragments": 100}
                     }
                 }
             };
@@ -557,8 +561,75 @@ var elasticProxy = {
 
         });
     },
+    findSimilarDocuments: function (index, docId, minScore, size, callback) {
 
-    findDocuments: function (index, word, from, size,slop, fields, andWords, withClassifier, callback) {
+
+        var payload =
+            {
+                "size": size,
+                "query": {
+                    "more_like_this": {
+                        "fields": ["content"],
+                        "like": [
+                            {
+                                "_index": index,
+                                "_type": "type_document",
+                                "_id": docId
+                            }],
+                        "min_word_length":5
+
+
+                    },
+
+                }
+            }
+        var options = {
+            method: 'POST',
+            json: payload,
+            url: baseUrl + index + "/_search"
+        };
+
+
+        request(options, function (error, response, body) {
+            if (error)
+                return callback(error);
+            if (!body.hits) {
+                return callback(null, []);
+            }
+            var hits = body.hits.hits;
+            var docs = [];
+            for (var i = 0; i < hits.length; i++) {
+                var obj = {};
+                var objElastic = hits[i]._source;
+                obj.title = objElastic.title;
+                obj._id = hits[i]._id;
+                obj._score = Math.round(hits[i]._score*10);
+                obj.date = objElastic.date;
+                obj.path = objElastic.path;
+                if (objElastic.content) {
+                    if (objElastic.content.length > maxContentLength)
+                        obj.content = objElastic.content.substring(0, maxContentLength) + "...";
+                    else
+                        obj.content = objElastic.content;
+                }
+
+                docs.push(obj);
+
+                docs.sort(function(a,b){
+                    if(a._score>b._score)
+                        return -1;
+                    if(a._score<b._score)
+                        return 1;
+                    return 0;
+                })
+            }
+            return callback(null, docs);
+
+        });
+    },
+
+
+    findDocuments: function (index, word, from, size, slop, fields, andWords, withClassifier, callback) {
         var match = {"content": word};
         if (!fields)
             fields = ["title", "date", "type", "path"];
@@ -586,7 +657,6 @@ var elasticProxy = {
         }
 
 
-
         if (andWords && andWords.length > 0) {
 
 
@@ -608,14 +678,14 @@ var elasticProxy = {
 
 
         var payload = {
-            "from":from,
+            "from": from,
             "size": size,
             "_source": fields,
             "query": query,
             "highlight": {
                 "fields": {
-                   "content": {}
-                  //  "content":{"fragment_size" : 50, "number_of_fragments" : 10}
+                    "content": {}
+                    //  "content":{"fragment_size" : 50, "number_of_fragments" : 10}
                 }
             }
 
@@ -642,7 +712,7 @@ var elasticProxy = {
             return callback(null, []);
         }
         var hits = body.hits.hits;
-        var total=body.hits.total;
+        var total = body.hits.total;
         var docs = [];
         var index;
         for (var i = 0; i < hits.length; i++) {
@@ -666,7 +736,7 @@ var elasticProxy = {
         var result = {
             docs: docs,
             classifier: classifier,
-            total:total
+            total: total
         }
 
         return callback(null, result);
@@ -674,29 +744,22 @@ var elasticProxy = {
 
     }
     , getAssociatedWords: function (index, word, size, slop, andWords, callback) {
-        var match;
-        if (word == null || word == "*" || word == "")
-            match = {"match_all": {}}
-        else
-            match = {"match": {"content": word}};
 
-
-        var query = "";
-        if (!slop || slop < 2) {
-            query = match;
-        } else {
+        if (typeof word === "object" && word.ids) {
             query = {
+                "bool": {
+                    "must": [
+                        {
+                            "ids": {
+                                "values": word.ids
+                            }
+                        }
+                    ]
 
-                "match_phrase": {
-                    "content": {
-                        "query": word,
-                        "slop": util.convertNumStringToNumber(slop)
-                    }
                 }
             }
         }
-
-        if (andWords && andWords.length > 0) {
+        else if (andWords && andWords.length > 0) {
             query =
                 {
                     "bool": {
@@ -711,12 +774,38 @@ var elasticProxy = {
                 query.bool.must.push({"match": {"content": andWords[i]}})
             }
         }
+        else {// word simple
+            var match;
+            if (word == null || word == "*" || word == "")
+                match = {"match_all": {}}
+            else
+                match = {"match": {"content": word}};
+
+
+            var query = "";
+            if (!slop || slop < 2) {
+                query = match;
+            } else {
+                query = {
+
+                    "match_phrase": {
+                        "content": {
+                            "query": word,
+                            "slop": util.convertNumStringToNumber(slop)
+                        }
+                    }
+                }
+            }
+
+
+        }
         var payload = {
             "query": query,
             "size": 0,
             "aggs": {
                 "associatedWords": {
                     "terms": {
+
                         "field": "content",
                         "size": size,
                         "exclude": ["le", "la", "les", "un", "une", "des", "je", "tu", "il", "à", "a",
@@ -772,8 +861,21 @@ var elasticProxy = {
                             'après',
                             'n’est',
                             'l’on',
-                            'qu’il'
-
+                            'qu’il',
+                            "de",
+                            "ou",
+                            "ne",
+                            "on",
+                            "se",
+                            "sa",
+                            "p",
+                            "y",
+                            "ont",
+                            "où",
+                            "été",
+                            "toujours",
+                            "dire","ci","là","cet",
+                            "dit","n","quelque","question","in","mêmes","t","b","culture","mort","peu","propre","ici","déjà","donne","font","d","seule","celles","ni","savoir","tel","cours","of","rituel","principe","puis","terme","va","choses","raison","relation","rôle","telle","jamais","mis","côté","quelques","cependant","the","plutôt","autant","suite","également","dès","c","lequel","ensuite","qu’*","d'*","s'*","and","l"
                         ]
                     }
                 }
@@ -785,6 +887,7 @@ var elasticProxy = {
             url: baseUrl + index + "/_search"
         };
 
+   //  console.log(JSON.stringify(payload,null,2))
         request(options, function (error, response, body) {
             if (error)
                 return callback(error);
@@ -794,10 +897,12 @@ var elasticProxy = {
             var buckets = body.aggregations.associatedWords.buckets;
             var result = [];
             for (var i = 0; i < buckets.length; i++) {
+
                 var obj = {};
                 var objElastic = buckets[i];
                 obj.key = objElastic.key;
                 obj.count = objElastic.doc_count;
+
                 result.push(obj);
             }
             return callback(null, result);
@@ -808,8 +913,8 @@ var elasticProxy = {
     ,
     indexDocDirInNewIndex: function (index, rootDir, doClassifier, callback) {
 
-        if(!fs.existsSync(rootDir)){
-            var message =("directory "+rootDir+" does not not exist on server" )
+        if (!fs.existsSync(rootDir)) {
+            var message = ("directory " + rootDir + " does not not exist on server" )
             elasticProxy.sendMessage("ERROR" + message);
             return callback(message);
         }
@@ -869,8 +974,8 @@ var elasticProxy = {
         })
     }
     , indexDirInExistingIndex: function (index, rootDir, doClassifier, callback) {
-        if(!fs.existsSync(rootDir)){
-            var message =("directory "+rootDir+" does not not exist on server" )
+        if (!fs.existsSync(rootDir)) {
+            var message = ("directory " + rootDir + " does not not exist on server" )
             elasticProxy.sendMessage("ERROR" + message);
             return callback(message);
         }
@@ -908,7 +1013,6 @@ var elasticProxy = {
                     elasticProxy.sendMessage("indexation in tempIndex successfull " + result);
 
 
-
                     elasticProxy.copyDocIndex(indexTemp, index, function (err, result) {
                         if (err) {
                             elasticProxy.sendMessage("ERROR" + err);
@@ -927,7 +1031,7 @@ var elasticProxy = {
                                 })
                             }
                             else {
-                             elasticProxy.sendMessage("index "+index+" updated");
+                                elasticProxy.sendMessage("index " + index + " updated");
                             }
                             return callback(null, message);
 
@@ -941,11 +1045,11 @@ var elasticProxy = {
         })
     }
     ,
-    sendMessage:function(message){
+    sendMessage: function (message) {
         socket.message(message);
-    logger.info(message);
-    console.log(message);
-}
+        logger.info(message);
+        console.log(message);
+    }
 
 
 }

@@ -142,7 +142,7 @@ var exportMongoToNeo = {
                 for (var i = 0; i < objs.length; i++) {
                     var obj = objs[i];
 
-                    obj = cleanFieldsForNeo(obj);
+                    obj = util.cleanFieldsForNeo(obj);
 
                     var labelFieldValue = obj._labelField;
                     if (labelFieldValue != null) {
@@ -504,37 +504,7 @@ var exportMongoToNeo = {
     },
 
 }
-function cleanFieldsForNeo(obj) {
-    var obj2 = {};
-    for (var key in obj) {
 
-        var key2 = key.replace(/-/g, "_");
-
-        key2 = key2.replace(/ /g, "_");
-        if (key2 != "") {
-            var valueObj = obj[key];
-
-            var value = "" + valueObj;
-            if (isNaN(valueObj)) {
-                value = value.replace(/[\n|\r|\t]+/g, " ");
-                value = value.replace(/&/g, " and ");
-                value = value.replace(/"/g, "'");
-                value = value.replace(/,/g, "\\,");
-                value = value.replace(/\//g, "%2F");
-            }
-            else if (value.indexOf(".") > -1)
-                value = parseFloat(value)
-            else
-                value = parseInt(value)
-
-
-            obj2[key2] = value;
-        }
-    }
-
-    return obj2;
-
-}
 
 
 function getLoadParams(params) {
@@ -658,7 +628,7 @@ function loadAndFetchDataToImport(params, importFn, _rootCallBack) {
                         return rootCallBack(err);
 
                     for (var i = 0; i < resultMongo.length; i++) {
-                        cleanFieldsForNeo(resultMongo[i])
+                        util.cleanFieldsForNeo(resultMongo[i])
                     }
                     importFn(params, resultMongo, function (err, result) {
                         if (err) {

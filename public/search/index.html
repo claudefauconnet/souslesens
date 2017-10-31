@@ -63,7 +63,6 @@
             width: 200px;
             float: left;
 
-
             overflow-y: auto;
             font-size: 10px;
         }
@@ -114,18 +113,19 @@
         .currentPageLink {
             font-weight: bold;
         }
-      /*  .jstree-classic li[rel="Role"] > a {
 
-            font-family: "sans-serif Verdana";
-            font-size: 10px;
-        }*/
+        /*  .jstree-classic li[rel="Role"] > a {
+
+              font-family: "sans-serif Verdana";
+              font-size: 10px;
+          }*/
     </style>
 
     <script src="../../common/js/jquery/jquery.min.js"></script>
     <script src="../../common/js/jquery/jquery-ui.min.js"></script>
     <script src="../../common/js/jsTree/jstree.min.js"></script>
     <script src="../../common/js/common.js"></script>
-    <script src="./js/jsTreeController.js"></script>
+    <script src="../../common/js/jsTreeController.js"></script>
     <link rel="stylesheet" href="../../common/js/jsTree/themes/default/style.min.css"/>
     <script>
         var associatedWords = [];
@@ -133,6 +133,8 @@
         var currentClassifierData = [];
         var from0 = 0;
         var currentPage = 1;
+        var currentDocId;
+        var currentAssociatedDocIds;
         fetchSize = 10;
 
         $(function () {
@@ -167,7 +169,7 @@
         })
 
 
-        function search(_from, pageIncrement,page) {
+        function search(_from, pageIncrement, page) {
             var from;
             if (!_from) {
                 from = 0;
@@ -175,8 +177,8 @@
             }
             else {
                 from = _from;
-                if(page)
-                    currentPage=page;
+                if (page)
+                    currentPage = page;
                 if (pageIncrement)
                     currentPage += pageIncrement;
             }
@@ -292,20 +294,20 @@
 
 
                     if (i % fetchSize == 0) {
-                        str += "<a " + linkClass + "href='javascript:search(" + (k - 1) * fetchSize + ",0," +k+")'>" + k+ "</a>&nbsp;&nbsp;"
+                        str += "<a " + linkClass + "href='javascript:search(" + (k - 1) * fetchSize + ",0," + k + ")'>" + k + "</a>&nbsp;&nbsp;"
                         k++;
                     }
 
-                  /*  if (currentPage > 1) {
-                        str += "<a href='javascript:search(" + 0 + ",1)'>...first  </a>&nbsp;&nbsp;";
+                    /*  if (currentPage > 1) {
+                     str += "<a href='javascript:search(" + 0 + ",1)'>...first  </a>&nbsp;&nbsp;";
 
-                    }*/
+                     }*/
 
-                    if(i>maxPagesLinks*fetchSize) {
-                       str+="...";
-                    // str += "<a href='javascript:search(" +Math.round(total/fetchSize)*fetchSize + ")'>... first </a>&nbsp;&nbsp;";
-                     break;
-                     }
+                    if (i > maxPagesLinks * fetchSize) {
+                        str += "...";
+                        // str += "<a href='javascript:search(" +Math.round(total/fetchSize)*fetchSize + ")'>... first </a>&nbsp;&nbsp;";
+                        break;
+                    }
                 }
 
 
@@ -382,9 +384,23 @@
             currentClassifierData = data
 
 
-            jsTreeController.load(data,'conceptDiv',function(functionName,data){
-                if( functionName=="addAssociatedWord")
-                    addAssociatedWord(data);
+            jsTreeController.load(data, 'conceptDiv', function ( node) {
+
+                if (node.children.length > 0) {
+                    for (var i = 0; i < currentClassifierData.length; i++) {
+                        if (currentClassifierData[i].text == node.text) {
+                            for (var j = 0; j < currentClassifierData[i].children.length; j++) {
+                                addAssociatedWord( currentClassifierData[i].children[j].word);
+                            }
+                        }
+                    }
+                } else {
+                    var word = node.original.word;
+
+                   addAssociatedWord(word);
+                }
+
+
 
             });
 
@@ -392,6 +408,8 @@
         }
 
         function visualizeDocContent(id) {
+            $("#dialogLeftDiv").html("");
+            currentDocId = id;
             var index = $("#indexInput").val();
             var words = associatedWords;
             words.push($("#searchInput").val());
@@ -447,6 +465,124 @@
             window.location.href = "file:///" + path;
 
         }
+
+        function admin() {
+            var html = "<button onclick='saveClassifier()'>save</button><br></button><div id='adminClassifierTree'></div>";
+            $("#dialogContentDiv").html(html);
+            $("#dialog").css("visibility", "visible");
+            /*       adminClassifierTree.load(data, 'conceptDiv', function (functionName, data) {
+             if (functionName == "addAssociatedWord")
+             addAssociatedWord(data);
+
+             });*/
+        }
+
+        function findSimilarDocuments() {
+            var index = $("#indexInput").val();
+            var payload = {
+                findSimilarDocuments: 1,
+                indexName: index,
+                docId: currentDocId,
+                minScore: 3,
+                size: 100
+            };
+
+
+            $.ajax({
+                type: "POST",
+                url: "/elastic",
+                data: payload,
+                dataType: "json",
+                success: function (data, textStatus, jqXHR) {
+                    var ids = [];
+                    var html = "<table border='1'><tr><td>score</td><td>title</td><td>content</td></tr>";
+                    for (var i = 0; i < data.length; i++) {
+                        ids.push(data[i]._id);
+                        var title = data[i].title;
+                        var content = data[i].content;
+                        var score = data[i]._score;
+                        html += "<tr>";
+                        html += "<td>" + score + "</td><td>" + title + "</td><td>" + content + "</td>";
+                        html += "</tr>";
+                    }
+                    currentAssociatedDocIds = ids;
+                    html += "</table>";
+                    $("#dialogContentDiv").html(html);
+
+                    //associatedTerms
+                    var payload = {
+                        getAssociatedWords: 1,
+                        indexName: index,
+                        word: {ids: ids},
+                        size: 20
+                    };
+
+                    $.ajax({
+                        type: "POST",
+                        url: "/elastic",
+                        data: payload,
+                        dataType: "json",
+                        success: function (data, textStatus, jqXHR) {
+                            var dialogWordsSelect = "<select size='20' id='similarDocsAssociatedWords' multiple='multiple'>"
+                            for (var i = 0; i < data.length; i++) {
+                                dialogWordsSelect += "<option value='" + data[i].key + "'>" + data[i].key + " (" + data[i].count + ")" + "</option>"
+                            }
+                            dialogWordsSelect += "</select><br>";
+                            dialogWordsSelect += "<button  onclick='filterAssocatedDocs()'>filter</button>"
+
+                            $("#dialogLeftDiv").html(dialogWordsSelect);
+
+                            var xx = data;
+                        }
+                    })
+
+
+                }
+
+            })
+        }
+
+        function filterAssocatedDocs() {
+            var index = $("#indexInput").val();
+
+            var words = $("#similarDocsAssociatedWords").val();
+            var payload = {
+                findDocumentsById: 1,
+                indexName: index,
+                ids: currentAssociatedDocIds,
+                words: words
+            }
+
+            $.ajax({
+                type: "POST",
+                url: "/elastic",
+                data: payload,
+                dataType: "json",
+                success: function (data, textStatus, jqXHR) {
+                    var html = "<table border='1'><tr><td>title</td><td>content</td></tr>";
+                    var data=data.docs;
+                    for (var i = 0; i < data.length; i++) {
+                        var content = "<ul>";
+
+                        for (var j = 0; j < data[i].highlights.length; j++) {
+                            content += "<li>" + data[i].highlights[j] + "</li>"
+                        }
+                        content += "</ul>";
+                        var title = data[i].title;
+
+                        var score = data[i]._score;
+                        html += "<tr>";
+                        html += "<td>" + title + "</td><td>" + content + "</td>";
+                        html += "</tr>";
+                    }
+
+                    html += "</table>";
+                    $("#dialogContentDiv").html(html);
+                    var xx = data;
+                }
+            });
+
+        }
     </script>
 
 
@@ -467,7 +603,8 @@
                         document.getElementById('searchButton').click()">
             &nbsp;
             <button id="searchButton" onclick="search()">Search</button>
-            &nbsp;words distance <input id="slopInput" size="2">
+            &nbsp;words distance <input id="slopInput" size="2"> &nbsp&nbsp;
+            <button onclick='admin()'>admin</button>
 
         </div>
         <br>
@@ -495,13 +632,16 @@
             </tr>
             <tr>
                 <td>
-                    <button onclick='nexHighlight()'> >></button>
+
+                    <button onclick='findSimilarDocuments()'> similar Docs</button>
+                    <!-- <button onclick='nexHighlight()'> >></button>-->
                     <br>
                 </td>
             </tr>
             <tr>
                 <td>
-                    <button onclick='$("#dialog").css("visibility","hidden")'>X</button>
+                    <div id="dialogLeftDiv"></div>
+                    <!--  <button onclick='$("#dialog").css("visibility","hidden")'>X</button>-->
                 </td>
             </tr>
 

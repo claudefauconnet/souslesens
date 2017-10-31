@@ -26,7 +26,8 @@
  ******************************************************************************/
 var customizeUI = (function () {
     self = {}
-
+    self.hideFilters=false
+    var legendDivWidth=Gparams.legendWidth;
 
     self.customInfo = function (obj) {
 
@@ -87,6 +88,9 @@ var customizeUI = (function () {
             })
 
         }
+        else{
+            advancedSearch.showBulkGraph(subGraph)
+        }
 
 
     }
@@ -96,8 +100,14 @@ var customizeUI = (function () {
 
         splitter.position("0%");
         $("#tabs-radarRight").width(totalWidth - 20);
-        $("#graphDiv").width((totalWidth - 10) - Gparams.legendWidth)
-        $("#graphLegendDiv").css("left", (totalWidth - 10) - Gparams.legendWidth)
+        customizeUI.hideFilters=true;
+        $("#filtersDiv").css("visibility", "hidden");
+
+
+        legendDivWidth=30;
+        $("#graphDiv").width((totalWidth - 10)-legendDivWidth)
+        $("#graphLegendDiv").css("left", (totalWidth - 10) -legendDivWidth)
+        $("#graphLegendDiv").width(legendDivWidth);
     }
 
 
@@ -110,8 +120,8 @@ var customizeUI = (function () {
 
         //  $("#verticalVisButtonsDiv").css("width",100)
         $("#verticalVisButtonsDiv").css("height", 400)
-        $("#verticalVisButtonsDiv").css("left", (totalWidth + 0) - Gparams.legendWidth)
-        $("#verticalVisButtonsDiv").css("top", 300)
+        $("#verticalVisButtonsDiv").css("left", (totalWidth-52) -legendDivWidth)
+        $("#verticalVisButtonsDiv").css("top", 60)
         $("#verticalVisButtonsDiv").css("visibility", "visible")
         $("#verticalVisButtonsDiv").css("z-index", 100);
 

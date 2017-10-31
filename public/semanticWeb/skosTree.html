@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>skostree</title>
+
+
+    <script src="../../common/js/jquery/jquery.min.js"></script>
+    <script src="../../common/js/jquery/jquery-ui.min.js"></script>
+    <script src="../../common/js/jsTree/jstree.min.js"></script>
+    <script src="../../common/js/common.js"></script>
+    <script src="../../common/js/jsTreeController.js"></script>
+    <link rel="stylesheet" href="../../common/js/jsTree/themes/default/style.min.css"/>
+
+    <script>
+        $(function(){
+            totalWidth = $(window).width();
+            totalHeight = $(window).height();
+            $("#treeDiv").height(totalHeight-100);
+        })
+        function loadTree(){
+            var ontology=$("#skosInput").val();
+            var payload = {
+                loadSkosToTree: 1,
+                ontology: ontology,
+            };
+
+
+            $.ajax({
+                type: "POST",
+                url: "/rdf",
+                data: payload,
+                dataType: "json",
+                success: function (data, textStatus, jqXHR) {
+                    jsTreeController.load(data, "treeDiv", function (err, result) {
+                    })
+                }
+            })
+        }
+
+        function searchTree(){
+            var word=$("#searchInput").val();
+            $("#treeDiv").jstree("search",word);
+
+        }
+
+
+
+
+
+    </script>
+
+
+
+
+
+</head>
+<body>
+
+skos file <input id="skosInput" value="unesco.rdf" size="6"><br>
+
+<button  onclick="loadTree()">loadTree</button><br>
+<input id="searchInput"><button  onclick="searchTree()">search</button><br>
+<div id="treeContainer">
+<div id="treeDiv">
+</div>
+</div>
+</body>
+</html>

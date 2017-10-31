@@ -15,7 +15,7 @@ var uploadCsvForNeo = require('../bin/uploadCsvForNeo.js');
 var restAPI = require("../bin/restAPI.js");
 var rdfProxy = require("../bin/rdf/rdfProxy.js");
 var classifierManager = require("../bin/rdf/classifierManager.js");
-var skos= require("../bin/rdf/skos.js");
+var skos = require("../bin/rdf/skos.js");
 
 var socket = require('./socket.js');
 
@@ -118,7 +118,20 @@ router.post('/elastic', function (req, response) {
         });
 
     else if (req.body && req.body.createIndexClassifier)
-        classifierManager.createIndexClassifier(req.body.indexName, parseInt(""+req.body.nWords),parseInt(""+ req.body.minFreq), req.body.ontologies, parseInt(""+req.body.nSkosAncestors), function (error, result) {
+        classifierManager.createIndexClassifier(req.body.indexName, parseInt("" + req.body.nWords), parseInt("" + req.body.minFreq), req.body.ontologies, parseInt("" + req.body.nSkosAncestors), function (error, result) {
+            processResponse(response, error, result)
+        });
+
+    else if (req.body && req.body.findSimilarDocuments)
+        elasticProxy.findSimilarDocuments(req.body.indexName, req.body.docId, parseInt("" + req.body.minScore), parseInt("" + req.body.size),function (error, result) {
+            processResponse(response, error, result)
+        });
+    else if (req.body && req.body.loadSkosClassifier)
+        skos.loadClassifier(req.body.indexName, function (error, result) {
+            processResponse(response, error, result)
+        });
+    else if (req.body && req.body.saveSkosClassifier)
+        skos.saveSkosClassifier(req.body.indexName, function (error, result) {
             processResponse(response, error, result)
         });
 
@@ -166,11 +179,17 @@ router.post('/rdf', function (req, response) {
     }
 
     if (req.body && req.body.treeToSkos) {
-        skos.treeDataToSkos(req.body.tree,req.body.identifier,req.body.date,description,creator,
-        rdfProxy.queryBnfDataToNeoResult(req.body.word, req.body.relations, req.body.lang, req.body.contains, req.body.limit, function (error, result) {
+        skos.treeDataToSkos(req.body.tree, req.body.identifier, req.body.date, description, creator, function (error, result) {
             processResponse(response, error, result)
         });
     }
+    if (req.body && req.body.loadSkosToTree) {
+        skos.loadSkosToTree(req.body.ontology, function (error, result) {
+            processResponse(response, error, result)
+        });
+    }
+
+
 
 });
 

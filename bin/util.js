@@ -97,7 +97,39 @@ Util = {
     isFloat: function (value) {
         return /-?[0-9]+[.,]+[0-9]?/.test("" + value);
 
+    },
+
+     cleanFieldsForNeo:function(obj) {
+    var obj2 = {};
+    for (var key in obj) {
+
+        var key2 = key.replace(/-/g, "_");
+
+        key2 = key2.replace(/ /g, "_");
+        if (key2 != "") {
+            var valueObj = obj[key];
+
+            var value = "" + valueObj;
+            if (isNaN(valueObj)) {
+                value = value.replace(/[\n|\r|\t]+/g, " ");
+                value = value.replace(/&/g, " and ");
+                value = value.replace(/"/g, "'");
+                value = value.replace(/,/g, "\\,");
+                value = value.replace(/\//g, "%2F");
+            }
+            else if (value.indexOf(".") > -1)
+                value = parseFloat(value)
+            else
+                value = parseInt(value)
+
+
+            obj2[key2] = value;
+        }
     }
+
+    return obj2;
+
+}
 
 }
 

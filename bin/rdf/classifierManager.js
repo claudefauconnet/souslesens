@@ -29,12 +29,12 @@ const fs = require('fs');
 var path = require('path');
 
 const rdfProxy = require('./rdfProxy.js');
+const skos = require('./skos.js');
 
-
-var elasticProxy ;
+var elasticProxy;
 var serverParams = require("../serverParams.js");
 var async = require('async');
-
+var elasticProxy = require('../elasticProxy.js')
 var socket = require('../../routes/socket.js');
 var logger = require('logger').createLogger(path.resolve(__dirname, "../../logs/classifierManager.log"));
 logger.setLevel('info');
@@ -46,11 +46,11 @@ var classifierManager = {
 
      */
     createIndexClassifier: function (index, nWords, minFreq, ontologies, nSkosAncestors, callback) {
-        classifierManager.sendMessage("searching most frequent words in index "+index);
+        classifierManager.sendMessage("searching most frequent words in index " + index);
         elasticProxy = require("../elasticProxy.js");
         elasticProxy.getAssociatedWords(index, "*", nWords, null, null, function (err, result) {
             if (err) {
-                classifierManager.sendMessage("ERROR "+err);
+                classifierManager.sendMessage("ERROR " + err);
                 return callback(err);
             }
             var words = [];
@@ -74,11 +74,11 @@ var classifierManager = {
 
 
             }
-            classifierManager.sendMessage("Most frequentwords "+JSON.stringify(words));
+            classifierManager.sendMessage("Most frequentwords " + JSON.stringify(words));
             if (ontologies.indexOf("BNF") > -1) {
                 classifierManager.sendMessage("searching  concepts in BNF... ");
                 classifierManager.findBnfSKOSterms(words, function (err, result) {
-                    if(err)
+                    if (err)
                         return callback(err);
 
                     var classifier = result;
@@ -89,7 +89,7 @@ var classifierManager = {
                     for (var key in wordObj) {
                         words.push(key);
                     }
-                    classifierManager.sendMessage("parent concepts found "+words);
+                    classifierManager.sendMessage("parent concepts found " + words);
                     /*
                      fill the classifier with ids in index
 
@@ -119,13 +119,13 @@ var classifierManager = {
                              at the end store the classifier
                              */
                             if (err) {
-                                classifierManager.sendMessage("ERROR"+err);
+                                classifierManager.sendMessage("ERROR" + err);
                                 return callback(err);
                             }
                             var file = path.resolve(__dirname, "./classifiers/" + index + "_BNF.json");
                             var str = JSON.stringify(classifier, null, 2);
                             fs.writeFileSync(file, str);
-                            classifierManager.sendMessage("classifier done :"+file);
+                            classifierManager.sendMessage("classifier done :" + file);
 
                         })
 
@@ -162,7 +162,7 @@ var classifierManager = {
                     ]
 
 
-                rdfProxy.getBnfTriples(word, payload, "fr", false, 100, function (err, json) {
+                rdfProxy.getBnfTriples("BNF",word, payload, "fr", false, 100, function (err, json) {
                     if (err) {
                         console.log(err)
                         return callback(err);
@@ -258,6 +258,9 @@ var classifierManager = {
 
                 var wordChild = words[j];
                 var broaders = classifier.words[wordChild].broaders;
+                console.log(wordChild);
+                if(!broaders)
+                    continue;
                 for (var k = 0; k < broaders.length; k++) {
                     var broader = broaders[i];
 
@@ -277,9 +280,13 @@ var classifierManager = {
             for (var i = 0; i < output[key].children.length; i++) {
                 var child = output[key].children[i];
                 parentCount += classifier.words[child].count;
-                children.push({text: child+" ("+classifier.words[child].count+")",word: child, count: classifier.words[child].count});
+                children.push({
+                    text: child + " (" + classifier.words[child].count + ")",
+                    word: child,
+                    count: classifier.words[child].count
+                });
             }
-            outputArray.push({text: key+" ("+parentCount+")",word:key, count: parentCount, children: children});
+            outputArray.push({text: key + " (" + parentCount + ")", word: key, count: parentCount, children: children});
 
         }
 
@@ -288,11 +295,94 @@ var classifierManager = {
 
     }
     ,
-    sendMessage:function(message){
+    sendMessage: function (message) {
         socket.message(message);
         logger.info(message);
         console.log(message);
     }
+
+
+    ,
+    generateClassifierFromSkos: function (thesaurus, index) {
+        skos.loadSkosToTree(thesaurus, function (err, result) {
+
+            var classifier = {
+                broaderNodes: {},
+                words: {},
+                docIds: {}
+            }
+
+            var words = []
+
+            for (var i = 0; i < result.length; i++) {
+                var node = result[i];
+                if (!node.text)
+                    continue;
+                words.push(node.text);
+                if (!classifier.words[node.text]) {
+                    classifier.words[node.text] = {
+                        broader: [],
+                        narrower: [],
+                        related: [],
+                        count: 0,
+                        docIds: []
+                    }
+                }
+             //   classifier.words[node.text].push(node.text);
+//console.log(node.parent)
+                if (node.parent != "#") {
+                    if (!classifier.broaderNodes[node.data.parentText])
+                        classifier.broaderNodes[node.data.parentText] = [];
+                    classifier.broaderNodes[node.data.parentText].push(node.text)
+                    classifier.words[node.text].broader.push(node.data.parentText);
+
+                }
+
+            }
+
+
+            classifierManager.sendMessage("put doc ids for each concepts ");
+            async.eachSeries(words, function (word, callbackInner) {
+                var subWords=word.split(" ");
+                var slop=null;
+                if(subWords.length>1)
+                    slop=subWords.length+1
+                    elasticProxy.findDocuments(index, word, 0, serverParams.elasticMaxFetch, slop, ["id"], null, null, function (err, result) {
+                        if (err)
+                            return callbackInner(err);
+                        classifier.words[word].docIds = [];
+                        for (var i = 0; i < result.docs.length; i++) {
+                            var id = result.docs[i]._id;
+                            classifier.words[word].docIds.push(id);
+                            if (!classifier.docIds[id])
+                                classifier.docIds[id] = [];
+                            classifier.docIds[id].push(word)
+                        }
+
+                        callbackInner(null);
+
+                    })
+                },
+                function (err, result) {
+                    /*
+                     at the end store the classifier
+                     */
+                    if (err) {
+                        classifierManager.sendMessage("ERROR" + err);
+                        return callback(err);
+                    }
+                    var file = path.resolve(__dirname, "./classifiers/" + index + "_XXX.json");
+                    var str = JSON.stringify(classifier, null, 2);
+                    fs.writeFileSync(file, str);
+                    classifierManager.sendMessage("classifier done :" + file);
+
+                })
+
+        })
+
+
+    }
+
 
 }
 
@@ -343,8 +433,9 @@ if (args.length > 2) {
     }
 }
 
+//classifierManager.generateClassifierFromSkos("PLM.rdf", "jfm")
+if (false) {
 
-if(false) {
     classifierManager.createIndexClassifier("jfm", 200, 10, ["BNF"], 1, function (err, result) {
 
 

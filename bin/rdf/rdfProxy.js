@@ -31,7 +31,7 @@ var request = require('request');
 var rdfProxy = {
     queryBnfDataToNeoResult: function (word, relations, lang, contains, limit, callback) {
         word=word.substring(0,1).toUpperCase()+word.substring(1).toLowerCase();
-        rdfProxy.getBnfTriples(word, relations, lang, contains, limit, function (err, result) {
+        rdfProxy.getBnfTriples(ontology,word, relations, lang, contains, limit, function (err, result) {
             if (err)
                 return callback(err);
             var neoArray = rdfProxy.sparqlResultToNeoResult(result);
@@ -41,7 +41,15 @@ var rdfProxy = {
     },
 
 
-    getBnfTriples: function (word, relations, lang, contains, limit, callback) {
+    getBnfTriples: function (ontology,word, relations, lang, contains, limit, callback) {
+        var url = "";
+        if (ontology == "BNF") {
+            url = "http://data.bnf.fr/sparql?default-graph-uri=&query="
+        }
+        else if (ontology == "DBPEDIA") {
+
+            url = "https://dbpedia.org/sparql?default-graph-uri=http%3A%2F%2Fdbpedia.org&query="
+        }
 
 
         if (!lang)
@@ -75,8 +83,8 @@ var rdfProxy = {
         query += "} limit " + limit;
 
 
-        var url = "http://data.bnf.fr/sparql?default-graph-uri=&query="
-//console.log(query);
+
+console.log(query);
         rdfProxy.querySparql(url, query, function (err, result) {
             if (err)
                 return callback(err);

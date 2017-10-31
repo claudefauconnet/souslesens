@@ -31,6 +31,7 @@ uploads/*
 uploads/*.json
 schemas/*.json
 bin/rdf/classifiers/*.json
+bin/rdf/thesaurii/*.json
 bin/sinequa/*
 bin/jfm/*
 bin/logs/*

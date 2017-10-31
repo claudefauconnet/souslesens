@@ -210,7 +210,7 @@
             subGraph = queryParams.subGraph;
             functionalities.hideFunctionalities();
             lang.setLangage();
-            dataModel.initNeoModel(queryParams.subGraph, [infoGenericDisplay.initLabels, customizeUI.customize, advancedSearch.showBulkGraph, statistics.initLabelsCurrentQueries, toutlesensController.afterGraphInit]);
+            dataModel.initNeoModel(queryParams.subGraph, [infoGenericDisplay.initLabels, customizeUI.customize, statistics.initLabelsCurrentQueries, toutlesensController.afterGraphInit]);
             functionalities.initFunctionalities();
             var mode = queryParams.mode;
             if (mode == "write")

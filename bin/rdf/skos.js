@@ -2,6 +2,10 @@ var fs = require('fs');
 var xml2js = require('xml2js');
 var jsonxml = require('jsontoxml');
 var path = require('path');
+var rdfProxy = require('./rdfProxy');
+var async = require('async');
+
+var parser = new xml2js.Parser();
 
 
 var skos = {
@@ -115,6 +119,244 @@ var skos = {
     }
 
 
-}
+    ,
 
-module.exports(skos)
+    loadSkosToTree: function (thesaurus, callback) {
+
+
+        var file = path.resolve(__dirname + "/thesaurii/" + thesaurus);
+        fs.readFile(file, function (err, data) {
+            if (err) {
+                if (callback)
+                    return callback(err);
+            }
+            var parser = new xml2js.Parser();
+            parser.parseString("" + data, function (err, result) {
+                if (err) {
+                    if (callback)
+                        return callback(err);
+
+                }
+
+                var concepts = result["rdf:RDF"]["skos:Concept"];
+                var conceptsMap = {}
+                for (var i = 0; i < concepts.length; i++) {
+                    var about = concepts[i]["$"]["rdf:about"];
+                    var id = about.substring(about.lastIndexOf("/") + 1)
+
+
+
+
+                    var prefLabel=concepts[i]["skos:prefLabel"][0]
+                    if(concepts[i]["skos:prefLabel"].length>1)  // english for Unesco
+                        prefLabel=concepts[i]["skos:prefLabel"][1]._
+                    if(concepts[i]["skos:prefLabel"].length>0)  //
+                        prefLabel=concepts[i]["skos:prefLabel"][0]._
+
+                   
+                   
+                   
+                   
+                    /*    conceptsMap[id] = {
+
+
+                    .prefLabel: concepts[i]["skos:prefLabel"][0]._,
+                     //    en: concepts[i]["skos:prefLabel"][1]._,
+                     //   sp: concepts[i]["skos:prefLabel"][0]._,
+                     //  .prefLabel: concepts[i]["skos:prefLabel"][2]._,
+                     narrower: concepts[i]["skos:narrower"],
+                     broader: concepts[i]["skos:broader"],
+                     about:about
+
+
+                     }*/
+                    var node = {prefLabel:prefLabel}
+
+
+
+                    if (concepts[i]["skos:narrower"])
+                        node.narrower =concepts[i]["skos:narrower"]
+                    if (concepts[i]["skos:NT"])
+                        node.narrower = concepts[i]["skos:NT"]
+                    if (concepts[i]["skos:broader"])
+                        node.broader = concepts[i]["skos:broader"]
+                    if (concepts[i]["skos:BT"])
+                        node.broader = concepts[i]["skos:BT"]
+
+                    conceptsMap[id] = node;
+
+                }
+
+
+                var treeData = []
+
+                for (var key in conceptsMap) {
+                    var concept = conceptsMap[key];
+                    var node = {text: concept.prefLabel, id: key, data: {about: concept.about}};
+
+                    var parents = concept.broader;
+
+                    if (parents && parents.length > 0) {
+                        var parent = parents[0]["$"]["rdf:resource"]
+                        var parent = parent.substring(parent.lastIndexOf("/") + 1)
+                        //    var parent = conceptsMap[parent];
+                        node.data.parentText = conceptsMap[parent].prefLabel;
+                        node.parent = parent;
+
+
+                    }
+                    else {
+                        node.parent = "#"
+
+                    }
+                    treeData.push(node);
+
+                }
+                if (callback)
+                    callback(null, treeData);
+
+
+            });
+        });
+    }
+
+    ,
+
+    saveTreeToSkos: function (indexName, callback) {
+    }
+
+
+    ,
+    generateSkosThesaurusFromWords: function (ontology, words, callback) {
+
+
+        function createConcept(doc, label) {
+            return {
+                name: "skos:Concept",
+                attrs: {"rdf:about": doc.value},
+                children: [{name: "skos:prefLabel", attrs: {"xml:lang":"fr"}, text: label.value}]
+
+            }
+        }
+
+        var concepts = {};
+        var relTypes = ["narrower", "broader", "related"];
+        var symetricReltypes = {
+            "narrower": "broader",
+            "broader": "narrower",
+            "related": "related"
+        }
+        async.eachSeries(words, function (_word, callback) {
+                var word = _word.substring(0, 1).toUpperCase() + _word.substring(1).toLowerCase();
+                console.log(word);
+                rdfProxy.getBnfTriples(ontology,word, ["broader", "narrower"], "fr", false, 5000, function (err, json) {
+                    if (err) {
+                        console.log(err)
+                        return callback();
+                    }
+                    if (!json)
+                        return callback();
+                    for (var i = 0; i < json.length; i++) {
+
+
+                        var obj = json[i];
+                        var concept = concepts[obj.doc.value];
+                        if (!concept) {
+                            var concept = createConcept(obj.doc, obj.label);
+                            concepts[obj.doc.value] = concept;
+                        }
+
+
+                        //var children = [];
+                        //  children.push({name: "skos:prefLabel", attrs: {"xml:lang": .prefLabel"}, text: obj.label.value})
+                        for (var j = 0; j < relTypes.length; j++) {
+                            var relDoc = relTypes[j] + "Doc";
+                            var relLabel = relTypes[j] + "Label";
+
+                            if (obj[relDoc]) {
+                                if (!concepts[obj[relDoc].value]) {
+                                    concepts[obj[relDoc].value] = createConcept(obj[relDoc], obj[relLabel]);
+                                    concepts[obj[relDoc].value].children.push({
+                                        name: "skos:" + symetricReltypes[relTypes[j]],
+                                        attrs: {"rdf:resource": obj.doc.value},
+                                    })
+
+                                    concepts[obj.doc.value].children.push({
+                                        name: "skos:" + relTypes[j],
+                                        attrs: {"rdf:resource": obj[relDoc].value},
+                                    })
+                                }
+
+                            }
+
+
+                        }
+
+
+                    }
+                    return callback();
+
+
+                })
+
+            },
+            function (err) {
+                var conceptsArray = [];
+                for (var key in concepts) {
+                    conceptsArray.push(concepts[key]);
+                }
+                var targetJson = {
+                    "rdf:RDF": conceptsArray,
+
+
+                };
+
+                var xml = jsonxml(targetJson, {indent: " ", prettyPrint: 1, xmlHeader: 1});
+                var header =
+                    '<rdf:RDF' +
+                    ' xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"' +
+                    ' xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"' +
+                    '  xmlns:skos="http://www.w3.org/2004/02/skos/core#"' +
+                    '>' +
+                    ' <skos:ConceptScheme rdf:about="http://www.souslesens.org/PLM">' +
+                    '<skos:prefLabel xml:lang="fr">Projet de nomenclature pour la bibliothèque PLM </skos:prefLabel>' +
+                    ' </skos:ConceptScheme>'
+
+                xml = xml.replace('<rdf:RDF>', header);
+                //  xml=header+"\n"+xml;
+                //   console.log(xml);
+                callback(null, xml);
+
+            })
+
+    },
+    generatePLMskos: function () {
+        var data = "" + fs.readFileSync(path.resolve(__dirname + "/thesaurii/PLM.txt"));
+        data = data.replace(/et/g, "/")
+        var words = data.split(/[\n\/]/);
+        for (var i = 0; i < words.length; i++) {
+            words[i] = words[i].replace("\r", "");
+            words[i] = words[i].replace(/\(.*\)/g, "");
+
+
+        }
+        skos.generateSkosThesauru.prefLabelomWords("BNF", words, function (err, result) {
+            if (err)
+                return console.log(err);
+            var file = path.resolve(__dirname + "/thesaurii/PLM.rdf");
+            fs.writeFileSync(file, result);
+        });
+
+    }
+}
+/*skos.generateSkosThesauru.prefLabelomWords("BNF", ["Bouddhisme"], function (err, result) {
+ if (err)
+ return console.log(err);
+ var file = path.resolve(__dirname + "/thesaurii/boudisme.rdf");
+ fs.writeFileSync(file, result);
+ })*/
+
+//skos.generatePLMskos();
+
+
+module.exports = skos;

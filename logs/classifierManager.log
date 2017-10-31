@@ -37,3 +37,274 @@ info [Sat Oct 14 2017 16:34:30 GMT+0200 (Paris, Madrid (heure d’été))]  clas
 
 
 
+
+
+
+
+info [Sat Oct 28 2017 07:56:17 GMT+0200 (Paris, Madrid (heure d’été))]  searching most frequent words in index referentiel
+info [Sat Oct 28 2017 07:56:47 GMT+0200 (Paris, Madrid (heure d’été))]  Most frequentwords []
+info [Sat Oct 28 2017 07:56:47 GMT+0200 (Paris, Madrid (heure d’été))]  searching  concepts in BNF... 
+info [Sat Oct 28 2017 07:56:47 GMT+0200 (Paris, Madrid (heure d’été))]  parent concepts found 
+info [Sat Oct 28 2017 07:56:47 GMT+0200 (Paris, Madrid (heure d’été))]  put doc ids for each concepts 
+info [Sat Oct 28 2017 07:56:47 GMT+0200 (Paris, Madrid (heure d’été))]  classifier done :D:\GitHub\souslesens\bin\rdf\classifiers\referentiel_BNF.json
+info [Sat Oct 28 2017 07:58:32 GMT+0200 (Paris, Madrid (heure d’été))]  searching most frequent words in index referentiel
+info [Sat Oct 28 2017 07:58:38 GMT+0200 (Paris, Madrid (heure d’été))]  Most frequentwords []
+info [Sat Oct 28 2017 07:58:38 GMT+0200 (Paris, Madrid (heure d’été))]  searching  concepts in BNF... 
+info [Sat Oct 28 2017 07:58:38 GMT+0200 (Paris, Madrid (heure d’été))]  parent concepts found 
+info [Sat Oct 28 2017 07:58:38 GMT+0200 (Paris, Madrid (heure d’été))]  put doc ids for each concepts 
+info [Sat Oct 28 2017 07:58:38 GMT+0200 (Paris, Madrid (heure d’été))]  classifier done :D:\GitHub\souslesens\bin\rdf\classifiers\referentiel_BNF.json
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+info [Mon Oct 30 2017 18:16:37 GMT+0100 (Paris, Madrid)]  searching most frequent words in index jfm
+info [Mon Oct 30 2017 18:16:38 GMT+0100 (Paris, Madrid)]  Most frequentwords []
+info [Mon Oct 30 2017 18:16:38 GMT+0100 (Paris, Madrid)]  searching  concepts in BNF... 
+info [Mon Oct 30 2017 18:16:38 GMT+0100 (Paris, Madrid)]  parent concepts found 
+info [Mon Oct 30 2017 18:16:38 GMT+0100 (Paris, Madrid)]  put doc ids for each concepts 
+info [Mon Oct 30 2017 18:16:38 GMT+0100 (Paris, Madrid)]  classifier done :D:\GitHub\souslesens\bin\rdf\classifiers\jfm_BNF.json
+info [Mon Oct 30 2017 18:17:05 GMT+0100 (Paris, Madrid)]  searching most frequent words in index jfm
+info [Mon Oct 30 2017 18:17:25 GMT+0100 (Paris, Madrid)]  Most frequentwords []
+info [Mon Oct 30 2017 18:17:25 GMT+0100 (Paris, Madrid)]  searching  concepts in BNF... 
+info [Mon Oct 30 2017 18:17:25 GMT+0100 (Paris, Madrid)]  parent concepts found 
+info [Mon Oct 30 2017 18:17:25 GMT+0100 (Paris, Madrid)]  put doc ids for each concepts 
+info [Mon Oct 30 2017 18:17:25 GMT+0100 (Paris, Madrid)]  classifier done :D:\GitHub\souslesens\bin\rdf\classifiers\jfm_BNF.json
+info [Mon Oct 30 2017 18:17:29 GMT+0100 (Paris, Madrid)]  searching most frequent words in index jfm
+info [Mon Oct 30 2017 18:18:58 GMT+0100 (Paris, Madrid)]  Most frequentwords []
+info [Mon Oct 30 2017 18:18:58 GMT+0100 (Paris, Madrid)]  searching  concepts in BNF... 
+info [Mon Oct 30 2017 18:18:58 GMT+0100 (Paris, Madrid)]  parent concepts found 
+info [Mon Oct 30 2017 18:18:58 GMT+0100 (Paris, Madrid)]  put doc ids for each concepts 
+info [Mon Oct 30 2017 18:18:58 GMT+0100 (Paris, Madrid)]  classifier done :D:\GitHub\souslesens\bin\rdf\classifiers\jfm_BNF.json
+info [Mon Oct 30 2017 18:18:58 GMT+0100 (Paris, Madrid)]  searching most frequent words in index jfm
+
+info [Mon Oct 30 2017 18:19:10 GMT+0100 (Paris, Madrid)]  searching most frequent words in index jfm
+
+info [Mon Oct 30 2017 18:21:14 GMT+0100 (Paris, Madrid)]  searching most frequent words in index jfm
+info [Mon Oct 30 2017 18:21:20 GMT+0100 (Paris, Madrid)]  Most frequentwords ["de","ou","ne","on","se","sa","p","être","y","ont","où","temps","été","toujours","dire","vie","ci","sens","voir","là","nature","lieu","société","premier","comment","cet","pouvoir","hommes","paris","dit","n","partie","social","or","première","quelque","vue","laquelle","question","in","effet","partir","compte","fonction","mêmes","trouve","rapport","parce","système","façon","t","chose","force","b","culture","mort","peu","propre","ici","fin","grand","seul","déjà","religion","pourquoi","sorte","formes","nom","semble","sociale","manière","donne","font","d","moment","seule","celles","ni","savoir","tel","cours","of","rituel","principe","puis","terme","va","choses","raison","relation","rôle","telle","jamais","mis","reste","côté","nouvelle","pensée","quelques","cependant","nouveau","comprendre","prendre","the","ensemble","plutôt","termes","dieu","vient","autant","suite","personne","sociétés","théorie","devient","également","corps","grande","l’autre","réalité","centre","dès","cause","sacrifice","chacun","c","sacré","lequel","contraire","passe","religieux","qu’ils","caractère","processus","éléments","donner","double","rendre","rites","certaines","ensuite","passage","moyen","présente","structure","humain","met","n’a","relations","roi","voit","différents","donné","qu’elle","commun","qu’un","sociales","modèle","étaient","source","prend","and","mot","objet","beaucoup","l","droit","loin","particulier","titre","dernier","doivent","existe","second","valeur","homme","qu’on","travers","pratique","retour","soient","différence","d’abord","qu’une","s’agit","l’idée","pu","d’être"]
+info [Mon Oct 30 2017 18:21:20 GMT+0100 (Paris, Madrid)]  searching  concepts in BNF... 
+info [Mon Oct 30 2017 18:21:56 GMT+0100 (Paris, Madrid)]  parent concepts found Temps,Hommes,Or,Pensée,Dieu,Sociétés,Réalité,Sacrifice,Sacré,Religieux,Valeur
+info [Mon Oct 30 2017 18:21:56 GMT+0100 (Paris, Madrid)]  put doc ids for each concepts 
+info [Mon Oct 30 2017 18:22:05 GMT+0100 (Paris, Madrid)]  classifier done :D:\GitHub\souslesens\bin\rdf\classifiers\jfm_BNF.json
+info [Mon Oct 30 2017 18:23:14 GMT+0100 (Paris, Madrid)]  searching most frequent words in index jfm
+info [Mon Oct 30 2017 18:23:14 GMT+0100 (Paris, Madrid)]  Most frequentwords ["de","ou","ne","on","se","sa","p","être","y","ont","où","temps","été","toujours","dire","vie","ci","sens","voir","là","nature","lieu","société","premier","comment","cet","pouvoir","hommes","paris","dit","n","partie","social","or","première","quelque","vue","laquelle","question","in","effet","partir","compte","fonction","mêmes","trouve","rapport","parce","système","façon","t","chose","force","b","culture","mort","peu","propre","ici","fin","grand","seul","déjà","religion","pourquoi","sorte","formes","nom","semble","sociale","manière","donne","font","d","moment","seule","celles","ni","savoir","tel","cours","of","rituel","principe","puis","terme","va","choses","raison","relation","rôle","telle","jamais","mis","reste","côté","nouvelle","pensée","quelques","cependant","nouveau","comprendre","prendre","the","ensemble","plutôt","termes","dieu","vient","autant","suite","personne","sociétés","théorie","devient","également","corps","grande","l’autre","réalité","centre","dès","cause","sacrifice","chacun","c","sacré","lequel","contraire","passe","religieux","qu’ils","caractère","processus","éléments","donner","double","rendre","rites","certaines","ensuite","passage","moyen","présente","structure","humain","met","n’a","relations","roi","voit","différents","donné","qu’elle","commun","qu’un","sociales","modèle","étaient","source","prend","and","mot","objet","beaucoup","l","droit","loin","particulier","titre","dernier","doivent","existe","second","valeur","homme","qu’on","travers","pratique","retour","soient","différence","d’abord","qu’une","s’agit","l’idée","pu","d’être"]
+info [Mon Oct 30 2017 18:23:14 GMT+0100 (Paris, Madrid)]  searching  concepts in BNF... 
+info [Mon Oct 30 2017 18:23:54 GMT+0100 (Paris, Madrid)]  parent concepts found Temps,Hommes,Or,Pensée,Dieu,Sociétés,Réalité,Sacrifice,Sacré,Religieux,Valeur
+info [Mon Oct 30 2017 18:23:54 GMT+0100 (Paris, Madrid)]  put doc ids for each concepts 
+info [Mon Oct 30 2017 18:24:03 GMT+0100 (Paris, Madrid)]  classifier done :D:\GitHub\souslesens\bin\rdf\classifiers\jfm_BNF.json
+
+info [Mon Oct 30 2017 18:35:36 GMT+0100 (Paris, Madrid)]  searching most frequent words in index jfm
+info [Mon Oct 30 2017 18:35:37 GMT+0100 (Paris, Madrid)]  Most frequentwords ["être","temps","vie","sens","voir","nature","lieu","société","premier","comment","pouvoir","hommes","paris","partie","social","or","première","vue","laquelle","effet","partir","compte","fonction","trouve","rapport","parce","système","façon","chose","force","fin","grand","seul","religion","pourquoi","sorte","formes","nom","semble","sociale","manière","moment","reste","nouvelle","pensée","nouveau","comprendre","prendre","ensemble","termes","dieu","vient","personne","sociétés","théorie","devient","corps","grande","l’autre","réalité","centre","cause","sacrifice","chacun","sacré","contraire","passe","religieux","qu’ils","recherche","caractère","processus","éléments","donner","double","rendre","rites","certaines","passage","moyen","présente","structure","humain","met","n’a","relations","roi","voit","différents","donné","qu’elle","commun","qu’un","sociales","modèle","étaient","source","prend","l’homme","mot","objet","beaucoup","droit","loin","particulier","titre","dernier","doivent","existe","second","valeur","homme","qu’on","travers","pratique","retour","soient","différence","d’abord","notion","qu’une","s’agit","l’idée","pu","d’être","humaine","rite","l’origine","consiste","objets","rituels","sera","doute","lorsque","aucune","fut","pratiques","sujet","m","présence","puisque","symbolique","aucun","lien","pourtant","terre","mesure","penser","humaines","parfois","position","tradition","enfin","l’histoire","puissance","aurait","produit","face","faits","forces","livre","données","pris","siècle","premiers","violence","n’y","soi","religieuse","tandis","ayant","cf","grands","haut","l’un","porte","quatre","sciences","ait","delà","travaux","parler"]
+info [Mon Oct 30 2017 18:35:37 GMT+0100 (Paris, Madrid)]  searching  concepts in BNF... 
+info [Mon Oct 30 2017 18:36:10 GMT+0100 (Paris, Madrid)]  parent concepts found Temps,Hommes,Or,Pensée,Dieu,Sociétés,Réalité,Sacrifice,Sacré,Religieux,Recherche,Valeur,Terre,Mesure,Face,Violence
+info [Mon Oct 30 2017 18:36:10 GMT+0100 (Paris, Madrid)]  put doc ids for each concepts 
+info [Mon Oct 30 2017 18:36:24 GMT+0100 (Paris, Madrid)]  classifier done :D:\GitHub\souslesens\bin\rdf\classifiers\jfm_BNF.json
+info [Mon Oct 30 2017 18:37:36 GMT+0100 (Paris, Madrid)]  searching most frequent words in index jfm
+info [Mon Oct 30 2017 18:37:37 GMT+0100 (Paris, Madrid)]  Most frequentwords ["être","temps","vie","sens","voir","nature","lieu","société","premier","comment","pouvoir","hommes","paris","partie","social","or","première","vue","laquelle","effet","partir","compte","fonction","trouve","rapport","parce","système","façon","chose","force","fin","grand","seul","religion","pourquoi","sorte","formes","nom","semble","sociale","manière","moment","reste","nouvelle","pensée","nouveau","comprendre","prendre","ensemble","termes","dieu","vient","personne","sociétés","théorie","devient","corps","grande","l’autre","réalité","centre","cause","sacrifice","chacun","sacré","contraire","passe","religieux","qu’ils","recherche","caractère","processus","éléments","donner","double","rendre","rites","certaines","passage","moyen","présente","structure","humain","met","n’a","relations","roi","voit","différents","donné","qu’elle","commun","qu’un","sociales","modèle","étaient","source","prend","l’homme","mot","objet","beaucoup","droit","loin","particulier","titre","dernier","doivent","existe","second","valeur","homme","qu’on","travers","pratique","retour","soient","différence","d’abord","notion","qu’une","s’agit","l’idée","pu","d’être","humaine","rite","l’origine","consiste","objets","rituels","sera","doute","lorsque","aucune","fut","pratiques","sujet","m","présence","puisque","symbolique","aucun","lien","pourtant","terre","mesure","penser","humaines","parfois","position","tradition","enfin","l’histoire","puissance","aurait","produit","face","faits","forces","livre","données","pris","siècle","premiers","violence","n’y","soi","religieuse","tandis","ayant","cf","grands","haut","l’un","porte","quatre","sciences","ait","delà","travaux","parler"]
+info [Mon Oct 30 2017 18:37:37 GMT+0100 (Paris, Madrid)]  searching  concepts in BNF... 
+info [Mon Oct 30 2017 18:38:11 GMT+0100 (Paris, Madrid)]  parent concepts found Temps,Hommes,Or,Pensée,Dieu,Sociétés,Réalité,Sacrifice,Sacré,Religieux,Recherche,Valeur,Terre,Mesure,Face,Violence
+info [Mon Oct 30 2017 18:38:11 GMT+0100 (Paris, Madrid)]  put doc ids for each concepts 
+info [Mon Oct 30 2017 18:38:25 GMT+0100 (Paris, Madrid)]  classifier done :D:\GitHub\souslesens\bin\rdf\classifiers\jfm_BNF.json
+info [Mon Oct 30 2017 19:32:38 GMT+0100 (Paris, Madrid)]  searching most frequent words in index jfm
+info [Mon Oct 30 2017 19:32:38 GMT+0100 (Paris, Madrid)]  Most frequentwords ["être","temps","vie","sens","comment","voir"]
+info [Mon Oct 30 2017 19:32:38 GMT+0100 (Paris, Madrid)]  searching  concepts in BNF... 
+
+info [Mon Oct 30 2017 19:41:09 GMT+0100 (Paris, Madrid)]  put doc ids for each concepts 
+
+info [Mon Oct 30 2017 19:45:16 GMT+0100 (Paris, Madrid)]  put doc ids for each concepts 
+
+
+info [Mon Oct 30 2017 19:53:00 GMT+0100 (Paris, Madrid)]  put doc ids for each concepts 
+
+info [Mon Oct 30 2017 19:53:02 GMT+0100 (Paris, Madrid)]  put doc ids for each concepts 
+
+info [Mon Oct 30 2017 19:54:40 GMT+0100 (Paris, Madrid)]  put doc ids for each concepts 
+
+
+info [Mon Oct 30 2017 19:56:00 GMT+0100 (Paris, Madrid)]  put doc ids for each concepts 
+info [Mon Oct 30 2017 19:56:00 GMT+0100 (Paris, Madrid)]  classifier done :D:\GitHub\souslesens\bin\rdf\classifiers\referentiel_XXX.json
+
+
+
+
+
+
+info [Tue Oct 31 2017 06:06:34 GMT+0100 (Paris, Madrid)]  put doc ids for each concepts 
+
+info [Tue Oct 31 2017 06:13:59 GMT+0100 (Paris, Madrid)]  put doc ids for each concepts 
+info [Tue Oct 31 2017 06:14:07 GMT+0100 (Paris, Madrid)]  classifier done :D:\GitHub\souslesens\bin\rdf\classifiers\referentiel_XXX.json
+
+info [Tue Oct 31 2017 06:15:30 GMT+0100 (Paris, Madrid)]  put doc ids for each concepts 
+
+info [Tue Oct 31 2017 06:15:48 GMT+0100 (Paris, Madrid)]  put doc ids for each concepts 
+
+info [Tue Oct 31 2017 06:17:27 GMT+0100 (Paris, Madrid)]  put doc ids for each concepts 
+
+
+info [Tue Oct 31 2017 06:22:35 GMT+0100 (Paris, Madrid)]  put doc ids for each concepts 
+info [Tue Oct 31 2017 06:22:47 GMT+0100 (Paris, Madrid)]  classifier done :D:\GitHub\souslesens\bin\rdf\classifiers\referentiel_XXX.json
+
+info [Tue Oct 31 2017 06:23:33 GMT+0100 (Paris, Madrid)]  put doc ids for each concepts 
+info [Tue Oct 31 2017 06:23:39 GMT+0100 (Paris, Madrid)]  classifier done :D:\GitHub\souslesens\bin\rdf\classifiers\referentiel_XXX.json
+
+
+
+info [Tue Oct 31 2017 06:38:55 GMT+0100 (Paris, Madrid)]  put doc ids for each concepts 
+info [Tue Oct 31 2017 06:39:01 GMT+0100 (Paris, Madrid)]  classifier done :D:\GitHub\souslesens\bin\rdf\classifiers\referentiel_XXX.json
+
+info [Tue Oct 31 2017 06:39:30 GMT+0100 (Paris, Madrid)]  put doc ids for each concepts 
+info [Tue Oct 31 2017 06:39:35 GMT+0100 (Paris, Madrid)]  classifier done :D:\GitHub\souslesens\bin\rdf\classifiers\referentiel_XXX.json
+
+info [Tue Oct 31 2017 06:39:44 GMT+0100 (Paris, Madrid)]  put doc ids for each concepts 
+
+
+info [Tue Oct 31 2017 06:41:13 GMT+0100 (Paris, Madrid)]  put doc ids for each concepts 
+info [Tue Oct 31 2017 06:45:31 GMT+0100 (Paris, Madrid)]  classifier done :D:\GitHub\souslesens\bin\rdf\classifiers\referentiel_XXX.json
+
+info [Tue Oct 31 2017 06:47:16 GMT+0100 (Paris, Madrid)]  put doc ids for each concepts 
+
+info [Tue Oct 31 2017 06:55:24 GMT+0100 (Paris, Madrid)]  put doc ids for each concepts 
+
+info [Tue Oct 31 2017 06:58:18 GMT+0100 (Paris, Madrid)]  put doc ids for each concepts 
+info [Tue Oct 31 2017 06:59:43 GMT+0100 (Paris, Madrid)]  classifier done :D:\GitHub\souslesens\bin\rdf\classifiers\referentiel_XXX.json
+
+
+
+info [Tue Oct 31 2017 07:09:07 GMT+0100 (Paris, Madrid)]  put doc ids for each concepts 
+info [Tue Oct 31 2017 07:09:19 GMT+0100 (Paris, Madrid)]  classifier done :D:\GitHub\souslesens\bin\rdf\classifiers\referentiel_XXX.json
+
+info [Tue Oct 31 2017 07:10:03 GMT+0100 (Paris, Madrid)]  put doc ids for each concepts 
+
+info [Tue Oct 31 2017 07:11:00 GMT+0100 (Paris, Madrid)]  put doc ids for each concepts 
+
+
+info [Tue Oct 31 2017 07:14:22 GMT+0100 (Paris, Madrid)]  put doc ids for each concepts 
+
+info [Tue Oct 31 2017 07:15:34 GMT+0100 (Paris, Madrid)]  put doc ids for each concepts 
+
+info [Tue Oct 31 2017 07:16:38 GMT+0100 (Paris, Madrid)]  put doc ids for each concepts 
+info [Tue Oct 31 2017 07:16:49 GMT+0100 (Paris, Madrid)]  classifier done :D:\GitHub\souslesens\bin\rdf\classifiers\referentiel_XXX.json
+
+
+
+
+
+info [Tue Oct 31 2017 08:52:26 GMT+0100 (Paris, Madrid)]  put doc ids for each concepts 
+
+info [Tue Oct 31 2017 08:52:45 GMT+0100 (Paris, Madrid)]  put doc ids for each concepts 
+
+
+
+info [Tue Oct 31 2017 08:55:49 GMT+0100 (Paris, Madrid)]  put doc ids for each concepts 
+info [Tue Oct 31 2017 08:56:39 GMT+0100 (Paris, Madrid)]  classifier done :D:\GitHub\souslesens\bin\rdf\classifiers\jfm_XXX.json
+
+info [Tue Oct 31 2017 09:16:19 GMT+0100 (Paris, Madrid)]  put doc ids for each concepts 
+info [Tue Oct 31 2017 09:17:16 GMT+0100 (Paris, Madrid)]  classifier done :D:\GitHub\souslesens\bin\rdf\classifiers\jfm_XXX.json
+
+
+

@@ -51,15 +51,15 @@ var filters = (function () {
 
         // str += "<tr class='italicSpecial'><td ><span
         // class='bigger'>Noeuds</span></td><td>Inclure</td><td>Exclure</td></tr>";
-        str += "<tr align='center' class='italicSpecial'><td ><span class='bigger'>Noeuds</span></td><td>Inclure<br><input type='checkbox' id='#comuteAllFiltersNodesInclude' checked='checked' onchange='filters.comuteAllFilters(this)'></td><td>Exclure<br><input type='checkbox' id='#comuteAllFiltersNodesExclude' onchange='filters.comuteAllFilters(this)'></td></tr>";
+        str += "<tr align='center' class='italicSpecial'><td ><span class='bigger'>Noeuds</span></td><td>Inclure<br><input type='checkbox' id='#comuteAllFiltersNodesInclude' checked='checked' onchange='filters.comuteAllFilters(this)'></td></tr>";//<td>Exclure<br><input type='checkbox' id='#comuteAllFiltersNodesExclude' onchange='filters.comuteAllFilters(this)'></td></tr>";
         for (var i = 0; i < targetLabels.length; i++) {
             str += "<tr align='center'>";
             str += "<td style='background-color:"+nodeColors[targetLabels[i]]+"'>" + targetLabels[i] + "</td>";
             str += "<td><input type='checkbox' name='graphNodesFilterCbx' value='"
-                + targetLabels[i] + "'" + onclick + checked + "/> "
-            str += "</td><td>"
+                + targetLabels[i] + "'" + onclick + checked + "/></td> "
+         /*   str += "<td>"
                 + "<input type='checkbox' name='graphNodesFilterExcludeCbx' value='"
-                + targetLabels[i] + "'" + onclick + noChecked + "/> "
+                + targetLabels[i] + "'" + onclick + noChecked + "/> "*/
 
             str += "</tr>";
         }
@@ -67,7 +67,7 @@ var filters = (function () {
 
         // str += "<tr class='italicSpecial'><td colspan='3'><span
         // class='bigger'>Relations</span></tr>";
-        str += "<tr align='center'  class='italicSpecial'><td ><span class='bigger'>Relations</span></td><td>Inclure<br><input type='checkbox' id='#comuteAllFiltersRelationsInclude' checked='checked'  onchange='filters.comuteAllFilters(this)'></td><td>Exclure<br><input type='checkbox' id='#comuteAllFiltersRelationsExclude' onchange='filters.comuteAllFilters(this)'></td></tr>";
+        str += "<tr align='center'  class='italicSpecial'><td ><span class='bigger'>Relations</span></td><td>Inclure<br><input type='checkbox' id='#comuteAllFiltersRelationsInclude' checked='checked'  onchange='filters.comuteAllFilters(this)'></td></tr>";//<td>Exclure<br><input type='checkbox' id='#comuteAllFiltersRelationsExclude' onchange='filters.comuteAllFilters(this)'></td></tr>";
 
         for (var i = 0; i < relationTypes.length; i++) {
             str += "<tr align='center'>";
@@ -79,9 +79,9 @@ var filters = (function () {
 
             str += "<td style='background-color:"+linkColors[relKey]+"'>" + relationTypes[i] + "</td>";
             str += "<td><input type='checkbox' name='graphRelationsFilterCbx' value='"
-                + relationTypes[i] + "'" + onclick + checked + "/> "
-            str += "</td><td><input type='checkbox' name='graphRelationsFilterExcludeCbx' value='"
-                + relationTypes[i] + "'" + onclick + noChecked + "/> ";
+                + relationTypes[i] + "'" + onclick + checked + "/></td> "
+          /*  str += "<td><input type='checkbox' name='graphRelationsFilterExcludeCbx' value='"
+                + relationTypes[i] + "'" + onclick + noChecked + "/> ";*/
             str += "</tr>";
 
         }
@@ -97,6 +97,7 @@ var filters = (function () {
          * $("[name=graphNodesFilterCbx]"); for (var i = 0; i < labelCbxes.length;
          * i++) { labelCbxes[i].checked = false; }
          */
+        if(!customizeUI.hideFilters==true)
         $("#filtersDiv").css("visibility", "visible");
         // generateGraph(currentObjId,drawGraph);
     }
