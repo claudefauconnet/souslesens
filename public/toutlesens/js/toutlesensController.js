@@ -300,7 +300,7 @@ var toutlesensController = (function () {
         else if (output == "FLOWER") {
             var jsonFlower = json;
             if ($("#groupByLabelsCbx").prop("checked"))
-                toutlesensData.jsonToHierarchyTree(json, "label");
+                jsonFlower=toutlesensData.jsonToHierarchyTree(json, "label");
             d3flower.drawFlower(jsonFlower, distance, currentGraphCharge);
 
         }

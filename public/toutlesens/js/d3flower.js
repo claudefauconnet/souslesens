@@ -308,6 +308,15 @@ var d3flower = (function () {
                     .attr("xlink:href", Gparams.imagesRootPath + d.neoAttrs.path.replace("photos2016", "thumbnails2016"));
             }
             else {// if( d.shape=="circle" ){
+                if (hasIcon ) {
+                    anode.append("svg:image")
+                       .attr('x', -12)
+                        .attr('y', -12)
+                        .attr('width', 25)
+                        .attr('opacity', 0.7)
+                        .attr('height', 24)
+                    .attr("xlink:href", "./icons/" +icon);
+                 }
                 shape = anode.append('svg:circle')
                     .attr("r", function (d) {
                         if (hasIcon === true)
@@ -342,6 +351,8 @@ var d3flower = (function () {
                 return 1;
             })
                 .style('fill-opacity', function (d) {
+                    if(hasIcon)
+                        return .9;
                     if (d.isRoot == true)
                         return 1;
                     if (d.shape == "textBox")
@@ -376,15 +387,7 @@ var d3flower = (function () {
                 }).attr("text-anchor", "middle").style("fill", "purple")
             }
 
-            if (hasIcon ) {
-                shape = anode.append("svg:image")
-                    .attr('x', -12)
-                    .attr('y', -12)
-                    .attr('width', 25)
-                    .attr('opacity', 0.7)
-                    //.attr('height', 24)
-                    .attr("xlink:href", "icons/" +icon);
-            }
+
             anode.append("text").attr("x", function (d) {
                 if (d.level == null)
                     return Gparams.circleR + 3;

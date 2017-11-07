@@ -423,6 +423,16 @@ var d3simpleForce = (function () {
                 }
 
                 else {// if( d.shape=="circle" ){
+                    if (hasIcon) {
+                        shape = anode.append("svg:image")
+                            .attr('x', -15)
+                            .attr('y', -15)
+                            .attr('width', 25)
+                            .attr('opacity', 1)
+                            //.attr('height', 24)
+                            //  .attr("xlink:href", "icons/" + Gparams.customIcons[subGraph][d.label]);
+                            .attr("href", "icons/" + icon);
+                    }
                     shape = anode.append('svg:circle')
                         .attr("r", function (d) {
                             if (hasIcon === true)
@@ -470,7 +480,7 @@ var d3simpleForce = (function () {
 
                     .style('opacity', function (d) {
                         if (hasIcon === true)
-                            return 0.5;
+                            return 0.7;
                         if (d.isRoot || d.isTarget)
                             return 1;
                         return Gparams.minOpacity;
@@ -479,16 +489,7 @@ var d3simpleForce = (function () {
                     .attr("class", "shape");
 
 
-                if (hasIcon) {
-                    shape = anode.append("svg:image")
-                        .attr('x', -15)
-                        .attr('y', -15)
-                        .attr('width', 25)
-                        .attr('opacity', 0.7)
-                        //.attr('height', 24)
-                        //  .attr("xlink:href", "icons/" + Gparams.customIcons[subGraph][d.label]);
-                        .attr("xlink:href", "icons/" + icon);
-                }
+
 
                 anode.append("text").attr("x", function (d) {
 

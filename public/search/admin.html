@@ -67,6 +67,7 @@
                 var nWords = $("#nWords").val();
                 nWords = parseInt(nWords);
                 var minFreq = $("#minFreq").val();
+                var lang = $("#lang").val();
                 minFreq = parseInt(minFreq);
                 var ontologies=JSON.parse( $("#ontologies").val());
                  payload = {
@@ -74,7 +75,8 @@
                     indexName: indexName,
                     nWords: nWords,
                     minFreq: minFreq,
-                    ontologies: ontologies
+                    ontologies: ontologies,
+                     lang:lang
 
 
                 };
@@ -148,6 +150,14 @@
         </td>
         <td>
             <input id="ontologies" value='["BNF"]'>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            lang
+        </td>
+        <td>
+            <input id="lang" value='fr'>
         </td>
     </tr>
     <tr>

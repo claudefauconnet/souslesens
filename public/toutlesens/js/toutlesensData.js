@@ -657,7 +657,7 @@ var toutlesensData = (function () {
                     levelX++;
                 var childLabel = node.children[i].label;
 
-                var groupLabels = labelCardinality[node.children[i].label] > 1 ? true : false;
+                var groupLabels = labelCardinality[node.children[i].label] > 2 ? true : false;
 
                 if (levelX < 3 && groupLabels) {// on ne groupe les
                     // noeud de meme
@@ -676,6 +676,7 @@ var toutlesensData = (function () {
                             color: nodeColors[childLabel],
                             relType: node.children[i].relType,
                             relDir: node.children[i].relDir,
+                            relProperties:{},
                             id: id++,
                             nodeType: "label",
                             parentNodeType: "root"
@@ -707,6 +708,7 @@ var toutlesensData = (function () {
                     color: nodeColors[childLabel],
                     relType: node.children[i].relType,
                     relDir: node.children[i].relDir,
+                    relProperties:{},
                     id: node.children[i].id,
                     nodeType: "node",
                     neoAttrs: node.children[i].neoAttrs

@@ -118,12 +118,12 @@ router.post('/elastic', function (req, response) {
         });
 
     else if (req.body && req.body.createIndexClassifier)
-        classifierManager.createIndexClassifier(req.body.indexName, parseInt("" + req.body.nWords), parseInt("" + req.body.minFreq), req.body.ontologies, parseInt("" + req.body.nSkosAncestors), function (error, result) {
+        classifierManager.createIndexClassifier(req.body.indexName, parseInt("" + req.body.nWords), parseInt("" + req.body.minFreq), req.body.ontologies, req.body.lang, parseInt("" + req.body.nSkosAncestors), function (error, result) {
             processResponse(response, error, result)
         });
 
     else if (req.body && req.body.findSimilarDocuments)
-        elasticProxy.findSimilarDocuments(req.body.indexName, req.body.docId, parseInt("" + req.body.minScore), parseInt("" + req.body.size),function (error, result) {
+        elasticProxy.findSimilarDocuments(req.body.indexName, req.body.docId, parseInt("" + req.body.minScore), parseInt("" + req.body.size), function (error, result) {
             processResponse(response, error, result)
         });
     else if (req.body && req.body.loadSkosClassifier)
@@ -172,8 +172,8 @@ router.post('/http', function (req, response) {
 });
 
 router.post('/rdf', function (req, response) {
-    if (req.body && req.body.store == 'BNF') {
-        rdfProxy.queryBnfDataToNeoResult(req.body.word, req.body.relations, req.body.lang, req.body.contains, req.body.limit, function (error, result) {
+    if (req.body && req.body.store) {
+        rdfProxy.queryOntologyDataToNeoResult(req.body.store, req.body.word, req.body.relations, req.body.lang, req.body.contains, req.body.limit, function (error, result) {
             processResponse(response, error, result)
         });
     }
@@ -188,7 +188,11 @@ router.post('/rdf', function (req, response) {
             processResponse(response, error, result)
         });
     }
-
+    if (req.body && req.body.saveTreeToSkos) {
+        skos.saveTreeToSkos(req.body.treeData, req.body.ontology, function (error, result) {
+            processResponse(response, error, result)
+        });
+    }
 
 
 });

@@ -4,8 +4,12 @@
 var jsTreeController = (function () {
 
     var self = {};
-self.nodesData={}
+self.nodesData={};
+self.addtionalMenuItems={};
+self.tree;
+self.types={}
     self.load = function (data, divId, callback) {
+        self.tree=$('#' + divId);
     for(var i=0;i<data.length;i++){
         self.nodesData[data[i].id]=data[i].data;
     }
@@ -15,7 +19,7 @@ self.nodesData={}
         plugins.push("contextmenu");
         plugins.push("dnd");
 
-        types = [];
+
 
         $('#' + divId).jstree("destroy").empty();
         var jsTree = $('#' + divId)
@@ -49,13 +53,13 @@ self.nodesData={}
 
                         },
                     },
-                       /* 'contextmenu': {
-                            'items': customMenu
-                        },*/
+                        'contextmenu': {
+                            'items': getCustomMenu
+                        },
                         "dnd": {
                             // check_while_dragging: true
                         },
-                        "types": types,
+                        "types": self.types,
                         "plugins": plugins,
 
 
@@ -70,10 +74,49 @@ self.nodesData={}
             });
 
 
+        function getCustomMenu($node){
+
+            var items={
+                    "Create": {
+                        "separator_before": false,
+                        "separator_after": false,
+                        "label": "Create",
+                        "action": function (obj) {
+                            $node = self.tree.jstree('create_node', $node);
+                            jsTreeController.tree.jstree('edit', $node);
+                        }
+                    },
+                    "Rename": {
+                        "separator_before": false,
+                        "separator_after": false,
+                        "label": "Rename",
+                        "action": function (obj) {
+                            jsTreeController.tree.jstree('edit', $node);
+                        }
+                    },
+                    "Remove": {
+                        "separator_before": false,
+                        "separator_after": false,
+                        "label": "Remove",
+                        "action": function (obj) {
+                            jsTreeController.tree.jstree('delete_node', $node);
+                        }
+                    }
+                };
+            var menuItemData = $.extend(true, {}, $node.data);//clone
+            for(var key in self.addtionalMenuItems){
+                self.addtionalMenuItems[key].data=menuItemData;
+                items[key]=self.addtionalMenuItems[key];
+            }
+            return items;
+
+        }
 
 
-function customMenu(){
-    var items=[];;
+
+
+function customMenuOld(){
+    var items={};
         items ["menu1" ] = {
             label: "Add  child ",
             data: [],

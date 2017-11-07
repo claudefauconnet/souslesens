@@ -29,9 +29,9 @@ var request = require('request');
 
 
 var rdfProxy = {
-    queryBnfDataToNeoResult: function (word, relations, lang, contains, limit, callback) {
+    queryOntologyDataToNeoResult: function (ontology,word, relations, lang, contains, limit, callback) {
         word=word.substring(0,1).toUpperCase()+word.substring(1).toLowerCase();
-        rdfProxy.getBnfTriples(ontology,word, relations, lang, contains, limit, function (err, result) {
+        rdfProxy.getOntologyTriples(ontology,word, relations, lang, contains, limit, function (err, result) {
             if (err)
                 return callback(err);
             var neoArray = rdfProxy.sparqlResultToNeoResult(result);
@@ -41,7 +41,7 @@ var rdfProxy = {
     },
 
 
-    getBnfTriples: function (ontology,word, relations, lang, contains, limit, callback) {
+    getOntologyTriples: function (ontology,word, relations, lang, contains, limit, callback) {
         var url = "";
         if (ontology == "BNF") {
             url = "http://data.bnf.fr/sparql?default-graph-uri=&query="
@@ -70,8 +70,8 @@ var rdfProxy = {
         for (var i = 0; i < relations.length; i++) {
             var rel = relations[i];
 
-           if(!rel.name ||(!rel.name && rel.optional)) {
-               var relation=rel;
+           if(rel.optional) {
+               var relation=rel.name;
                query += "\n  OPTIONAL{ ?doc skos:" + relation + " ?" + relation + "Doc .  ?" + relation + "Doc skos:prefLabel ?" + relation + "Label.}";
            }
            else{
@@ -228,7 +228,7 @@ console.log(query);
 
 
 
-/*dfProxy.getBnfTriples("Vin", "fr", false, function (err, result) {
+/*dfProxy.getOntologyTriples("Vin", "fr", false, function (err, result) {
  var xx = result;
  var  resultArray = rdfProxy.sparqlResultToNeoResult(result);
  // console.log(JSON.stringify(resultArray, null, 2));

@@ -576,7 +576,7 @@ var elasticProxy = {
                                 "_type": "type_document",
                                 "_id": docId
                             }],
-                        "min_word_length":5
+                        "min_word_length": 5
 
 
                     },
@@ -603,7 +603,7 @@ var elasticProxy = {
                 var objElastic = hits[i]._source;
                 obj.title = objElastic.title;
                 obj._id = hits[i]._id;
-                obj._score = Math.round(hits[i]._score*10);
+                obj._score = Math.round(hits[i]._score * 10);
                 obj.date = objElastic.date;
                 obj.path = objElastic.path;
                 if (objElastic.content) {
@@ -615,10 +615,10 @@ var elasticProxy = {
 
                 docs.push(obj);
 
-                docs.sort(function(a,b){
-                    if(a._score>b._score)
+                docs.sort(function (a, b) {
+                    if (a._score > b._score)
                         return -1;
-                    if(a._score<b._score)
+                    if (a._score < b._score)
                         return 1;
                     return 0;
                 })
@@ -874,8 +874,80 @@ var elasticProxy = {
                             "où",
                             "été",
                             "toujours",
-                            "dire","ci","là","cet",
-                            "dit","n","quelque","question","in","mêmes","t","b","culture","mort","peu","propre","ici","déjà","donne","font","d","seule","celles","ni","savoir","tel","cours","of","rituel","principe","puis","terme","va","choses","raison","relation","rôle","telle","jamais","mis","côté","quelques","cependant","the","plutôt","autant","suite","également","dès","c","lequel","ensuite","qu’*","d'*","s'*","and","l"
+                            "dire", "ci", "là", "cet",
+                            "dit",
+                            "n",
+                            "quelque",
+                            "in",
+                            "mêmes",
+                            "t",
+                            "b",
+                            "peu",
+                            "propre",
+                            "ici",
+                            "déjà",
+                            "d",
+                            "seule",
+                            "celles",
+                            "ni",
+                            "tel",
+                            "of",
+                            "puis",
+                            "va",
+                            "rôle",
+                            "telle",
+                            "jamais",
+                            "mis",
+                            "côté",
+                            "quelques",
+                            "cependant",
+                            "the",
+                            "plutôt",
+                            "autant",
+                            "suite",
+                            "également",
+                            "dès",
+                            "c",
+                            "lequel",
+                            "ensuite",
+                            "qu’*",
+                            "d'*",
+                            "s'*",
+                            "and",
+                            "l",
+
+
+
+
+                            "shall",
+                            "be",
+                            "to",
+                            "for",
+                            "with",
+                            "or",
+                            "as",
+                            "by",
+                            "all",
+                            "at",
+                            "is",
+                            "not",
+                            "this",
+                            "from",
+                            "any",
+                            "that",
+                            "used",
+                            "each",
+                            "if",
+                            "an",
+                            "when",
+                            "case",
+                            "have",
+                            "during",
+                            "than"
+
+
+
+
                         ]
                     }
                 }
@@ -887,7 +959,7 @@ var elasticProxy = {
             url: baseUrl + index + "/_search"
         };
 
-   //  console.log(JSON.stringify(payload,null,2))
+        //  console.log(JSON.stringify(payload,null,2))
         request(options, function (error, response, body) {
             if (error)
                 return callback(error);
@@ -956,7 +1028,8 @@ var elasticProxy = {
                             elasticProxy.sendMessage("delete temporary index " + indexTemp);
                             var message = "-----------Index " + index + " is ready to use-----------"
                             if (doClassifier.toLowerCase() == "y") {
-                                classifierManager.createIndexClassifier(index, 200, 10, ["BNF"], 1, function (err, result) {
+
+                                classifierManager.createIndexClassifier(index, 200, 10, ["BNF"], "fr", 1, function (err, result) {
                                     elasticProxy.sendMessage("classifier done");
 
                                     elasticProxy.sendMessage(message);
@@ -1024,7 +1097,7 @@ var elasticProxy = {
                             var message = "-----------Index " + index + " is ready to use-----------"
                             elasticProxy.sendMessage("delete temporary index " + indexTemp);
                             if (doClassifier.toLowerCase() == "y") {
-                                classifierManager.createIndexClassifier(index, 200, 10, ["BNF"], 1, function (err, result) {
+                                classifierManager.createIndexClassifier(index, 200, 10, ["BNF"],"fr", 1, function (err, result) {
 
                                     elasticProxy.sendMessage("classifier done");
                                     elasticProxy.sendMessage(message);
