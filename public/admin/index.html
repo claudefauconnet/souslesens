@@ -271,6 +271,10 @@
 
 
         });
+
+        function onFileButton(){
+
+        }
     </script>
 <body>
 
@@ -628,7 +632,7 @@
                             <tr>
                                 <td>Import</td>
                                 <td>
-                                    <form enctype="multipart/form-data" action="../rest/" method="post"
+                                    <form enctype="multipart/form-data" action="../uploadToNeo/" method="post"
                                           target="votar">
                                         <input type="file" name="cypher" class='exportNeo' onblur= 'onFileButton()';>
                                         <input type="submit" value="upload" name="submit" class='exportNeo'/>
