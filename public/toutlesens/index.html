@@ -111,6 +111,7 @@
     <script src="js/advancedSearch.js"></script>
     <script src="js/selection.js"></script>
     <script src="js/statistics.js"></script>
+    <script src="js/graphTraversalQueries.js"></script>
 
     <script src="./js/schema.js"></script>
     <script src="../common/js/jsTree/jstree.min.js"></script>
@@ -210,8 +211,39 @@
             subGraph = queryParams.subGraph;
             functionalities.hideFunctionalities();
             lang.setLangage();
-            dataModel.initNeoModel(queryParams.subGraph, [infoGenericDisplay.initLabels, customizeUI.customize, statistics.initLabelsCurrentQueries, toutlesensController.afterGraphInit]);
-            functionalities.initFunctionalities();
+
+
+            var afterLoadModelTasks=[
+                infoGenericDisplay.initLabels,
+                customizeUI.customize,
+                toutlesensController.afterGraphInit,
+                statistics.initLabelsCurrentQueries,
+                advancedSearch.patternInitLabels,
+                advancedSearch.patternInitRelTypes,
+                functionalities.initFunctionalities
+
+            ]
+
+            Schema.load(subGraph, function (err, schema) {
+                if(err)
+                   return setMessage("Error cannot load Schema");
+                // play init UI methods after schema is loaded
+                        for (var i = 0; i < afterLoadModelTasks.length; i++) {
+                            try {
+                                afterLoadModelTasks[i](subGraph);
+                            }
+                            catch(err){
+                                console.log(""+i+"  "+err);
+                            }
+                        }
+
+
+
+                toutlesensController.appInitEnded=true;
+
+            })
+
+
             var mode = queryParams.mode;
             if (mode == "write")
                 Gparams.readOnly = false;
@@ -750,6 +782,8 @@
 
 
                                 </td>
+                            </tr>
+                            <tr>
                                 <td>
 
                                     Pattern
@@ -757,10 +791,11 @@
                                     <select id="patternPatternSelect" size="10"></select>
 
                                 </td>
-
+                            </tr>
+                            <tr>
                                 <td>
                                     <button onclick="advancedSearch.removeFromPatternSelect()">-</button>
-                                    <br>
+                               &nbsp;
                                     <button onclick="advancedSearch.executePatternUI(true)">Count</button>
                                     <br>
                                     <input id="patternCount">

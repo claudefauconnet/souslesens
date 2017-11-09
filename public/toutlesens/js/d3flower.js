@@ -187,8 +187,8 @@ var d3flower = (function () {
                     toutlesensController.dispatchAction('relationInfos');
                 })
                 .attr("stroke-width", function(d){
-                    if(d.target.relProperties.strength)
-                        return d.target.relProperties.strength*Gparams.relStrokeWidth;
+                    if(d.target.relProperties[Gparams.visibleLinkProperty])
+                        return d.target.relProperties[Gparams.visibleLinkProperty]*Gparams.relStrokeWidth;
                    return  Gparams.relStrokeWidth;
                 })
                 .attr("stroke", "#65dbf1").attr("fill", "none")

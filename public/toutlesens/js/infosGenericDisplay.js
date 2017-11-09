@@ -32,7 +32,7 @@ var infoGenericDisplay = (function () {
     self.synchronizeNeoToMongo = false;
 
 
-    var limit = 1000;
+    var limit = Gparams.jsTreeMaxChildNodes;
     var jsTreeDivId = "treeContainer";
     var ids = {};
     self.subGraph;
@@ -57,36 +57,34 @@ var infoGenericDisplay = (function () {
             /*  dataModel.initNeoModel(self.subGraph, function () {
              schema.generateNeoImplicitSchema(self.subGraph, true);*/
             var k = 0;
-            Schema.load(self.subGraph, function (err, schema) {
-                var labels = [""];
-                for (var label in Schema.schema.labels) {
-                    labels.push(label);
 
-                    if (!Schema.schema.labels[label].color) {
+            var labels = [""];
+            for (var label in Schema.schema.labels) {
+                labels.push(label);
 
-                        var paletteColor = Gparams.palette[k % Gparams.palette.length];
-                        Schema.schema.labels[label].color = paletteColor;
-                        nodeColors[label] = paletteColor;
-                        k++;
-                    }
-                    else {
-                        nodeColors[label] = Schema.schema.labels[label].color;
-                    }
+                if (!Schema.schema.labels[label].color) {
 
-                    //  toutlesensController.setLinkColors();
-
-
+                    var paletteColor = Gparams.palette[k % Gparams.palette.length];
+                    Schema.schema.labels[label].color = paletteColor;
+                    nodeColors[label] = paletteColor;
+                    k++;
+                }
+                else {
+                    nodeColors[label] = Schema.schema.labels[label].color;
                 }
 
-                labels.sort();
+                //  toutlesensController.setLinkColors();
 
 
-                if (nodesLabelsSelect)
-                    $("#nodesLabelsSelect").empty()
-                        .append('<option value=""></option>')
-                common.fillSelectOptionsWithStringArray(nodesLabelsSelect, labels);
+            }
 
-            });
+            labels.sort();
+
+
+            if (nodesLabelsSelect)
+                $("#nodesLabelsSelect").empty()
+                    .append('<option value=""></option>')
+            common.fillSelectOptionsWithStringArray(nodesLabelsSelect, labels);
 
 
         }
@@ -571,8 +569,8 @@ var infoGenericDisplay = (function () {
         }
 
         if (obj.m) {//Neo
-            if(obj.m.properties.nom && !obj.m.properties.name)
-                obj.m.properties.name=obj.m.properties.nom;
+            if (obj.m.properties.nom && !obj.m.properties.name)
+                obj.m.properties.name = obj.m.properties.nom;
             jtreeId = obj.m._id;
             neoId = obj.m._id;
             var label = obj.m.labels[0];
@@ -581,8 +579,8 @@ var infoGenericDisplay = (function () {
 
         }
         else if (obj.n) {//Neo
-            if(obj.n.properties.nom && !obj.n.properties.name)
-                obj.n.properties.name=obj.n.properties.nom;
+            if (obj.n.properties.nom && !obj.n.properties.name)
+                obj.n.properties.name = obj.n.properties.nom;
             jtreeId = obj.n._id;
             neoId = obj.n._id;
             var label = obj.n.labels[0];
@@ -652,6 +650,10 @@ var infoGenericDisplay = (function () {
 
 
     self.onSelect = function (node) {
+        var node=node;
+        self.selectedNodeData = node.data;
+        self.selectedNodeData.parent = parent;
+        var label = node.label
         var parentId = node.data.neoId;
 
 
@@ -661,8 +663,11 @@ var infoGenericDisplay = (function () {
         // var  parentJstreeId=node.id
         var parentId = node.data.neoId;
 
-        self.selectedNodeData = node.data;
-        self.selectedNodeData.parent = parent;
+
+
+
+        toutlesensController.checkMaxNumberOfNodeRelations (parentId,Gparams.jsTreeMaxChildNodes,function(){
+
         currentObjectId = parentId;
         if (toutlesensController && currentDisplayType && currentDisplayType == "CARDS") {
 
@@ -675,13 +680,14 @@ var infoGenericDisplay = (function () {
         }
 
         else {
-            var node = ids[parentJstreeId];
+             node = ids[parentJstreeId];
             self.showNodeData(node);
         }
-        var label = node.label
-     /*   if (node.data.label)
-            var label = node.data.label;*/
-        var matchStr = "match (n)-[r]-(m) where ID(m)=" + parentId + " and m.subGraph=\"" + self.subGraph + "\" return n,r limit " + limit;
+
+        /*   if (node.data.label)
+         var label = node.data.label;*/
+
+        var matchStr = "match (n)-[r]-(m) where ID(m)=" + parentId + " and m.subGraph=\"" + self.subGraph + "\" return n,r limit " + Gparams.jsTreeMaxChildNodes;
         var payload = {match: matchStr, parentLabel: label, parentId: parentId, limit: limit};
         self.callAPIproxy(payload, "retrieve", function (error, data) {
             var jsonData = self.formatResultToJtreeData(data, parentJstreeId, node.parents);
@@ -696,22 +702,22 @@ var infoGenericDisplay = (function () {
             }
 
         })
-
+        })
 
     }
 
-    self.findNodeByNeoId=function(neoId){
-            for(var key in ids){
-                if(ids[key].neoId==neoId)
-                    return ids[key];
-            }
+    self.findNodeByNeoId = function (neoId) {
+        for (var key in ids) {
+            if (ids[key].neoId == neoId)
+                return ids[key];
+        }
         return null;
     }
 
-    self.showNodeData = function (node,neoId) {
-        if( !node) {
-            node=self.findNodeByNeoId(neoId);
-            if(!node)
+    self.showNodeData = function (node, neoId) {
+        if (!node) {
+            node = self.findNodeByNeoId(neoId);
+            if (!node)
                 return;
         }
 

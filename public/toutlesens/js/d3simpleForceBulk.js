@@ -28,6 +28,7 @@
 var d3simpleForceBulk = (function () {
     var self = {};
     self.force;
+    var inPatternMode = false;
 
     self.initSimpleForceBulk = function (json) {
 
@@ -41,9 +42,14 @@ var d3simpleForceBulk = (function () {
         var linkNodeIndexes = [];
         for (var i = 0; i < forceData.nodes.length; i++) {
 
-            if (!patternNodes)// tous les noeuds visibility 1
+            if (!patternNodes) {// tous les noeuds visibility 1
                 forceData.nodes[i].belongsToPattern = true;
+                if (i == 0)
+                    inPatternMode = false;
+            }
             else if (patternNodes.indexOf(forceData.nodes[i].id) > -1) {
+                if (i == 0)
+                    inPatternMode = true;
                 forceData.nodes[i].belongsToPattern = true;
                 linkNodeIndexes.push(forceData.nodes[i].nodeIndex);
             }
@@ -107,9 +113,9 @@ var d3simpleForceBulk = (function () {
         var svg0 = d3.select(selector).append("svg:svg")
             .attr('width', w)
             .attr('height', h)
-           .on("click", function(){
-               self.force.stop()
-           })
+            .on("click", function () {
+                self.force.stop()
+            })
         svg = svg0.append("svg:g").attr("id", "canvas").call(zoomListener);
 
 
@@ -209,12 +215,28 @@ var d3simpleForceBulk = (function () {
                             return "brown";
                         })
                         .attr("stroke-width", function (d) {
-                            if (d.target.relProperties && d.target.relProperties.strength)
-                                return d.target.relProperties.strength * Gparams.relStrokeWidth;
+                            if (d.target.relProperties && d.target.relProperties[Gparams.visibleLinkProperty])
+                                return d.target.relProperties[Gparams.visibleLinkProperty] * Gparams.relStrokeWidth;
                             return;
                             Gparams.relStrokeWidth;
                         })
                         .attr("fill", "none")
+
+                        .style('opacity', function (d) {
+                            if (d.source.isRoot || d.target.isTarget)
+                                return 1;
+                            if (d.source.belongsToPattern || d.target.belongsToPattern)
+                                return 1;
+                            else {
+                                if (inPatternMode)
+                                    return Gparams.minOpacity;
+                                else if (drawLinks)
+                                    return 1;
+                                else
+                                    return Gparams.minOpacity;
+                            }
+                        })
+
                     ;
                 }
             });
@@ -237,11 +259,11 @@ var d3simpleForceBulk = (function () {
 
                     var anode = d3.select(this);
                     anode.append('svg:circle')
-                        .on("click", function(){
-                            currentObject=d;
-                           // currentDisplayType=
-                            toutlesensController.onVisButton("SIMPLE_FORCE_GRAPH",graphButton);
-                         //  d3common.d3CommonClick(d);
+                        .on("click", function () {
+                            currentObject = d;
+                            // currentDisplayType=
+                            toutlesensController.onVisButton("SIMPLE_FORCE_GRAPH", graphButton);
+                            //  d3common.d3CommonClick(d);
                         })
                         .attr("r", "5px")
                         .style("stroke", "black")
@@ -255,13 +277,19 @@ var d3simpleForceBulk = (function () {
                         })
 
                         .style('opacity', function (d) {
-                            //    console.log( d.label+"  :  "+d.belongsToPattern)
-                            if (d.belongsToPattern || drawLinks)
-                                return 1;
-                            return 0.2;
                             if (d.isRoot || d.isTarget)
                                 return 1;
-                            return Gparams.minOpacity;
+                            if (d.belongsToPattern)
+                                return 1;
+                            else {
+                                if (inPatternMode)
+                                    return Gparams.minOpacity;
+                                else if (drawLinks)
+                                    return 1;
+                                else
+                                    return Gparams.minOpacity;
+                            }
+
 
                         })
                         .attr("class", "shape");

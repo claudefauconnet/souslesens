@@ -334,8 +334,8 @@ var d3simpleForce = (function () {
                     })
 
                     .attr("stroke-width", function (d) {
-                        if (d.target.relProperties && d.target.relProperties.strength)
-                            return d.target.relProperties.strength * Gparams.relStrokeWidth;
+                        if (d.target.relProperties && d.target.relProperties[Gparams.visibleLinkProperty])
+                            return d.target.relProperties[Gparams.visibleLinkProperty] * Gparams.relStrokeWidth;
                         return Gparams.relStrokeWidth;
                     })
 

@@ -96,15 +96,18 @@ var advancedSearch = (function () {
             '</tr>' +
             '<tr>' +
             '<td><select id="dialogNodesLabelsSelect" size="15" class="ui-widget-content" ondblclick="' + callback + '(this)"></select></td><td>';
+        if (currentActionObj.currentTarget != "customQueryMatch") {
+            str += '<button onclick="advancedSearch.showNodeSelectionDialog()"> select a node</button>';
+            str += '<button onclick="advancedSearch.showSearchPropertyDialog()">add property filter</button><br>';
+
+        }
+
         if (callback) {
             str += '<button onclick="' + callback + '(this)">OK</button>';
         }
 
         str += '<button onclick=" advancedSearch.closeDialog()">Cancel</button><br>';
-        if (currentActionObj.currentTarget != "customQueryMatch") {
-            str += '<button onclick="advancedSearch.showSearchPropertyDialog()">add property filter</button><br>';
-            str += '<button onclick="advancedSearch.showNodeSelectionDialog()"> select a node</button>';
-        }
+
         str += '</td></tr></table>'
 
         $("#dialog").html(str);
@@ -150,8 +153,8 @@ var advancedSearch = (function () {
             + "onclick='advancedSearch.setNode(this)'><option>----------</option></select></td>";
         dialogStr += '<button onclick=" advancedSearch.closeDialog()">Cancel</button><br>';
         $("#dialog").html(dialogStr);
-
-        toutlesensData.searchNodes(currentActionObj.subGraph, currentActionObj[currentActionObj.currentTarget].label, currentActionObj[currentActionObj.currentTarget].property, "count");// 10000, 0);
+        toutlesensData.searchNodes(Schema.subGraph, currentActionObj[currentActionObj.currentTarget].label,null);
+    //    toutlesensData.searchNodes(Schema.subGraph, currentActionObj[currentActionObj.currentTarget].label, currentActionObj[currentActionObj.currentTarget].property, "count");// 10000, 0);
         $("#dialog").dialog("open");
 
 
@@ -397,6 +400,8 @@ var advancedSearch = (function () {
 
 
     self.getWhereProperty = function (str, nodeAlias) {
+        if(!str)
+            return "";
         var property = Gparams.defaultNodeNameProperty;
         var p = str.indexOf(":");
         var operator;
@@ -883,13 +888,14 @@ var advancedSearch = (function () {
 
     self.showBulkGraph = function (subGraph) {
         $("#graphBulkButton").addClass("displayIcon-selected");
+
         if (!currentActionObj) {
-            if (!Gparams.startWithBulkGraphView === true)
-                return;
-        }
-        currentActionObj = {
-            type: "pattern",
-        };
+            currentActionObj = {
+                type: "pattern",
+            };
+
+        }else
+            currentActionObj.type= "pattern";
 
 
         var matchAll = "MATCH path=(n)-[r]-(m) where n.subGraph='" + subGraph + "' ";

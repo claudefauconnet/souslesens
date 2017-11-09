@@ -40,7 +40,72 @@ var Schema = (function () {
     }
 
 // if no schema exists create one,store it and load it
-    self.load = function (subGraph, callback) {
+    self.load = function (_subGraph, callback) {
+        var subGraph = _subGraph;
+        if (!_subGraph)
+            subGraph = subGraph = queryParams.subGraph;
+        self.schema = {
+            labels: {},
+            relations: {},
+            properties: {},
+            mongoCollectionMapping: {},
+            fieldsSelectValues: {},
+            Gparams: {}
+        }
+
+
+        function initSchema(data, callback) {
+
+            if (data.result)
+                data = data.result;
+            if (data) {
+                if (typeof data !== "object")
+                    data = JSON.parse(data);
+
+
+                if (!data.defaultNodeNameProperty)
+                    data.defaultNodeNameProperty = "name";
+
+                for (var key in self.schema) {// pour completer le champs vides non enregistrés par Jquery
+                    if (!data[key])
+                        data[key] = {};
+                }
+
+
+                self.schema = data;
+                if (Gparams)
+                    Gparams.defaultNodeNameProperty = self.schema.defaultNodeNameProperty;
+                //name  used in UI but not stored
+                for (var key in self.schema.relations) {
+                    self.schema.relations[key].name = key
+                }
+
+                for (var key in self.schema.labels) {
+                    if (!self.schema.properties[key])
+                        self.schema.properties[key] = {};
+                    if (!self.schema.properties[key][self.schema.defaultNodeNameProperty])
+                        self.schema.properties[key][self.schema.defaultNodeNameProperty] = {
+                            "type": "text"
+                        }
+                }
+
+                self.setLabelsColor();
+                self.setLinkColors();
+                if (self.schema.Gparams) {
+                    for (var key in self.schema.Gparams) {
+                        Gparams[key] = self.schema.Gparams[key];
+                    }
+                }
+
+                Gparams.defaultNodeNameProperty = self.schema.defaultNodeNameProperty;
+
+                if (callback)
+                    callback(null, self.schema);
+
+            }
+
+        }
+
         self.subGraph = subGraph;
         var payload = {
             retrieve: 1,
@@ -48,84 +113,33 @@ var Schema = (function () {
 
         }
         $.ajax(Schema.serverUrl + '/jsonFileStorage', {
-                data: payload,
-                dataType: "json",
-                type: 'POST',
-                error: function (error, ajaxOptions, thrownError) {
-                    console.log(error);
-                    self.schema = {
-                        labels: {},
-                        relations: {},
-                        properties: {},
-                        mongoCollectionMapping: {},
-                        fieldsSelectValues: {}
-                    }
-                    if (dataModel) {// if no schema exists create one,store it and load it
-                        self.generateNeoImplicitSchema(subGraph, true, function (err, result) {
-                            self.load(subGraph, function (err, result) {
-                                if (err)
-                                    return callback(err);
-                                else
-                                    return callback(null, self.schema)
+            data: payload,
+            dataType: "json",
+            type: 'POST',
 
-                            })
-                        });
+
+            error: function (error, ajaxOptions, thrownError) {
+                // if schema does not exist we create one by analyzing Neo4j db content
+                console.log(error);
+
+                self.generateNeoImplicitSchema(subGraph, true, function (err, _schema) {
+                    if (err)
+                        return callback(err);
+                    else {
+                        initSchema(_schema, callback);
 
                     }
-
-                    if (callback)
-                        callback(error);
-
-                }
-                ,
-                success: function (data) {
-                    if (data.result)
-                        data = data.result;
-                    if (data) {
-                        if (typeof data !== "object")
-                            data = JSON.parse(data);
+                })
 
 
-                        if (!data.defaultNodeNameProperty)
-                            data.defaultNodeNameProperty = "name";
-
-                        for (var key in self.schema) {// pour completer le champs vides non enregistrés par Jquery
-                            if (!data[key])
-                                data[key] = {};
-                        }
-
-
-                        self.schema = data;
-                        if (Gparams)
-                            Gparams.defaultNodeNameProperty = self.schema.defaultNodeNameProperty;
-                        //name  used in UI but not stored
-                        for (var key in self.schema.relations) {
-                            self.schema.relations[key].name = key
-                        }
-
-                        for (var key in self.schema.labels) {
-                            if (!self.schema.properties[key])
-                                self.schema.properties[key] = {};
-                            if (!self.schema.properties[key][self.schema.defaultNodeNameProperty])
-                                self.schema.properties[key][self.schema.defaultNodeNameProperty] = {
-                                    "type": "text"
-                                }
-                        }
-
-                        self.setLabelsColor();
-                        self.setLinkColors();
-
-                        Gparams.defaultNodeNameProperty = self.schema.defaultNodeNameProperty;
-
-                        if (callback)
-                            callback(null, self.schema);
-
-                    }
-
-                }
+            },
+            success: function (_schema) {
+                //if schema has been found and loaded
+                initSchema(_schema, callback);
             }
-        )
+        })
     }
+
 
     self.save = function (subGraph, json, callback) {
         if (!json)
@@ -323,24 +337,26 @@ var Schema = (function () {
         if (oldRelations)
             relations = oldRelations;
         for (var key in relations) {
-            var relations = relations[key];
-            for (var i = 0; i < relations.length; i++) {
-                var relation = relations[i];
-                if (relation.direction == "inverse")
-                    continue;
-                delete relation.direction;
-                var name = key;
-                if (i > 0)
-                    var name = key + "#" + (i);
 
-                relation.type = key;
-                relationsNewModel[name] = relation;
+            var relations2 = relations[key];
+            if (relations2) {
+                for (var i = 0; i < relations2.length; i++) {
+                    var relation = relations2[i];
+                    if (relation.direction == "inverse")
+                        continue;
+                    delete relation.direction;
+                    var name = key;
+                    if (i > 0)
+                        var name = key + "#" + (i);
 
+                    relation.type = key;
+                    relationsNewModel[name] = relation;
 
+                }
             }
         }
 
-        console.log(JSON.stringify(self.schema, undefined, 4));
+        //      console.log(JSON.stringify(self.schema, undefined, 4));
 
         if (confirm("save new Schema ?")) {
             self.schema.relations = relationsNewModel;
@@ -380,7 +396,8 @@ var Schema = (function () {
                 relations: self.updateRelationsModel(dataModel.allRelations),
                 properties: properties,
                 fieldsSelectValues: {},
-                defaultNodeNameProperty: "name"
+                defaultNodeNameProperty: "name",
+                Gparams: {}
 
             }
             if (save) {

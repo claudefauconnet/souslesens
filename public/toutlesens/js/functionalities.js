@@ -28,6 +28,7 @@
 var functionalities = (function(){
  var self = {};
 
+
    self.initFunctionalities=function(){
     var profile=Gparams.profiles[Gparams.currentProfile];
 self.hideFunctionalities(profile);

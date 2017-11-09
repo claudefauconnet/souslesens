@@ -53,6 +53,10 @@ var customizeUI = (function () {
 
     }
     self.init = function () {
+
+
+
+
     if( queryParams.sinequaCallbackUrl)
         customizeUI.customizationName="Sinequa";
     }
@@ -89,7 +93,8 @@ var customizeUI = (function () {
 
         }
         else{
-            advancedSearch.showBulkGraph(subGraph)
+            if(Gparams.startWithBulkGraphView)
+             advancedSearch.showBulkGraph(subGraph);
         }
 
 

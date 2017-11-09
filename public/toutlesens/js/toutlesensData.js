@@ -1056,8 +1056,8 @@ var toutlesensData = (function () {
         }
         var str = "";
         var subGraphWhere = "";
-        if (!word)
-            word = "";
+      /*  if (!word)
+            word = "";*/
         var returnStr = " RETURN n";//,id(n) as n_id,labels(n) as n_labels";
         var cursorStr = "";
         if (resultType == "count")

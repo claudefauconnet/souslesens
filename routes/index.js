@@ -381,7 +381,8 @@ function processResponse(response, error, result) {
                 }
                 else {
                     var resultObj = result;
-                    response.send(JSON.stringify(resultObj));
+                   // response.send(JSON.stringify(resultObj));
+                    response.send(resultObj);
                 }
             }
         }

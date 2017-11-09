@@ -25,19 +25,22 @@
  *
  ******************************************************************************/
 var Gparams = {
+
+    visibleLinkProperty:"count",
     logLevel:5,
     readOnly: true,
     showRelationAttrs:true,
     maxNodesForRelNamesOnGraph:20,
-    startWithBulkGraphView: true,
+    startWithBulkGraphView: false,
     defaultNodeNameProperty:"name",
     defaultQueryDepth:2,
     bulkGraphViewMaxNodesToDrawLinks:1000,
+    jsTreeMaxChildNodes:300,
     defaultGraphtype:"FLOWER",
     graphNavigationMode: "expandNode",
     wholeGraphViewMaxNodes: 5000,
     modifyMode: 'onList',//''onList'
-    MaxResults: 5000,
+    MaxResults: 1000,
     lang: "EN",
 
 
@@ -69,7 +72,7 @@ var Gparams = {
     curveOffset: 40,
     relStrokeWidth: 4,
     legendWidth: 200,
-    minOpacity: .5,
+    minOpacity: .3,
     d3ForceParams: {distance: 200, charge: -500, gravity: .25},
     htmlOutputWithAttrs: true,
     showRelationNames: false,

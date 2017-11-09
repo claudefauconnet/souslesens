@@ -32,6 +32,7 @@ var socket = require('../routes/socket.js');
 var async = require('async');
 var fs = require("fs");
 var serverParams = require("./serverParams.js");
+var util=require("./util");
 var totalLines = 0;
 var neoMappings = [];
 var distinctNames = [];
@@ -75,7 +76,7 @@ var exportMongoToNeo = {
                 var obj = data[i];
                 if (obj._id)
                     obj.mongoId = "" + obj._id;
-                delete obj._id;
+            //    delete obj._id;
                 var nameMongoFieldValue = obj[nameMongoField];
                 //   console.log(nameMongoFieldValue+"   "+(countNodes++));
                 if (!nameMongoFieldValue) {
@@ -268,7 +269,7 @@ var exportMongoToNeo = {
 
                 var obj = data[i];
                 obj.neoId = obj._id;
-                delete obj._id;
+               // delete obj._id;
 
 
                 var neoIdStart = params.nodeMappings["_" + obj[mongoSourceField]];

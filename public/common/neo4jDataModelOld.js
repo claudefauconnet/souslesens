@@ -172,14 +172,26 @@ var dataModel = (function () {
 
 
                         }
+                        Schema.load(subGraph, function (err, schema) {
+                            if (callback) {
+                                if (Array.isArray(callback)) {
+                                    for (var i = 0; i < callback.length; i++) {
+                                        if (callback[i])
+                                            callback[i](subGraph);
+                                    }
+                                }
+                                else {
+                                    callback(subGraph);
+                                    toutlesensController.appInitEnded = true;
+                                }
+                            }
+                            toutlesensController.appInitEnded=true;
 
-                        callback(null,dataModel);
-
+                        })
 
                     }
                     ,
                     error: function (xhr, err, msg) {
-                        callback(null);
                         console.log(xhr);
                         console.log(err);
                         console.log(msg);

@@ -308,3 +308,167 @@ info [Tue Oct 31 2017 09:17:16 GMT+0100 (Paris, Madrid)]  classifier done :D:\Gi
 
 
 
+
+
+info [Tue Oct 31 2017 19:18:00 GMT+0100 (Paris, Madrid)]  searching most frequent words in index referentiel
+info [Tue Oct 31 2017 19:18:01 GMT+0100 (Paris, Madrid)]  Most frequentwords ["shall","be","to","for","with","or","as","by","all","at","is","not","this","from","company","equipment","any","that","used","requirements","test","each","system","minimum","if","an","following","gs","design","provided","required","specification","when","ep","case","it","have","during","per","control","tests","accordance","performed","than","out","welding","such","pressure"]
+info [Tue Oct 31 2017 19:18:01 GMT+0100 (Paris, Madrid)]  searching SKOS concepts in Ontology :DBPEDIA... 
+info [Tue Oct 31 2017 19:22:02 GMT+0100 (Paris, Madrid)]  parent concepts found Shall,Be,To,For,With,Or,As,By,All,At,Is,Not,This,From,Company,Equipment,Any,That,Used,Requirements,Test,Each,System,Minimum,If,An,Following,Gs,Design,Provided,Required,Specification,When,Ep,Case,It,Have,During,Per,Control,Tests,Accordance,Performed,Than,Out,Welding,Such,Pressure
+info [Tue Oct 31 2017 19:22:02 GMT+0100 (Paris, Madrid)]  put doc ids for each concepts 
+info [Tue Oct 31 2017 19:22:02 GMT+0100 (Paris, Madrid)]  searching most frequent words in index referentiel
+info [Tue Oct 31 2017 19:22:02 GMT+0100 (Paris, Madrid)]  searching most frequent words in index referentiel
+info [Tue Oct 31 2017 19:22:02 GMT+0100 (Paris, Madrid)]  Most frequentwords ["shall","be","to","for","with","or","as","by","all","at","is","not","this","from","company","equipment","any","that","used","requirements","test","each","system","minimum","if","an","following","gs","design","provided","required","specification","when","ep","case","it","have","during","per","control","tests","accordance","performed","than","out","welding","such","pressure"]
+info [Tue Oct 31 2017 19:22:02 GMT+0100 (Paris, Madrid)]  searching SKOS concepts in Ontology :DBPEDIA... 
+info [Tue Oct 31 2017 19:22:02 GMT+0100 (Paris, Madrid)]  Most frequentwords ["shall","be","to","for","with","or","as","by","all","at","is","not","this","from","company","equipment","any","that","used","requirements","test","each","system","minimum","if","an","following","gs","design","provided","required","specification","when","ep","case","it","have","during","per","control","tests","accordance","performed","than","out","welding","such","pressure","specified","which","pipe","one","between","other","according","weld","mm","conditions","material","defined","contractor","may","installation","made","approval","steel","these","project","manufacturer","section","maximum","temperature","supplier","installed","inspection","procedure","operation","including","designed","valve","process","after","particular","order","safety","load","testing","protection","up","least","include","only","cable","where","into","two","no","comply","same","analysis","they","line","also","unless","level","above","power","valves","thickness","time","piping","use","its","without","carried","components","will","electrical","standard","otherwise","site","approved","cables","considered","their","full","specific","heat","subject","before","provide","supply","service","welds","materials","using","ensure","maintenance","within","can","operating","parts","prior","number","necessary","applicable","general","submitted","area","connection","acceptance","under","iec","appendix","gas","table","based","detailed","loads","structure","taken","ins","allow","main","water","s","account","end","less","length","connections","access","mechanical","qualification","voltage","position","supplied","engineering","pipes","surface","systems","connected","instrument","class","so","set","below","welded","production","location","both","internal","assembly"]
+info [Tue Oct 31 2017 19:22:02 GMT+0100 (Paris, Madrid)]  searching SKOS concepts in Ontology :DBPEDIA... 
+info [Tue Oct 31 2017 19:22:11 GMT+0100 (Paris, Madrid)]  parent concepts found Shall,Be,To,For,With,Or,As,By,All,At,Is,Not,This,From,Company,Equipment,Any,That,Used,Requirements,Test,Each,System,Minimum,If,An,Following,Gs,Design,Provided,Required,Specification,When,Ep,Case,It,Have,During,Per,Control,Tests,Accordance,Performed,Than,Out,Welding,Such,Pressure
+info [Tue Oct 31 2017 19:22:11 GMT+0100 (Paris, Madrid)]  put doc ids for each concepts 
+info [Tue Oct 31 2017 19:22:19 GMT+0100 (Paris, Madrid)]  classifier done :D:\GitHub\souslesens\bin\rdf\classifiers\referentiel_BNF.json
+info [Tue Oct 31 2017 19:22:23 GMT+0100 (Paris, Madrid)]  classifier done :D:\GitHub\souslesens\bin\rdf\classifiers\referentiel_BNF.json
+info [Tue Oct 31 2017 19:22:35 GMT+0100 (Paris, Madrid)]  parent concepts found Shall,Be,To,For,With,Or,As,By,All,At,Is,Not,This,From,Company,Equipment,Any,That,Used,Requirements,Test,Each,System,Minimum,If,An,Following,Gs,Design,Provided,Required,Specification,When,Ep,Case,It,Have,During,Per,Control,Tests,Accordance,Performed,Than,Out,Welding,Such,Pressure,Specified,Which,Pipe,One,Between,Other,According,Weld,Mm,Conditions,Material,Defined,Contractor,May,Installation,Made,Approval,Steel,These,Project,Manufacturer,Section,Maximum,Temperature,Supplier,Installed,Inspection,Procedure,Operation,Including,Designed,Valve,Process,After,Particular,Order,Safety,Load,Testing,Protection,Up,Least,Include,Only,Cable,Where,Into,Two,No,Comply,Same,Analysis,They,Line,Also,Unless,Level,Above,Power,Valves,Thickness,Time,Piping,Use,Its,Without,Carried,Components,Will,Electrical,Standard,Otherwise,Site,Approved,Cables,Considered,Their,Full,Specific,Heat,Subject,Before,Provide,Supply,Service,Welds,Materials,Using,Ensure,Maintenance,Within,Can,Operating,Parts,Prior,Number,Necessary,Applicable,General,Submitted,Area,Connection,Acceptance,Under,Iec,Appendix,Gas,Table,Based,Detailed,Loads,Structure,Taken,Ins,Allow,Main,Water,S,Account,End,Less,Length,Connections,Access,Mechanical,Qualification,Voltage,Position,Supplied,Engineering,Pipes,Surface,Systems,Connected,Instrument,Class,So,Set,Below,Welded,Production,Location,Both,Internal,Assembly
+info [Tue Oct 31 2017 19:22:35 GMT+0100 (Paris, Madrid)]  put doc ids for each concepts 
+info [Tue Oct 31 2017 19:22:54 GMT+0100 (Paris, Madrid)]  classifier done :D:\GitHub\souslesens\bin\rdf\classifiers\referentiel_BNF.json
+info [Tue Oct 31 2017 19:23:10 GMT+0100 (Paris, Madrid)]  searching most frequent words in index referentiel
+info [Tue Oct 31 2017 19:23:10 GMT+0100 (Paris, Madrid)]  Most frequentwords ["shall","be","to","for","with","or","as","by","all","at","is","not","this","from","company","equipment","any","that","used","requirements","test","each","system","minimum","if","an","following","gs","design","provided","required","specification","when","ep","case","it","have","during","per","control","tests","accordance","performed","than","out","welding","such","pressure","specified","which","pipe","one","between","other","according","weld","mm","conditions","material","defined","contractor","may","installation","made","approval","steel","these","project","manufacturer","section","maximum","temperature","supplier","installed","inspection","procedure","operation","including","designed","valve","process","after","particular","order","safety","load","testing","protection","up","least","include","only","cable","where","into","two","no","comply","same","analysis","they","line","also","unless","level","above","power","valves","thickness","time","piping","use","its","without","carried","components","will","electrical","standard","otherwise","site","approved","cables","considered","their","full","specific","heat","subject","before","provide","supply","service","welds","materials","using","ensure","maintenance","within","can","operating","parts","prior","number","necessary","applicable","general","submitted","area","connection","acceptance","under","iec","appendix","gas","table","based","detailed","loads","structure","taken","ins","allow","main","water","s","account","end","less","length","connections","access","mechanical","qualification","voltage","position","supplied","engineering","pipes","surface","systems","connected","instrument","class","so","set","below","welded","production","location","both","internal","assembly"]
+info [Tue Oct 31 2017 19:23:10 GMT+0100 (Paris, Madrid)]  searching SKOS concepts in Ontology :DBPEDIA... 
+info [Tue Oct 31 2017 19:23:39 GMT+0100 (Paris, Madrid)]  parent concepts found Shall,Be,To,For,With,Or,As,By,All,At,Is,Not,This,From,Company,Equipment,Any,That,Used,Requirements,Test,Each,System,Minimum,If,An,Following,Gs,Design,Provided,Required,Specification,When,Ep,Case,It,Have,During,Per,Control,Tests,Accordance,Performed,Than,Out,Welding,Such,Pressure,Specified,Which,Pipe,One,Between,Other,According,Weld,Mm,Conditions,Material,Defined,Contractor,May,Installation,Made,Approval,Steel,These,Project,Manufacturer,Section,Maximum,Temperature,Supplier,Installed,Inspection,Procedure,Operation,Including,Designed,Valve,Process,After,Particular,Order,Safety,Load,Testing,Protection,Up,Least,Include,Only,Cable,Where,Into,Two,No,Comply,Same,Analysis,They,Line,Also,Unless,Level,Above,Power,Valves,Thickness,Time,Piping,Use,Its,Without,Carried,Components,Will,Electrical,Standard,Otherwise,Site,Approved,Cables,Considered,Their,Full,Specific,Heat,Subject,Before,Provide,Supply,Service,Welds,Materials,Using,Ensure,Maintenance,Within,Can,Operating,Parts,Prior,Number,Necessary,Applicable,General,Submitted,Area,Connection,Acceptance,Under,Iec,Appendix,Gas,Table,Based,Detailed,Loads,Structure,Taken,Ins,Allow,Main,Water,S,Account,End,Less,Length,Connections,Access,Mechanical,Qualification,Voltage,Position,Supplied,Engineering,Pipes,Surface,Systems,Connected,Instrument,Class,So,Set,Below,Welded,Production,Location,Both,Internal,Assembly
+info [Tue Oct 31 2017 19:23:39 GMT+0100 (Paris, Madrid)]  put doc ids for each concepts 
+info [Tue Oct 31 2017 19:23:56 GMT+0100 (Paris, Madrid)]  classifier done :D:\GitHub\souslesens\bin\rdf\classifiers\referentiel_BNF.json
+info [Tue Oct 31 2017 19:24:02 GMT+0100 (Paris, Madrid)]  searching most frequent words in index referentiel
+info [Tue Oct 31 2017 19:24:02 GMT+0100 (Paris, Madrid)]  Most frequentwords ["shall","be","to","for","with","or","as","by","all","at","is","not","this","from","company","equipment","any","that","used","requirements","test","each","system","minimum","if","an","following","gs","design","provided","required","specification","when","ep","case","it","have","during","per","control","tests","accordance","performed","than","out","welding","such","pressure"]
+info [Tue Oct 31 2017 19:24:02 GMT+0100 (Paris, Madrid)]  searching SKOS concepts in Ontology :DBPEDIA... 
+info [Tue Oct 31 2017 19:24:10 GMT+0100 (Paris, Madrid)]  parent concepts found Shall,Be,To,For,With,Or,As,By,All,At,Is,Not,This,From,Company,Equipment,Any,That,Used,Requirements,Test,Each,System,Minimum,If,An,Following,Gs,Design,Provided,Required,Specification,When,Ep,Case,It,Have,During,Per,Control,Tests,Accordance,Performed,Than,Out,Welding,Such,Pressure
+info [Tue Oct 31 2017 19:24:10 GMT+0100 (Paris, Madrid)]  put doc ids for each concepts 
+info [Tue Oct 31 2017 19:24:18 GMT+0100 (Paris, Madrid)]  classifier done :D:\GitHub\souslesens\bin\rdf\classifiers\referentiel_BNF.json
+info [Tue Oct 31 2017 19:25:10 GMT+0100 (Paris, Madrid)]  searching most frequent words in index referentiel
+info [Tue Oct 31 2017 19:25:10 GMT+0100 (Paris, Madrid)]  Most frequentwords ["shall","be","to","for","with","or","as","by","all","at","is","not","this","from","company","equipment","any","that","used","requirements","test","each","system","minimum","if","an","following","gs","design","provided","required","specification","when","ep","case","it","have","during","per","control","tests","accordance","performed","than","out","welding","such","pressure","specified","which","pipe","one","between","other","according","weld","mm","conditions","material","defined","contractor","may","installation","made","approval","steel","these","project","manufacturer","section","maximum","temperature","supplier","installed","inspection","procedure","operation","including","designed","valve","process","after","particular","order","safety","load","testing","protection","up","least","include","only","cable","where","into","two","no","comply","same","analysis","they","line","also","unless","level","above","power","valves","thickness","time","piping","use","its","without","carried","components","will","electrical","standard","otherwise","site","approved","cables","considered","their","full","specific","heat","subject","before","provide","supply","service","welds","materials","using","ensure","maintenance","within","can","operating","parts","prior","number","necessary","applicable","general","submitted","area","connection","acceptance","under","iec","appendix","gas","table","based","detailed","loads","structure","taken","ins","allow","main","water","s","account","end","less","length","connections","access","mechanical","qualification","voltage","position","supplied","engineering","pipes","surface","systems","connected","instrument","class","so","set","below","welded","production","location","both","internal","assembly"]
+info [Tue Oct 31 2017 19:25:10 GMT+0100 (Paris, Madrid)]  searching SKOS concepts in Ontology :DBPEDIA... 
+
+info [Tue Oct 31 2017 19:27:32 GMT+0100 (Paris, Madrid)]  searching most frequent words in index referentiel
+info [Tue Oct 31 2017 19:27:32 GMT+0100 (Paris, Madrid)]  Most frequentwords ["company","equipment","requirements","test","system","minimum","following","gs","design","provided","required","specification","ep","it","per","control","tests","accordance","performed","out","welding","such","pressure","specified","which","pipe","one","between","other","according","weld","mm","conditions","material","defined","contractor","may","installation","made","approval","steel","these","project","manufacturer","section","maximum","temperature","supplier","installed","inspection","procedure","operation","including","designed","valve","process","after","particular","order","safety","load","testing","protection","up","least","include","only","cable","where","into","two","no","comply","same","analysis","they","line","also","unless","level","above","power","valves","thickness","time","piping","use","its","without","carried","components","will","electrical","standard","otherwise"]
+info [Tue Oct 31 2017 19:27:32 GMT+0100 (Paris, Madrid)]  searching SKOS concepts in Ontology :DBPEDIA... 
+info [Tue Oct 31 2017 19:27:46 GMT+0100 (Paris, Madrid)]  parent concepts found Company,Equipment,Requirements,Test,System,Minimum,Following,Gs,Design,Provided,Required,Specification,Ep,It,Per,Control,Tests,Accordance,Performed,Out,Welding,Such,Pressure,Specified,Which,Pipe,One,Between,Other,According,Weld,Mm,Conditions,Material,Defined,Contractor,May,Installation,Made,Approval,Steel,These,Project,Manufacturer,Section,Maximum,Temperature,Supplier,Installed,Inspection,Procedure,Operation,Including,Designed,Valve,Process,After,Particular,Order,Safety,Load,Testing,Protection,Up,Least,Include,Only,Cable,Where,Into,Two,No,Comply,Same,Analysis,They,Line,Also,Unless,Level,Above,Power,Valves,Thickness,Time,Piping,Use,Its,Without,Carried,Components,Will,Electrical,Standard,Otherwise
+info [Tue Oct 31 2017 19:27:46 GMT+0100 (Paris, Madrid)]  put doc ids for each concepts 
+info [Tue Oct 31 2017 19:27:54 GMT+0100 (Paris, Madrid)]  classifier done :D:\GitHub\souslesens\bin\rdf\classifiers\referentiel_BNF.json
+info [Tue Oct 31 2017 19:29:32 GMT+0100 (Paris, Madrid)]  searching most frequent words in index referentiel
+info [Tue Oct 31 2017 19:29:32 GMT+0100 (Paris, Madrid)]  Most frequentwords ["company","equipment","requirements","test","system","minimum","following","gs","design","provided","required","specification","ep","it","per","control","tests","accordance","performed","out","welding","such","pressure","specified","which","pipe","one","between","other","according","weld","mm","conditions","material","defined","contractor","may","installation","made","approval","steel","these","project","manufacturer","section","maximum","temperature","supplier","installed","inspection","procedure","operation","including","designed","valve","process","after","particular","order","safety","load","testing","protection","up","least","include","only","cable","where","into","two","no","comply","same","analysis","they","line","also","unless","level","above","power","valves","thickness","time","piping","use","its","without","carried","components","will","electrical","standard","otherwise"]
+info [Tue Oct 31 2017 19:29:32 GMT+0100 (Paris, Madrid)]  searching SKOS concepts in Ontology :DBPEDIA... 
+info [Tue Oct 31 2017 19:29:46 GMT+0100 (Paris, Madrid)]  parent concepts found Company,Equipment,Requirements,Test,System,Minimum,Following,Gs,Design,Provided,Required,Specification,Ep,It,Per,Control,Tests,Accordance,Performed,Out,Welding,Such,Pressure,Specified,Which,Pipe,One,Between,Other,According,Weld,Mm,Conditions,Material,Defined,Contractor,May,Installation,Made,Approval,Steel,These,Project,Manufacturer,Section,Maximum,Temperature,Supplier,Installed,Inspection,Procedure,Operation,Including,Designed,Valve,Process,After,Particular,Order,Safety,Load,Testing,Protection,Up,Least,Include,Only,Cable,Where,Into,Two,No,Comply,Same,Analysis,They,Line,Also,Unless,Level,Above,Power,Valves,Thickness,Time,Piping,Use,Its,Without,Carried,Components,Will,Electrical,Standard,Otherwise
+info [Tue Oct 31 2017 19:29:46 GMT+0100 (Paris, Madrid)]  put doc ids for each concepts 
+info [Tue Oct 31 2017 19:29:55 GMT+0100 (Paris, Madrid)]  classifier done :D:\GitHub\souslesens\bin\rdf\classifiers\referentiel_BNF.json
+
+info [Tue Oct 31 2017 19:31:59 GMT+0100 (Paris, Madrid)]  searching most frequent words in index referentiel
+info [Tue Oct 31 2017 19:31:59 GMT+0100 (Paris, Madrid)]  Most frequentwords ["company","equipment","requirements","test","system","minimum","following","gs","design","provided"]
+info [Tue Oct 31 2017 19:31:59 GMT+0100 (Paris, Madrid)]  searching SKOS concepts in Ontology :DBPEDIA... 
+info [Tue Oct 31 2017 19:32:00 GMT+0100 (Paris, Madrid)]  parent concepts found Company,Equipment,Requirements,Test,System,Minimum,Following,Gs,Design,Provided
+info [Tue Oct 31 2017 19:32:00 GMT+0100 (Paris, Madrid)]  put doc ids for each concepts 
+info [Tue Oct 31 2017 19:32:07 GMT+0100 (Paris, Madrid)]  classifier done :D:\GitHub\souslesens\bin\rdf\classifiers\referentiel_BNF.json
+info [Tue Oct 31 2017 19:32:41 GMT+0100 (Paris, Madrid)]  searching most frequent words in index referentiel
+info [Tue Oct 31 2017 19:32:41 GMT+0100 (Paris, Madrid)]  Most frequentwords ["company","equipment","requirements","test","system","minimum","following","gs","design","provided"]
+info [Tue Oct 31 2017 19:32:41 GMT+0100 (Paris, Madrid)]  searching SKOS concepts in Ontology :DBPEDIA... 
+
+info [Tue Oct 31 2017 19:36:51 GMT+0100 (Paris, Madrid)]  searching most frequent words in index referentiel
+info [Tue Oct 31 2017 19:36:51 GMT+0100 (Paris, Madrid)]  Most frequentwords ["company","equipment","requirements","test","system","minimum","following","gs","design","provided"]
+
+info [Tue Oct 31 2017 19:39:20 GMT+0100 (Paris, Madrid)]  searching most frequent words in index referentiel
+info [Tue Oct 31 2017 19:39:20 GMT+0100 (Paris, Madrid)]  Most frequentwords ["company","equipment","requirements","test","system","minimum","following","gs","design","provided"]
+info [Tue Oct 31 2017 19:39:20 GMT+0100 (Paris, Madrid)]  searching SKOS concepts in Ontology :DBPEDIA... 
+info [Tue Oct 31 2017 19:39:51 GMT+0100 (Paris, Madrid)]  ERRORSyntaxError: Unexpected token V in JSON at position 0
+
+info [Tue Oct 31 2017 19:42:14 GMT+0100 (Paris, Madrid)]  searching most frequent words in index referentiel
+info [Tue Oct 31 2017 19:42:14 GMT+0100 (Paris, Madrid)]  Most frequentwords ["company","equipment","requirements","test","system","minimum","following","gs","design","provided"]
+info [Tue Oct 31 2017 19:42:14 GMT+0100 (Paris, Madrid)]  searching SKOS concepts in Ontology :DBPEDIA... 
+info [Tue Oct 31 2017 19:42:16 GMT+0100 (Paris, Madrid)]  parent concepts found Company,Equipment,Requirements,Test,System,Minimum,Following,Gs,Design,Provided
+info [Tue Oct 31 2017 19:42:16 GMT+0100 (Paris, Madrid)]  put doc ids for each concepts 
+info [Tue Oct 31 2017 19:42:26 GMT+0100 (Paris, Madrid)]  classifier done :D:\GitHub\souslesens\bin\rdf\classifiers\referentiel_BNF.json
+info [Tue Oct 31 2017 19:44:14 GMT+0100 (Paris, Madrid)]  searching most frequent words in index referentiel
+info [Tue Oct 31 2017 19:44:14 GMT+0100 (Paris, Madrid)]  Most frequentwords ["company","equipment","requirements","test","system","minimum","following","gs","design","provided"]
+info [Tue Oct 31 2017 19:44:14 GMT+0100 (Paris, Madrid)]  searching SKOS concepts in Ontology :DBPEDIA... 
+info [Tue Oct 31 2017 19:44:15 GMT+0100 (Paris, Madrid)]  parent concepts found Company,Equipment,Requirements,Test,System,Minimum,Following,Gs,Design,Provided
+info [Tue Oct 31 2017 19:44:15 GMT+0100 (Paris, Madrid)]  put doc ids for each concepts 
+info [Tue Oct 31 2017 19:44:17 GMT+0100 (Paris, Madrid)]  classifier done :D:\GitHub\souslesens\bin\rdf\classifiers\referentiel_BNF.json
+info [Tue Oct 31 2017 19:44:21 GMT+0100 (Paris, Madrid)]  searching most frequent words in index referentiel
+info [Tue Oct 31 2017 19:44:21 GMT+0100 (Paris, Madrid)]  Most frequentwords ["company","equipment","requirements","test","system","minimum","following","gs","design","provided","required","specification","ep","it","per","control","tests","accordance","performed","out","welding","such","pressure","specified","which","pipe","one","between","other","according","weld","mm","conditions","material","defined","contractor","may","installation","made","approval","steel","these","project","manufacturer","section","maximum","temperature","supplier","installed","inspection","procedure","operation","including","designed","valve","process","after","particular","order","safety","load","testing","protection","up","least","include","only","cable","where","into","two","no","comply","same","analysis","they","line","also","unless","level","above","power","valves","thickness","time","piping","use","its","without","carried","components","will","electrical","standard","otherwise","site","approved","cables","considered","their","full","specific","heat","subject","before","provide","supply","service","welds","materials","using","ensure","maintenance","within","can","operating","parts","prior","number","necessary","applicable","general","submitted","area","connection","acceptance","under","iec","appendix","gas","table","based","detailed","loads","structure","taken","ins","allow","main","water","s","account","end","less","length","connections","access","mechanical","qualification","voltage","position","supplied","engineering","pipes","surface","systems","connected","instrument","class","so","set","below","welded","production","location","both","internal","assembly","applied","iso","fully","located","procedures","devices","tested","e.g","diameter","current","asme","circuit","documents","i.e","exceed","drawings","complete","unit","fabrication","corrosion","air","high","associated","metal","final"]
+info [Tue Oct 31 2017 19:44:21 GMT+0100 (Paris, Madrid)]  searching SKOS concepts in Ontology :DBPEDIA... 
+info [Tue Oct 31 2017 19:44:50 GMT+0100 (Paris, Madrid)]  parent concepts found Company,Equipment,Requirements,Test,System,Minimum,Following,Gs,Design,Provided,Required,Specification,Ep,It,Per,Control,Tests,Accordance,Performed,Out,Welding,Such,Pressure,Specified,Which,Pipe,One,Between,Other,According,Weld,Mm,Conditions,Material,Defined,Contractor,May,Installation,Made,Approval,Steel,These,Project,Manufacturer,Section,Maximum,Temperature,Supplier,Installed,Inspection,Procedure,Operation,Including,Designed,Valve,Process,After,Particular,Order,Safety,Load,Testing,Protection,Up,Least,Include,Only,Cable,Where,Into,Two,No,Comply,Same,Analysis,They,Line,Also,Unless,Level,Above,Power,Valves,Thickness,Time,Piping,Use,Its,Without,Carried,Components,Will,Electrical,Standard,Otherwise,Site,Approved,Cables,Considered,Their,Full,Specific,Heat,Subject,Before,Provide,Supply,Service,Welds,Materials,Using,Ensure,Maintenance,Within,Can,Operating,Parts,Prior,Number,Necessary,Applicable,General,Submitted,Area,Connection,Acceptance,Under,Iec,Appendix,Gas,Table,Based,Detailed,Loads,Structure,Taken,Ins,Allow,Main,Water,S,Account,End,Less,Length,Connections,Access,Mechanical,Qualification,Voltage,Position,Supplied,Engineering,Pipes,Surface,Systems,Connected,Instrument,Class,So,Set,Below,Welded,Production,Location,Both,Internal,Assembly,Applied,Iso,Fully,Located,Procedures,Devices,Tested,E.g,Diameter,Current,Asme,Circuit,Documents,I.e,Exceed,Drawings,Complete,Unit,Fabrication,Corrosion,Air,High,Associated,Metal,Final
+info [Tue Oct 31 2017 19:44:50 GMT+0100 (Paris, Madrid)]  put doc ids for each concepts 
+info [Tue Oct 31 2017 19:45:02 GMT+0100 (Paris, Madrid)]  classifier done :D:\GitHub\souslesens\bin\rdf\classifiers\referentiel_BNF.json
+info [Tue Oct 31 2017 19:47:54 GMT+0100 (Paris, Madrid)]  searching most frequent words in index jfm
+info [Tue Oct 31 2017 19:47:54 GMT+0100 (Paris, Madrid)]  Most frequentwords ["être","temps","vie","sens","voir","nature","lieu","société","premier","comment","pouvoir","hommes","paris","partie","social","première","vue","laquelle","question","effet","partir","compte","fonction","trouve","rapport","parce","système","façon","chose","force","culture","mort","fin","grand","seul","religion","pourquoi","sorte","formes","nom","semble","sociale","manière","donne","font","moment","savoir","cours","rituel","principe","terme","choses","raison","relation","reste","nouvelle","pensée","nouveau","comprendre","prendre","ensemble","termes","dieu","vient","personne","sociétés","théorie","devient","corps","grande","l’autre","réalité","centre","cause","sacrifice","chacun","sacré","contraire","passe","religieux","qu’ils","recherche","caractère","processus","éléments","donner","double","rendre","rites","certaines","passage","moyen","présente","structure","humain","met","n’a","relations","roi","voit","différents","donné","qu’elle","commun","qu’un","sociales","modèle","étaient","source","prend","l’homme","mot","objet","beaucoup","droit","loin","particulier","titre","dernier","doivent","existe","second","valeur","homme","qu’on","travers","pratique","retour","soient","différence","d’abord","qu’une","s’agit","l’idée","pu","d’être","humaine","rite","l’origine","consiste","objets","rituels","sera","doute","lorsque","aucune","fut","pratiques","sujet","m","présence","puisque","symbolique","aucun","lien","pourtant","terre","mesure","penser","humaines","parfois","position","tradition","enfin","l’histoire","puissance","produit","face","faits","forces","livre","données","pris","premiers","violence","n’y","religieuse","tandis","ayant","cf","grands","haut","porte","quatre"]
+info [Tue Oct 31 2017 19:47:54 GMT+0100 (Paris, Madrid)]  searching SKOS concepts in Ontology :DBPEDIA... 
+info [Tue Oct 31 2017 19:48:19 GMT+0100 (Paris, Madrid)]  parent concepts found Être,Temps,Vie,Sens,Voir,Nature,Lieu,Société,Premier,Comment,Pouvoir,Hommes,Paris,Partie,Social,Première,Vue,Laquelle,Question,Effet,Partir,Compte,Fonction,Trouve,Rapport,Parce,Système,Façon,Chose,Force,Culture,Mort,Fin,Grand,Seul,Religion,Pourquoi,Sorte,Formes,Nom,Semble,Sociale,Manière,Donne,Font,Moment,Savoir,Cours,Rituel,Principe,Terme,Choses,Raison,Relation,Reste,Nouvelle,Pensée,Nouveau,Comprendre,Prendre,Ensemble,Termes,Dieu,Vient,Personne,Sociétés,Théorie,Devient,Corps,Grande,L’autre,Réalité,Centre,Cause,Sacrifice,Chacun,Sacré,Contraire,Passe,Religieux,Qu’ils,Recherche,Caractère,Processus,Éléments,Donner,Double,Rendre,Rites,Certaines,Passage,Moyen,Présente,Structure,Humain,Met,N’a,Relations,Roi,Voit,Différents,Donné,Qu’elle,Commun,Qu’un,Sociales,Modèle,Étaient,Source,Prend,L’homme,Mot,Objet,Beaucoup,Droit,Loin,Particulier,Titre,Dernier,Doivent,Existe,Second,Valeur,Homme,Qu’on,Travers,Pratique,Retour,Soient,Différence,D’abord,Qu’une,S’agit,L’idée,Pu,D’être,Humaine,Rite,L’origine,Consiste,Objets,Rituels,Sera,Doute,Lorsque,Aucune,Fut,Pratiques,Sujet,M,Présence,Puisque,Symbolique,Aucun,Lien,Pourtant,Terre,Mesure,Penser,Humaines,Parfois,Position,Tradition,Enfin,L’histoire,Puissance,Produit,Face,Faits,Forces,Livre,Données,Pris,Premiers,Violence,N’y,Religieuse,Tandis,Ayant,Cf,Grands,Haut,Porte,Quatre
+info [Tue Oct 31 2017 19:48:19 GMT+0100 (Paris, Madrid)]  put doc ids for each concepts 
+info [Tue Oct 31 2017 19:51:07 GMT+0100 (Paris, Madrid)]  searching SKOS concepts in Ontology :BNF... 
+info [Tue Oct 31 2017 19:51:27 GMT+0100 (Paris, Madrid)]  parent concepts found Être,Temps,Vie,Sens,Voir,Nature,Lieu,Société,Premier,Comment,Pouvoir,Hommes,Paris,Partie,Social,Première,Vue,Laquelle,Question,Effet,Partir,Compte,Fonction,Trouve,Rapport,Parce,Système,Façon,Chose,Force,Culture,Mort,Fin,Grand,Seul,Religion,Pourquoi,Sorte,Formes,Nom,Semble,Sociale,Manière,Donne,Font,Moment,Savoir,Cours,Rituel,Principe,Terme,Choses,Raison,Relation,Reste,Nouvelle,Pensée,Nouveau,Comprendre,Prendre,Ensemble,Termes,Dieu,Vient,Personne,Sociétés,Théorie,Devient,Corps,Grande,L’autre,Réalité,Centre,Cause,Sacrifice,Chacun,Sacré,Contraire,Passe,Religieux,Qu’ils,Recherche,Caractère,Processus,Éléments,Donner,Double,Rendre,Rites,Certaines,Passage,Moyen,Présente,Structure,Humain,Met,N’a,Relations,Roi,Voit,Différents,Donné,Qu’elle,Commun,Qu’un,Sociales,Modèle,Étaient,Source,Prend,L’homme,Mot,Objet,Beaucoup,Droit,Loin,Particulier,Titre,Dernier,Doivent,Existe,Second,Valeur,Homme,Qu’on,Travers,Pratique,Retour,Soient,Différence,D’abord,Qu’une,S’agit,L’idée,Pu,D’être,Humaine,Rite,L’origine,Consiste,Objets,Rituels,Sera,Doute,Lorsque,Aucune,Fut,Pratiques,Sujet,M,Présence,Puisque,Symbolique,Aucun,Lien,Pourtant,Terre,Mesure,Penser,Humaines,Parfois,Position,Tradition,Enfin,L’histoire,Puissance,Produit,Face,Faits,Forces,Livre,Données,Pris,Premiers,Violence,N’y,Religieuse,Tandis,Ayant,Cf,Grands,Haut,Porte,Quatre
+info [Tue Oct 31 2017 19:51:27 GMT+0100 (Paris, Madrid)]  put doc ids for each concepts 
+info [Tue Oct 31 2017 19:54:10 GMT+0100 (Paris, Madrid)]  classifier done :D:\GitHub\souslesens\bin\rdf\classifiers\jfm_BNF.json
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

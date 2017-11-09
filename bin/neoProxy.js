@@ -50,6 +50,8 @@ neo4jProxy = {
         var neo4jUrl = serverParams.neo4jUrl;
         var uri = neo4jUrl + path;
 
+       if(! typeof payload === 'object')
+            payload=JSON.parse(payload);
         request({
                 url: uri,
                 json: payload,

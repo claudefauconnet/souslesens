@@ -32,7 +32,8 @@ var toutlesensController = (function () {
     var self = {};
     self.collapseTargetLabels = [];
     self.currentActionObj = null;
-    self.currentSource = "NEO4J"
+    self.currentSource = "NEO4J";
+    self.appInitEnded=false;
 
 
 // http://graphaware.com/neo4j/2015/01/16/neo4j-graph-model-design-labels-versus-indexed-properties.html
@@ -87,21 +88,19 @@ var toutlesensController = (function () {
         self.hidePopupMenu();
 
 
-
-
-        self.displayButtons={
-            "FLOWER":"treeFlowerButton",
-            "TREEMAP":"treemapButton",
-            "TREE":"treeButton",
-            "CARDS":"cardsButton",
-            "SIMPLE_FORCE_GRAPH":"graphButton",
-            "SIMPLE_FORCE_GRAPH_BULK":"graphBulkButton",
-            "FORM":"formButton",
+        self.displayButtons = {
+            "FLOWER": "treeFlowerButton",
+            "TREEMAP": "treemapButton",
+            "TREE": "treeButton",
+            "CARDS": "cardsButton",
+            "SIMPLE_FORCE_GRAPH": "graphButton",
+            "SIMPLE_FORCE_GRAPH_BULK": "graphBulkButton",
+            "FORM": "formButton",
 
         }
 
-            $(".displayIcon").removeClass("displayIcon-selected");
-            $("#"+self.displayButtons[currentDisplayType]).addClass("displayIcon-selected");
+        $(".displayIcon").removeClass("displayIcon-selected");
+        $("#" + self.displayButtons[currentDisplayType]).addClass("displayIcon-selected");
 
 
         if (!id) {
@@ -154,7 +153,7 @@ var toutlesensController = (function () {
             if (self.collapseTargetLabels.length > 0) {//if we want to collapse graph
                 data = self.collapseResult(data);
             }
-            if(data.length>Gparams.maxNodesForRelNamesOnGraph) {
+            if (data.length > Gparams.maxNodesForRelNamesOnGraph) {
                 Gparams.showRelationNames = false;
                 $("#showRelationTypesCbx").removeAttr("checked");
             }
@@ -300,7 +299,7 @@ var toutlesensController = (function () {
         else if (output == "FLOWER") {
             var jsonFlower = json;
             if ($("#groupByLabelsCbx").prop("checked"))
-                jsonFlower=toutlesensData.jsonToHierarchyTree(json, "label");
+                jsonFlower = toutlesensData.jsonToHierarchyTree(json, "label");
             d3flower.drawFlower(jsonFlower, distance, currentGraphCharge);
 
         }
@@ -990,9 +989,6 @@ var toutlesensController = (function () {
         }
 
 
-
-
-
         $("#representationSelect").val(value);
         currentDisplayType = value;
         if (currentDisplayType == "FORM") {
@@ -1267,6 +1263,36 @@ var toutlesensController = (function () {
             cards.userRole = "read";
         }
 
+    }
+
+
+    self.checkMaxNumberOfNodeRelations = function (nodeId, maxRels, callback) {
+        var matchStr = "match (n)-[r]-(m) where ID(m)=" + nodeId + " and m.subGraph=\"" + subGraph + "\" return count(r) as count";
+        var payload = {match: matchStr};
+        $.ajax({
+            type: "POST",
+            url: Gparams.neo4jProxyUrl,
+            data: payload,
+            dataType: "json",
+            success: function (data, textStatus, jqXHR) {
+
+                var count = data[0].count;
+                if (count > Gparams.jsTreeMaxChildNodes) {
+
+                    $("#dialog").dialog("option", "title", "result");
+                    var str = "All nodes cannot be displayed : " + count + " maximum :" + Gparams.jsTreeMaxChildNodes;
+                   // str += "enter criteria"
+                    str += "<br><button onclick=' $(\"#dialog\").dialog(\"close\")')>close</button>"
+                    $("#dialog").html(str);
+                    $("#dialog").dialog("open");//.position({my: 'center', at: 'center', of: '#tabs-radarLeft'});
+                    callback(false);
+                }
+                callback(true);
+            }
+            ,error:function(){
+                callback(false);
+            }
+        })
     }
 
     return self;
