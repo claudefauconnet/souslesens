@@ -26,7 +26,7 @@
  ******************************************************************************/
 var Gparams = {
 
-    visibleLinkProperty:"count",
+    visibleLinkProperty:null,
     logLevel:5,
     readOnly: true,
     showRelationAttrs:true,
@@ -79,6 +79,7 @@ var Gparams = {
     isInframe: false,
     treeGraphVertSpacing: 35,
     bigDialogSize: {w: 300, h: 400},
+    showBItab:true,
     gantt: {
         name: "nom",
         startField: "datedebut",

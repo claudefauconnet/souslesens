@@ -281,6 +281,9 @@ var exportMongoToNeo = {
 
                 } else {
 
+
+
+
                     var hashCode = "" + neoIdStart + neoIdEnd;
 
                     if (uniqueRelations.indexOf(hashCode) < 0) {
@@ -292,8 +295,15 @@ var exportMongoToNeo = {
                     var properties = {};
                     if (subGraph != null)
                         properties.subGraph = subGraph;
-                    if (params.neoRelAttributeField != null && params.neoRelAttributeField.length > 0)
-                        properties[params.neoRelAttributeField] = obj[params.neoRelAttributeField];
+                    if (params.neoRelAttributeField != null && params.neoRelAttributeField.length > 0){
+                        var relProps=params.neoRelAttributeField.split(";");
+                        for(var j=0;j<relProps.length;j++){
+                            var prop=relProps[j].trim();
+                            if(obj[prop])
+                                properties[prop] = obj[prop];
+                        }
+                    }
+
 
                     var relation = {
                         sourceId: neoIdStart,

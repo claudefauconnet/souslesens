@@ -378,10 +378,12 @@ function fillSelectOptionsWithStringArray(select, data) {
 }
 function fillSelectOptions(select, data, textfield, valueField) {
 	select.options.length = 0;
-	if (!textfield || !valueField) {
+	if (!textfield ) {
 		fillSelectOptionsWithStringArray(select, data);
 		return;
 	}
+	if(!valueField)
+        valueField=textfield;
 	$.each(data, function(i, item) {
 		$(select).append($('<option>', {
 			text : item[textfield],

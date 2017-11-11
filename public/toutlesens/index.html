@@ -199,6 +199,14 @@
             font-weight: bold;
         }
 
+        #innerLegendDiv,#relInfoDiv{
+          margin-left: 20px;
+            font-size: 10px;
+            font-family: verdana, sans-serif;
+            font-weight: bold;
+        }
+
+
 
     </style>
 
@@ -220,6 +228,7 @@
                 statistics.initLabelsCurrentQueries,
                 advancedSearch.patternInitLabels,
                 advancedSearch.patternInitRelTypes,
+               // advancedDisplay.initDecorationDiv,
                 functionalities.initFunctionalities
 
             ]
@@ -1216,6 +1225,9 @@
                     <div id="graphMessage" class="message"></div>
                     <!--   <button style="font-size:12px" onclick="toutlesensController.stopAnimation()">stop animation</button>-->
                     <div id="filtersDiv"></div>
+                  <!--  keep filters<input type="checkbox" id="keepFiltersCbx" checked="checked">-->
+                    <div id="innerLegendDiv"></div>
+                    <div id="relInfoDiv"></div>
                 </div>
 
                 <div id="graphDiv"></div>
@@ -1431,7 +1443,7 @@
 
     </div>
 
-
+</div>
     <div id="dialogGantt" title="Gantt">
         <!--   <iframe id="dialogGanttIframe" src="ganttDialog.html"></iframe>-->
     </div>

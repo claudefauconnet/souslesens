@@ -85,6 +85,7 @@ var d3common = (function () {
     self.d3CommonMouseover = function (d) {
 
 
+
         if (d.neoAttrs && d.neoAttrs.path) {
             return;
         }
@@ -99,7 +100,17 @@ var d3common = (function () {
         }
         currentObject = d;
         currentMouseOverCoords = {x: x, y: y}
-        toutlesensController.showPopupMenu(x, y, "nodeInfo");
+        if(d.target){//relation
+            delete currentObject.target.relProperties.NeoId;
+            currentObject.target.relProperties.source=currentObject.source[Schema.getNameProperty()];
+            currentObject.target.relProperties.target=currentObject.target[Schema.getNameProperty()];
+            var str = textOutputs.formatNodeInfo(currentObject.target.relProperties)
+            $("#relInfoDiv").html(str);
+
+        }
+        else {
+            toutlesensController.showPopupMenu(x, y, "nodeInfo");
+        }
         return;
 
 

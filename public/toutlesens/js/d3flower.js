@@ -183,9 +183,11 @@ var d3flower = (function () {
                     return str;
                 })
                 .on("click", function (d) {
-                    currentRelation = d;
-                    toutlesensController.dispatchAction('relationInfos');
+                 //   currentRelation = d;
+                 //   toutlesensController.dispatchAction('relationInfos');
+
                 })
+                .on("mouseover", d3common.d3CommonMouseover)
                 .attr("stroke-width", function(d){
                     if(d.target.relProperties[Gparams.visibleLinkProperty])
                         return d.target.relProperties[Gparams.visibleLinkProperty]*Gparams.relStrokeWidth;

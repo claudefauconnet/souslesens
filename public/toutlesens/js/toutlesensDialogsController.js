@@ -128,6 +128,9 @@ self.getAllpropertiesDialogContent("setSearchNodeReturnFilterVal()");
     $("#dialog").dialog("open")//;.parent().position({ my: 'center', at: 'center', of: '#tabs-radarRight' });
 }
 
+
+
+
    self.setPopupMenuNodeInfoContent=function() {
 var name=textOutputs.formatNode(currentObject).name+"<br";
 

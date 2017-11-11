@@ -269,7 +269,7 @@ function onFieldSelect() {
 function addToExportedFields() {
     var fieldSelect = $("#fieldSelect").val();
     var exportedFields = $("#exportedFields").val();
-    if (exportedFields == "none")
+    if (exportedFields == "none" || exportedFields == "all")
         exportedFields = "";
 
     if (exportedFields && exportedFields.length > 0)
@@ -320,7 +320,14 @@ function setMongoTargetField() {
 }
 function setNeoRelAttributeField() {
     var fieldSelect = $("#fieldSelect").val();
-    $("#neoRelAttributeField").val(fieldSelect);
+    var  exportedRelFields=$("#neoRelAttributeField").val();
+    if (exportedRelFields == "none" || exportedRelFields == "all")
+        exportedRelFields = "";
+
+    if (exportedRelFields && exportedRelFields.length > 0)
+        $("#neoRelAttributeField").val(exportedRelFields + ";" + fieldSelect);
+    else
+        $("#neoRelAttributeField").val(fieldSelect);
 }
 function setNeoSourceLabel() {
     var labelSelect = $("#labelsSelect").val();

@@ -393,19 +393,23 @@ var common = (function () {
             }));
         });
     }
+
     self.fillSelectOptions=function(select, data, textfield, valueField) {
         select.options.length = 0;
-        if (!textfield || !valueField) {
-            self.fillSelectOptionsWithStringArray(select, data);
+        if (!textfield ) {
+            fillSelectOptionsWithStringArray(select, data);
             return;
         }
-        $.each(data, function (i, item) {
+        if(!valueField)
+            valueField=textfield;
+        $.each(data, function(i, item) {
             $(select).append($('<option>', {
-                text: item[textfield],
-                value: item[valueField]
+                text : item[textfield],
+                value : item[valueField]
             }));
         });
     }
+
 
     self.convertNumStringToNumber =function(value){
         if(value.match && value.match(/.*[a-zA-Z\/\\$].*/))

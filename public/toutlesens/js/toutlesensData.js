@@ -36,6 +36,7 @@ var toutlesensData = (function () {
     self.queryNodeFilters = "";
     self.queryRelFilters = "";
     self.queryExcludeNodeFilters = "";
+    self.whereFilter=""
 
 
     self.executeNeoQuery = function (queryType, str, successFunction) {
@@ -152,6 +153,13 @@ var toutlesensData = (function () {
                 whereStatement += "WHERE ";
             whereStatement += subGraphWhere;
 
+        }
+        if(self.whereFilter!=""){
+            if(whereStatement=="")
+                whereStatement += " AND ";
+            else
+                whereStatement += "WHERE ";
+            whereStatement+=self.whereFilter+" ";
         }
 
         var returnStatement = " RETURN EXTRACT(rel IN relationships(path) | type(rel)) as rels," +

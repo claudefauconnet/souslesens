@@ -33,7 +33,7 @@ var toutlesensController = (function () {
     self.collapseTargetLabels = [];
     self.currentActionObj = null;
     self.currentSource = "NEO4J";
-    self.appInitEnded=false;
+    self.appInitEnded = false;
 
 
 // http://graphaware.com/neo4j/2015/01/16/neo4j-graph-model-design-labels-versus-indexed-properties.html
@@ -81,6 +81,8 @@ var toutlesensController = (function () {
 
 
     self.generateGraph = function (id, applyFilters, callback) {
+        if($("#keepFiltersCbx").prop("checked"=="checked"))
+            applyFilters=true;
         $("#graphMessage").html("");
         currentDataStructure = "flat";
         if (currentDisplayType == "FLOWER" || currentDisplayType == "TREE" || currentDisplayType == "TREEMAP")
@@ -795,10 +797,11 @@ var toutlesensController = (function () {
         }
 
         if (action == 'relationInfos') {
-            textOutputs.getRelationAttrsInfo()
-
-            self.selectLeftTab('#attrsTab');
-            $("#infoPanel").html(str);
+           var str= textOutputs.getRelationAttrsInfo();
+            $("#popupMenuNodeInfoDiv").html(str);
+            $("#popupMenuNodeInfoDiv").show();
+         //   self.selectLeftTab('#attrsTab');
+          //  $("#infoPanel").html(str);
         }
 
 
@@ -1080,7 +1083,7 @@ var toutlesensController = (function () {
 
     self.showPopupMenu = function (x, y, type) {
         var popup = "popupMenuNodeInfoDiv";
-        "popupMenuRead";
+
 
         if (type && type == "label") {
             popup = "popupMenuLabel";
@@ -1090,11 +1093,17 @@ var toutlesensController = (function () {
             popup = "popupMenuNodeInfoDiv";
             $("#popupMenuNodeInfoDiv").show();
         }
+       /* else if (type && type == "relationInfo") {
+            toutlesensDialogsController.setPopupMenuRelationInfoContent();
+            popup = "popupMenuNodeInfoDiv";
+
+            $("#popupMenuNodeInfoDiv").show();
+        }   */
 
         /* else if (currentMode == "write")
          popup = "popupMenuWrite";*/
 
-
+        console.log(x+"--"+y+"----"+$("#popupMenuNodeInfoDiv").html())  ;
         $("#" + popup).css("visibility", "visible").css("top", y).css("left", x);
 
     }
@@ -1250,6 +1259,9 @@ var toutlesensController = (function () {
         }
         $("#advancedQueriesDiv").tabs("option", "disabled", [3, 4]);
 
+        if (Gparams.showBItab)
+            $("#tabs-radarLeft").tabs( "enable", 2);
+
         if (queryParams.write) {
             $("#infosHeaderDiv").css("visibility", "visible");
             infoGenericDisplay.userRole = "write";
@@ -1281,7 +1293,7 @@ var toutlesensController = (function () {
 
                     $("#dialog").dialog("option", "title", "result");
                     var str = "All nodes cannot be displayed : " + count + " maximum :" + Gparams.jsTreeMaxChildNodes;
-                   // str += "enter criteria"
+                    // str += "enter criteria"
                     str += "<br><button onclick=' $(\"#dialog\").dialog(\"close\")')>close</button>"
                     $("#dialog").html(str);
                     $("#dialog").dialog("open");//.position({my: 'center', at: 'center', of: '#tabs-radarLeft'});
@@ -1289,7 +1301,7 @@ var toutlesensController = (function () {
                 }
                 callback(true);
             }
-            ,error:function(){
+            , error: function () {
                 callback(false);
             }
         })
