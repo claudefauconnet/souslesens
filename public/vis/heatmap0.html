@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" type="text/css" title="Design"
+          href="../common/js/jquery/theme_humanity/jquery-ui.min.css"/>
+    <script src="../common/js/jquery/jquery.min.js"></script>
+    <script src="../common/js/jquery/jquery-ui.min.js"></script>
+    <script src="../common/js/d3/d3.js"></script>
+
+
+    <style>
+        #graphDiv {
+            width: 5000px;
+            height: 5000px;
+        }
+
+        .rect {
+            position: absolute;
+            border-style: solid;
+
+        }
+    </style>
+    <script>
+        function drawHeatMap() {
+            var max = 50000;
+            var GSarray = []
+            var map = [];
+            var payload = {
+                find: 1,
+                dbName: "requirements",
+                collectionName: "similarities",
+                mongoQuery: {startDomain: "STR"}
+            };
+
+            $.ajax({
+                type: "POST",
+                url: "/mongo",
+                data: payload,
+                dataType: "json",
+                success: function (data, textStatus, jqXHR) {
+                    max = Math.min(max, data.length)
+                    //  liste des GS
+                    for (var i = 0; i < max; i++) {
+                        if (GSarray.indexOf(data[i].startRule) < 0)
+                            GSarray.push(data[i].startRule);
+                        if (GSarray.indexOf(data[i].endRule) < 0)
+                            GSarray.push(data[i].endRule);
+
+                    }
+
+//matrice carrée
+                    for (var i = 0; i < GSarray.length; i++) {
+                        map.push([])
+                        for (var j = 0; j < GSarray.length; j++) {
+                            map[i].push(0)
+                        }
+
+
+                    }
+
+//remplissage matrice
+                    for (var i = 0; i < max; i++) {
+                        var start = data[i].startRule;
+                        var end = data[i].endRule;
+                        var j = GSarray.indexOf(start);
+                        var k = GSarray.indexOf(end);
+                        if (j == k)
+                            continue;
+                        map[j][k] = data[i].score;
+
+
+                    }
+
+
+                    var emptyCols = [];
+                    for (var i = 0; i < map.length; i++) {
+                        var emptyCol = true;
+                        for (var j = 0; j < map[i].length; j++) {
+                            if (map[i][j] > 0) {
+                                emptyCol = false;
+                                break;
+                            }
+                        }
+                        if (emptyCol) {
+                            emptyCols.push(i)
+                        }
+                    }
+
+
+                    var map2 = [];
+
+
+                    for (var i = 0; i < map.length; i++) {
+                        var x=-1;
+                        if (emptyCols.indexOf(i) > -1) {
+                            map2.push([])
+                            x=i;
+
+                            for (var j = 0; j < map[i].length; j++) {
+                                if (j!=x) {
+                                    map2[map2.length-1].push(map[i][j] )
+                                }
+                            }
+
+                        }
+
+                    }
+
+
+                    var d3Data = [];
+                    var x, y = 0;
+
+                    var xStart = 10;
+                    var yStart = 10;
+                    var pW = 5;
+                    var pH = 5;
+
+                    for (var i = 0; i < map2.length; i++) {
+
+
+                        for (var j = 0; j < map2[i].length; j++) {
+
+                            var x = xStart + (j * pW);
+                            var y = yStart + (i * pH);
+                            var value = map2[i][j];
+                            var color = "grey"
+                            if (value && value != 0) {
+
+
+                                //   if (count <1) {
+                                if (value < .6)
+                                    color = "blue"
+                                else if (value < .7)
+                                    color = "green"
+                                else if (value < .8)
+                                    color = "purple"
+                                else if (value < .9)
+                                    color = "brown"
+                                else if (value < .1)
+                                    color = "orange"
+                                else if (value == 1)
+                                    color = "red"
+                            }
+
+                            var rect = {
+                                x: x,
+                                y: y,
+                                color: color,
+                                id: "rect_" + i + "_" + j,
+                                w: pW,
+                                h: pH
+                            }
+
+                            d3Data.push(rect);
+
+                        }
+
+
+                    }
+                    var selector = "#graphDiv";
+                    d3.select(selector).html("");
+                    d3.select(selector).selectAll("svg").remove();
+                    w = $(selector).width();
+                    h = $(selector).height() - 10;
+
+                    this.svg = d3.select(selector).append("svg:svg")
+                        .attr('width', w)
+                        .attr('height', h);
+
+
+                    this.svg.selectAll("rect").remove();
+                    this.node = this.svg.selectAll("rect")
+                        .data(d3Data).enter().append("svg:rect")
+                        // .style("stroke", "#999")
+                        .style("fill", function (d) {
+                            return d.color;
+                        })
+                        .attr('width', function (d) {
+                            return d.w;
+                        })
+                        .attr('height', function (d) {
+                            return d.h;
+                        })
+                        .attr('x', function (d) {
+                            return d.x;
+                        })
+                        .attr('y', function (d) {
+                            return d.y;
+                        })
+                        .on("mouseover", function (d) {
+                            if (d.color == "grey")
+                                return;
+
+                            var x = d.id;
+                            console.log(d.id + "  " + d.color)
+                        })
+
+                    /*  .on("click", d3common.d3CommonClick)
+                     .on("dblclick", d3common.d3CommonDblclick)
+
+
+
+
+                     .on("mouseover", d3common.d3CommonMouseover)*/
+
+
+                },
+                error: function (xhr, err, msg) {
+
+                    console.log(xhr);
+                    console.log(err);
+                    console.log(msg);
+                }
+            });
+        }
+
+
+    </script>
+
+
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<button onclick="drawHeatMap()">Draw</button>
+
+<svg id="graphDiv"></svg>
+</body>
+</html>

@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" type="text/css" title="Design"
+          href="../common/js/jquery/theme_humanity/jquery-ui.min.css"/>
+    <script src="../common/js/jquery/jquery.min.js"></script>
+    <script src="../common/js/jquery/jquery-ui.min.js"></script>
+    <script src="../common/js/d3/d3.js"></script>
+
+
+    <style>
+        #graphDiv {
+            width: 1000px;
+            height: 2000px;
+        }
+
+        #infosDiv {
+            width: 1000px;
+            height: 200px;
+            overflow: auto;
+            font-size: 12px;
+            font-family: "sans-serif Verdana";
+
+        }
+    </style>
+    <script>
+        function drawHeatMap() {
+            var max = 500000000;
+            var GSarray = []
+            var map = [];
+            /* var payload = {
+             find: 1,
+             dbName: "requirements",
+             collectionName: "similarities",
+             mongoQuery: {startDomain: "STR"}
+             };*/
+            var where="";
+            var domain=$("#domainSelect").val()
+            if(domain && domain!="")
+                where="where n.startDomain=\""+domain+"\" ";
+            var payload = {
+                match: "MATCH (n:similarRule) "+where+" return n"
+            }
+
+            $.ajax({
+                type: "POST",
+                url: "/neo",
+                data: payload,
+                dataType: "json",
+
+                success: function (data, textStatus, jqXHR) {
+                    max = Math.min(max, data.length)
+
+                    var d3Data = [];
+                    var selector = "#graphDiv";
+                    d3.select(selector).html("");
+                    d3.select(selector).selectAll("svg").remove();
+                    var w0 = $(selector).width();
+                    var h0 = $(selector).height() - 10;
+                    var x = 10;
+                    var y = 10;
+                    var w = 5;
+                    var h = 10;
+
+                    data.sort(function(a,b) {
+                        if (a.n.properties.score > b.n.properties.score)
+                            return -1;
+                        if (a.n.properties.score < b.n.properties.score)
+                            return 1;
+                        return 0;
+
+                    })
+                    for (var i = 0; i < max; i++) {
+                        var node = data[i].n.properties;
+                        var id = node.startRule + "_" + node.endRule;
+                        var value = node.score;
+
+                        x += w;
+                        if (x > w0) {
+                            x = 10;
+                            y += h;
+                        }
+
+
+                        var color = "grey"
+
+
+                        if (value < .6)
+                            color = "blue"
+                        else if (value < .7)
+                            color = "green"
+                        else if (value < .8)
+                            color = "purple"
+                        else if (value < .9)
+                            color = "brown"
+                        else if (value < 1)
+                            color = "orange"
+                        else if (value >= 1)
+                            color = "red"
+                        else{
+www=value;
+                        }
+
+
+                        var rect = {
+                            x: x,
+                            y: y,
+                            color: color,
+                            id: id,
+                            w: w,
+                            h: h
+                        }
+
+                        d3Data.push(rect);
+
+                    }
+
+
+                    this.svg = d3.select(selector).append("svg:svg")
+                        .attr('width', w0)
+                        .attr('height', h0);
+
+
+                    this.svg.selectAll("rect").remove();
+                    this.node = this.svg.selectAll("rect")
+                        .data(d3Data).enter().append("svg:rect")
+                        // .style("stroke", "#999")
+                        .style("fill", function (d) {
+                            return d.color;
+                        })
+                        .style("stroke", "#65dbf1")
+                        .attr('width', function (d) {
+                            return d.w;
+                        })
+                        .attr('height', function (d) {
+                            return d.h;
+                        })
+                        .attr('x', function (d) {
+                            return d.x;
+                        })
+                        .attr('y', function (d) {
+                            return d.y;
+                        })
+                        .on("mouseover", function (d) {
+                            if (d.color == "grey")
+                                return;
+
+
+                            showRules(d.id);
+
+                        })
+
+                    /*  .on("click", d3common.d3CommonClick)
+                     .on("dblclick", d3common.d3CommonDblclick)
+
+
+
+
+                     .on("mouseover", d3common.d3CommonMouseover)*/
+
+
+                },
+                error: function (xhr, err, msg) {
+
+                    console.log(xhr);
+                    console.log(err);
+                    console.log(msg);
+                }
+            });
+        }
+
+
+        function showRules(id) {
+
+            var rules = id.split("_");
+
+            // var query={$or:[{_id:"ObjectId("+rules[0]+")"},{_id:"ObjectId("+rules[1]+")"}]}
+
+            /*   var payload = {
+             find: 1,
+             dbName: "requirements",
+             collectionName: "import",
+             mongoQuery: query
+             };*/
+            var payload = {
+                match: "MATCH (n:rule) where n._id IN " + JSON.stringify(rules) + " return n"
+            }
+
+            $.ajax({
+                type: "POST",
+                url: "/neo",
+                data: payload,
+                dataType: "json",
+
+                success: function (data, textStatus, jqXHR) {
+                    var startRule = data[0].n.properties;
+                    var endRule = data[1].n.properties;
+
+                    //  var str = JSON.stringify(startRule, null, 2) + "<br>" + JSON.stringify(endRule, null, 2);
+
+                    var str = "<table border='1'><tr><td>Domain</td><td>Branch</td><td>GS</td>Chapter<td>Chapter</td><td>numChapter</td><td>Content</td></tr>"
+                    str += "<tr><td>" + startRule.domain + "</td><td>" + startRule.branch + "</td><td>" + startRule.ruleGS + "</td><td>" + startRule.ruleChapter + "</td><td>" + startRule.ruleNumChapter + "</td><td>" + startRule.ruleContent + "</td></tr>"
+                    str += "<tr><td>" + endRule.domain + "</td><td>" + endRule.branch + "</td><td>" + endRule.ruleGS + "</td><td>" + endRule.ruleChapter + "</td><td>" + endRule.ruleNumChapter + "</td><td>" + endRule.ruleContent + "</td></tr>"
+                    str += "</table>"
+                    $("#infosDiv").html(str);
+
+
+                }
+
+
+            })
+
+        }
+
+
+    </script>
+
+
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<select id="domainSelect">
+    <option></option>
+    <option>ELE</option>
+    <option>INS</option>
+    <option>MEC</option>
+    <option>PLR</option>
+    <option>PVV</option>
+    <option>STR</option>
+</select>
+<button onclick="drawHeatMap()">Draw</button>
+<div id="infosDiv"></div>
+<div id="graphDiv"></div>
+
+</body>
+</html>
