@@ -41,7 +41,7 @@ Util = {
                      obj[key] = new ObjectID(id);*/
                     var id = "" + obj[key];
                     if (id.length > 24)
-                        id = substring(id.length - 24);
+                        id = id.substring(id.length - 24);
 
 
                     while (id.length < 24) {

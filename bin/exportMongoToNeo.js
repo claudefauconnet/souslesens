@@ -37,6 +37,8 @@ var totalLines = 0;
 var neoMappings = [];
 var distinctNames = [];
 var countNodes = 0;
+var lastImports=[];
+
 var exportMongoToNeo = {
 
     clearVars: function () {
@@ -62,6 +64,20 @@ var exportMongoToNeo = {
 
         if (label == null)
             label = collection;
+
+        // to avoid to import twice if browser timeout
+        // see https://groups.google.com/a/chromium.org/forum/#!topic/chromium-dev/urswDsm6Pe0
+        // timeout 2 min et retry delay <5sec
+        if(lastImports.length>0 && lastImports[lastImports.length-1].label==label){
+            var now=new Date();
+           if((now- lastImports[lastImports.length-1].startTime>(2*1000*60))  && (now- lastImports[lastImports.length-1].endTime<(1000*5))){
+               return callback(null,"Abort Retry on browser timeout");
+           }
+
+        }
+
+        lastImports.push({label:label,startTime:new Date()});
+        console.log("------------Importing" +label)
 
         loadAndFetchDataToImport(params, importNodes, callback);
 
@@ -179,6 +195,7 @@ var exportMongoToNeo = {
                         nodeMapping.label = label;
                         nodeMappings.push(nodeMapping);
                     }
+
                     callback(nodeMappings);
 
                 });
@@ -207,6 +224,22 @@ var exportMongoToNeo = {
         var neoTargetLabel = params.neoTargetLabel;
         var relationType = params.relationType;
         params.fields = setRelationsMongoFieldsToExport(params);
+
+
+        // to avoid to import twice if browser timeout
+        // see https://groups.google.com/a/chromium.org/forum/#!topic/chromium-dev/urswDsm6Pe0
+        // timeout 2 min et retry delay <5sec
+
+        if(lastImports.length>0 && lastImports[lastImports.length-1].relationType==relationType){
+            var now=new Date();
+            if((now- lastImports[lastImports.length-1].startTime>(2*1000*60))  && (now- lastImports[lastImports.length-1].endTime<(1000*5))){
+                return callback(null,"Abort Retry on browser timeout");
+            }
+
+        }
+
+        lastImports.push({relationType:relationType,startTime:new Date()});
+
 
         if (!neoSourceKey) {
             neoSourceKey = mongoSourceField;
@@ -262,6 +295,7 @@ var exportMongoToNeo = {
 
         params.nodeMappings = mongoNeoTargetIdsMap;
         loadAndFetchDataToImport(params, importRelations, callback);
+
 
         function importRelations(params, data, callback) {
             var relations = [];
@@ -351,6 +385,7 @@ var exportMongoToNeo = {
 
                 var message = "Imported " + totalImported + "relations  with type " + relationType;
                 socket.message(message);
+
                 callback(null, result)
 
             })
@@ -602,6 +637,7 @@ function loadAndFetchDataToImport(params, importFn, _rootCallBack) {
                     message = "import done : " + totalLines + "lines ";
                     socket.message(message);
                     console.log(message);
+
                     rootCallBack(null, message);
 
                 }
@@ -670,6 +706,7 @@ function loadAndFetchDataToImport(params, importFn, _rootCallBack) {
             }
             ,
             function (err, result) {//end
+                lastImports[lastImports.length-1].endTime=new Date();
                 var message = "";
                 if (err) {
                     var message = "  mongoDB:" + dbName + "  , collection:" + collection + "  ; " + JSON.stringify(err[0].message).substring(0, Math.min(200, err[0].message.length)) + "...";

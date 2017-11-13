@@ -94,7 +94,7 @@ var MongoProxy = {
                 callback(e);
             }
         }
-        Util.prepareJsonForMongo(query);
+   Util.prepareJsonForMongo(query);
 
 
         try {
