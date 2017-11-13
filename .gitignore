@@ -45,3 +45,5 @@ public/toutlesens/js/oldJs/*
 public/toutlesens/icons/*
 
 
+*.log
+*.log
