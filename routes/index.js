@@ -16,7 +16,7 @@ var restAPI = require("../bin/restAPI.js");
 var rdfProxy = require("../bin/rdf/rdfProxy.js");
 var classifierManager = require("../bin/rdf/classifierManager.js");
 var skos = require("../bin/rdf/skos.js");
-
+var serverParams=require("../bin/serverParams.js")
 var socket = require('./socket.js');
 
 
@@ -25,12 +25,12 @@ var socket = require('./socket.js');
  app.use(cors()); // use CORS for all requests and all routes*/
 
 
-router.get('/', function (req, res) {
+router.get(serverParams.routesRootUrl+'/', function (req, res) {
     res.render('index', {title: 'Express'});
 });
 
 
-router.post('/neo', function (req, response) {
+router.post(serverParams.routesRootUrl+'/neo', function (req, response) {
     if (req.body && req.body.match)
         neoProxy.match(req.body.match, function (error, result) {
             processResponse(response, error, result)
@@ -43,7 +43,7 @@ router.post('/neo', function (req, response) {
 
 });
 
-router.post('/mongo', function (req, response) {
+router.post(serverParams.routesRootUrl+'/mongo', function (req, response) {
     if (req.body && req.body.find)
         mongoProxy.find(req.body.dbName, req.body.collectionName, req.body.mongoQuery, function (error, result) {
             processResponse(response, error, result)
@@ -83,7 +83,7 @@ router.post('/mongo', function (req, response) {
 
 
 });
-router.post('/elastic', function (req, response) {
+router.post(serverParams.routesRootUrl+'/elastic', function (req, response) {
     if (req.body && req.body.searchWordAll)
         elasticProxy.searchWordAll(req.body.searchWordAll, function (error, result) {
             processResponse(response, error, result)
@@ -138,7 +138,7 @@ router.post('/elastic', function (req, response) {
 });
 
 
-router.post('/exportMongoToNeo', function (req, response) {
+router.post(serverParams.routesRootUrl+'/exportMongoToNeo', function (req, response) {
     exportMongoToNeo.clearVars();
     if (req.body.type == "batch")
         exportToNeoBatch.exportBatch(req.body.sourceType, req.body.dbName, req.body.subGraph, JSON.parse(req.body.data), null, function (error, result) {
@@ -164,14 +164,14 @@ router.post('/exportMongoToNeo', function (req, response) {
 
 });
 
-router.post('/http', function (req, response) {
+router.post(serverParams.routesRootUrl+'/http', function (req, response) {
     if (req.body && req.body.get)
         httpProxy.get(req.body.get, function (error, result) {
             processResponse(response, error, result)
         });
 });
 
-router.post('/rdf', function (req, response) {
+router.post(serverParams.routesRootUrl+'/rdf', function (req, response) {
     if (req.body && req.body.store) {
         rdfProxy.queryOntologyDataToNeoResult(req.body.store, req.body.word, req.body.relations, req.body.lang, req.body.contains, req.body.limit, function (error, result) {
             processResponse(response, error, result)
@@ -198,7 +198,7 @@ router.post('/rdf', function (req, response) {
 });
 
 
-router.post('/storedParams', function (req, response) {
+router.post(serverParams.routesRootUrl+'/storedParams', function (req, response) {
     if (req.body && req.body.load) {
         //  var payload={"load": "displayParams","user":Gparams.user};
         var type = req.body.load;
@@ -218,26 +218,26 @@ router.post('/storedParams', function (req, response) {
     }
 });
 
-router.post('/upload', function (req, response) {
+router.post(serverParams.routesRootUrl+'/upload', function (req, response) {
     fileUpload.upload(req, function (error, result) {
         processResponse(response, error, result)
     });
 });
 
-router.post('/uploadData', function (req, response) {
+router.post(serverParams.routesRootUrl+'/uploadData', function (req, response) {
     fileUpload.uploadData(req, function (error, result) {
         processResponse(response, error, result)
     });
 });
 
-router.post('/uploadToNeo', function (req, response) {
+router.post(serverParams.routesRootUrl+'/uploadToNeo', function (req, response) {
     uploadToNeo.uploadAndImport(req, function (error, result) {
         processResponse(response, error, result)
     });
 });
 
 
-router.post('/uploadCsvForNeo', function (req, response) {
+router.post(serverParams.routesRootUrl+'/uploadCsvForNeo', function (req, response) {
     uploadCsvForNeo.upload(req, function (error, result) {
         processResponse(response, error, result)
     });
@@ -245,7 +245,7 @@ router.post('/uploadCsvForNeo', function (req, response) {
 });
 
 
-router.post('/rest', function (req, response) {
+router.post(serverParams.routesRootUrl+'/rest', function (req, response) {
     if (req.query && req.query.updateNeoFromCSV) {
         restAPI.updateNeoFromCSV(req.body, function (error, result) {
             processResponse(response, error, result)
@@ -302,7 +302,7 @@ router.post('/rest', function (req, response) {
 
 
 });
-router.get('/rest', function (req, response) {
+router.get(serverParams.routesRootUrl+'/rest', function (req, response) {
     if (req.query && req.query.desc_updateNeoFromCSV) {
         restAPI.desc_updateNeoFromCSV(function (error, result) {
             processResponse(response, error, result)
@@ -323,14 +323,14 @@ router.get('/rest', function (req, response) {
 });
 
 
-router.post('/exportMongoToElastic', function (req, response) {
+router.post(serverParams.routesRootUrl+'/exportMongoToElastic', function (req, response) {
     elasticProxy.exportMongoToElastic(req.body.mongoDB, req.body.mongoCollection, req.body.mongoQuery, req.body.elasticIndex, req.body.elasticFields, req.body.elasticType, function (error, result) {
         processResponse(response, error, result)
     });
 });
 
 
-router.post('/jsonFileStorage', function (req, response) {
+router.post(serverParams.routesRootUrl+'/jsonFileStorage', function (req, response) {
     console.log("!!!!!!!!!!!!!!!!!!!!!!!!!!" + JSON.stringify(req.body));
     if (req.body.store)
         jsonFileStorage.store(req.body.path, req.body.data, function (error, result) {

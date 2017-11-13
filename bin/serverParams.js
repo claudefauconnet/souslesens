@@ -26,6 +26,7 @@
  ******************************************************************************/
 
 var serverParams={
+    routesRootUrl:"",
    neo4jUrl: 'http://neo4j:souslesens@127.0.0.1:7474',
      mongoUrl : "mongodb://127.0.0.1:27017/",
     mongoFetchSize:500,
