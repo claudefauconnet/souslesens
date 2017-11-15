@@ -20,6 +20,8 @@ var serverParams=require("../bin/serverParams.js")
 var socket = require('./socket.js');
 
 
+console.log("***********************serverParams.routesRootUrl "+serverParams.routesRootUrl+"*********")
+
 /*const cors = require('cors');
  var app = express();
  app.use(cors()); // use CORS for all requests and all routes*/

@@ -182,7 +182,7 @@ var modifyData = (function () {
 
     self.onDeleteNodeButton = function (id) {
         if (!id)
-            id = currentObjId;
+            id = currentObject.id;
         if (confirm("detruire le noeud definitivement ?"))
             self.deleteNodeInNeo4j(id);
 

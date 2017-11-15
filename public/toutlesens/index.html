@@ -84,6 +84,8 @@
     <script src="js/d3flower.js"></script>
 
     <script src="js/d3simpleForce.js"></script>
+    <script src="js/d3simpleForceLight.js"></script>
+    <script src="js/souslesensForcelayout.js"></script>
     <script src="js/d3simpleForceBulk.js"></script>
     <script src="js/d3treemap.js"></script>
     <script src="js/d3forceCollapseClass.js"></script>
@@ -199,13 +201,12 @@
             font-weight: bold;
         }
 
-        #innerLegendDiv,#relInfoDiv{
-          margin-left: 20px;
+        #innerLegendDiv, #relInfoDiv {
+            margin-left: 20px;
             font-size: 10px;
             font-family: verdana, sans-serif;
             font-weight: bold;
         }
-
 
 
     </style>
@@ -221,34 +222,33 @@
             lang.setLangage();
 
 
-            var afterLoadModelTasks=[
+            var afterLoadModelTasks = [
                 infoGenericDisplay.initLabels,
                 customizeUI.customize,
                 toutlesensController.afterGraphInit,
                 statistics.initLabelsCurrentQueries,
                 advancedSearch.patternInitLabels,
                 advancedSearch.patternInitRelTypes,
-               // advancedDisplay.initDecorationDiv,
+                // advancedDisplay.initDecorationDiv,
                 functionalities.initFunctionalities
 
             ]
 
             Schema.load(subGraph, function (err, schema) {
-                if(err)
-                   return setMessage("Error cannot load Schema");
+                if (err)
+                    return setMessage("Error cannot load Schema");
                 // play init UI methods after schema is loaded
-                        for (var i = 0; i < afterLoadModelTasks.length; i++) {
-                            try {
-                                afterLoadModelTasks[i](subGraph);
-                            }
-                            catch(err){
-                                console.log(""+i+"  "+err);
-                            }
-                        }
+                for (var i = 0; i < afterLoadModelTasks.length; i++) {
+                    try {
+                        afterLoadModelTasks[i](subGraph);
+                    }
+                    catch (err) {
+                        console.log("" + i + "  " + err);
+                    }
+                }
 
 
-
-                toutlesensController.appInitEnded=true;
+                toutlesensController.appInitEnded = true;
 
             })
 
@@ -474,7 +474,7 @@
                 value: 1,
                 slide: function (event, ui) {
                     $("#depth").val(ui.value);
-                    toutlesensController.generateGraph();
+                    toutlesensController.generateGraph(null, true);
                 }
             });
 
@@ -529,17 +529,51 @@
 
         })
 
-
-        function onViewSelect(select) {
-
-            infoGenericDisplay.clearNodePropertiesDiv();
-            // $("#treeHeader").css("visibility", "hidden");
-
-            //  initUI();
-            //  dbName = $("#dbName").val();
+        function onLabelActionSelect(select) {
             var value = $(select).val();
-            if (value != "")
-                infoGenericDisplay.loadTree(value);
+            if (value == "displayGraphForLabel") {
+                currentDisplayType = "SIMPLE_FORCE_GRAPH";
+                currentLabel = $("#nodeLabelSelect").val();
+                currentObject = {};
+                if (currentLabel != "")
+                    toutlesensController.generateGraph(null, false);
+
+            }
+
+            if (value == "listNodes") {
+
+                currentDisplayType = "FLOWER";
+                currentLabel = $("#nodeLabelSelect").val();
+
+
+            }
+
+        }
+
+        function onLabelSelect(select) {
+            var value = $(select).val();
+          /*  if (value == "")
+                $("#onLabelActionSelect").val("displayGraphForLabel");
+            else
+                $("#onLabelActionSelect").val("listNodes");*/
+            var actionType = $("#onLabelActionSelect").val();
+            if (actionType == "listNodes") {
+                infoGenericDisplay.clearNodePropertiesDiv();
+                // $("#treeHeader").css("visibility", "hidden");
+
+                //  initUI();
+                //  dbName = $("#dbName").val();
+
+                if (value != "")
+                    infoGenericDisplay.loadTree(value);
+            }
+
+            else if (actionType == "displayGraphForLabel") {
+                currentLabel = value;
+                currentDisplayType = "SIMPLE_FORCE_GRAPH";
+                toutlesensController.generateGraph(null, false);
+
+            }
         }
 
 
@@ -617,11 +651,11 @@
                                                        id="cardsButton"
                                                        src="images/cards.png"/></td>
 
-                                            <td><input type="image" class="displayIcon"
+                                       < !--    <td><input type="image" class="displayIcon"
                                                        title="<span id='lang_7'>arbre</span>" height="30px"
                                                        onclick="toutlesensController.onVisButton('TREE',this)"
                                                        id="treeButton"
-                                                       src="images/tree.png"/></td>
+                                                       src="images/tree.png"/></td>-->
 
 
                                             <td><input type="image" height="30px" title="treeMap" class="displayIcon"
@@ -637,8 +671,7 @@
                                 </td>
 
                             </tr>
-                            </tr>
-                            <tr  valign="middle">
+                            <tr valign="middle">
                                 <td><span id='lang_15'>Profondeur</span>&nbsp;<input
                                         id="depth" value="1" size="1"></td>
                                 <td colspan="2">
@@ -648,8 +681,10 @@
                             </tr>
                             <tr>
                                 <td colspan="3">
-                                    <input type="checkbox" id="showRelationTypesCbx" onclick="toutlesensController.displayGraph()">nom des relations
-                                    <input type="checkbox" id="groupByLabelsCbx" onclick="toutlesensController.displayGraph()">grouper par label
+                                    <input type="checkbox" id="showRelationTypesCbx"
+                                           onclick="toutlesensController.displayGraph()">nom des relations
+                                    <input type="checkbox" id="groupByLabelsCbx"
+                                           onclick="toutlesensController.displayGraph()">grouper par label
 
 
                                 </td>
@@ -659,6 +694,11 @@
                             <tr>
 
                                 <td colspan="2">
+                                    <br> Label <select id="nodesLabelsSelect" onchange="onLabelSelect(this)"> </select>
+                                    <select id="onLabelActionSelect" onchange="onLabelActionSelect(this)">
+                                        <option>displayGraphForLabel</option>
+                                        <option>listNodes</option>
+                                    </select>
                                     <hr>
                                     <span id='lang_1'>Search</span>
                                     <input id="word"
@@ -669,14 +709,18 @@
                                                              id="searchButton"
                                                              src="images/search.png"/>
 
-                                    <br> Label <select id="nodesLabelsSelect" onchange="onViewSelect(this)"> </select>
-                                    <button id="createNodeButton" onclick="infoGenericDisplay.createNewRootNode()">Create Node</button>
+
+                                    <button id="createNodeButton" onclick="infoGenericDisplay.createNewRootNode()">
+                                        Create Node
+                                    </button>
                                     <!-- <button  onclick="showAdvancedSearchDialog()">+</button>-->
 
 
                                 </td>
 
                             </tr>
+
+
                             <tr>
                                 <td colspan="2">
 
@@ -804,7 +848,7 @@
                             <tr>
                                 <td>
                                     <button onclick="advancedSearch.removeFromPatternSelect()">-</button>
-                               &nbsp;
+                                    &nbsp;
                                     <button onclick="advancedSearch.executePatternUI(true)">Count</button>
                                     <br>
                                     <input id="patternCount">
@@ -1225,7 +1269,6 @@
                     <div id="graphMessage" class="message"></div>
                     <!--   <button style="font-size:12px" onclick="toutlesensController.stopAnimation()">stop animation</button>-->
                     <div id="filtersDiv"></div>
-                  <!--  keep filters<input type="checkbox" id="keepFiltersCbx" checked="checked">-->
                     <div id="innerLegendDiv"></div>
                     <div id="relInfoDiv"></div>
                 </div>
@@ -1444,12 +1487,12 @@
     </div>
 
 </div>
-    <div id="dialogGantt" title="Gantt">
-        <!--   <iframe id="dialogGanttIframe" src="ganttDialog.html"></iframe>-->
-    </div>
+<div id="dialogGantt" title="Gantt">
+    <!--   <iframe id="dialogGanttIframe" src="ganttDialog.html"></iframe>-->
+</div>
 
-    <input type="hidden" id="graphTravReturnEvaluator">
-    <input type="hidden" id="graphTravPruneEvaluator"></input>
-    <input type="hidden" id="graphTravRelTypes"></input>
+<input type="hidden" id="graphTravReturnEvaluator">
+<input type="hidden" id="graphTravPruneEvaluator"></input>
+<input type="hidden" id="graphTravRelTypes"></input>
 </body>
 </html>

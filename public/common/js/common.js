@@ -36,7 +36,6 @@ var filterValue;
 var isRadarReadOnly = true;
 var http = "";
 var currentObject;
-var currentObjectId;
 var canModifyRadarDetails = false;
 var rapahaelItemsSet;
 var canModify = false;

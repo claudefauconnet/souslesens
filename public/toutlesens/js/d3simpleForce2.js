@@ -27,7 +27,7 @@
 
 var d3simpleForce = (function () {
     var self = {};
-    self.buildNodesAndLinks = function (resultArray) {
+    toutlesensData.buildForceNodesAndLinks = function (resultArray) {
         currentDataStructure = "flat";
         if (resultArray.currentActionObj)
             currentActionObj = resultArray.currentActionObj;
@@ -176,10 +176,10 @@ var d3simpleForce = (function () {
     }
 
 
-    self.drawsimpleForce = function (json) {
+    self.drawSimpleForce = function (json) {
 
 
-        json = self.buildNodesAndLinks(json);
+        json = toutlesensData.buildForceNodesAndLinks(json);
 
 //	 makeDiag( forceData.nodes, forceData.links);
         self.drawSimpleForce(json.nodes, json.links);

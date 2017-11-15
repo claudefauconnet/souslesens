@@ -93,7 +93,7 @@ var customizeUI = (function () {
 
         }
         else{
-            if(Gparams.startWithBulkGraphView)
+            if(Gparams.startWithBulkGraphView )
              advancedSearch.showBulkGraph(subGraph);
         }
 

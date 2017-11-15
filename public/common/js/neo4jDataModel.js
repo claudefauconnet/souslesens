@@ -173,7 +173,48 @@ var dataModel = (function () {
 
                         }
 
-                        callback(null,dataModel);
+
+                        //relation Properties
+                       query=" match(n)-[r]-(m)"+ where +" return distinct type(r)as relType,labels(n)[0] as startLabel,labels(m)[0] as endLabel,  keys(r) as relProperties"
+                        payload = {match: query};
+
+
+                        // console.log("QUERY----" + JSON.stringify(payload));
+                        $.ajax({
+                            type: "POST",
+                            url: Gparams.neo4jProxyUrl,
+                            data: payload,
+                            dataType: "json",
+                            success: function (data, textStatus, jqXHR) {
+                                for (var i = 0; i < data.length; i++) {
+
+                                    var relPropsObj = data[i];
+                                    var relationObjs = dataModel.allRelations[relPropsObj.relType];
+                                    for(var j=0;j<relationObjs.length;j++) {
+                                        var relationObj = relationObjs[j];
+
+                                        if (relationObj && relationObj.direction == "normal" && relationObj.startLabel == relPropsObj.startLabel && relationObj.endLabel == relPropsObj.endLabel) {
+                                            dataModel.allRelations[relPropsObj.relType][j].properties = relPropsObj.relProperties;
+                                        }
+                                        if (relationObj && relationObj.direction == "inverse" && relationObj.endLabel == relPropsObj.startLabel && relationObj.startLabel == relPropsObj.endLabel) {
+                                            dataModel.allRelations[relPropsObj.relType][j].properties = relPropsObj.relProperties;
+                                        }
+                                    }
+
+
+                                }
+
+                                callback(null, dataModel);
+                            }
+                            ,
+                            error: function (xhr, err, msg) {
+                                callback(null);
+                                console.log(xhr);
+                                console.log(err);
+                                console.log(msg);
+                            }
+                        })
+
 
 
                     }

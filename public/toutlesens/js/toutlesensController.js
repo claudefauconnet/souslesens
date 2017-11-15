@@ -48,9 +48,9 @@ var toutlesensController = (function () {
 
         currentLabel = text.substring(text.indexOf("[") + 1, text.indexOf("]"));
         currentNodeName = text.substring(0, text.indexOf("]") - 1);
-        currentObjId = $("#wordsSelect").val();
+        currentObject.id = $("#wordsSelect").val();
         currentObject = {
-            id: currentObjId,
+            id: currentObject.id,
             name: currentNodeName,
             label: currentLabel
         }
@@ -75,15 +75,23 @@ var toutlesensController = (function () {
             $("#graphPathSourceNode").html(text);
             $("#graphTravSourceNode").html(text);
         }
-        self.generateGraph(currentObjId, false, toutlesensController.drawGraph);
+        self.generateGraph(currentObject.id, false, toutlesensController.drawGraph);
 
     }
 
 
     self.generateGraph = function (id, applyFilters, callback) {
-        if($("#keepFiltersCbx").prop("checked"=="checked"))
-            applyFilters=true;
+
+
+        d3.select("#graphDiv").selectAll("svg").remove();
+        $("#graphDiv").html("");
         $("#graphMessage").html("");
+        $("#relInfoDiv").html("");
+
+
+
+        if ($("#keepFiltersCbx").prop("checked"))
+            $("#graphMessage").html("");
         currentDataStructure = "flat";
         if (currentDisplayType == "FLOWER" || currentDisplayType == "TREE" || currentDisplayType == "TREEMAP")
             currentDataStructure = "tree";
@@ -104,26 +112,25 @@ var toutlesensController = (function () {
         $(".displayIcon").removeClass("displayIcon-selected");
         $("#" + self.displayButtons[currentDisplayType]).addClass("displayIcon-selected");
 
+        if (currentDisplayType.indexOf("FORCE") > -1) {
+            currentObject.id = null;
 
-        if (!id) {
-            if (!currentObjId && currentDataStructure == "tree") {
-                alert("A node must be selected for this graph type (tree")
-                return callback(null, {});
-                /*   if (toutlesensData.cachedResultArray && toutlesensData.cachedResultArray.length > 0) {
-                 currentObject = toutlesensData.cachedResultArray[0].nodes[0]
-                 currentObjId = currentObject._id;
-                 }
-                 else
-                 return callback(null, {});*/
-            }
-            id = currentObjId;
-            if (!id && currentObject) {
+        }
+        else {
+            if (!id) {
+                if (!currentObject.id && currentDataStructure == "tree") {
+                    alert("A node must be selected for this graph type (tree")
+                    return callback(null, {});
+                }
                 id = currentObject.id;
+                if (!id && currentObject) {
+                    id = currentObject.id;
+                }
             }
         }
 
 
-        currentObjId = id;
+        currentObject.id = id;
 
 
         if (currentGraphRequestType == currentGraphRequestType_TRAVERSAL) {
@@ -140,21 +147,53 @@ var toutlesensController = (function () {
         }
 
 
+        var output = currentDisplayType;
         if (applyFilters) {
             filters.setQueryFilters()
         }
+        else {
+            self.setGraphMessage("To display a graph <b>select relations  and/or label types")
+            output = "filtersDescription";
+        }
+
         var addToExistingTree = false;
-        toutlesensData.getNodeAllRelations(id, currentDisplayType, addToExistingTree, function (err, data) {
+        toutlesensData.getNodeAllRelations(id, output, addToExistingTree, function (err, data) {
+            toutlesensData.whereFilter="";
             if (err) {
                 console.log(err);
                 self.setMessage("ERROR" + err);
                 if (callback)
                     return callback(err);
+                return;
             }
+            if (output == "filtersDescription") {
+                var xx = data;
+                filters.initGraphFilters(data);
+                //  filters.initGraphFilters0(data.labels, data.relTypes);
+                if (callback)
+                    return callback(null, data);
+                return;
+            }
+
+            if (data.length >= Gparams.graphDisplayLimitMax && currentDisplayType != "SIMPLE_FORCE_GRAPH_BULK") {
+               self.setGraphMessage("Maximum size of data exceeded:" + data.size + " > maximum " + Gparams.graphDisplayLimitMax,"stop");
+                return;
+
+            }
+
+            //a revoir !!!! jamais appelé pour éviter les filtres
+            if (data.length <= Gparams.graphDisplayLimitToDisplayAll) {
+                filters.comuteAllFilters("all");
+                self.generateGraph(null,true);
+                return;
+            }
+
 
             if (self.collapseTargetLabels.length > 0) {//if we want to collapse graph
                 data = self.collapseResult(data);
             }
+            $("#graphMessage").html("<b>" + data.length + "</b> relations found <br>");
+
             if (data.length > Gparams.maxNodesForRelNamesOnGraph) {
                 Gparams.showRelationNames = false;
                 $("#showRelationTypesCbx").removeAttr("checked");
@@ -162,9 +201,6 @@ var toutlesensController = (function () {
             toutlesensData.prepareRawData(data, addToExistingTree, currentDisplayType, function (err, data, labels, relations) {
                 if (callback)
                     return callback(null, data);
-                if (!applyFilters)
-                    filters.initGraphFilters(labels, relations);
-
 
                 toutlesensController.displayGraph(data, currentDisplayType, self.currentLabels);
 
@@ -219,7 +255,7 @@ var toutlesensController = (function () {
             word: word,
             contains: contains,
             relations: relations,
-            limit: Gparams.MaxResults
+            limit: Gparams.neoQueryLimit
         }
         $.ajax({
             type: "POST",
@@ -269,7 +305,7 @@ var toutlesensController = (function () {
             }
         }
         if (output == "SIMPLE_FORCE_GRAPH" || output == "SIMPLE_FORCE_GRAPH_BULK") {
-            $("#graphMessage").html("&nbsp;&nbsp; click on graph to stop animation");
+            $("#graphMessage").append("&nbsp;&nbsp; click on graph to stop animation");
         } else
             $("#graphMessage").html("");
         help.setGraphActionsHelp();
@@ -338,11 +374,13 @@ var toutlesensController = (function () {
 
         } else if (output == "SIMPLE_FORCE_GRAPH") {
             var forceJson = json;
-            if (!json || json.children && json.children.length > 0)// maladroit à revoir dans flower
-                forceJson = toutlesensData.cachedResultArray;
-            d3simpleForce.drawsimpleForce(forceJson);
-            d3simpleForce.drawsimpleForce(forceJson);
+            //  if (!json || json.children && json.children.length > 0) {// maladroit à revoir dans flower
+            var forceJson = toutlesensData.buildForceNodesAndLinks(toutlesensData.cachedResultArray);
+            d3simpleForceLight.drawSimpleForce(forceJson.nodes, forceJson.links, forceJson.linksMap)
+
+            //    d3simpleForce.drawSimpleForce(forceJson);
             // visjsGraph.draw("graphDiv",forceJson);
+            //  }
         }
         else if (output == "SIMPLE_FORCE_GRAPH_BULK") {
             var forceJson = toutlesensData.cachedResultArray;
@@ -363,7 +401,7 @@ var toutlesensController = (function () {
 
 
                 var matchAll = "MATCH path=(n)-[r]-(m) where n.subGraph='" + subGraph + "' ";
-                matchAll += " return " + returnStr + "  limit " + Gparams.wholeGraphViewMaxNodes;
+                matchAll += " return " + returnStr + "  limit " + Gparams.neoQueryLimit;
                 toutlesensData.executeNeoQuery(QUERY_TYPE_MATCH, matchAll, function (data) {
                     data.patternNodes = nodeIds;
                     d3simpleForceBulk.initSimpleForceBulk(data);
@@ -397,8 +435,8 @@ var toutlesensController = (function () {
             select = "#" + selectId;
 
 
-        for (var i = 0; i < dataModel.allLabels.length; i++) {
-            var label = dataModel.allLabels[i];
+
+        for (var label in Schema.schema.labels) {
             $(select).append($('<option>', {
                 text: label,
                 value: label
@@ -747,7 +785,7 @@ var toutlesensController = (function () {
         if (currentObject && currentObject.id)
             id = currentObject.id;
         else
-            id = currentObjId
+            id = currentObject.id
 
         if (!currentObject.label && currentObject.nodeType) {
             currentObject.label = currentObject.nodeType;
@@ -797,11 +835,11 @@ var toutlesensController = (function () {
         }
 
         if (action == 'relationInfos') {
-           var str= textOutputs.getRelationAttrsInfo();
+            var str = textOutputs.getRelationAttrsInfo();
             $("#popupMenuNodeInfoDiv").html(str);
             $("#popupMenuNodeInfoDiv").show();
-         //   self.selectLeftTab('#attrsTab');
-          //  $("#infoPanel").html(str);
+            //   self.selectLeftTab('#attrsTab');
+            //  $("#infoPanel").html(str);
         }
 
 
@@ -985,9 +1023,9 @@ var toutlesensController = (function () {
     }
 
 
-    self.onVisButton = function (value, input) {
-        if (!currentObject && !currentObjectId) {
-            console.log("ERROR  No currentObject or currentObjectId");
+    self.onVisButton = function (value) {
+        if (!currentObject && !currentObject.id) {
+            console.log("ERROR  No currentObject or currentObject.id");
             return;
         }
 
@@ -999,7 +1037,7 @@ var toutlesensController = (function () {
             $("#tabs-radarRight").tabs("option", "active", 2);
             if (infoGenericDisplay && infoGenericDisplay.selectedNodeData && !infoGenericDisplay.isAddingRelation) {
                 //  var node = infoGenericDisplay.ids[infoGenericDisplay.selectedNodeData.jtreeId];
-                infoGenericDisplay.showNodeData(null, currentObjectId);
+                infoGenericDisplay.showNodeData(null, currentObject.id);
             }
 
 
@@ -1008,7 +1046,7 @@ var toutlesensController = (function () {
 
             $("#tabs-radarRight").tabs("option", "active", 0);
             var label = $("#nodesLabelsSelect").val();
-            var id = currentObjectId;
+            var id = currentObject.id;
 
             if (label || id)
 
@@ -1026,7 +1064,7 @@ var toutlesensController = (function () {
         }
 
         else {
-            self.generateGraph();
+            self.generateGraph(null, true);
         }
 
     }
@@ -1093,17 +1131,17 @@ var toutlesensController = (function () {
             popup = "popupMenuNodeInfoDiv";
             $("#popupMenuNodeInfoDiv").show();
         }
-       /* else if (type && type == "relationInfo") {
-            toutlesensDialogsController.setPopupMenuRelationInfoContent();
-            popup = "popupMenuNodeInfoDiv";
+        /* else if (type && type == "relationInfo") {
+         toutlesensDialogsController.setPopupMenuRelationInfoContent();
+         popup = "popupMenuNodeInfoDiv";
 
-            $("#popupMenuNodeInfoDiv").show();
-        }   */
+         $("#popupMenuNodeInfoDiv").show();
+         }   */
 
         /* else if (currentMode == "write")
          popup = "popupMenuWrite";*/
 
-        console.log(x+"--"+y+"----"+$("#popupMenuNodeInfoDiv").html())  ;
+        //   console.log(x + "--" + y + "----" + $("#popupMenuNodeInfoDiv").html());
         $("#" + popup).css("visibility", "visible").css("top", y).css("left", x);
 
     }
@@ -1257,10 +1295,10 @@ var toutlesensController = (function () {
             $("#tabs-radarLeft").tabs("option", "disabled", [2, 3]);
 
         }
-        $("#advancedQueriesDiv").tabs("option", "disabled", [3, 4]);
+        $("#advancedQueriesDiv").tabs("option", "disabled", [2,3, 4]);
 
         if (Gparams.showBItab)
-            $("#tabs-radarLeft").tabs( "enable", 2);
+            $("#tabs-radarLeft").tabs("enable", 2);
 
         if (queryParams.write) {
             $("#infosHeaderDiv").css("visibility", "visible");
@@ -1305,6 +1343,24 @@ var toutlesensController = (function () {
                 callback(false);
             }
         })
+    }
+    self.setGraphMessage = function (message, type) {
+
+        var str = "<br><br><p align='center'>"
+        var name="";
+        if(currentObject && currentObject.id)
+          name= "Node "+currentObject[Schema.getNameProperty(currentObject.label)];
+        else
+            name="Label "+currentLabel;
+        if(name)
+            str += "<span class='objectName'>" +name+"</span><br>"
+        if (type == "stop")
+            str += "<img src='./icons/warning.png' width='50px'><br>"
+        str += "" + message + " <br>";
+        str += "</p>";
+
+        $("#graphDiv").html(str);
+
     }
 
     return self;

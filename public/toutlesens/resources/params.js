@@ -30,17 +30,34 @@ var Gparams = {
     logLevel:5,
     readOnly: true,
     showRelationAttrs:true,
-    maxNodesForRelNamesOnGraph:20,
+
     startWithBulkGraphView: false,
     defaultNodeNameProperty:"name",
-    defaultQueryDepth:2,
+    defaultQueryDepth:1,
+
+
+
+    neoQueryLimit:20000,
+
+    listDisplayLimitMax:500,
+    jsTreeMaxChildNodes:500,
+    graphDisplayLimitMax: 5000,
+
+    graphDisplayLimitToDisplayAll:100,
     bulkGraphViewMaxNodesToDrawLinks:1000,
-    jsTreeMaxChildNodes:300,
+    bulkGraphDisplayLimit:5000,
+    maxNodesForRelNamesOnGraph:20,
+
+    durationMsecBeforeGraphStop:8000,
+
+
+
+
     defaultGraphtype:"FLOWER",
     graphNavigationMode: "expandNode",
-    wholeGraphViewMaxNodes: 5000,
+
     modifyMode: 'onList',//''onList'
-    MaxResults: 1000,
+
     lang: "EN",
 
 
@@ -79,7 +96,7 @@ var Gparams = {
     isInframe: false,
     treeGraphVertSpacing: 35,
     bigDialogSize: {w: 300, h: 400},
-    showBItab:true,
+    showBItab:false,
     gantt: {
         name: "nom",
         startField: "datedebut",

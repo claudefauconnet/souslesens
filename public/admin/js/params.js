@@ -27,9 +27,9 @@
 
 var Gparams = {
 
-    neo4jProxyUrl: "../neo",
-    mongoProxyUrl: "../mongo",
-    mongoToNeoUrl: "../exportMongoToNeo",
+    neo4jProxyUrl: "/neo",
+    mongoProxyUrl: "/mongo",
+    mongoToNeoUrl: "/exportMongoToNeo",
 
 
 

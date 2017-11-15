@@ -4,92 +4,87 @@
 
 var filters = (function () {
     var self = {};
-    var currentPropertiesMap
+    var currentPropertiesMap;
+    self.hasFiltersSelected = false;
+    self.currentFilters = {};
 
-    self.initGraphFilters = function (labels, relations) {
+
+    self.initGraphFilters = function (data) {
+        self.hasFiltersSelected = false;
+        self.currentFilters = {};
+        self.postFilter = null;
+
         $("#innerLegendDiv").html("");
-        if (false && dontReInitFilterGraph == true)
-            return;
 
-        if (!labels) {
-            console.log("!!! no labels for filters")
-            return;//   labels = [currentLabel];
-        }
+
         var str = "";
         var targetLabels = [];
         var relationTypes = [];
 
-        targetLabels = labels;
-        relationTypes = relations;
-        /*   for (var j = 0; j < labels.length; j++) {
-         var label = labels[j];
-         if (Schema) {
-         for (var key in Schema.schema.relations){
-         var relation= Schema.schema.relations[key];
-
-
-         }
-
-         } else {/// old approach
-         var relations = dataModel.relations[label];
-
-         if (!relations)
-         return;
-         for (var i = 0; i < relations.length; i++) {
-         if (relationTypes.indexOf(relations[i].relType) < 0)
-         relationTypes.push(relations[i].relType);
-         if (targetLabels.indexOf(label) < 0)
-         targetLabels.push(label);
-
-         }
-         }
-         }*/
 
         var checked = "' checked='checked' ";
-        var onclick = " onclick='filters.startQueryFilterMode() '"
-        onclick = "onclick='filters.onFilterCbxClik();'";
         var noChecked = "";
+        var onclick = " onclick='filters.startQueryFilterMode() '"
+        onclick = "onclick='filters.onFilterCbxClik(this);'";
+
         str += "<table>"
 
         // str += "<tr class='italicSpecial'><td ><span
         // class='bigger'>Noeuds</span></td><td>Inclure</td><td>Exclure</td></tr>";
-        str += "<tr align='center' class='italicSpecial'><td></td><td><span class='bigger'>Noeuds</span></td><td>Inclure<br><input type='checkbox' id='#comuteAllFiltersNodesInclude' checked='checked' onchange='filters.comuteAllFilters(this)'></td></tr>";//<td>Exclure<br><input type='checkbox' id='#comuteAllFiltersNodesExclude' onchange='filters.comuteAllFilters(this)'></td></tr>";
-        for (var i = 0; i < targetLabels.length; i++) {
+        str += "<tr align='center'  class='italicSpecial'><td><span class='bigger'>Relations/labels</span></td><td></td><td>Include<br><input type='checkbox' id='#comuteAllFiltersRelationsInclude' " + noChecked + "  onchange='filters.comuteAllFilters(this)'></td></tr>";//<td>Exclure<br><input type='checkbox' id='#comuteAllFiltersRelationsExclude' onchange='filters.comuteAllFilters(this)'></td></tr>";
+        for (var i = 0; i < data.length; i++) {
+            var filterObj = data[i];
+            for (var k = 0; k < filterObj.rels.length; k++) {
+                var relName = filterObj.rels[k];
+
+
+                if (!self.currentFilters[relName]) {
+                    self.currentFilters[relName] = [];
+
+                }
+                for (var j = 0; j < filterObj.labels.length; j++) {
+                    var label = filterObj.labels[j][0];
+                    if (self.currentFilters[relName].indexOf(label) < 0)
+                        self.currentFilters[relName].push(label);
+                }
+            }
+        }
+        for (var relName in self.currentFilters) {
+            var relLabels = self.currentFilters[relName];
             str += "<tr align='center'>";
-            str += "<td><button onclick='filters.labelDoMore(\"" + relationTypes[i] + "\")'>+</button></td>";
-            str += "<td style='background-color:" + nodeColors[targetLabels[i]] + "'>" + targetLabels[i] + "</td>";
-            str += "<td><input type='checkbox' name='graphNodesFilterCbx' value='"
-                + targetLabels[i] + "'" + onclick + checked + "/></td> "
-            /*   str += "<td>"
-             + "<input type='checkbox' name='graphNodesFilterExcludeCbx' value='"
-             + targetLabels[i] + "'" + onclick + noChecked + "/> "*/
+            str += "<td style='background-color:" + linkColors[relName] + "'>";
+            str +=   relName + "</td>";
+            str += "<td> <img  src='./icons/filter.png'  width='15px' onclick='filters.relDoMore(\"" + relName + "\")'></td>"
+          //  str += "<td><button onclick='filters.relDoMore(\"" + relName + "\")'>+</button></td>";
+          //  str += "<td style='background-color:" + linkColors[relName] + "'>" + relName + "</td>";
+            str += "<td><input type='checkbox' name='graphRelationsFilterCbx' value='"
+                + relName + "'" + onclick + noChecked + "/></td> "
 
             str += "</tr>";
+
+            for (var j = 0; j < relLabels.length; j++) {
+
+                var label = relLabels[j];
+
+                str += "<tr align='center'>";
+                //str += "<td><button  onclick='filters.labelDoMore(\"" + label + "\",\"" + relName + "\")'><img  src='./icons/filter.png'  width='15px'></button></td>";
+                str += "<td style='color:" + nodeColors[label] + "'>";
+                str +=   label + "</td>";
+                str += "<td><img  src='./icons/filter.png'  width='15px' onclick='filters.labelDoMore(\"" + label + "\",\"" + relName + "\")'>"
+                str += "<td><input type='checkbox' name='graphNodesFilterCbx' value='"
+                    + relName + "#" + label + "'" + onclick + noChecked + "/></td> "
+
+                str += "</tr>";
+
+
+            }
+            str += "</tr>";
+            str += "<tr><td colspan='3' >&nbsp;</B></td></td></tr>";
         }
-        str += "<tr><td colspan='3' >&nbsp;</B></td></td></tr>";
 
         // str += "<tr class='italicSpecial'><td colspan='3'><span
         // class='bigger'>Relations</span></tr>";
-        str += "<tr align='center'  class='italicSpecial'><td></td><td><span class='bigger'>Relations</span></td><td>Inclure<br><input type='checkbox' id='#comuteAllFiltersRelationsInclude' checked='checked'  onchange='filters.comuteAllFilters(this)'></td></tr>";//<td>Exclure<br><input type='checkbox' id='#comuteAllFiltersRelationsExclude' onchange='filters.comuteAllFilters(this)'></td></tr>";
 
-        for (var i = 0; i < relationTypes.length; i++) {
-            str += "<tr align='center'>";
-            var key = relationTypes[i];
-            var relKey = relationTypes[i];
-            var p = relKey.indexOf("#");
-            if (p > -1)
-                relKey = relKey.substring(0, p);
-            str += "<td><button onclick='filters.relDoMore(\"" + relationTypes[i] + "\")'>+</button></td>";
-            str += "<td style='background-color:" + linkColors[relKey] + "'>" + relationTypes[i] + "</td>";
-
-            +relationTypes[i] + "'" + onclick + checked + "/></td> "
-            str += "<td><input type='checkbox' name='graphRelationsFilterCbx' value='"
-                + relationTypes[i] + "'" + onclick + checked + "/></td> "
-            /*  str += "<td><input type='checkbox' name='graphRelationsFilterExcludeCbx' value='"
-             + relationTypes[i] + "'" + onclick + noChecked + "/> ";*/
-            str += "</tr>";
-
-        }
 
         str += "</table>"
         $("#filtersDiv").html(str);
@@ -104,8 +99,51 @@ var filters = (function () {
          */
         if (!customizeUI.hideFilters == true)
             $("#filtersDiv").css("visibility", "visible");
-        // generateGraph(currentObjId,drawGraph);
+        // generateGraph(currentObject.id,drawGraph);
     }
+
+    self.comuteAllFilters = function (caller, mode) {
+        var str="";
+        var status = true;
+        if(caller=="all"){
+            str="#comuteAllFiltersRelationsInclude";
+        }
+        if (caller) {
+           str= $(caller).attr("id");
+            var status = $(caller).prop("checked");
+        }
+        else {
+            if (mode == "off")
+                status = false;
+            else
+                status = false;
+        }
+
+        self.comuteAll = function (cbxs, mode) {
+            var relCbxes = $("[name=" + cbxs + "]");
+            for (var i = 0; i < relCbxes.length; i++) {
+                $(relCbxes[i]).prop("checked", mode);
+            }
+
+        }
+
+
+        if (str == "#comuteAllFiltersRelationsInclude")
+            self.comuteAll("graphRelationsFilterCbx", status);
+        if (str == "#comuteAllFiltersRelationsExclude")
+            self.comuteAll("graphRelationsFilterExcludeCbx", status);
+        if (str == "#comuteAllFiltersNodesInclude")
+            self.comuteAll("graphNodesFilterCbx", status);
+        if (str == "#comuteAllFiltersNodesExclude")
+            self.comuteAll("graphNodesFilterExcludeCbx", status);
+
+        if (status) {//on  all checked action
+            self.setQueryFilters();
+            toutlesensController.generateGraph(currentObject.id, true);
+        }
+    }
+
+
 
     self.comuteAllFilters = function (caller, mode) {
         var status = true;
@@ -139,7 +177,7 @@ var filters = (function () {
 
         if (status) {//on  all checked action
             self.setQueryFilters();
-            toutlesensController.generateGraph(currentObjectId, true);
+            toutlesensController.generateGraph(currentObject.id, true);
         }
     }
 
@@ -152,43 +190,50 @@ var filters = (function () {
         var nodeLabelFilters = [];
         var relRelTypesExcludedFilters = [];
         var nodeLabelExcludedFilters = [];
-        var id = currentObjectId;
+        var id = currentObject.id;
 
         var relCbxes = $("[name=graphRelationsFilterCbx]");
         for (var i = 0; i < relCbxes.length; i++) {
             if (relCbxes[i].checked) {
-                relRelTypesFilters.push(relCbxes[i].value);
+                if (relRelTypesFilters.indexOf(relCbxes[i].value) < 0)
+                    relRelTypesFilters.push(relCbxes[i].value);
 
             }
-
-
         }
         var labelCbxes = $("[name=graphNodesFilterCbx]");
         for (var i = 0; i < labelCbxes.length; i++) {
             if (labelCbxes[i].checked) {
-                nodeLabelFilters.push(labelCbxes[i].value);
-
+                var label = labelCbxes[i].value.split("#")[1]
+                if (nodeLabelFilters.indexOf(label) < 0)
+                    nodeLabelFilters.push(label);
             }
-
-        }
-        var labelExludedCbxes = $("[name=graphNodesFilterExcludeCbx]");
-        for (var i = 0; i < labelExludedCbxes.length; i++) {
-            if (labelExludedCbxes[i].checked) {
-                nodeLabelExcludedFilters.push(labelExludedCbxes[i].value);
-
-            }
-
         }
 
-        var relExcludesCbxes = $("[name=graphRelationsFilterExcludeCbx]");
-        for (var i = 0; i < relExcludesCbxes.length; i++) {
-            if (relExcludesCbxes[i].checked) {
-                relRelTypesExcludedFilters.push(relExcludesCbxes[i].value);
+        /*   var labelExludedCbxes = $("[name=graphNodesFilterExcludeCbx]");
+         for (var i = 0; i < labelExludedCbxes.length; i++) {
+         if (labelExludedCbxes[i].checked) {
+         nodeLabelExcludedFilters.push(labelExludedCbxes[i].value);
 
-            }
+         }
+
+         }
+
+         var relExcludesCbxes = $("[name=graphRelationsFilterExcludeCbx]");
+         for (var i = 0; i < relExcludesCbxes.length; i++) {
+         if (relExcludesCbxes[i].checked) {
+         relRelTypesExcludedFilters.push(relExcludesCbxes[i].value);
+
+         }
 
 
+         }*/
+
+        // if no filter return false
+        if (relRelTypesFilters.length + nodeLabelFilters.length == 0) {
+            self.hasFiltersSelected = false;
+            return;
         }
+        self.hasFiltersSelected = true;
 
         toutlesensData.queryNodeFilters = "";
         toutlesensData.queryExcludeNodeFilters = "";
@@ -219,34 +264,43 @@ var filters = (function () {
         }
 
 
-        if (nodeLabelExcludedFilters.length != labelExludedCbxes.length) {
-            for (var i = 0; i < nodeLabelExcludedFilters.length; i++) {
-                toutlesensData.queryExcludeNodeFilters += " and NOT m:"
-                    + nodeLabelExcludedFilters[i];
+        /*  if (nodeLabelExcludedFilters.length != labelExludedCbxes.length) {
+         for (var i = 0; i < nodeLabelExcludedFilters.length; i++) {
+         toutlesensData.queryExcludeNodeFilters += " and NOT m:"
+         + nodeLabelExcludedFilters[i];
 
-            }
+         }
 
-        }
-
-
-        if (relRelTypesExcludedFilters.length != relExcludesCbxes.length) {
-            for (var i = 0; i < relRelTypesExcludedFilters.length; i++) {
-                if (i > 0)
-                    toutlesensData.queryExcludeRelFilters += ",";
-                toutlesensData.queryExcludeRelFilters += "\"" + relRelTypesExcludedFilters[i]
-                    + "\"";
-
-            }
-            if (toutlesensData.queryExcludeRelFilters.length > 0)
-                toutlesensData.queryExcludeRelFilters = "  and  NONE( rel in r WHERE type(rel) IN ["
-                    + toutlesensData.queryExcludeRelFilters + "])"
+         }
 
 
-        }
+         if (relRelTypesExcludedFilters.length != relExcludesCbxes.length) {
+         for (var i = 0; i < relRelTypesExcludedFilters.length; i++) {
+         if (i > 0)
+         toutlesensData.queryExcludeRelFilters += ",";
+         toutlesensData.queryExcludeRelFilters += "\"" + relRelTypesExcludedFilters[i]
+         + "\"";
+
+         }
+         if (toutlesensData.queryExcludeRelFilters.length > 0)
+         toutlesensData.queryExcludeRelFilters = "  and  NONE( rel in r WHERE type(rel) IN ["
+         + toutlesensData.queryExcludeRelFilters + "])"
+
+
+         }*/
+        return;
     }
 
-    self.onFilterCbxClik = function () {
-        toutlesensController.generateGraph(currentObjectId, true);
+    self.onFilterCbxClik = function (cbx) {
+        var relName = cbx.value;
+        if (cbx.name.indexOf("graphRelation") == 0) {//if relation filter
+            var labels = filters.currentFilters[relName];
+            for (var i = 0; i < labels.length; i++) {
+                $("[value='" + relName + "#" + labels[i] + "']").prop("checked", "checked")
+            }
+
+        }
+        toutlesensController.generateGraph(currentObject.id, true);
     }
     self.backToNonFilteredGraph = function () {
         isInPathGraphAction = false;
@@ -258,111 +312,175 @@ var filters = (function () {
     }
     self.relDoMore = function (type) {
 
-        $("#dialog").load("/htmlSnippets/relPropertySelection.html", function () {
-            self.initRelPropertySelection(type);
+        $("#dialog").load("/htmlSnippets/propertySelection.html", function () {
+            self.initRelationPropertySelection(type);
             $("#dialog").dialog("open")
         });
 
 
     }
-    self.labelDoMore = function (label) {
-        $("#dialog").load("/htmlSnippets/labelPropertySelection.html");
-        $("#dialog").dialog("open")
+    self.labelDoMore = function (label,relType) {
+        $("#dialog").load("/htmlSnippets/propertySelection.html", function () {
+            self.initLabelPropertySelection(label);
+            $("#dialog").dialog("open");
+
+            var cbxs = $('[name=graphRelationsFilterCbx]');
+            for (var i = 0; i < cbxs.length; i++) {
+                if (cbxs[i].value == relType)
+                    $(cbxs[i]).prop("checked", "checked");
+                }
+        });
     }
 
-    self.initRelPropertySelection = function (type) {
-        var xx = Schema.schema;
-        var result = toutlesensData.cachedResultArray;
-        var propertiesObj = {};
-        for (var i = 0; i < result.length; i++) {
-            var relProps = result[i].relProperties;
-            for (var k = 0; k < relProps.length; k++) {
-                var props2 = relProps[k].properties;
-                for (var key in props2) {
-                    if (!propertiesObj[key]) {
-                        propertiesObj[key] = {
-                            name: key,
-                            min: 99999999999999,
-                            max: -999999999999999,
-                            values: [],
-                            cumulValue: 0,
-                            count: 0
-                        }
-                    }
-                    value = props2[key];
-                    if (util.isNumber) {
-                        propertiesObj[key].min = Math.min(propertiesObj[key].min, value);
-                        propertiesObj[key].max = Math.max(propertiesObj[key].max, value);
-                        propertiesObj[key].cumulValue += value;
-                        propertiesObj[key].count += 1;
-
-                    } else {
-                        propertiesObj[key].count += 1;
-                        if (propertiesObj[key].values.indexOf(value) < 0)
-                            propertiesObj[key].values.push(value);
-
-
-                    }
-                }
-
-
+    self.initRelationPropertySelection = function (type) {
+        self.postFilter = null;
+        var relations = Schema.getRelationsByType(type);
+        var propertiesArray = [""];
+        for (var i = 0; i < relations.length; i++) {
+            for (var j = 0; j < relations[i].properties.length; j++) {
+                var property = relations[i].properties[j];
+                if (propertiesArray.indexOf(property) < 0)
+                    propertiesArray.push(property);
             }
         }
-        currentPropertiesMap = {
-            type: type,
-            properties: propertiesObj
-        };
-        var propertiesArray = [""]
-        for (var key in propertiesObj) {
-            propertiesArray.push(propertiesObj[key])
-        }
+        propertiesArray.sort();
         $("#relPropertiesSelectionRelationSpan").html(type);
-        var select = document.getElementById("relPropertiesSelectionDialogSelect")
-        common.fillSelectOptions(select, propertiesArray, "name")
+        $("#propertiesSelectionDialog_natureInput").val("relation");
+        var select = document.getElementById("propertiesSelectionDialog_propsSelect")
+        common.fillSelectOptionsWithStringArray(select, propertiesArray)
 
     }
-    self.setRelationStrokeWitdh = function () {
-        var prop = $("#relPropertiesSelectionDialogSelect").val();
-        var type = currentPropertiesMap.type;
-        var cbxs = $('[name=graphRelationsFilterCbx]');
-        for (var i = 0; i < cbxs.length; i++) {
-            var mode = "unchecked";
 
-            if (cbxs[i].value == type) {
+    self.initLabelPropertySelection = function (type) {
+        self.postFilter = null;
+        var properties = Schema.schema.properties[type];
+        var propertiesArray = [""];
+        for (var key in properties) {
+            propertiesArray.push(key);
+        }
+        propertiesArray.sort();
+
+    $("#relPropertiesSelectionRelationSpan").html(type);
+        $("#propertiesSelectionDialog_natureInput").val("startNode");
+    var select = document.getElementById("propertiesSelectionDialog_propsSelect")
+    common.fillSelectOptionsWithStringArray(select, propertiesArray)
+
+}
+
+/* self.initpropertySelection = function (type) {
+ self.postFilter=null;
+ var xx = Schema.schema;
+ var result = toutlesensData.cachedResultArray;
+ var propertiesObj = {};
+ for (var i = 0; i < result.length; i++) {
+ var relProps = result[i].relProperties;
+ for (var k = 0; k < relProps.length; k++) {
+ var props2 = relProps[k].properties;
+ for (var key in props2) {
+ if (!propertiesObj[key]) {
+ propertiesObj[key] = {
+ name: key,
+ min: 99999999999999,
+ max: -999999999999999,
+ values: [],
+ cumulValue: 0,
+ count: 0
+ }
+ }
+ value = props2[key];
+ if (util.isNumber) {
+ propertiesObj[key].min = Math.min(propertiesObj[key].min, value);
+ propertiesObj[key].max = Math.max(propertiesObj[key].max, value);
+ propertiesObj[key].cumulValue += value;
+ propertiesObj[key].count += 1;
+
+ } else {
+ propertiesObj[key].count += 1;
+ if (propertiesObj[key].values.indexOf(value) < 0)
+ propertiesObj[key].values.push(value);
+
+
+ }
+ }
+
+
+ }
+ }
+ currentPropertiesMap = {
+ type: type,
+ properties: propertiesObj
+ };
+ var propertiesArray = [""]
+ for (var key in propertiesObj) {
+ propertiesArray.push(propertiesObj[key])
+ }
+ $("#relPropertiesSelectionRelationSpan").html(type);
+ var select = document.getElementById("propertiesSelectionDialog_propsSelect")
+ common.fillSelectOptions(select, propertiesArray, "name")
+
+ }*/
+self.outLineProperty = function () {
+    var prop = $("#propertiesSelectionDialog_propsSelect").val();
+    var type = currentPropertiesMap.type;
+    var cbxs = $('[name=graphRelationsFilterCbx]');
+    for (var i = 0; i < cbxs.length; i++) {
+        var mode = "unchecked";
+
+        if (cbxs[i].value == type) {
 
             mode = "checked"
             $(cbxs[i]).prop("checked", mode);
-        }else
-                $(cbxs[i]).removeAttr("checked");
-        }
-
-        Gparams.visibleLinkProperty = prop;
-        toutlesensController.generateGraph(currentObjectId, true);
-        $("#dialog").dialog("close");
-
-        $("#innerLegendDiv").html("relation witdh -> "+currentPropertiesMap.type+"/"+prop);
+        } else
+            $(cbxs[i]).removeAttr("checked");
     }
 
-    self.applyRelPropFilter = function () {
-        var propOnly = $("#relPropertiesSelectionDialogSelect").val();
-        var whereOnlyRelProp = ""
-        for (var key in currentPropertiesMap) {
-            if (key != propOnly) {
-                if (whereOnlyRelProp != "")
-                    whereOnlyRelProp += " AND ";
-                whereOnlyRelProp += " NOT HAS(r:" + key + ")";
+    Gparams.visibleLinkProperty = prop;
+    toutlesensController.generateGraph(currentObject.id, true);
+    $("#dialog").dialog("close");
 
-            }
-        }
-        toutlesensData.whereFilter = whereOnlyRelProp;
-        self.generateGraph(null, true, function (err, result) {
-            var xx = result;
+    $("#innerLegendDiv").html("relation witdh -> " + currentPropertiesMap.type + "<br>" + prop);
+}
 
-        })
+
+self.filterOnProperty = function () {
+    var property = $("#propertiesSelectionDialog_propsSelect").val();
+    var value=$("#propertiesSelectionDialog_valueInput").val();
+    var nature=$("#propertiesSelectionDialog_natureInput").val();
+    var operator=$("#propertiesSelectionDialog_operatorSelect").val();
+
+    var where=""
+    if(value){
+        if( toutlesensData.whereFilter != "")
+            toutlesensData.whereFilter += " AND ";
+
+
+
 
     }
+    if(nature=="relation" ) {
+        if( common.isNumber(value))
 
-    return self;
+            toutlesensData.whereFilter += "r[0]."+property+operator+value+" ";
+        else
+            toutlesensData.whereFilter += "r[0]."+property+operator+"\""+value+"\" ";
+
+    }
+    else if(nature=="startNode" ) {
+        if( common.isNumber(value))
+            toutlesensData.whereFilter += "node1."+property+operator+value+" ";
+        else
+            toutlesensData.whereFilter += "node1."+property+operator+"\""+value+"\" ";
+
+    }
+    toutlesensController.generateGraph(null, true);
+    $("#dialog").dialog("close");
+
+}
 
 
-})()
+
+return self;
+
+
+})
+()

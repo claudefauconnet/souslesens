@@ -668,7 +668,7 @@ var infoGenericDisplay = (function () {
 
         toutlesensController.checkMaxNumberOfNodeRelations (parentId,Gparams.jsTreeMaxChildNodes,function(){
 
-        currentObjectId = parentId;
+        currentObject.id = parentId;
         if (toutlesensController && currentDisplayType && currentDisplayType == "CARDS") {
 
             toutlesensController.onVisButton("CARDS");

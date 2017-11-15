@@ -54,7 +54,7 @@ var graphTraversalQueries = (function () {
                     return;
 
                 }
-                if (data.length > Gparams.MaxResults) {
+                if (data.length > Gparams.graphDisplayLimitMax) {
 
                     alert("trop de resultats "
                         + data.length
@@ -225,7 +225,7 @@ var graphTraversalQueries = (function () {
                         return;
 
                     }
-                    if (data.length > Gparams.MaxResults) {
+                    if (data.length > Gparams.graphDisplayLimitMax) {
                         currentGraphPanel = "";
                         alert("trop de resultats "
                             + data.length

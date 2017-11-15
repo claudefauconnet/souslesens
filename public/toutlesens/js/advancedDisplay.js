@@ -76,6 +76,7 @@ common.fillSelectOptionsWithStringArray(nodesLabelsBISelect, labels);
     // data=testData;
     var label = $(select).val();
     var props = dataModel.labels[label];
+    var props=Schema.getLabelPropertiesNames(label)
 common.fillSelectOptionsWithStringArray(nodesLabelsPropertiesSelect, props);
 
 }
@@ -341,7 +342,6 @@ self.onPropertyClick(nodesLabelsPropertiesSelect);
 
    self.initDecorationDiv=function() {
     data = toutlesensData.cachedResultArray;
-    dataModel = dataModel;
 storedParams.loadStoredParams("decoration");
     if (!currentlabel) {
 self.loadGraphDisplaylabels();

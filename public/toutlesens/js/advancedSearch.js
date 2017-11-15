@@ -899,7 +899,7 @@ var advancedSearch = (function () {
 
 
         var matchAll = "MATCH path=(n)-[r]-(m) where n.subGraph='" + subGraph + "' ";
-        matchAll += " return " + returnStr + "  limit " + Gparams.wholeGraphViewMaxNodes;
+        matchAll += " return " + returnStr + "  limit " + Gparams.neoQueryLimit;
 
         // console.log(matchAll);
 

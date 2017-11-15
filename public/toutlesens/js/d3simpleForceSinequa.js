@@ -27,7 +27,7 @@
 
 var d3simpleForceSinequa = (function(){
  var self = {};
-   self.buildNodesAndLinks=function(resultArray) {
+   toutlesensData.buildForceNodesAndLinks=function(resultArray) {
     currentDataStructure="flat";
     var nodesMap = {};
     var links = [];
@@ -170,10 +170,10 @@ var d3simpleForceSinequa = (function(){
 }
 
 
-   self.drawsimpleForce=function(json) {
+   self.drawSimpleForce=function(json) {
 
 
-self.buildNodesAndLinks(json);
+toutlesensData.buildForceNodesAndLinks(json);
 toutlesensController.setLabelsColor()
 //	 makeDiag( forceData.nodes, forceData.links);
 self.drawSimpleForce(forceData.nodes, forceData.links);

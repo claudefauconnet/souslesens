@@ -47,7 +47,7 @@ var elasticCustom = {
 }
 
 
-var data=""+fs.readFileSync("D:\\Total\\Requirements\\EP\\ELE\\GS_EP_ELE_001-Req-3.-1.html")
-elasticCustom.getMetaData(data);
+//var data=""+fs.readFileSync("D:\\Total\\Requirements\\EP\\ELE\\GS_EP_ELE_001-Req-3.-1.html")
+//elasticCustom.getMetaData(data);
 
 module.exports = elasticCustom;

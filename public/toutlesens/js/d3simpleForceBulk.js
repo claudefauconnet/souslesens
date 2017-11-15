@@ -32,7 +32,7 @@ var d3simpleForceBulk = (function () {
 
     self.initSimpleForceBulk = function (json) {
 
-        var forceData = d3simpleForce.buildNodesAndLinks(json);
+        var forceData = d3simpleForce.toutlesensData.buildForceNodesAndLinks(json);
         var patternNodes = json.patternNodes;
         // console.log("nodes : "+forceData.nodes.length);
         //  console.log("charge :"+ Gparams.d3ForceParams.charge);

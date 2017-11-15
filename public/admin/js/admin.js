@@ -1067,6 +1067,7 @@ function onSubGraphSelect(select, showgraph) {
 function onLabelSelect(select) {
     var value = $(select).val();
     $('#label').val(value);
+    currentLabel=val();
 
 }
 

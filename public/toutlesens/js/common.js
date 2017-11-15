@@ -39,7 +39,7 @@ var common = (function () {
 //moved  var isRadarReadOnly = true;
 //moved  var http = "";
 //moved  var currentObject;
-//moved  var currentObjectId;
+//moved  var currentObject.id;
 //moved  var canModifyRadarDetails = false;
 //moved  var rapahaelItemsSet;
 //moved  var canModify = false;

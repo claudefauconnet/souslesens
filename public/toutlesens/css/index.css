@@ -528,6 +528,12 @@ table.dataTable thead th div.DataTables_sort_wrapper {
     stroke-width: none;
 }
 
+.objectName{
+    color: #662211;
+    font-weight: bold;
+    font-size: 14px;
+}
+
 
 
 

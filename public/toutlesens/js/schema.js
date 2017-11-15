@@ -348,7 +348,6 @@ var Schema = (function () {
                     var name = key;
                     if (i > 0)
                         var name = key + "#" + (i);
-
                     relation.type = key;
                     relationsNewModel[name] = relation;
 
