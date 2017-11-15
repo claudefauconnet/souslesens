@@ -27,7 +27,7 @@ var filters = (function () {
         var onclick = " onclick='filters.startQueryFilterMode() '"
         onclick = "onclick='filters.onFilterCbxClik(this);'";
 
-        str += "<table>"
+        str += "<table >"
 
         // str += "<tr class='italicSpecial'><td ><span
         // class='bigger'>Noeuds</span></td><td>Inclure</td><td>Exclure</td></tr>";
@@ -51,7 +51,7 @@ var filters = (function () {
         }
         for (var relName in self.currentFilters) {
             var relLabels = self.currentFilters[relName];
-            str += "<tr align='center'>";
+            str += "<tr align='center' class='relationType'>";
             str += "<td style='background-color:" + linkColors[relName] + "'>";
             str +=   relName + "</td>";
             str += "<td> <img  src='./icons/filter.png'  width='15px' onclick='filters.relDoMore(\"" + relName + "\")'></td>"

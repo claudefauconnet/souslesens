@@ -88,7 +88,7 @@ var Gparams = {
     user: "anonymous",
     curveOffset: 40,
     relStrokeWidth: 4,
-    legendWidth: 200,
+    legendWidth: 250,
     minOpacity: .3,
     d3ForceParams: {distance: 200, charge: -500, gravity: .25},
     htmlOutputWithAttrs: true,

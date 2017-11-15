@@ -183,9 +183,9 @@ var toutlesensController = (function () {
 
             //a revoir !!!! jamais appelé pour éviter les filtres
             if (data.length <= Gparams.graphDisplayLimitToDisplayAll) {
-                filters.comuteAllFilters("all");
-                self.generateGraph(null,true);
-                return;
+              //  filters.comuteAllFilters("all");
+             //   self.generateGraph(null,true);
+             //   return;
             }
 
 

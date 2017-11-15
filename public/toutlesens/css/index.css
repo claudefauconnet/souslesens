@@ -533,6 +533,9 @@ table.dataTable thead th div.DataTables_sort_wrapper {
     font-weight: bold;
     font-size: 14px;
 }
+.relationType{
+    font-size: 12px;
+}
 
 
 

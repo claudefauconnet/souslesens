@@ -94,10 +94,11 @@ var d3simpleForceLight = (function () {
         self.canvas = svg.append("svg:g")
             .style("stroke", "#999")
             .style("fill", "#fff")
+            .attr('class', "canvas")
             .attr('width', w)
             .attr('height', h)
             .call(d3.behavior.zoom().scaleExtent([coef / 3, coef * 2]).on("zoom", function () {
-                if (d3.event.scale < 0.8)
+                if (d3.event.scale < 0.9)
                     d3.selectAll(".nodeText").style("visibility", "hidden");
                 else
                     d3.selectAll(".nodeText").style("visibility", "visible");
@@ -110,6 +111,9 @@ var d3simpleForceLight = (function () {
 
                 })
             );
+       // d3.select(".canvas").append("rect").attrs({ x: 0, y: 0, width: 0, height: 0, fill: 'white' })
+
+
 
         force = d3.layout.force()
             .on("tick", tick)
@@ -275,15 +279,15 @@ var d3simpleForceLight = (function () {
 
                 anode.on("mouseover", function (d) {
                     d3common.d3CommonMouseover(d);
-                    d3.selectAll(".link").attr("stroke", "grey").style("opacity", 0.2);
+                    d3.selectAll(".link").attr("stroke", "grey").style("opacity", 0.5);
                     d3.selectAll(".pointsRadar").attr("stroke", "black").attr("stroke-width", 1);
                     for (var i = 0; i < d.rels.length; i++) {
                         var idLink = d.rels[i];
-                        d3.selectAll("#L_" + idLink).attr("stroke", "blue").style("opacity", 1);
+                        d3.selectAll("#L_" + idLink).transition().duration(100).attr("stroke", "blue").style("opacity", 1);
 
                         var linkObj = linksMap[idLink];
-                        d3.selectAll("#P_" + linkObj.source).select('svg:circle').attr("stroke", "blue").style("opacity", 1).attr("stroke-width", 3);
-                        d3.selectAll("#P_" + linkObj.target).select('svg:circle').attr("stroke", "blue").style("opacity", 1).attr("stroke-width", 3);
+                        d3.selectAll("#P_" + linkObj.source).select('svg:circle').transition().duration(100).attr("stroke", "blue").style("opacity", 1).attr("stroke-width", 3);
+                        d3.selectAll("#P_" + linkObj.target).select('svg:circle').transition().duration(100).attr("stroke", "blue").style("opacity", 1).attr("stroke-width", 3);
 
 
                     }
@@ -306,9 +310,9 @@ var d3simpleForceLight = (function () {
                 })
                     .attr("dy", ".35em").attr('class', 'nodeText')
 
-                    .style("fill", function (d) {
+                 /*   .style("fill", function (d) {
                         return "#444";
-                    })
+                    })*/
                     .attr("text-anchor", function (d) {
                         return "start";
                     })
@@ -322,7 +326,7 @@ var d3simpleForceLight = (function () {
                         return "12px";
 
                     })
-                    .style("visibility", "hidden")
+                    .style("visibility", "visible")
 
 
             });
