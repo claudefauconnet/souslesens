@@ -1323,8 +1323,10 @@ var toutlesensData = (function () {
                     console.log(str);
                     return;
                 }
-                if(data.length>Gparam.listDisplayLimitMax)
-                    alert("tomany result : "+data.length+"> Max :"+Gparam.listDisplayLimitMax)
+                if(data.length>Gparams.listDisplayLimitMax) {
+                    alert("too many result : " + data.length + "> Max :" + Gparams.listDisplayLimitMax)
+                    return;
+                }
 
 
                 if (resultType == "count") {

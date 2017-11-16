@@ -311,7 +311,7 @@
             $("#graphDecorationPanel").height(totalHeight / 2);
 
 
-            $(".splitter_panel").width(totalWidth / leftPanelRatio * 2).height(totalHeight - 50);
+            $(".splitter_panel").width((totalWidth / leftPanelRatio * 2.5)).height(totalHeight - 50);
             //  $("#graphLegendDiv").width(totalWidth / 4 * 3).height(50);
 
             $("#nodeIframe").width("100%").height(totalHeight - 100);
@@ -614,13 +614,6 @@
                         <table border="0">
 
 
-                            <!--    <tr>
-                                    <td><B></B> Labels</td>
-                                    <td><select id="nodesLabelsSelect"
-                                                onchange=toutlesensController.onLabelSelect(this)></select></td>
-
-                                </tr>-->
-
 
                             <tr>
                                 <td colspan="3">
@@ -759,7 +752,8 @@
                     </ul>
 
                     <div id="graphPathDiv">
-
+                        this first tab is IN PROGRESS, currentQueries is OK...
+<!--
                         <br>
                         <table border="0">
                             <tr>
@@ -790,6 +784,8 @@
 
 
                         </table>
+
+                     -->
                     </div>
                     <div id="PatternVizDiv">
                         <table>

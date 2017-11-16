@@ -89,7 +89,6 @@ var toutlesensController = (function () {
         $("#relInfoDiv").html("");
 
 
-
         if ($("#keepFiltersCbx").prop("checked"))
             $("#graphMessage").html("");
         currentDataStructure = "flat";
@@ -118,9 +117,11 @@ var toutlesensController = (function () {
         }
         else {
             if (!id) {
-                if (!currentObject.id && currentDataStructure == "tree") {
-                    alert("A node must be selected for this graph type (tree")
+                if (!currentObject.id && (currentDataStructure == "tree" || currentDisplayType == "CARDS" || currentDisplayType == "FORM")) {
+                    self.setGraphMessage("A node must be selected for this graph type ", "stop");
+                    if(callback)
                     return callback(null, {});
+                    return;
                 }
                 id = currentObject.id;
                 if (!id && currentObject) {
@@ -158,7 +159,7 @@ var toutlesensController = (function () {
 
         var addToExistingTree = false;
         toutlesensData.getNodeAllRelations(id, output, addToExistingTree, function (err, data) {
-            toutlesensData.whereFilter="";
+            toutlesensData.whereFilter = "";
             if (err) {
                 console.log(err);
                 self.setMessage("ERROR" + err);
@@ -176,16 +177,16 @@ var toutlesensController = (function () {
             }
 
             if (data.length >= Gparams.graphDisplayLimitMax && currentDisplayType != "SIMPLE_FORCE_GRAPH_BULK") {
-               self.setGraphMessage("Maximum size of data exceeded:" + data.size + " > maximum " + Gparams.graphDisplayLimitMax,"stop");
+                self.setGraphMessage("Maximum size of data exceeded:" + data.length + " > maximum " + Gparams.graphDisplayLimitMax, "stop");
                 return;
 
             }
 
             //a revoir !!!! jamais appelé pour éviter les filtres
             if (data.length <= Gparams.graphDisplayLimitToDisplayAll) {
-              //  filters.comuteAllFilters("all");
-             //   self.generateGraph(null,true);
-             //   return;
+                //  filters.comuteAllFilters("all");
+                //   self.generateGraph(null,true);
+                //   return;
             }
 
 
@@ -433,7 +434,6 @@ var toutlesensController = (function () {
         var select = "#nodesLabelsSelect";
         if (selectId)
             select = "#" + selectId;
-
 
 
         for (var label in Schema.schema.labels) {
@@ -1024,15 +1024,16 @@ var toutlesensController = (function () {
 
 
     self.onVisButton = function (value) {
-        if (!currentObject && !currentObject.id) {
-            console.log("ERROR  No currentObject or currentObject.id");
-            return;
-        }
 
 
         $("#representationSelect").val(value);
         currentDisplayType = value;
+
         if (currentDisplayType == "FORM") {
+            if (!currentObject.id) {
+                self.setGraphMessage("A node must be selected for this graph type ", "stop");
+                return;
+            }
             $("#tabs-radarRight").tabs("enable", 2);
             $("#tabs-radarRight").tabs("option", "active", 2);
             if (infoGenericDisplay && infoGenericDisplay.selectedNodeData && !infoGenericDisplay.isAddingRelation) {
@@ -1063,6 +1064,10 @@ var toutlesensController = (function () {
 
         }
 
+        else if (currentDisplayType == "SIMPLE_FORCE_GRAPH") {
+            currentObject.id = null;
+            self.generateGraph(null, false);
+        }
         else {
             self.generateGraph(null, true);
         }
@@ -1295,7 +1300,7 @@ var toutlesensController = (function () {
             $("#tabs-radarLeft").tabs("option", "disabled", [2, 3]);
 
         }
-        $("#advancedQueriesDiv").tabs("option", "disabled", [2,3, 4]);
+        $("#advancedQueriesDiv").tabs("option", "disabled", [2, 3, 4]);
 
         if (Gparams.showBItab)
             $("#tabs-radarLeft").tabs("enable", 2);
@@ -1347,13 +1352,15 @@ var toutlesensController = (function () {
     self.setGraphMessage = function (message, type) {
 
         var str = "<br><br><p align='center'>"
-        var name="";
-        if(currentObject && currentObject.id)
-          name= "Node "+currentObject[Schema.getNameProperty(currentObject.label)];
-        else
-            name="Label "+currentLabel;
-        if(name)
-            str += "<span class='objectName'>" +name+"</span><br>"
+        var name = "";
+        if (currentObject && currentObject.id)
+            name = "Node " + currentObject[Schema.getNameProperty(currentObject.label)];
+        else {
+            if (currentLabel)
+                name = "Label " + currentLabel;
+        }
+        if (name)
+            str += "<span class='objectName'>" + name + "</span><br>"
         if (type == "stop")
             str += "<img src='./icons/warning.png' width='50px'><br>"
         str += "" + message + " <br>";
@@ -1364,4 +1371,5 @@ var toutlesensController = (function () {
     }
 
     return self;
-})()
+})
+()

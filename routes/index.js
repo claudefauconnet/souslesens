@@ -31,7 +31,9 @@ router.get(serverParams.routesRootUrl+'/', function (req, res) {
     res.render('index', {title: 'Express'});
 });
 
-
+router.post(serverParams.routesRootUrl+'/test', function (req, response) {
+    res.render('index', {title: 'TEST'});
+});
 router.post(serverParams.routesRootUrl+'/neo', function (req, response) {
     if (req.body && req.body.match)
         neoProxy.match(req.body.match, function (error, result) {

@@ -448,31 +448,40 @@ self.filterOnProperty = function () {
     var nature=$("#propertiesSelectionDialog_natureInput").val();
     var operator=$("#propertiesSelectionDialog_operatorSelect").val();
 
+
+
+
     var where=""
-    if(value){
-        if( toutlesensData.whereFilter != "")
+    if(value) {
+
+        if(operator=="contains"){
+            var operator="=~ ";
+            value=".*"+value+".*"
+
+        }
+        if (toutlesensData.whereFilter != "")
             toutlesensData.whereFilter += " AND ";
 
 
+        if (nature == "relation") {
+            if (common.isNumber(value))
 
+                toutlesensData.whereFilter += "r[0]." + property + operator + value + " ";
+            else
+                toutlesensData.whereFilter += "r[0]." + property + operator + "\"" + value + "\" ";
 
+        }
+        else if (nature == "startNode") {
+            if (common.isNumber(value))
+                toutlesensData.whereFilter += "node1." + property + operator + value + " ";
+            else
+                toutlesensData.whereFilter += "node1." + property + operator + "\"" + value + "\" ";
+
+        }
+        toutlesensController.generateGraph(null, true);
+    }else{
+        toutlesensController.setGraphMessage("enter a value for the property","stop")
     }
-    if(nature=="relation" ) {
-        if( common.isNumber(value))
-
-            toutlesensData.whereFilter += "r[0]."+property+operator+value+" ";
-        else
-            toutlesensData.whereFilter += "r[0]."+property+operator+"\""+value+"\" ";
-
-    }
-    else if(nature=="startNode" ) {
-        if( common.isNumber(value))
-            toutlesensData.whereFilter += "node1."+property+operator+value+" ";
-        else
-            toutlesensData.whereFilter += "node1."+property+operator+"\""+value+"\" ";
-
-    }
-    toutlesensController.generateGraph(null, true);
     $("#dialog").dialog("close");
 
 }

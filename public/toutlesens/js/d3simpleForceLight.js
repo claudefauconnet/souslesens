@@ -28,19 +28,21 @@
 var d3simpleForceLight = (function () {
     var self = {};
     self.force;
-    self.canvas;
+    self.container;
     self.maxlLinks = 0
     self.ticks = 0;
     self.maxTicks = 10;
     self.t0 = 0;
-    self.isStopped=false;
+    self.isStopped = false;
+    self.linksMap
 
 
     self.drawSimpleForce = function (nodes, links, linksMap) {
+        self.linksMap=linksMap;
         self.maxlLinks = 0
         self.ticks = 0
         self.t0 = new Date();
-        self.isStopped=false;
+        self.isStopped = false;
         //  self.maxTicks=10000/links.length;
 
 
@@ -52,7 +54,7 @@ var d3simpleForceLight = (function () {
         var selector = "#graphDiv";
         var w = $(selector).width() - 50;
         var h = $(selector).height() - 50;
-        var coef = 2
+        var coef = 1
         w = w * coef
         h = h * coef
 
@@ -73,53 +75,45 @@ var d3simpleForceLight = (function () {
             .attr('width', w)
             .attr('height', h)
             .on("click", function () {
-                if(self.isStopped) {
-                    self.isStopped=false;
+                if (self.isStopped) {
+                    self.isStopped = false;
                     self.t0 = new Date();
                     self.force.start();
 
                 }
                 else {
-                    self.isStopped = true;
+                    // self.isStopped = true;
                     self.force.stop()
                 }
             })
-        // svg = svg0.append("svg:g").attr("id", "canvas")
 
 
-        // zoomListener.x([]);
-        // svg0.attr("transform", "translate(-"+ w/2+" -"+h/2+")");
-
-        // svg0.attr("transform", "translate(" + -500 + "," + -500 + ")")
-        self.canvas = svg.append("svg:g")
-            .style("stroke", "#999")
-            .style("fill", "#fff")
-            .attr('class', "canvas")
+        self.container = svg.append("svg:g")
+        /* .style("stroke", "#999")
+         .style("fill", "#fff")*/
+            .attr('class', "container")
             .attr('width', w)
             .attr('height', h)
-            .call(d3.behavior.zoom().scaleExtent([coef / 3, coef * 2]).on("zoom", function () {
-                if (d3.event.scale < 0.9)
-                    d3.selectAll(".nodeText").style("visibility", "hidden");
-                else
-                    d3.selectAll(".nodeText").style("visibility", "visible");
-                d3.select(this).attr("transform", "translate(" + d3.event.translate + ")" + " scale(" + d3.event.scale + ")")
-            }))
-            .call(d3.behavior.drag()
-                .on("drag", function (d, i) {
-                    if (d && d.x)
-                        d3.select(this).attr("transform", "translate(" + d.x + "," + d.y + ")")
-
-                })
-            );
-       // d3.select(".canvas").append("rect").attrs({ x: 0, y: 0, width: 0, height: 0, fill: 'white' })
+        /*    .call(d3.behavior.zoom().scaleExtent([coef / 3, coef * 2]).on("zoom", function () {
 
 
+         d3.select(this).attr("transform",  " scale(" + d3.event.scale + ")")
+         //  d3.select(this).attr("transform", "translate(" + d3.event.translate + ")" + " scale(" + d3.event.scale + ")")
+         }))
+         .call(d3.behavior.drag()
+         .on("drag", function (d, i) {
+         if (d && d.x)
+         d3.select(this).attr("transform", "translate(" + d.x + "," + d.y + ")")
 
-        force = d3.layout.force()
+         })
+         );*/
+
+
+        var force = d3.layout.force()
             .on("tick", tick)
             .on('end', function () {
-                self.canvas.attr("transform", "translate(" + 0 + "," + 0 + ")" + " scale(" + 1 / coef + ")")
-                // self.canvas.attr("transform", "translate(" + (-w/(2*coef))+","+(-h/(2*coef))+ ")" + " scale(" + 1/coef+ ")")
+                self.container.attr("transform", "translate(" + 0 + "," + 0 + ")" + " scale(" + 1 / coef + ")")
+                // self.container.attr("transform", "translate(" + (-w/(2*coef))+","+(-h/(2*coef))+ ")" + " scale(" + 1/coef+ ")")
             })
             .nodes(nodes)
             .links(links)
@@ -143,40 +137,12 @@ var d3simpleForceLight = (function () {
 
 
             isDragging = false;
-
-            //  var nodes = flatten(json);
-            //  var links = d3.layout.tree().links(nodes);
             var total = nodes.length || 1;
-
-
-            // remove existing text (will readd it afterwards to be sure it's on top)
             svg.selectAll("text").remove();
 
-            // Restart the force layout
-            /* force
-             .gravity(Math.atan(total / 50) / Math.PI * 0.4)
-             .nodes(nodes)
-             .links(links)
-             .start();*/
-
-            //force = d3.layout.force()
-
-
-            // sticky drag
-            var drag = force.drag()
-                .on("dragstart", dragstart)
-                .on("dragend", function (d) {
-                    isDragging = true;
-                });
-
-            function dragstart(d) {
-                toutlesensController.hidePopupMenu()
-                isDragging = false;
-                d3.select(this).classed("fixed", d.fixed = true);
-            }
 
             // Update the links
-            link = self.canvas.selectAll("line.link")
+            link = self.container.selectAll("line.link")
                 .data(links);
             // .data(links, function(d) { return d.target.name; });
 
@@ -227,7 +193,7 @@ var d3simpleForceLight = (function () {
 
 
             // Update the nodes
-            node = self.canvas.selectAll("circle.node")
+            node = self.container.selectAll("circle.node")
                 .data(nodes, function (d) {
                     return d.name;
                 })
@@ -243,6 +209,7 @@ var d3simpleForceLight = (function () {
 
                 var anode = d3.select(this);
                 anode.append('svg:circle')
+                    .attr("id", "C_" + d.id)
                     .on("dblclick", function () {
                         currentObject = d;
                         currentObject.id = d.id
@@ -277,48 +244,84 @@ var d3simpleForceLight = (function () {
                     })
                     .attr("class", "shape");
 
-                anode.on("mouseover", function (d) {
-                    d3common.d3CommonMouseover(d);
-                    d3.selectAll(".link").attr("stroke", "grey").style("opacity", 0.5);
-                    d3.selectAll(".pointsRadar").attr("stroke", "black").attr("stroke-width", 1);
-                    for (var i = 0; i < d.rels.length; i++) {
-                        var idLink = d.rels[i];
-                        d3.selectAll("#L_" + idLink).transition().duration(100).attr("stroke", "blue").style("opacity", 1);
-
-                        var linkObj = linksMap[idLink];
-                        d3.selectAll("#P_" + linkObj.source).select('svg:circle').transition().duration(100).attr("stroke", "blue").style("opacity", 1).attr("stroke-width", 3);
-                        d3.selectAll("#P_" + linkObj.target).select('svg:circle').transition().duration(100).attr("stroke", "blue").style("opacity", 1).attr("stroke-width", 3);
+                anode.on("click", function (d) {
+                    d3.select(this).style('fill', 'red')
+                    // d3common.d3CommonMouseover(d);
+                    d3.selectAll("line").style('stroke', 'grey')
+                    //  var circles=d3.selectAll("circle").style('fill','grey')
+                    var nodeRels = d.rels;
 
 
-                    }
+                    d3.selectAll("text").style('fill', 'black').style("font-size", "10px").style("font-weight", "normal")
+                    d3.selectAll("line").each(function (d, i) {
+                        if (nodeRels.indexOf(d.id) > -1) {
+
+                            d3.select(this).style('stroke', 'blue').style("stroke-width", 5).style("opacity", 1)
+                            var linkNodes = self.linksMap[d.id];
+                            d3.selectAll("text").each(function (d, i) {
+                                if (linkNodes.source==d.index || linkNodes.target==d.index) {
+
+                                    d3.select(this).style('fill', 'blue').style("font-size", "14px").style("font-weight", "bold")
+                                }
+
+
+
+
+                            })
+                        }
+                        else
+                            d3.select(this).style('stroke', 'grey').style("stroke-width", 1).style("opacity", 0.5)
+
+
+                    })
+
+
+
+
+
+                    /*    var xxx= d3.select("#L_" + idLink).select("line")
+                     d3.select("#L_" + idLink).select("line").style("color", "blue").style("opacity", 0.5);
+                     var linkObj = linksMap[idLink];
+                     d3.select("circle#C_" + linkObj.source).style('fill','red')*/
+
+
+                    /*
+
+                     //  d3common.d3CommonMouseover(d);
+                     d3.selectAll(".link").attr("stroke", "grey").style("opacity", 0.5);
+                     d3.selectAll(".pointsRadar").attr("stroke", "none")
+                     for (var i = 0; i < d.rels.length; i++) {
+                     var idLink = d.rels[i];
+                     var xxx= d3.selectAll("#L_" + idLink).select("line");
+                     d3.selectAll("#L_" + idLink).attr("stroke", "blue").attr("stroke-width",3).style("opacity", 1);
+
+                     var linkObj = linksMap[idLink];
+                     d3.selectAll("#P_" + linkObj.source).attr("stroke", "blue").style("opacity", 1).attr("stroke-width", 3);
+                     d3.selectAll("#P_" + linkObj.target).attr("stroke", "blue").style("opacity", 1).attr("stroke-width", 3);
+
+                     // d3.selectAll("#P_" + linkObj.source).attr("stroke", "blue").style("opacity", 1).attr("stroke-width", 3);
+                     //  d3.selectAll("#P_" + linkObj.target).attr("stroke", "blue").style("opacity", 1).attr("stroke-width", 3);
+
+
+                     } */
 
                 });
 
 
-                anode.append("text").attr("x", function (d) {
-                    return Gparams.circleR / 2;
-                }).text(function (d) {
-                    var match = /__[0-9]*/.exec(d.name);
-                    if (match) {
-                        var p = match.index;
-                        if (p > -1)
-                            return d.name.substring(0, p);
-                    }
-                    if (d.name && d.name.length > Gparams.nodeMaxTextLength)
-                        return d.name.substring(0, Gparams.nodeMaxTextLength - 1) + "...";
-                    return d.name;
-                })
-                    .attr("dy", ".35em").attr('class', 'nodeText')
-
-                 /*   .style("fill", function (d) {
-                        return "#444";
-                    })*/
-                    .attr("text-anchor", function (d) {
-                        return "start";
+                anode.append("text")
+                    .attr("x", function (d) {
+                        return Gparams.circleR + 3;
+                    }).attr("dy", ".35em")
+                    .attr('class', 'nodeText')
+                    // .style("fill", "purple")
+                    .attr("text-anchor", "start")
+                    .text(function (d) {
+                        textOutputs.formatNode(d);
+                        if (d.name && d.name.length > Gparams.nodeMaxTextLength)
+                            return d.name.substring(0, Gparams.nodeMaxTextLength - 1) + "...";
+                        return d.name;
                     })
-                    .style("fill-opacity", 1)
                     .style("font-weight", function (d) {
-
                         return "normal";
                     })
 
@@ -326,8 +329,6 @@ var d3simpleForceLight = (function () {
                         return "12px";
 
                     })
-                    .style("visibility", "visible")
-
 
             });
 
@@ -338,8 +339,8 @@ var d3simpleForceLight = (function () {
         function tick() {
 //if(self.ticks++>self.maxTicks)
             if ((new Date() - self.t0) > Gparams.durationMsecBeforeGraphStop) {
-                self.isStopped=true;
-                 self.force.stop();
+                self.isStopped = true;
+                self.force.stop();
                 return
             }
 
@@ -372,6 +373,25 @@ var d3simpleForceLight = (function () {
                 return "translate(" + Math.max(5, Math.min(w - 5, d.x)) + "," + Math.max(5, Math.min(h - 5, d.y)) + ")";
             });
         };
+        function zoomed() {
+            self.container.attr("transform", "translate(" + d3.event.translate + ")scale(" + d3.event.scale + ")");
+        }
+
+        function dragstarted(d) {
+            d3.event.sourceEvent.stopPropagation();
+            d3.select(this).classed("dragging", true);
+        }
+
+        function dragged(d) {
+            if (d && d.x)
+                d3.select(this).attr("transform", "translate(" + d.x + "," + d.y + ")")
+
+            // d3.select(this).attr("cx", d.x = d3.event.x).attr("cy", d.y = d3.event.y);
+        }
+
+        function dragended(d) {
+            d3.select(this).classed("dragging", false);
+        }
 
         function cleanup() {
             self.update([]);
@@ -382,7 +402,7 @@ var d3simpleForceLight = (function () {
 
         self.update();
         var wwww = d3.select(svg);
-        d3.select(".canvas").attr("transform", "translate(" + 500 + "," + 500 + ")")
+        //   d3.select(".container").attr("transform", "translate(" + 500 + "," + 500 + ")")
         /*  var xxx=-zoomListener.x();
          zoomListener.center();*/
 

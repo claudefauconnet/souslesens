@@ -526,7 +526,7 @@ var advancedSearch = (function () {
             data.currentActionObj = currentActionObj;
             toutlesensData.prepareRawData(data, false,currentDisplayType, function (err, data, labels, relations) {
              // if (!applyFilters)
-                    filters.initGraphFilters(labels, relations);
+   //                 filters.initGraphFilters(labels, relations);
 
                 toutlesensData.cachedResultArray = data;
                 toutlesensController.displayGraph(data, currentDisplayType, null)
