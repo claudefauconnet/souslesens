@@ -132,6 +132,10 @@ Util = {
 }
 
 }
-
+/*var array=[128,1430,8324]
+for(var i=0;i<array.length;i++){
+    var x=array[i]
+    console.log(x+"  "+Math.round(Math.log10(x)));
+}*/
 
 module.exports = Util;

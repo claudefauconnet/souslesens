@@ -1,0 +1,43 @@
+
+
+<span id="paintDialogTypeSpan"></span><br>
+
+<button onclick="paint.paintAll('all')">Paint All values</button> <br>
+or
+<br>
+<button onclick=$('#paintDialogPropDiv').css('visibility','visible')>Paint property values</button> <br>
+
+<div id="paintDialogPropDiv"  style="visibility: visible">
+Properties
+<select id="propertiesSelectionDialog_propsSelect">
+
+</select>
+<br>
+
+
+<select id="propertiesSelectionDialog_operatorSelect">
+    <option>=</option>
+    <option>!=</option>
+    <option>&lt;</option>
+    <option>&gt;</option>
+    <option>contains</option>
+
+</select>
+<input id="propertiesSelectionDialog_valueInput">
+<input type="hidden" id="propertiesSelectionDialog_natureInput">
+<input type="hidden" id="propertiesSelectionDialog_typeInput">
+<!--<button onclick="filters.outLineProperty()">outline property</button>-->
+
+
+</div>
+ <hr>
+ <div id="paintDialogPalette"   style="visibility: visible" >
+Color <div id="paintDialogColorSelect"></div>
+Point size<select id="paintDialogPointSizeSelect"></select>
+Line width <select id="paintDialogLineWidthSelect"></select>
+
+<div id="paintDialogSelectedColor"></div>
+
+</div>
+ <button onclick="paint.onApply()">Apply</button>
+<!-- <button onclick="filters.filterOnProperty('remove')">Remove filter</button> <br>-->

@@ -121,7 +121,7 @@ function callExportToNeo(type, data, callback) {
     };
     $.ajax({
         type: "POST",
-        url: Gparams.mongoToNeoUrl,
+        url: Gparams.exportMongoToNeo,
         data: payload,
         dataType: "json",
         success: function (data, textStatus, jqXHR) {
@@ -579,7 +579,7 @@ function deleteRequest() {
             }
             $.ajax({
                 type: "POST",
-                url: "/jsonFileStorage",
+                url: serverRootUrl+"/jsonFileStorage",
                 data: paramsObj,
                 dataType: "json",
                 success: function (data, textStatus, jqXHR) {
@@ -676,7 +676,7 @@ function saveRequest(json) {
         }
         $.ajax({
             type: "POST",
-            url: "/jsonFileStorage",
+            url: serverRootUrl+"/jsonFileStorage",
             data: paramsObj,
             dataType: "json",
             success: function (data, textStatus, jqXHR) {
@@ -728,7 +728,7 @@ function loadRequests() {
         }
         $.ajax({
             type: "POST",
-            url: "/jsonFileStorage",
+            url: serverRootUrl+"/jsonFileStorage",
             data: paramsObj,
             dataType: "json",
             success: function (data, textStatus, jqXHR) {
@@ -971,7 +971,7 @@ function submitMatchNeo(query, callback) {
     console.log("QUERY----" + JSON.stringify(payload));
     $.ajax({
         type: "POST",
-        url: neoApiUrl,
+        url: Gparams.neo4jProxyUrl,
         data: paramsObj,
         dataType: "json",
         success: function (data, textStatus, jqXHR) {

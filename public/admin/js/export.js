@@ -215,7 +215,7 @@ function importOnServer(){
     };
     $.ajax({
         type: "POST",
-        url: "/uploadToNeo",
+        url: Gparams.uploadToNeo,
         data: payload,
         dataType: "json",
         success: function (data, textStatus, jqXHR) {

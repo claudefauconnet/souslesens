@@ -24,12 +24,19 @@
  * SOFTWARE.
  *
  ******************************************************************************/
-
+var serverRootUrl="";
 var Gparams = {
 
-    neo4jProxyUrl: "/neo",
-    mongoProxyUrl: "/mongo",
-    mongoToNeoUrl: "/exportMongoToNeo",
+    httpProxyUrl: serverRootUrl+"/http",
+    neo4jProxyUrl: serverRootUrl+"/neo",
+    exportMongoToNeo: serverRootUrl+"/exportMongoToNeo",
+    rdfProxyUrl: serverRootUrl+"/rdf",
+    restProxyUrl: serverRootUrl+"/rest",
+    mongoProxyUrl: serverRootUrl+"/mongo",
+    uploadToNeo: serverRootUrl+"/uploadToNeo",
+    storedParamsUrl: serverRootUrl+"/storedParams",
+    imagesRootPath: serverRootUrl+"/files/albumPhotos/",
+
 
 
 

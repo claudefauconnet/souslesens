@@ -24,43 +24,68 @@
  * SOFTWARE.
  *
  ******************************************************************************/
+var   serverRootUrl="";
 var Gparams = {
 
+
+    //init defaults*******************************
     visibleLinkProperty:null,
     logLevel:5,
     readOnly: true,
     showRelationAttrs:true,
-
     startWithBulkGraphView: false,
     defaultNodeNameProperty:"name",
     defaultQueryDepth:1,
+    defaultGraphtype:"FLOWER",
+    graphNavigationMode: "expandNode",
+    modifyMode: 'onList',//''onList'
 
 
 
+
+//limits************************************
     neoQueryLimit:20000,
-
     listDisplayLimitMax:500,
     jsTreeMaxChildNodes:500,
     graphDisplayLimitMax: 5000,
-
+    maxDepthExplorationAroundNode: 3,
     graphDisplayLimitToDisplayAll:100,
     bulkGraphViewMaxNodesToDrawLinks:1000,
     bulkGraphDisplayLimit:5000,
     maxNodesForRelNamesOnGraph:20,
 
+
+    //urls************************
+    httpProxyUrl: serverRootUrl+"/http",
+    neo4jProxyUrl: serverRootUrl+"/neo",
+    rdfProxyUrl: serverRootUrl+"/rdf",
+    restProxyUrl: serverRootUrl+"/rest",
+    mongoProxyUrl: serverRootUrl+"/mongo",
+    uploadToNeo: serverRootUrl+"/uploadToNeo",
+    storedParamsUrl: serverRootUrl+"/storedParams",
+    imagesRootPath: serverRootUrl+"/files/albumPhotos/",
+
+
+
+
+
+    //divs size*************************
+    splitterMin:0,
+    splitterNormal:300,
+    legendWidth: 250,
+
+
+    //durations************************************
     durationMsecBeforeGraphStop:8000,
+    forceAnimationDuration: 2000,
 
 
 
 
-    defaultGraphtype:"FLOWER",
-    graphNavigationMode: "expandNode",
+    //others****************************************
 
-    modifyMode: 'onList',//''onList'
 
     lang: "EN",
-
-
     profiles: {
         minimum: {
             hide: ["lang_52", "lang_62", "listDownloadButton", "div_externalRessources", "photoControls"],
@@ -73,22 +98,19 @@ var Gparams = {
     },
     currentProfile: "all",//minimum ,all
     navigationStyle: "",// , "jpt" // Jean Paul
-    httpProxyUrl: "../http",
-    neo4jProxyUrl: "/neo",
-    rdfProxyUrl: "/rdf",
-    mongoProxyUrl: "/mongo",
-    storedParamsUrl: "/storedParams",
-    imagesRootPath: "/files/albumPhotos/",
-    forceAnimationDuration: 2000,
-    maxDepthExplorationAroundNode: 3,
-    // forceGraph
+
+
+
+
+
+//Graph display defaults***************************
     circleR: 15,
     defaultNodeColor: "grey",
     nodeMaxTextLength: 40,
     user: "anonymous",
     curveOffset: 40,
     relStrokeWidth: 4,
-    legendWidth: 250,
+
     minOpacity: .3,
     d3ForceParams: {distance: 200, charge: -500, gravity: .25},
     htmlOutputWithAttrs: true,

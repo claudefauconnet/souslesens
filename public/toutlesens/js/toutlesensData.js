@@ -33,8 +33,8 @@ var toutlesensData = (function () {
     self.cachedResultTree = null;
 
     self.queryExcludeRelFilters = "";
-    self.queryNodeFilters = "";
-    self.queryRelFilters = "";
+    self.queryNodeLabelFilters = "";
+    self.queryRelTypeFilters = "";
     self.queryExcludeNodeFilters = "";
     self.whereFilter = ""
 
@@ -120,12 +120,12 @@ var toutlesensData = (function () {
 
     self.getNodeAllRelations = function (id, output, addToExistingTree, callback) {
         excludedLabels = [];
-        id = parseInt("" + id);
+    //    id = parseInt("" + id);
         if (addToExistingTree)
             navigationPath.push(id);
         else
             navigationPath = [id];
-        currentRootId = id;
+        currentRootId = Math.abs(id);
         legendNodeLabels = {}
         legendRelTypes = {};
         var subGraphWhere;
@@ -144,8 +144,12 @@ var toutlesensData = (function () {
                 numberOfLevelsVal += 1;
         }*/
         var whereStatement = "";
-        if (id)
-            whereStatement = " WHERE ID(node1)=" + id;
+        if (id){
+            if(id>0)
+            whereStatement = " WHERE (ID(node1)=" + id+")" ;//+" OR  ID(m)="+id+")" ;
+            else
+                whereStatement = " WHERE (ID(m)=" + (-id)+")" ;
+        }
         if (subGraphWhere) {
             if (id)
                 whereStatement += " AND ";
@@ -174,16 +178,18 @@ var toutlesensData = (function () {
             returnStatement = " RETURN COLLECT( distinct EXTRACT( rel IN relationships(path) |  type(rel))) as rels,EXTRACT( node IN nodes(path) | labels(node)) as labels"
         }
 
-
-        var statement = "MATCH path=(node1"
+var node1Label="";
+        if(currentLabel)
+            node1Label=":"+currentLabel;
+        var statement = "MATCH path=(node1"+node1Label
             + ")-[r"
-            + toutlesensData.queryRelFilters
+            + toutlesensData.queryRelTypeFilters
             + "*.."
             + numberOfLevelsVal
             + "]-(m) "
             + whereStatement
             + graphQueryTargetFilter
-            + toutlesensData.queryNodeFilters
+            + toutlesensData.queryNodeLabelFilters
             + toutlesensData.queryExcludeNodeFilters
             + toutlesensData.queryExcludeRelFilters
             + returnStatement;
@@ -195,8 +201,8 @@ var toutlesensData = (function () {
             console.log(statement);
         $("#neoQueriesTextArea").val(statement);
         $("#neoQueriesHistoryId").prepend(statement + "<br><br>");
-        toutlesensData.queryNodeFilters = "";
-        toutlesensData.queryRelFilters = "";
+        toutlesensData.queryNodeLabelFilters = "";
+        toutlesensData.queryRelTypeFilters = "";
         toutlesensData.queryExcludeNodeFilters = "";
         toutlesensData.queryExcludeRelFilters = "";
         graphQueryUnionStatement = "";
@@ -213,7 +219,8 @@ var toutlesensData = (function () {
 
 
                 if (data.length == 0) {
-                    self.showInfos2(id, toutlesensController.zeroRelationsForNodeAction);
+                    if(false)
+                        self.showInfos2(id, toutlesensController.zeroRelationsForNodeAction);
                     return callback(null, []);
 
                 }
@@ -363,8 +370,8 @@ var toutlesensData = (function () {
 
     }
     self.buildForceNodesAndLinks = function (resultArray) {
-        console.log("----------------------");
-        console.log(JSON.stringify(resultArray[0], null, 2))
+      //  console.log("----------------------");
+    //    console.log(JSON.stringify(resultArray[0], null, 2))
 
 
         currentDataStructure = "flat";
@@ -402,6 +409,7 @@ var toutlesensData = (function () {
                     children: [],
                     neoAttrs: nodeNeo,
                     rels: [],
+                    invRels:[],
                     nLinks: 0
 
 
@@ -460,6 +468,7 @@ var toutlesensData = (function () {
                     links.push(rel)
                     linksMap[linkId]= {source: indexSource, target: indexTarget};
                     nodesMap[ids[j]].rels.push(rel.id);
+                    nodesMap[ids[j-1]].invRels.push(rel.id);
                     nodesMap[ids[j]].nLinks++;
                     nodesMap[ids[j - 1]].nLinks++;
 

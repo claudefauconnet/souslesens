@@ -60,11 +60,11 @@ toutlesensController.initLabels( "currentQueriesTargetLabelSelect");
    self.executeFrequentQuery=function() {
 
 
-    var queryName = $("#currentQueriesSelect").val();
-    var sourceLabel = $("#currentQueriesSourceLabelSelect").val();
-    var targetLabel = $("#currentQueriesTargetLabelSelect").val();
-    var direction = $("#currentQueriesDirectionSelect").val();
-    var limit = parseInt($("#currentQueriesLimit").val());
+    var queryName = $("#currentQueriesDialogSelect").val();
+    var sourceLabel = $("#currentQueriesDialogSourceLabelSelect").val();
+    var targetLabel = $("#currentQueriesDialogTargetLabelSelect").val();
+    var direction = $("#currentQueriesDialogDirectionSelect").val();
+    var limit = parseInt($("#currentQueriesDialogLimit").val());
 
     if(queryName=="") {
         $("#message").html("choose a query")

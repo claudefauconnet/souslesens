@@ -34,6 +34,7 @@ var toutlesensController = (function () {
     self.currentActionObj = null;
     self.currentSource = "NEO4J";
     self.appInitEnded = false;
+    self.graphHistoryArray = [];
 
 
 // http://graphaware.com/neo4j/2015/01/16/neo4j-graph-model-design-labels-versus-indexed-properties.html
@@ -80,6 +81,30 @@ var toutlesensController = (function () {
     }
 
 
+    self.stackGraph = function (displayType, currentLabel, currentObjectId,filters) {
+        var state = {
+            displayType: displayType,
+            currentLabel: currentLabel,
+            currentObjectId: currentObjectId,
+            filters:filters
+        }
+        self.graphHistoryArray.splice(0, 0, state);
+    }
+
+    self.replayLastGraph = function () {
+
+        if (self.graphHistoryArray.length > 1) {
+            var state = self.graphHistoryArray[1]
+            currentObject.id = state.currentObjectId;
+            currentLabel = state.currentLabel;
+            currentDisplayType = state.displayType;
+            filters.currentSelectdFilters = state.filters;
+            filters.setQueryFilters(true);
+
+        }
+    }
+
+
     self.generateGraph = function (id, applyFilters, callback) {
 
 
@@ -119,8 +144,8 @@ var toutlesensController = (function () {
             if (!id) {
                 if (!currentObject.id && (currentDataStructure == "tree" || currentDisplayType == "CARDS" || currentDisplayType == "FORM")) {
                     self.setGraphMessage("A node must be selected for this graph type ", "stop");
-                    if(callback)
-                    return callback(null, {});
+                    if (callback)
+                        return callback(null, {});
                     return;
                 }
                 id = currentObject.id;
@@ -149,13 +174,16 @@ var toutlesensController = (function () {
 
 
         var output = currentDisplayType;
-        if (applyFilters) {
+        if (applyFilters == "flowerFiltersInited")
+            filters.setQueryFilters()
+        else if (applyFilters) {
             filters.setQueryFilters()
         }
         else {
             self.setGraphMessage("To display a graph <b>select relations  and/or label types")
             output = "filtersDescription";
         }
+
 
         var addToExistingTree = false;
         toutlesensData.getNodeAllRelations(id, output, addToExistingTree, function (err, data) {
@@ -168,13 +196,14 @@ var toutlesensController = (function () {
                 return;
             }
             if (output == "filtersDescription") {
-                var xx = data;
-                filters.initGraphFilters(data);
+                //    var xx = data;
+                filters.initGraphFilters(data, false);
                 //  filters.initGraphFilters0(data.labels, data.relTypes);
                 if (callback)
                     return callback(null, data);
                 return;
             }
+
 
             if (data.length >= Gparams.graphDisplayLimitMax && currentDisplayType != "SIMPLE_FORCE_GRAPH_BULK") {
                 self.setGraphMessage("Maximum size of data exceeded:" + data.length + " > maximum " + Gparams.graphDisplayLimitMax, "stop");
@@ -182,18 +211,21 @@ var toutlesensController = (function () {
 
             }
 
-            //a revoir !!!! jamais appelé pour éviter les filtres
-            if (data.length <= Gparams.graphDisplayLimitToDisplayAll) {
-                //  filters.comuteAllFilters("all");
-                //   self.generateGraph(null,true);
-                //   return;
-            }
+            // after dblclik on force graph display flower directly without count
+            if (currentDisplayType == "FLOWER" && applyFilters != "flowerFiltersInited") {// add depth criteria ??
+                //   filters.checkPreviouscheckedFilters();
+                // filters.currentFilters={}
 
+                self.generateGraph(currentObject.id, "flowerFiltersInited");
+                return;
+
+            }
 
             if (self.collapseTargetLabels.length > 0) {//if we want to collapse graph
                 data = self.collapseResult(data);
             }
-            $("#graphMessage").html("<b>" + data.length + "</b> relations found <br>");
+
+            self.setResultGraphMessage(data.length);
 
             if (data.length > Gparams.maxNodesForRelNamesOnGraph) {
                 Gparams.showRelationNames = false;
@@ -204,6 +236,7 @@ var toutlesensController = (function () {
                     return callback(null, data);
 
                 toutlesensController.displayGraph(data, currentDisplayType, self.currentLabels);
+                self.stackGraph(currentDisplayType, currentLabel, currentObject.id, filters.currentSelectdFilters);
 
 
             });
@@ -212,6 +245,20 @@ var toutlesensController = (function () {
         });
 
 
+    }
+
+    self.setResultGraphMessage = function (resultLength) {
+        var message = "";
+        if (currentLabel)
+            message = "Label : " + currentLabel + "<br>"
+        if (currentObject.id)
+            message = "Node : [" + currentObject.label + "]" + currentObject[Schema.getNameProperty(currentObject.label)] + "<br>";
+        message += filters.printRelationsFilters() + "<br>";
+        message += filters.printPropertyFilters() + "<br>";
+
+
+        message += "<b>" + resultLength + "</b> relations found <br>"
+        $("#graphMessage").html(message);
     }
 
     self.searchRDF = function (word) {
@@ -857,8 +904,8 @@ var toutlesensController = (function () {
 
                 self.searchRDF(name);
             }
-            else {
-                self.generateGraph(currentObject.id, false);
+            else {// minus sign on currentObject.id see toutlesensData 148
+                self.generateGraph(-currentObject.id, false);
             }
         } else if (action == "foldNode") {
             var output = $("#representationSelect").val();
@@ -1369,6 +1416,23 @@ var toutlesensController = (function () {
         $("#graphDiv").html(str);
 
     }
+    self.clearGraphDiv = function () {
+        $("#graphDiv").html("");
+        $("#graphMessage").html("");
+        $("#filtersDiv").html("");
+        $("#innerLegendDiv").html("");
+        $("#relInfoDiv").html("");
+
+
+    }
+    self.setSplitterPosition = function (offset) {
+        splitter.position(offset);
+        var w = totalWidth - (offset + Gparams.legendWidth);
+        $("#graphLegendDiv").css("left", w)
+        $("#graphDiv").width(w)
+        $("#graphDiv").css("left", 0)
+    }
+
 
     return self;
 })

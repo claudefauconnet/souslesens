@@ -54,7 +54,7 @@ var neoMongoSynchronizer=(function(){
 
         $.ajax({
             type: "POST",
-            url: "http://localhost:3002/neo",
+            url: Gparams.neo4jProxyUrl,
             data: payload,
             dataType: "json",
             success: function (data, textStatus, jqXHR) {

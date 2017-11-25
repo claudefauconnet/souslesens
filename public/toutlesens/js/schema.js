@@ -28,7 +28,7 @@ var Schema = (function () {
     var serverDir = "./schemas/";
     self = {};
     self.subGraph;
-    self.serverUrl = "..";//Gparams.neo4jProxyUrl;
+
 
     self.schema = {
         defaultNodeNameProperty: "name",
@@ -112,7 +112,7 @@ var Schema = (function () {
             path: serverDir + subGraph + ".json",
 
         }
-        $.ajax(Schema.serverUrl + '/jsonFileStorage', {
+        $.ajax(serverRootUrl + '/jsonFileStorage', {
             data: payload,
             dataType: "json",
             type: 'POST',
@@ -164,7 +164,7 @@ var Schema = (function () {
             path: serverDir + subGraph + ".json",
             data: json///JSON.stringify(json)
         }
-        $.ajax(Schema.serverUrl + '/jsonFileStorage', {
+        $.ajax(serverRootUrl + '/jsonFileStorage', {
             data: payload,
             dataType: "json",
             type: 'POST',
@@ -262,6 +262,17 @@ var Schema = (function () {
 
     }
 
+    self.getAllLabelNames=function() {
+        var labels = [""];
+
+        for (var label in self.schema.labels) {
+            labels.push(label);
+        }
+        labels.sort();
+        return labels;
+    }
+
+
 
     self.getPermittedRelTypes = function (startLabel, endLabel) {
         relTypes = [];
@@ -350,6 +361,7 @@ var Schema = (function () {
                         var name = key + "#" + (i);
                     relation.properties.subGraph
                     relation.type = key;
+                    relation.properties=[]
                     relationsNewModel[name] = relation;
 
                 }

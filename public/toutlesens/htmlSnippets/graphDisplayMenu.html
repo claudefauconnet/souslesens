@@ -1,0 +1,130 @@
+<table>
+    <tr>
+        <td colspan="3">
+
+            <table class="visButtonTable" id="visButtonTableDiv">
+
+
+                <tr>
+                    <td><input type="image" height="30px" title="form" class="displayIcon"
+                               onclick="toutlesensController.onVisButton('FORM',this)"
+                               id="formButton"
+                               src="images/form.png"/></td>
+                    <td><input type="image" height="30px" title="fleur" class="displayIcon"
+                               onclick="toutlesensController.onVisButton('FLOWER',this)"
+                               id="treeFlowerButton"
+                               src="images/flower.png"/></td>
+                    <td><input type="image" height="30px" title="graphBulk" class="displayIcon"
+                               onclick="toutlesensController.onVisButton('SIMPLE_FORCE_GRAPH_BULK',this)"
+                               id="graphBulkButton"
+                               src="images/graphBulk.png"/></td>
+
+                    <td><input type="image" height="30px" class="displayIcon"
+                               title="<span id='lang_9'>carte</span>"
+                               onclick="toutlesensController.onVisButton('SIMPLE_FORCE_GRAPH',this)"
+                               id="graphButton" src="images/graph.png"/></td>
+                    <td><input type="image" height="30px" title="cards" class="displayIcon"
+                               onclick="toutlesensController.onVisButton('CARDS',this)"
+                               id="cardsButton"
+                               src="images/cards.png"/></td>
+
+                    <!--<td><input type="image" class="displayIcon"
+                                        title="<span id='lang_7'>arbre</span>" height="30px"
+                                        onclick="toutlesensController.onVisButton('TREE',this)"
+                                        id="treeButton"
+                                        src="images/tree.png"/></td>-->
+
+
+                    <td><input type="image" height="30px" title="treeMap" class="displayIcon"
+                               onclick="toutlesensController.onVisButton('TREEMAP',this)"
+                               id="treemapButton"
+                               src="images/treemap.png"/></td>
+
+
+                </tr>
+            </table>
+
+
+        </td>
+
+    </tr>
+    <tr valign="middle">
+        <td><span id='lang_15'>Profondeur</span>&nbsp;<input
+                id="depth" value="1" size="1"></td>
+        <td colspan="2">
+            <div id="depthSlider" style="width: 130px;"></div>
+        </td>
+
+    </tr>
+    <tr>
+        <td>Zoom
+        </td>
+        <td colspan="3">
+            <div id="graphZoomSlider" style="width: 130px;"></div>
+        </td>
+    </tr>
+    <tr>
+        <td colspan="3">
+            <input type="checkbox" id="showRelationTypesCbx"
+                   onclick="toutlesensController.displayGraph()">nom des relations
+            <input type="checkbox" id="groupByLabelsCbx"
+                   onclick="toutlesensController.displayGraph()">grouper par label
+
+
+        </td>
+    </tr>
+
+
+
+
+</table>
+<script>
+    $("#graphForceDistanceSlider").slider({
+        min: 10,
+        max: 400,
+        range: "min",
+        value: 200,
+        slide: function (event, ui) {
+            /*   if (false) {
+             var h = $("#graphDiv").height();
+             distance = h / (10 * depth) / (200 / distance);
+             }*/
+            Gparams.d3ForceParams.distance = ui.value;
+            toutlesensController.displayGraph();
+        }
+    });
+    $("#graphZoomSlider").slider({
+        min: 4,
+        max: 20,
+        // range: "min",
+        value: 6,
+        slide: function (event, ui) {
+
+            var scale=Math.log(ui.value/3)
+            d3simpleForceLight.zoom(scale)
+        }
+    });
+
+    $("#graphForceChargeSlider").slider({
+        min: -1000,
+        max: -10,
+        range: "min",
+        value: -500,
+        slide: function (event, ui) {
+            Gparams.d3ForceParams.charge = ui.value;
+            toutlesensController.displayGraph();
+        }
+    });
+
+
+    $("#depthSlider").slider({
+        min: 1,
+        max: 3,
+        range: "min",
+        value: 1,
+        slide: function (event, ui) {
+            $("#depth").val(ui.value);
+            toutlesensController.generateGraph(null, true);
+        }
+    });
+</script>

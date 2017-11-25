@@ -40,6 +40,8 @@ var advancedSearch = (function () {
 // IN
 // relationships(path))";
 
+
+    self.traversalCurrentInput=null;
     self.init = function () {
 
         currentActionObj = {type: types[0], subGraph: subGraph};
@@ -135,8 +137,8 @@ var advancedSearch = (function () {
     }
 
 
-    self.showNodeSelectionDialog = function (value) {
-
+    self.showNodeSelectionDialog = function (value,input) {
+        self.traversalCurrentInput=input;
         var value = $("#dialogNodesLabelsSelect option:selected").val();
         if (!value) {
             alert("select a node label before choosing a property")
@@ -175,7 +177,7 @@ var advancedSearch = (function () {
         currentActionObj[currentActionObj.currentTarget].label = value;
         //  $("#graphPathTargetNode").val(":" + value);
         $("#" + currentActionObj.currentTarget).val("[" + value + "]");
-        $("#dialog").dialog("close");
+      //  $("#dialog").dialog("close");
 
 
     }
@@ -184,7 +186,7 @@ var advancedSearch = (function () {
         self.setTargetNodeVisibility()
         currentActionObj[currentActionObj.currentTarget].property = value;
         $("#" + currentActionObj.currentTarget).val(value);
-        $("#dialog").dialog("close");
+       // $("#dialog").dialog("close");
 
 
     }
@@ -227,9 +229,11 @@ var advancedSearch = (function () {
         self.setTargetNodeVisibility()
         currentActionObj[currentActionObj.currentTarget].nodeId = valueId;
         currentActionObj[currentActionObj.currentTarget].nodeText = valueText;
-        $("#dialog").dialog("close");
+      //  $("#dialog").dialog("close");
+        mainMenu.onSelectOption("traversal");
+        $(self.traversalCurrentInput).val(valueText);
+    //    $("#" + currentActionObj.currentTarget).val(valueText);
 
-        $("#" + currentActionObj.currentTarget).val(valueText);
 
 
     }
@@ -762,13 +766,9 @@ var advancedSearch = (function () {
 
     /*********************Patterns***************************/
     self.patternInitLabels = function () {
-        for (var key in dataModel.labels) {
-            var value = "(" + key + ")";
-            $('#patternLabelSelect').append($('<option/>', {
-                value: key,
-                text: value
-            }));
-        }
+        var labels=Schema.getAllLabelNames()
+        common.fillSelectOptionsWithStringArray(patternLabelSelect, labels);
+
     }
     self.patternInitRelTypes = function () {
         var array = dataModel.allRelationsArray;

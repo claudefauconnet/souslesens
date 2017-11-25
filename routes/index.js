@@ -101,11 +101,11 @@ router.post(serverParams.routesRootUrl+'/elastic', function (req, response) {
             processResponse(response, error, result)
         });
     else if (req.body && req.body.findDocuments)
-        elasticProxy.findDocuments(req.body.indexName, req.body.word, req.body.from, req.body.size, req.body.slop, req.body.fields, req.body.andWords, req.body.withClassifier, function (error, result) {
+        elasticProxy.findDocuments(req.body.indexName, req.body.word, req.body.from, req.body.size, req.body.slop, req.body.fields, req.body.andWords, req.body.classifierSource, function (error, result) {
             processResponse(response, error, result)
         });
     else if (req.body && req.body.findDocumentsById)
-        elasticProxy.findDocumentsById(req.body.indexName, req.body.ids, req.body.words, req.body.withClassifier, function (error, result) {
+        elasticProxy.findDocumentsById(req.body.indexName, req.body.ids, req.body.words, req.body.classifierSource, function (error, result) {
             processResponse(response, error, result)
         });
     else if (req.body && req.body.getAssociatedWords)
@@ -361,6 +361,9 @@ function processResponse(response, error, result) {
 
 
         if (error) {
+            if (typeof error == "object") {
+                error = JSON.stringify(error,null,2);
+            }
             console.log("ERROR !!" + error);
             socket.message("ERROR !!" + error);
             response.status(404).send({ERROR: error});

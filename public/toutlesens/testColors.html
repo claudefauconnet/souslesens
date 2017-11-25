@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title></title>
+    <style type="text/css" media="screen">
+        div {
+            width:60px;
+            height: 60px;
+            float: left;
+            margin: 1px;
+        }
+    </style>
+</head>
+<body>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+<script src="http://d3js.org/d3.v3.js"></script>
+
+<script type="text/javascript">
+
+    var body = d3.select("body"),
+        length = 100,
+        color = d3.scale.linear().domain([1,length])
+            .interpolate(d3.interpolateHcl)
+            .range([d3.rgb("#007AFF"), d3.rgb('#FFF500')]);
+
+
+    for (var i = 0; i < length; i++) {
+        body.append('div').attr('style', function (d) {
+            return 'background-color: ' + color(i+0.5);
+        });
+    }
+
+    body.append('div').attr('style', function (d) {
+        return 'background-color: ' + color(53.6);
+    });
+</script>
+
+</body>
+</html>

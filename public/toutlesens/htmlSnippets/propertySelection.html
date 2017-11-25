@@ -1,0 +1,37 @@
+ <span id="propertiesSelectionTypeSpan"></span><br>
+
+<button onclick="filters.filterOnProperty('all')">Add All values</button> <br>
+or
+<br>
+<button onclick=$('#propertiesSelectionPropDiv').css('visibility','visible')>Add filter on a property</button> <br>
+
+<div id="propertiesSelectionPropDiv" style="visibility: hidden;">
+Properties
+<select id="propertiesSelectionDialog_propsSelect">
+
+</select>
+<br>
+
+
+<select id="propertiesSelectionDialog_operatorSelect">
+    <option>=</option>
+    <option>!=</option>
+    <option>&lt;</option>
+    <option>&gt;</option>
+    <option>contains</option>
+
+</select>
+<input id="propertiesSelectionDialog_valueInput">
+<input type="hidden" id="propertiesSelectionDialog_natureInput">
+<input type="hidden" id="propertiesSelectionDialog_typeInput">
+<!--<button onclick="filters.outLineProperty()">outline property</button>-->
+
+<button onclick="filters.filterOnProperty()">Apply</button>
+</div>
+<hr>
+previous filters
+<div id="previouspropertiesDiv">
+
+</div>
+
+<!-- <button onclick="filters.filterOnProperty('remove')">Remove filter</button> <br>-->

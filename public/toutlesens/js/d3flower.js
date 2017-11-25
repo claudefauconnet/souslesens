@@ -122,6 +122,10 @@ var d3flower = (function () {
 
 
     CodeFlower.prototype.update = function (json) {
+        if(!json ){
+            console.log("!!!!!no json")
+            return;
+        }
         if (json) this.json = json;
 
         this.json.fixed = true;

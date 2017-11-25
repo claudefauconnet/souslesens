@@ -1,0 +1,77 @@
+
+
+<p align="center">
+
+
+    <span style="font-size: 12px;font-weigth: normal">choose an action to navigate inside the graph</span>
+<table style="font-weight: bold">
+    <tr>
+        <td>
+            <img  width="15px "  src="images/infos.png" onmouseover='$("#mainMenuInfo").html("select  a subset of  nodes having a selected label and display a graph that applies filters on  selected  relations and nodes")'>
+
+        </td>
+        <td>
+
+         Label  <select  style="width:120px"  id="mainMenuLabelsSelect" onchange=mainMenu.onSelectOption("label")> </select>
+
+        </td>
+
+    </tr>
+
+
+    <tr>
+        <td>
+            <img  width="15px "  src="images/infos.png"  onmouseover='$("#mainMenuInfo").html("select starts navigation in the graph  by selecting a node and explore relatiosn and nodes around")'>
+
+
+        </td>
+        <td>
+
+            Specific node<button onclick=mainMenu.onSelectOption("node")> Go  </button>
+
+        </td>
+
+    </tr>
+<!--
+    <tr>
+        <td>
+            <img  width="15px "  src="images/infos.png"  onmouseover='$("#mainMenuInfo").html("This graph displays transtives  relations between selected nodes at a specified distance in the graph")'>
+
+
+        </td>
+        <td>
+
+            Pathes beetwen nodes<button onclick=mainMenu.onSelectOption("traversal")> Go  </button>
+
+        </td>
+
+    </tr>
+    -->
+
+    <tr>
+        <td>
+            <img  width="15px " src="images/infos.png"  onmouseover='$("#mainMenuInfo").html("specific queries :<ul><li>count most frequent relations between nodes</li></ul>")'>
+        </td>
+        <td>
+
+            Custom queries<button onclick=mainMenu.onSelectOption("customQueries")> Go  </button>
+
+        </td>
+
+    </tr>
+    <tr>
+        <td colspan="2">
+            <div style="overFlow:auto;height:150px; font-style:italic;font-weight: normal;background-color: #eaeaea" id="mainMenuInfo"></div>
+        </td>
+
+
+    </tr>
+
+
+
+
+
+
+</table>
+
+</p>

@@ -159,7 +159,7 @@ var dataModel = (function () {
                         dataModel.allProperties.sort();
                         dataModel.allLabels.sort();
 
-                        if (dataModel.allProperties.indexOf("subGraph") < 0) {
+                      /*  if (dataModel.allProperties.indexOf("subGraph") < 0) {
                             var queryParamsSubGraph = "";
                             if (queryParams.subGraph)
                                 queryParamsSubGraph = queryParams.subGraph;
@@ -171,7 +171,7 @@ var dataModel = (function () {
                             $("#dialog").dialog("open");//.position({my: 'center', at: 'center', of: '#tabs-radarLeft'});
 
 
-                        }
+                        }*/
 
 
                         //relation Properties

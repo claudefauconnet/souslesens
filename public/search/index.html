@@ -197,13 +197,13 @@
             }
             oldWord = word;
             var slop = $("#slopInput").val();
-
+var classifierSourceStr=$("#classifierSource").val();
             var payload = {
                 findDocuments: 1,
                 from: from,
                 fetchSize: fetchSize,
                 indexName: index,
-                withClassifier: true,
+                classifierSource: classifierSourceStr,
                 word: word
             };
             if (slop != "")
@@ -604,7 +604,13 @@
             &nbsp;
             <button id="searchButton" onclick="search()">Search</button>
             &nbsp;words distance <input id="slopInput" size="2"> &nbsp&nbsp;
-            <button onclick='admin()'>admin</button>
+          <!--  <button onclick='admin()'>admin</button>-->
+            classifierSource  <select id="classifierSource">
+            <option></option>
+            <option>BNF</option>
+            <option>unesco</option>
+            <option>PLM</option>
+        </select>
 
         </div>
         <br>
@@ -621,6 +627,7 @@
 
 
     <div id="rightPanel"><br><br><br><br><br>
+
         <div id="conceptDiv"></div>
     </div>
     <div id="dialog"><br>

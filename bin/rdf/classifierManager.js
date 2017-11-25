@@ -248,8 +248,8 @@ var classifierManager = {
     },
 
 
-    getClassifierOutput: function (index, ontology, data) {
-        var file = path.resolve(__dirname, "./classifiers/" + index + "_BNF.json")
+    getClassifierOutput: function (index, source, data) {
+        var file = path.resolve(__dirname, "./classifiers/" + index + "_"+source+".json")
         var classifier;
         try {
             classifier = "" + fs.readFileSync(file);
@@ -401,6 +401,10 @@ var classifierManager = {
 
 
 }
+
+
+//classifierManager.generateClassifierFromSkos("unesco","jfm");
+
 
 module.exports = classifierManager;
 

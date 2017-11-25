@@ -912,7 +912,7 @@ var infoGenericDisplay = (function () {
     /********************************************************************************/
     self.callAPIproxy = function (payload, operation, callback) {
         if (self.Neo4jStorage) {
-            $.ajax('/rest/?' + operation + '=1', {
+            $.ajax(Gparams.restProxyUrl+'/?' + operation + '=1', {
                 data: payload,
                 dataType: "json",
                 type: 'POST',

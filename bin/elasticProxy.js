@@ -104,6 +104,7 @@ var elasticProxy = {
             body: payload
         }, function (err, response) {
             if (err) {
+                console.log(err);
                 callback(err);
                 return;
 
@@ -514,7 +515,7 @@ var elasticProxy = {
     }
     ,
 
-    findDocumentsById: function (index, ids, words, withClassifier, callback) {
+    findDocumentsById: function (index, ids, words, classifierSource, callback) {
 
         var payload =
             {
@@ -557,7 +558,7 @@ var elasticProxy = {
 
         console.log(JSON.stringify(payload, null, 2));
         request(options, function (error, response, body) {
-            elasticProxy.processSearchResult(error, body, withClassifier, callback);
+            elasticProxy.processSearchResult(error, body, classifierSource, callback);
 
         });
     },
@@ -629,7 +630,7 @@ var elasticProxy = {
     },
 
 
-    findDocuments: function (index, word, from, size, slop, fields, andWords, withClassifier, callback) {
+    findDocuments: function (index, word, from, size, slop, fields, andWords, classifierSource, callback) {
         var match = {"content": word};
         if (!fields)
             fields = ["title", "date", "type", "path"];
@@ -700,11 +701,11 @@ var elasticProxy = {
 
 
         request(options, function (error, response, body) {
-            elasticProxy.processSearchResult(error, body, withClassifier, callback);
+            elasticProxy.processSearchResult(error, body, classifierSource, callback);
 
         });
     },
-    processSearchResult: function (error, body, withClassifier, callback) {
+    processSearchResult: function (error, body, classifierSource, callback) {
 
         if (error)
             return callback(error);
@@ -731,8 +732,8 @@ var elasticProxy = {
             docs.push(obj);
         }
         var classifier;
-        if (index && withClassifier == "true")
-            classifier = classifierManager.getClassifierOutput(index, "BNF", docs);
+        if (index && classifierSource && classifierSource.length>0)
+            classifier = classifierManager.getClassifierOutput(index, classifierSource, docs);
         var result = {
             docs: docs,
             classifier: classifier,

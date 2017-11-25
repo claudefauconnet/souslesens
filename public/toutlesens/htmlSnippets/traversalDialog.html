@@ -1,0 +1,191 @@
+<style>
+    .back {
+        visibility: hidden;
+        z-index: 0;
+        position: absolute;
+        top: 0;
+        left: 0;
+        background-color: #eaeaea;
+        width: 300px;
+        height: 350px;
+
+    }
+
+
+</style>
+<script>
+    var zIndex = 1
+    function bringToFront(divId) {
+        $(".back").css("visibility", "hidden");
+        $("#" + divId).css("z-index", ++zIndex);
+
+        $("#" + divId).css("visibility", "visible");
+
+
+    }
+
+
+</script>
+
+
+<div id="traversalDialogWrapper">
+    <div id="traversalDialogMain" class=".back">
+        <table>
+            <tr>
+                <td><span id="lang_109">noeud source</span></td>
+                <td><input id="graphPathSourceNode" value=" ?" onclick="bringToFront('traversalDialogLabel');mainMenu.traversalSetCurrentAction(this)  ">
+                    <button onclick="$('#graphPathSourceNode').val('?');advancedSearch.setTargetNodeVisibility(true)">
+
+                        X
+                    </button>
+                </td>
+
+            </tr>
+            <tr>
+
+                <td><span id="lang_133" class="targetNode">noeud cible</span></td>
+
+                <td><span class="targetNode"><input onclick="bringToFront('traversalDialogLabel'); mainMenu.traversalSetCurrentAction(this)"
+                                                    id="graphPathTargetNode" value=" ?">
+                        <button onclick="$('#graphPathTargetNode').val('?'); ">X</button>
+                                        </span></td>
+            </tr>
+            <tr>
+            </tr>
+            <tr>
+
+                <td><span id="lang_134" class="targetNode">&gt;distance maximum entre les noeuds</span>
+                </td>
+                <td><span class="targetNode"><input id="graphPathMaxDistance" value="1"></span></td>
+            </tr>
+
+
+        </table>
+
+        <div class="executeDiv">
+            <button onclick="advancedSearch.executeSearch()"><span id="lang_152">Draw Graph</span></button>
+            <button onclick="currentActionObj.selection=true;advancedSearch.executeSearch()"><span id="lang_174">Selection</span>
+            </button>
+            <span id="lang_108">Limite</span>
+            <input id="cypherQueryLimitInput" size="5" value="2000">&nbsp;
+            <button onclick="currentActionObj.selection=false;toutlesensDialogsController.hideAdvancedSearch()">
+                <span id="lang_153">Annuler</span></button>
+            <div id="message" class="message"></div>
+        </div>
+    </div>
+
+
+
+
+
+    <!***********************************************************traversalDialogLabel*******************************************************>
+    <div id="traversalDialogLabel" class="back">
+        <div id="Labeldialog">
+            <table border="0">
+                <tbody>
+                <tr>
+
+                    <td>
+
+                    <span id="lang_100">Labels</span>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <select id="dialogNodesLabelsSelect" size="15"
+                                ondblclick="mainMenu.traversalInitNodeDialog(this)">
+
+                        </select>
+                    </td>
+                    <td>
+                        <button onclick="bringToFront('traversalDialogMain');mainMenu.traversalSetLabel(dialogNodesLabelsSelect);">
+                            OK
+                        </button>
+                        <button onclick=" bringToFront('traversalDialogMain')">
+                            Cancel
+                        </button>
+                        <br>
+                        <button onclick="bringToFront('traversalDialogProperty')">
+                            add property filter
+                        </button>
+                        <br>
+                        <button onclick="mainMenu.traversalInitNodeDialog(this)">
+                            select a node
+                        </button>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+    <!***********************************************************traversalDialogProperty*******************************************************>
+
+    <div id="traversalDialogProperty" class="back">
+
+
+             <span id="propertiesSelectionTypeSpan">
+            <br>
+
+
+            Properties
+            <select id="propertiesSelectionDialog_propsSelect">
+            </select>
+
+            <br>
+
+
+
+            <select id="propertiesSelectionDialog_operatorSelect">
+                <option>
+                    =</option>
+
+                <option>
+                    !=</option>
+
+                <option>
+                    &lt;</option>
+
+                <option>
+                    &gt;</option>
+
+                <option>
+                    contains</option>
+
+            </select>
+
+            <input id="propertiesSelectionDialog_valueInput">
+
+            <input type="hidden" id="propertiesSelectionDialog_natureInput" value="relation">
+
+            <button onclick="filters.filterOnProperty()">
+                filter on property</button>
+             </span>
+
+
+    </div>
+
+
+
+    <!***********************************************************traversalDialogNode*******************************************************>
+    <div id="traversalDialogNode" class="back">
+
+        <table>
+            <tbody>
+
+            <tr>
+                <td>
+                    <select size="25" id="traversalDialogWordsSelect" onclick="mainMenu.traversalSetNode(this)">
+
+                    </select>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+
+    </div>
+
+
+</div>
+
+

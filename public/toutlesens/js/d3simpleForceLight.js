@@ -35,9 +35,16 @@ var d3simpleForceLight = (function () {
     self.t0 = 0;
     self.isStopped = false;
     self.linksMap
+    var sizeCoef = 1;
+self.zoom=function(scale){
+    var xxx=d3.select(".container");
+    d3.select(".container").attr("transform", "translate(" + (-scale*(w/2))+","+(scale*(h/2))+ ")" + " scale(" + scale + ")")
 
-
+}
     self.drawSimpleForce = function (nodes, links, linksMap) {
+    sizeCoef=Math.round(Math.log10(links.length))-1
+        if(sizeCoef==0)
+            sizeCoef=1;
         self.linksMap=linksMap;
         self.maxlLinks = 0
         self.ticks = 0
@@ -54,9 +61,9 @@ var d3simpleForceLight = (function () {
         var selector = "#graphDiv";
         var w = $(selector).width() - 50;
         var h = $(selector).height() - 50;
-        var coef = 1
-        w = w * coef
-        h = h * coef
+
+        w = w * sizeCoef
+        h = h * sizeCoef
 
         var charge = Gparams.d3ForceParams.charge;
         var gravity = Gparams.d3ForceParams.gravity;
@@ -68,12 +75,49 @@ var d3simpleForceLight = (function () {
         var isDragging = false;
 
 
+var colors=paint.getDataColorDomain(nodes,"id",5)
+
+
+        var scale = 1.0;
+
+        var zoom = d3.behavior.zoom()
+            .scale(scale)
+            .scaleExtent([.2, 3])
+            .on("zoom", zoomed);
+
+      var dragNode = d3.behavior.drag()
+            .on("drag", function(d,i) {
+                d3.event.sourceEvent.stopPropagation();
+                if (d && d.x && d.y) {
+                    d3.select(this).attr("transform", "translate(" + d.x + "," + d.y + ")")
+                    d3.select(this).classed("fixed", d.fixed = true);
+                }
+            });
+
+    /*    var dragNode = this.force.drag()
+            .on("dragstart", dragNodestart)
+            .on("dragend", function (d) {
+                this.isDragging = true;
+            });*/
+
+        function dragNodestart(d) {
+            toutlesensController.hidePopupMenu()
+            this.isDragging = false;
+            d3.select(this).classed("fixed", d.fixed = true);
+        }
+
+
+
         d3.select(selector).selectAll("svg").remove();
+
 
 
         var svg = d3.select(selector).append("svg:svg")
             .attr('width', w)
             .attr('height', h)
+            .style("display", "block")
+            .style("margin", "auto")
+
             .on("click", function () {
                 if (self.isStopped) {
                     self.isStopped = false;
@@ -85,7 +129,8 @@ var d3simpleForceLight = (function () {
                     // self.isStopped = true;
                     self.force.stop()
                 }
-            })
+            }) .call(zoom);
+
 
 
         self.container = svg.append("svg:g")
@@ -94,26 +139,20 @@ var d3simpleForceLight = (function () {
             .attr('class', "container")
             .attr('width', w)
             .attr('height', h)
-        /*    .call(d3.behavior.zoom().scaleExtent([coef / 3, coef * 2]).on("zoom", function () {
 
 
-         d3.select(this).attr("transform",  " scale(" + d3.event.scale + ")")
-         //  d3.select(this).attr("transform", "translate(" + d3.event.translate + ")" + " scale(" + d3.event.scale + ")")
-         }))
-         .call(d3.behavior.drag()
-         .on("drag", function (d, i) {
-         if (d && d.x)
-         d3.select(this).attr("transform", "translate(" + d.x + "," + d.y + ")")
 
-         })
-         );*/
+
+
 
 
         var force = d3.layout.force()
             .on("tick", tick)
             .on('end', function () {
-                self.container.attr("transform", "translate(" + 0 + "," + 0 + ")" + " scale(" + 1 / coef + ")")
-                // self.container.attr("transform", "translate(" + (-w/(2*coef))+","+(-h/(2*coef))+ ")" + " scale(" + 1/coef+ ")")
+                //self.container.attr("transform", "translate(" + 0 + "," + 0 + ")" + " scale(" + 1 / sizeCoef + ")")
+              //self.container.attr("transform", "translate(" + 0 + "," + 0 + ")" + " scale(" + 1 / sizeCoef + ")")
+                if(sizeCoef>1)
+            self.container.attr("transform", "translate(" + (-w/(2*sizeCoef))+","+(-h/(2*sizeCoef))+ ")" + " scale(" + 1+ ")")
             })
             .nodes(nodes)
             .links(links)
@@ -210,13 +249,6 @@ var d3simpleForceLight = (function () {
                 var anode = d3.select(this);
                 anode.append('svg:circle')
                     .attr("id", "C_" + d.id)
-                    .on("dblclick", function () {
-                        currentObject = d;
-                        currentObject.id = d.id
-                        currentDisplayType = "FLOWER";
-                        toutlesensController.generateGraph(d.id)
-
-                    })
                     .attr("r", function (d) {
                             var r0 = Gparams.circleR / 3;
                             if (d.rels && d.rels.length > 0) {
@@ -243,23 +275,37 @@ var d3simpleForceLight = (function () {
 
                     })
                     .attr("class", "shape");
+              anode.call(dragNode);
+                anode.on("click",function(d){
+                    d3common.d3CommonMouseover(d);
+                 /*   var dx=(w/(2*sizeCoef))-d.px;
+                    var dy=(h/(2*sizeCoef))-d.py;
+                    d3simpleForceLight.container.attr("transform", "translate(" + dx + "," + dy + ")")*/
+                })
+                anode.on("dblclick", function () {
+                        currentObject = d;
+                        currentObject.id = d.id
+                    currentLabel=null;
+                        currentDisplayType = "FLOWER";
+                        toutlesensController.generateGraph(d.id,true)
 
-                anode.on("click", function (d) {
-                    d3.select(this).style('fill', 'red')
-                    // d3common.d3CommonMouseover(d);
-                    d3.selectAll("line").style('stroke', 'grey')
-                    //  var circles=d3.selectAll("circle").style('fill','grey')
+                    })
+                anode.on("mouseover", function (d) {
+                 //   d3.select(this).style('fill', 'red')
+
+                    d3.selectAll("line").style('stroke', 'grey').style("opacity", 0.5)//.style("stroke-width", 1)
                     var nodeRels = d.rels;
-
+                    var nodeInvRels = d.invRels;
 
                     d3.selectAll("text").style('fill', 'black').style("font-size", "10px").style("font-weight", "normal")
-                    d3.selectAll("line").each(function (d, i) {
-                        if (nodeRels.indexOf(d.id) > -1) {
 
-                            d3.select(this).style('stroke', 'blue').style("stroke-width", 5).style("opacity", 1)
+                    d3.selectAll("line").each(function (d, i) {
+                        if (nodeRels.indexOf(d.id) > -1 || nodeInvRels.indexOf(d.id) > -1) {
+                            var normalDir=(nodeRels.indexOf(d.id) > -1)
+                            d3.select(this).style('stroke', 'blue').style("stroke-width", 1).style("opacity", 1)
                             var linkNodes = self.linksMap[d.id];
                             d3.selectAll("text").each(function (d, i) {
-                                if (linkNodes.source==d.index || linkNodes.target==d.index) {
+                                if (linkNodes && ((normalDir &&linkNodes.source==d.index) || (!normalDir && linkNodes.target==d.index))) {
 
                                     d3.select(this).style('fill', 'blue').style("font-size", "14px").style("font-weight", "bold")
                                 }
@@ -274,6 +320,7 @@ var d3simpleForceLight = (function () {
 
 
                     })
+                    d3.select(this).select("text").style('fill', 'green').style("font-size", "14px").style("font-weight", "bold")
 
 
 
@@ -369,11 +416,48 @@ var d3simpleForceLight = (function () {
                     d.x = w - 100;
                     d.y = h - 100;
                 }
-
-                return "translate(" + Math.max(5, Math.min(w - 5, d.x)) + "," + Math.max(5, Math.min(h - 5, d.y)) + ")";
+                return "translate(" +  d.x + "," +  d.y + ")";
+             //   return "translate(" + Math.max(5, Math.min(w - 5, d.x)) + "," + Math.max(5, Math.min(h - 5, d.y)) + ")";
             });
         };
+
+
+
         function zoomed() {
+            var translateX = d3.event.translate[0];
+            var translateY = d3.event.translate[1];
+            var xScale = d3.event.scale;
+            self.container.attr("transform", "translate(" + translateX + "," + translateY + ")scale(" + xScale + ")");
+            if(d3.event.scale>1) {
+                d3.selectAll("text").style("font-size", Math.round(12 / d3.event.scale))
+            }
+                d3.selectAll("circle").each(function (d, i) {
+                    if(!d.r0)
+                        d.r0 = parseInt(d3.select(this).attr("r"))
+                    r = Math.round( d.r0 / d3.event.scale);
+                    if(r>0)
+                    d3.select(this).attr("r", r)//.attr("stroke", Math.round( d.r0 / d3.event.scale));
+                })
+
+
+           d3.selectAll("line").each(function(d,i){
+               if(!d.sw0)
+                   d.sw0 =parseInt(d3.select(this).style("stroke-width"))
+                w= Math.round(d.sw0/d3.event.scale);
+                if(w>0)
+                d3.select(this).style("stroke-width",w);
+
+            })
+
+
+        }
+
+
+
+
+
+
+       /* function zoomed() {
             self.container.attr("transform", "translate(" + d3.event.translate + ")scale(" + d3.event.scale + ")");
         }
 
@@ -383,7 +467,7 @@ var d3simpleForceLight = (function () {
         }
 
         function dragged(d) {
-            if (d && d.x)
+            if (d && d.x && d.y)
                 d3.select(this).attr("transform", "translate(" + d.x + "," + d.y + ")")
 
             // d3.select(this).attr("cx", d.x = d3.event.x).attr("cy", d.y = d3.event.y);
@@ -391,7 +475,7 @@ var d3simpleForceLight = (function () {
 
         function dragended(d) {
             d3.select(this).classed("dragging", false);
-        }
+        }*/
 
         function cleanup() {
             self.update([]);

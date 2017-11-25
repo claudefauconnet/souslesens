@@ -534,7 +534,11 @@ table.dataTable thead th div.DataTables_sort_wrapper {
     font-size: 14px;
 }
 .relationType{
-    font-size: 12px;
+    font-size: 14px;
+}
+#propertiesSelectionTypeSpan{
+    font-weight: bold;
+    font-size: 14px;
 }
 
 
@@ -543,6 +547,15 @@ table.dataTable thead th div.DataTables_sort_wrapper {
     color: #662211;
     stroke-width: 5px;
 }
+
+
+.colorPaletteSquare {
+    width:20px;
+    height: 20px;
+    float: left;
+    margin: 1px;
+}
+
 
 
 

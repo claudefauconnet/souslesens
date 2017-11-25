@@ -69,7 +69,8 @@
     <script src="js/toutlesensData.js"></script>
     <script src="js/toutlesensDialogsController.js"></script>
     <script src="js/filters.js"></script>
-
+    <script src="js/paint.js"></script>
+    <script src="js/mainMenu.js"></script>
     <script src="js/modifyData.js"></script>
 
     <!--
@@ -249,6 +250,7 @@
 
 
                 toutlesensController.appInitEnded = true;
+                toutlesensController.appInitEnded = true;
 
             })
 
@@ -400,22 +402,6 @@
                     $(".accordionLeft .ui-accordion-content").height($("#" + panel).height());
 
 
-                    /*  if (panel == "graphFiltersPanel" || panel == "graphSimplePanel") {
-                     $("#graphForceDistance").val(100);
-                     if ($("#depthSlider").val() > 3) {
-                     $("#depth").val(1);
-                     $("#depthSlider").slider({
-                     max: 3,
-                     value: 1
-                     });
-                     }
-                     }
-                     if (panel == "graphFiltersPanel") {
-                     currentGraphRequestType = currentGraphRequestType_FILTERED;
-                     isInPathGraphAction = false;
-                     }*/
-
-
                 }
 
 
@@ -436,47 +422,8 @@
 
             }
 
-            if (Gparams.navigationStyle == "jpt") {
-                $("#div_externalRessources").detach();
-            }
-
-            $("#graphForceDistanceSlider").slider({
-                min: 10,
-                max: 400,
-                range: "min",
-                value: 200,
-                slide: function (event, ui) {
-                    /*   if (false) {
-                     var h = $("#graphDiv").height();
-                     distance = h / (10 * depth) / (200 / distance);
-                     }*/
-                    Gparams.d3ForceParams.distance = ui.value;
-                    toutlesensController.displayGraph();
-                }
-            });
-
-            $("#graphForceChargeSlider").slider({
-                min: -1000,
-                max: -10,
-                range: "min",
-                value: -500,
-                slide: function (event, ui) {
-                    Gparams.d3ForceParams.charge = ui.value;
-                    toutlesensController.displayGraph();
-                }
-            });
 
 
-            $("#depthSlider").slider({
-                min: 1,
-                max: 3,
-                range: "min",
-                value: 1,
-                slide: function (event, ui) {
-                    $("#depth").val(ui.value);
-                    toutlesensController.generateGraph(null, true);
-                }
-            });
 
             $("#dialog").dialog({
                 autoOpen: false,
@@ -486,7 +433,7 @@
 
             });
 
-            $("#dialogAdvancedSearch").dialog({
+          /*  $("#dialogAdvancedSearch").dialog({
                 autoOpen: false,
                 height: Gparams.bigDialogSize.h,
                 width: Gparams.bigDialogSize.w,
@@ -510,7 +457,7 @@
                 appendTo: "#tabs-radarRight",
                 modal: true,
 
-            });
+            });*/
 
             $("#popupMenuNodeInfoDiv").mouseleave(function () {
                 $(this).hide();
@@ -518,6 +465,8 @@
 
 
             advancedSearch.init();
+
+            mainMenu.showDataMenu();
 
             /*     var str="";
              for (var i=0;i< Gparams.palette.length;i++){
@@ -543,7 +492,8 @@
             if (value == "listNodes") {
 
                 currentDisplayType = "FLOWER";
-                currentLabel = $("#nodeLabelSelect").val();
+
+                currentLabel = null;//$("#nodeLabelSelect").val();
 
 
             }
@@ -575,6 +525,7 @@
 
             }
         }
+
 
 
     </script>
@@ -615,83 +566,14 @@
 
 
 
-                            <tr>
-                                <td colspan="3">
 
-                                    <table class="visButtonTable" id="visButtonTableDiv">
-
-
-                                        <tr>
-                                            <td><input type="image" height="30px" title="form" class="displayIcon"
-                                                       onclick="toutlesensController.onVisButton('FORM',this)"
-                                                       id="formButton"
-                                                       src="images/form.png"/></td>
-                                            <td><input type="image" height="30px" title="fleur" class="displayIcon"
-                                                       onclick="toutlesensController.onVisButton('FLOWER',this)"
-                                                       id="treeFlowerButton"
-                                                       src="images/flower.png"/></td>
-                                            <td><input type="image" height="30px" title="graphBulk" class="displayIcon"
-                                                       onclick="toutlesensController.onVisButton('SIMPLE_FORCE_GRAPH_BULK',this)"
-                                                       id="graphBulkButton"
-                                                       src="images/graphBulk.png"/></td>
-
-                                            <td><input type="image" height="30px" class="displayIcon"
-                                                       title="<span id='lang_9'>carte</span>"
-                                                       onclick="toutlesensController.onVisButton('SIMPLE_FORCE_GRAPH',this)"
-                                                       id="graphButton" src="images/graph.png"/></td>
-                                            <td><input type="image" height="30px" title="cards" class="displayIcon"
-                                                       onclick="toutlesensController.onVisButton('CARDS',this)"
-                                                       id="cardsButton"
-                                                       src="images/cards.png"/></td>
-
-                                       < !--    <td><input type="image" class="displayIcon"
-                                                       title="<span id='lang_7'>arbre</span>" height="30px"
-                                                       onclick="toutlesensController.onVisButton('TREE',this)"
-                                                       id="treeButton"
-                                                       src="images/tree.png"/></td>-->
-
-
-                                            <td><input type="image" height="30px" title="treeMap" class="displayIcon"
-                                                       onclick="toutlesensController.onVisButton('TREEMAP',this)"
-                                                       id="treemapButton"
-                                                       src="images/treemap.png"/></td>
-
-
-                                        </tr>
-                                    </table>
-
-
-                                </td>
-
-                            </tr>
-                            <tr valign="middle">
-                                <td><span id='lang_15'>Profondeur</span>&nbsp;<input
-                                        id="depth" value="1" size="1"></td>
-                                <td colspan="2">
-                                    <div id="depthSlider" style="width: 130px;"></div>
-                                </td>
-
-                            </tr>
-                            <tr>
-                                <td colspan="3">
-                                    <input type="checkbox" id="showRelationTypesCbx"
-                                           onclick="toutlesensController.displayGraph()">nom des relations
-                                    <input type="checkbox" id="groupByLabelsCbx"
-                                           onclick="toutlesensController.displayGraph()">grouper par label
-
-
-                                </td>
-                            </tr>
 
 
                             <tr>
 
                                 <td colspan="2">
                                     <br> Label <select id="nodesLabelsSelect" onchange="onLabelSelect(this)"> </select>
-                                    <select id="onLabelActionSelect" onchange="onLabelActionSelect(this)">
-                                        <option>displayGraphForLabel</option>
-                                        <option>listNodes</option>
-                                    </select>
+
                                     <hr>
                                     <span id='lang_1'>Search</span>
                                     <input id="word"
@@ -752,40 +634,40 @@
                     </ul>
 
                     <div id="graphPathDiv">
-                        this first tab is IN PROGRESS, currentQueries is OK...
-<!--
-                        <br>
-                        <table border="0">
-                            <tr>
-                                <td><span id='lang_109'>noeud source</span></td>
-                                <td><input id="graphPathSourceNode" value=" ?"
-                                           onclick="advancedSearch.onSourceNodeClick()">
-                                    <button onclick="$('#graphPathSourceNode').val('?');advancedSearch.setTargetNodeVisibility(true)">
-                                        X
-                                    </button>
-                                    </input></td>
+                        <!--    this first tab is IN PROGRESS, currentQueries is OK...-->
 
-                            </tr>
-                            <tr>
+                            <br>
+                            <table border="0">
+                                <tr>
+                                    <td><span id='lang_109'>noeud source</span></td>
+                                    <td><input id="graphPathSourceNode" value=" ?"
+                                               onclick="advancedSearch.onSourceNodeClick()">
+                                        <button onclick="$('#graphPathSourceNode').val('?');advancedSearch.setTargetNodeVisibility(true)">
+                                            X
+                                        </button>
+                                        </input></td>
 
-                                <td><span id='lang_133' class="targetNode">noeud cible</span></td>
+                                </tr>
+                                <tr>
 
-                                <td><span class="targetNode"><input onclick="advancedSearch.onTargetNodeClick()"
-                                                                    id="graphPathTargetNode" value=" ?">
-                    <button onclick="$('#graphPathTargetNode').val('?'); ">X</button>
-                                    </input></span></td>
-                            <tr>
-                            <tr>
+                                    <td><span id='lang_133' class="targetNode">noeud cible</span></td>
 
-                                <td><span id='lang_134' class='targetNode'>>distance maximum entre les noeuds</span>
-                                </td>
-                                <td><span class="targetNode"><input id="graphPathMaxDistance" value="3"/></span></td>
-                            </tr>
+                                    <td><span class="targetNode"><input onclick="advancedSearch.onTargetNodeClick()"
+                                                                        id="graphPathTargetNode" value=" ?">
+                        <button onclick="$('#graphPathTargetNode').val('?'); ">X</button>
+                                        </input></span></td>
+                                <tr>
+                                <tr>
+
+                                    <td><span id='lang_134' class='targetNode'>>distance maximum entre les noeuds</span>
+                                    </td>
+                                    <td><span class="targetNode"><input id="graphPathMaxDistance" value="1"/></span></td>
+                                </tr>
 
 
-                        </table>
+                            </table>
 
-                     -->
+
                     </div>
                     <div id="PatternVizDiv">
                         <table>
@@ -1262,10 +1144,13 @@
             <div id="center">
 
                 <div id="graphLegendDiv">
-                    <div id="graphMessage" class="message"></div>
+                    <button onclick="mainMenu.showDataMenu()"> Data menu</button>  <button onclick="mainMenu.showGraphDisplayMenu()"> Graph menu</button>
+                    <button id="backToPreviousGraph" onclick="toutlesensController.replayLastGraph()">Previous Graph</button>
+
                     <!--   <button style="font-size:12px" onclick="toutlesensController.stopAnimation()">stop animation</button>-->
                     <div id="filtersDiv"></div>
                     <div id="innerLegendDiv"></div>
+                    <div id="graphMessage" class="message"></div>
                     <div id="relInfoDiv"></div>
                 </div>
 
@@ -1273,7 +1158,7 @@
                 <div id="popupMenuWrite" class="popupmenuDiv">
                     <table border="0" class="popupMenuTable">
                         <tr>
-                            <td><span onclick=toutlesensController.dispatchAction('nodeInfos')"><span
+                            <td><span onclick=toutlesensController.dispatchAction('nodeInfos')><span
                                     id='lang_67'>Infos</span></span></td>
                         </tr>
                         <tr>

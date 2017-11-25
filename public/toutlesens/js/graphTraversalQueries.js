@@ -27,6 +27,11 @@ var graphTraversalQueries = (function () {
      *
      ******************************************************************************/
     self.getAllSimplePaths = function (startId, endId, depth, algo) {
+
+
+
+
+
         var body = '{ "to":"' + endId + '","max_depth":' + depth + ',"algorithm":"'
             + algo + '"}';
         var urlSuffix = "/db/data/node/" + startId + "/paths";
@@ -39,8 +44,8 @@ var graphTraversalQueries = (function () {
 
 
         }
+        console.log(JSON.stringify(paramsObj),"null",2);
 
-        console.log(JSON.stringify(body));
         console.log(urlSuffix);
         $.ajax({
             type: "POST",
@@ -74,7 +79,7 @@ var graphTraversalQueries = (function () {
 
     }
 
-    self.processPathResults = function (data) {
+    self.processPathResults = function (data,callback) {
         /* graphPathDebugInfo += "\n---------result------------\n" */
 
         var RelIds = [];
@@ -89,15 +94,32 @@ var graphTraversalQueries = (function () {
 
             }
         }
+
+
+
+
+
+
         var startNodeId = parseInt(data[0].start.substring(data[0].start
                 .lastIndexOf("/") + 1));
         var endNodeId = parseInt(data[0].end
             .substring(data[0].end.lastIndexOf("/") + 1))
-        self.getRelationsByIds(RelIds, data, startNodeId, endNodeId);
+        self.getRelationsByIds(RelIds, data, startNodeId, endNodeId,function(err,data,rels){
+            if(err)
+               return console.log(err);
+
+            filters.initGraphFilters(rels);
+            toutlesensData.cachedResultArray = data;
+            toutlesensDialogsController.hideAdvancedSearch();
+            currentDisplayType = "SIMPLE_FORCE_GRAPH";
+            currentDataStructure = "flat";
+            toutlesensController.displayGraph(data, "SIMPLE_FORCE_GRAPH", null);
+
+        });
 
     }
 
-    self.getRelationsByIds = function (RelIds, rawData, startNodeId, endNodeId) {
+    self.getRelationsByIds = function (RelIds, rawData, startNodeId, endNodeId,callback) {
         // var query = "MATCH (n)-[r]->(m) WHERE ID(r) IN "+
         // JSON.stringify(normalRelIds)+ " RETURN
         // n,m,r,labels(n),labels(m),ID(n),ID(m),type(r),ID(r) ";
@@ -114,7 +136,7 @@ var graphTraversalQueries = (function () {
             data: payload,
             dataType: "json",
             success: function (data, textStatus, jqXHR) {
-
+var rels={}
                 for (var i = 0; i < data.length; i++) {// marquage des
                     // noeuds source et
                     // cible
@@ -131,17 +153,35 @@ var graphTraversalQueries = (function () {
                             data[i].nodes[j].isTarget = true;
                     }
 
+
+                    //extract relations objs for filters
+                    var relsI=data[i].rels;
+                    for (var j = 0; j < relsI.length; j++) {
+                        var relJ=relsI[j]
+                    if(!rels[relJ])
+                        rels[relJ]={rels:[relJ],labels:[[]]};
+                        for (var k = 0; k < data[i].nodes.length; k++) {
+                            if( rels[relJ].labels[0].indexOf(data[i].nodes[k].labels[0])<0){
+                                rels[relJ].labels[0].push(data[i].nodes[k].labels[0])
+                            }
+                        }
+
+                    }
+
+
                 }
-                toutlesensData.cachedResultArray = data;
-                toutlesensDialogsController.hideAdvancedSearch();
-                currentDisplayType = "SIMPLE_FORCE_GRAPH";
-                currentDataStructure = "flat";
-                toutlesensController.displayGraph(data, "SIMPLE_FORCE_GRAPH", null);
+                var relsArray=[]
+                for (var key in rels){
+                    relsArray.push(rels[key]);
+                }
+                callback(null,data,relsArray);
+
             },
             error: function (xhr, err, msg) {
-                console.log(xhr);
+               // console.log(xhr);
                 console.log(err);
-                console.log(msg);
+              //  console.log(msg);
+                callback(err)
             },
 
 
