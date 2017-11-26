@@ -1,43 +1,49 @@
-
-
 <span id="paintDialogTypeSpan"></span><br>
 
-<button onclick="paint.paintAll('all')">Paint All values</button> <br>
-or
-<br>
+
+
 <button onclick=$('#paintDialogPropDiv').css('visibility','visible')>Paint property values</button> <br>
 
-<div id="paintDialogPropDiv"  style="visibility: visible">
-Properties
-<select id="propertiesSelectionDialog_propsSelect">
+<div id="paintDialogPropDiv" style="visibility: visible">
+    Properties
+    <select id="propertiesSelectionDialog_propsSelect">
 
-</select>
-<br>
+    </select>
+    <br>
 
 
-<select id="propertiesSelectionDialog_operatorSelect">
-    <option>=</option>
-    <option>!=</option>
-    <option>&lt;</option>
-    <option>&gt;</option>
-    <option>contains</option>
+    <select id="propertiesSelectionDialog_operatorSelect">
+        <option>=</option>
+        <option>!=</option>
+        <option>&lt;</option>
+        <option>&gt;</option>
+        <option>contains</option>
 
-</select>
-<input id="propertiesSelectionDialog_valueInput">
-<input type="hidden" id="propertiesSelectionDialog_natureInput">
-<input type="hidden" id="propertiesSelectionDialog_typeInput">
-<!--<button onclick="filters.outLineProperty()">outline property</button>-->
+    </select>
+    <input id="propertiesSelectionDialog_valueInput">
+    <input type="hidden" id="propertiesSelectionDialog_natureInput">
+    <input type="hidden" id="propertiesSelectionDialog_typeInput">
+    <!--<button onclick="filters.outLineProperty()">outline property</button>-->
+
+
+</div>
+<hr>
+<div id="paintDialogPalette" style="visibility: visible">
+    Color
+    <div id="paintDialogColorSelect"></div>
+    Point size<select id="paintDialogPointSizeSelect"></select>
+    Line width <select id="paintDialogLineWidthSelect"></select>
+    <hr>
 
 
 </div>
- <hr>
- <div id="paintDialogPalette"   style="visibility: visible" >
-Color <div id="paintDialogColorSelect"></div>
-Point size<select id="paintDialogPointSizeSelect"></select>
-Line width <select id="paintDialogLineWidthSelect"></select>
-
-<div id="paintDialogSelectedColor"></div>
-
+<div id="paintDialogSelectedAttrs" style="visibility: visible">
+    color
+    <div id="paintDialogSelectedColor"></div>
+    circleRadius <input id="propertiesSelectionDialog_circleRadiusInput" value="30">
+    lineWidth <input id="propertiesSelectionDialog_lineWidthInput" value="3">
 </div>
- <button onclick="paint.onApply()">Apply</button>
+<button onclick="paint.paintAll('outline')">Paint All values</button>
+<button onclick="paint.paintAll('initial')">removeFilters</button>
+<button onclick="paint.paintAll('palette')">Apply</button>
 <!-- <button onclick="filters.filterOnProperty('remove')">Remove filter</button> <br>-->

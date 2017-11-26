@@ -50,6 +50,7 @@ self.zoom=function(scale){
         self.ticks = 0
         self.t0 = new Date();
         self.isStopped = false;
+
         //  self.maxTicks=10000/links.length;
 
 
@@ -195,7 +196,7 @@ var colors=paint.getDataColorDomain(nodes,"id",5)
 
             link.each(function (d) {
 
-                d3.select(this).insert("svg:line", ".line").attr("class", "link")
+                d3.select(this).insert("svg:line")
                     .attr("x1", function (d) {
                         return d.source.px;
                     })
@@ -377,8 +378,10 @@ var colors=paint.getDataColorDomain(nodes,"id",5)
 
                     })
 
-            });
 
+
+            });
+            paint.storeInitialGraphObjectAttrs()
 
         }
 
