@@ -188,6 +188,7 @@ var toutlesensController = (function () {
 
 
         var addToExistingTree = false;
+       $("#waitImg").css("visibility","visible")
         toutlesensData.getNodeAllRelations(id, output, addToExistingTree, function (err, data) {
             toutlesensData.whereFilter = "";
             if (err) {
@@ -206,22 +207,25 @@ var toutlesensController = (function () {
                 }
 
                 if ( nRels <= Gparams.graphMaxDataLengthToDisplayGraphDirectly) {
-                    filters.applyAllRelationsFilter();
+                 //   filters.applyAllRelationsFilter();
                     self.generateGraph(currentObject.id, true);
+
                     return;
 
                 }
 
 
                 //  filters.initGraphFilters0(data.labels, data.relTypes);
-                if (callback)
+                if (callback) {
+                    $("#waitImg").css("visibility", "hidden")
                     return callback(null, data);
-                return;
+                }
             }
 
 
             if (data.length >= Gparams.graphDisplayLimitMax && currentDisplayType != "SIMPLE_FORCE_GRAPH_BULK") {
                 self.setGraphMessage("Maximum size of data exceeded:" + data.length + " > maximum " + Gparams.graphDisplayLimitMax, "stop");
+                $("#waitImg").css("visibility","hidden")
                 return;
 
             }
@@ -249,11 +253,13 @@ var toutlesensController = (function () {
                 $("#showRelationTypesCbx").removeAttr("checked");
             }
             toutlesensData.prepareRawData(data, addToExistingTree, currentDisplayType, function (err, data, labels, relations) {
-                if (callback)
-                    return callback(null, data);
+
 
                 toutlesensController.displayGraph(data, currentDisplayType, self.currentLabels);
+                $("#waitImg").css("visibility","hidden")
                 self.stackGraph(currentDisplayType, currentLabel, currentObject.id, filters.currentSelectdFilters);
+                if (callback)
+                    return callback(null, data);
 
 
             });
@@ -353,7 +359,7 @@ var toutlesensController = (function () {
     }
 
 
-    self.displayGraph = function (json, output) {
+    self.displayGraph = function (json, output,callback) {
         Gparams.showRelationNames = $("#showRelationTypesCbx").prop("checked");
         d3NodesSelection = [];
         $("#textDiv").html("");
@@ -479,6 +485,8 @@ var toutlesensController = (function () {
                     d3simpleForceBulk.initSimpleForceBulk(data);
                 });
             }
+            if(callback)
+                callback()
 
 
         }

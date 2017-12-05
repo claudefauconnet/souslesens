@@ -279,11 +279,11 @@
           //  $("#info_panel").width(totalWidth / leftPanelRatio).height(totalHeight - 10);
             $("#graphDiv").width((totalWidth / Gparams.leftPanelRatio * 2) - Gparams.legendWidth).height(totalHeight - 50)
             $("#graphLegendDiv").width(Gparams.legendWidth).height(totalHeight - 50).css("left", $("#graphDiv").width());
-         //   $("#table_Graph").width((totalWidth / leftPanelRatio * 2) - 50).height(totalHeight - 50);
-        //    $("#textDivContainer").width((totalWidth / leftPanelRatio * 2) - 50).height(totalHeight - 100);
-        //    $("#neoQueriesHistoryId").width((totalWidth / leftPanelRatio * 2) - 50).height(totalHeight - 100);
+         //   $("#table_Graph").width((totalWidth / Gparams.leftPanelRatio * 2) - 50).height(totalHeight - 50);
+         $("#textDivContainer").width((totalWidth / Gparams.leftPanelRatio * 2) - 50).height(totalHeight - 100);
+        //    $("#neoQueriesHistoryId").width((totalWidth / Gparams.leftPanelRatio * 2) - 50).height(totalHeight - 100);
             $("#center").width(totalWidth / 4 * 3).height(totalHeight - 100);
-       //     $("#nodeDetailsDiv").width((totalWidth / leftPanelRatio * 2) - 50).height(totalHeight - 150);
+       //     $("#nodeDetailsDiv").width((totalWidth / Gparams.leftPanelRatio * 2) - 50).height(totalHeight - 150);
        //     $("#graphDecorationPanel").height(totalHeight / 2);
 
 
@@ -1154,7 +1154,7 @@
                     <div id="paintDiv"></div>
                     <div id="filtersDiv"></div>
                     <div id="innerLegendDiv"></div>
-                    <div id="graphMessage" class="message"></div>
+                    <div id="graphMessage" class="message"> <br><img id="waitImg" src="images/waitAnimated.gif" width="50px" style="visibility: hidden;"></div>
                     <div id="relInfoDiv"></div>
                 </div>
 
@@ -1326,7 +1326,7 @@
 
 
         <!--  ****************************************************nodeDetailsTab***************************-->
-        <
+        <!--
         <div id="cardsInfosControlsDiv">
             <button onclick="cards.save();">Save</button>
             <button onclick="cards.delete();">Delete</button>
@@ -1367,7 +1367,7 @@
                 </tr>
             </table>
 
-        </div>
+        </div>-->
 
     </div>
 

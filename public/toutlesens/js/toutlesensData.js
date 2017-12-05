@@ -36,7 +36,8 @@ var toutlesensData = (function () {
     self.queryNodeLabelFilters = "";
     self.queryRelTypeFilters = "";
     self.queryExcludeNodeFilters = "";
-    self.whereFilter = ""
+    self.whereFilter = "";
+    self.matchStatement=null;
 
 
     self.executeNeoQuery = function (queryType, str, successFunction) {
@@ -119,84 +120,94 @@ var toutlesensData = (function () {
     }
 
     self.getNodeAllRelations = function (id, output, addToExistingTree, callback) {
-        excludedLabels = [];
-    //    id = parseInt("" + id);
-        if (addToExistingTree)
-            navigationPath.push(id);
-        else
-            navigationPath = [id];
-        currentRootId = Math.abs(id);
-        legendNodeLabels = {}
-        legendRelTypes = {};
-        var subGraphWhere;
-        if (subGraph)
-            subGraphWhere = "  node1.subGraph=\"" + subGraph + "\" "
-        // http://graphaware.com/graphaware/2015/05/19/neo4j-cypher-variable-length-relationships-by-example.html
+
+            if (!self.matchStatement) {
+                excludedLabels = [];
+                //    id = parseInt("" + id);
+                if (addToExistingTree)
+                    navigationPath.push(id);
+                else
+                    navigationPath = [id];
+                currentRootId = Math.abs(id);
+                legendNodeLabels = {}
+                legendRelTypes = {};
+
+                var subGraphWhere;
+                if (subGraph)
+                    subGraphWhere = "  node1.subGraph=\"" + subGraph + "\" "
+                // http://graphaware.com/graphaware/2015/05/19/neo4j-cypher-variable-length-relationships-by-example.html
 
 
-        var numberOfLevelsVal = $("#depth").val();
-        if (numberOfLevelsVal === undefined)
-            numberOfLevelsVal = Gparams.defaultQueryDepth;
-        else
-            numberOfLevelsVal = parseInt(numberOfLevelsVal);
-     /*   if (Gparams.graphNavigationMode != "expandNode") {
-            if (!currentDisplayType || currentDisplayType == "FLOWER" || currentDisplayType == "TREE" || currentDisplayType == "SIMPLE_FORCE_GRAPH" || currentDisplayType == "TREEMAP")
-                numberOfLevelsVal += 1;
-        }*/
-        var whereStatement = "";
-        if (id){
-            whereStatement = " WHERE ((ID(node1)=" + id+") OR (ID(m)=" + (id)+"))"
-           /* if(id>0)
-            whereStatement = " WHERE (ID(node1)=" + id+")" ;//+" OR  ID(m)="+id+")" ;
-            else
-                whereStatement = " WHERE (ID(m)=" + (-id)+")" ;*/
+                var numberOfLevelsVal = $("#depth").val();
+                if (numberOfLevelsVal === undefined)
+                    numberOfLevelsVal = Gparams.defaultQueryDepth;
+                else
+                    numberOfLevelsVal = parseInt(numberOfLevelsVal);
+                /*   if (Gparams.graphNavigationMode != "expandNode") {
+                 if (!currentDisplayType || currentDisplayType == "FLOWER" || currentDisplayType == "TREE" || currentDisplayType == "SIMPLE_FORCE_GRAPH" || currentDisplayType == "TREEMAP")
+                 numberOfLevelsVal += 1;
+                 }*/
+                var whereStatement = "";
+                if (id) {
+                    whereStatement = " WHERE ((ID(node1)=" + id + "))";// OR (ID(m)=" + (id)+"))"
+                    /* if(id>0)
+                     whereStatement = " WHERE (ID(node1)=" + id+")" ;//+" OR  ID(m)="+id+")" ;
+                     else
+                     whereStatement = " WHERE (ID(m)=" + (-id)+")" ;*/
+                }
+                if (subGraphWhere) {
+                    if (id)
+                        whereStatement += " AND ";
+                    else
+                        whereStatement += "WHERE ";
+                    whereStatement += subGraphWhere;
+
+                }
+                if (self.whereFilter != "") {
+                    if (whereStatement == "")
+                        whereStatement += " WHERE ";
+                    else
+                        whereStatement += "AND ";
+                    whereStatement += self.whereFilter + " ";
+                }
+            }
+
+
+            var returnStatement;
+            if (output == "filtersDescription") {
+                returnStatement = " RETURN count(r) as nRels, COLLECT( distinct EXTRACT( rel IN relationships(path) |  type(rel))) as rels,EXTRACT( node IN nodes(path) | labels(node)) as labels"
+            }
+            else {
+                returnStatement = " RETURN EXTRACT(rel IN relationships(path) | type(rel)) as rels," +
+                    "EXTRACT(rel IN relationships(path) | rel)  as relProperties," +
+                    "nodes(path) as nodes," +//   !!!!!!!!!!!!!!!!!!!!! a voir pour alléger les données transmises
+                    //   "EXTRACT(node IN nodes(path) | node.subGraph) as nodes,"+   !!!!!!!!!!!!!!!!!!!!! a voir pour alléger les données transmises
+                    " EXTRACT(node IN nodes(path) | ID(node)) as ids," +
+                    " EXTRACT(node IN nodes(path) | labels(node)) as labels "
+                    + ", EXTRACT(rel IN relationships(path) | labels(startNode(rel))) as startLabels";
+            }
+
+            var node1Label = "";
+            if (currentLabel)
+                node1Label = ":" + currentLabel;
+
+            var statement;
+            if (self.matchStatement)
+                statement = self.matchStatement;
+            else{
+                statement = "MATCH path=(node1" + node1Label
+                    + ")-[r"
+                    + toutlesensData.queryRelTypeFilters
+                    + "*.."
+                    + numberOfLevelsVal
+                    + "]-(m) "
+                    + whereStatement
+                    + graphQueryTargetFilter
+                    + toutlesensData.queryNodeLabelFilters
+                    + toutlesensData.queryExcludeNodeFilters
+                    + toutlesensData.queryExcludeRelFilters
         }
-        if (subGraphWhere) {
-            if (id)
-                whereStatement += " AND ";
-            else
-                whereStatement += "WHERE ";
-            whereStatement += subGraphWhere;
-
-        }
-        if (self.whereFilter != "") {
-            if (whereStatement == "")
-                whereStatement += " WHERE ";
-            else
-                whereStatement += "AND ";
-            whereStatement += self.whereFilter + " ";
-        }
-
-
-        var returnStatement
-        if (output == "filtersDescription") {
-            returnStatement = " RETURN count(r) as nRels, COLLECT( distinct EXTRACT( rel IN relationships(path) |  type(rel))) as rels,EXTRACT( node IN nodes(path) | labels(node)) as labels"
-        }
-        else{
-             returnStatement = " RETURN EXTRACT(rel IN relationships(path) | type(rel)) as rels," +
-                "EXTRACT(rel IN relationships(path) | rel)  as relProperties," +
-                "nodes(path) as nodes," +//   !!!!!!!!!!!!!!!!!!!!! a voir pour alléger les données transmises
-                //   "EXTRACT(node IN nodes(path) | node.subGraph) as nodes,"+   !!!!!!!!!!!!!!!!!!!!! a voir pour alléger les données transmises
-                " EXTRACT(node IN nodes(path) | ID(node)) as ids," +
-                " EXTRACT(node IN nodes(path) | labels(node)) as labels "
-                + ", EXTRACT(rel IN relationships(path) | labels(startNode(rel))) as startLabels";
-        }
-
-var node1Label="";
-        if(currentLabel)
-            node1Label=":"+currentLabel;
-        var statement = "MATCH path=(node1"+node1Label
-            + ")-[r"
-            + toutlesensData.queryRelTypeFilters
-            + "*.."
-            + numberOfLevelsVal
-            + "]-(m) "
-            + whereStatement
-            + graphQueryTargetFilter
-            + toutlesensData.queryNodeLabelFilters
-            + toutlesensData.queryExcludeNodeFilters
-            + toutlesensData.queryExcludeRelFilters
-            + returnStatement;
+           statement += returnStatement;
         if (graphQueryUnionStatement)
             statement += " UNION " + graphQueryUnionStatement + returnStatement;
 

@@ -19,11 +19,11 @@ var paint = (function () {
 
         // $( "#dialog" ).css("left",totalWidth-350);
         // $( "#dialog" ).css("top",100);
-     //   $("#dialog").dialog("option", "title", "Graph paint attributes");
+        //   $("#dialog").dialog("option", "title", "Graph paint attributes");
 
-     //   $("#dialog").load("htmlSnippets/paintDialog.html", function () {
+        //   $("#dialog").load("htmlSnippets/paintDialog.html", function () {
         $("#paintDiv").load("htmlSnippets/paintDialog.html", function () {
-            $("#filtersDiv").css("visibility","hidden")
+         //   $("#filtersDiv").css("visibility", "hidden")
             if (label) {
 
                 filters.initLabelPropertySelection(label);
@@ -31,14 +31,14 @@ var paint = (function () {
             else
                 filters.initRelationPropertySelection(reltype);
             paint.initColorsPalette(10, "paintDialogPalette");
-        //    $("#dialog").dialog("open");
+            //    $("#dialog").dialog("open");
 
 
         });
     }
 
-    self.closePaintDialog=function(){
-        $("#filtersDiv").css("visibility","visible");
+    self.closePaintDialog = function () {
+        $("#filtersDiv").css("visibility", "visible");
         $("#paintDiv").html("");
     }
 
@@ -75,15 +75,14 @@ var paint = (function () {
     }
 
 
-
     self.paintClasses = function () {
         self.closePaintDialog();
         var property = $("#propertiesSelectionDialog_propsSelect").val();
-       var nClasses=parseInt($("#propertiesSelectionDialog_NclassesInput").val());
-       var data=[];
-       for(var i=0;i<d3simpleForceLight.nodes.length;i++){
-           data[i]=d3simpleForceLight.nodes[i].neoAttrs
-       }
+        var nClasses = parseInt($("#propertiesSelectionDialog_NclassesInput").val());
+        var data = [];
+        for (var i = 0; i < d3simpleForceLight.nodes.length; i++) {
+            data[i] = d3simpleForceLight.nodes[i].neoAttrs
+        }
         self.applyColorClasses(data, property, nClasses);
     }
 
@@ -100,7 +99,6 @@ var paint = (function () {
             linkStroke = "#ddd";
         } else if (option == "initial") {// null values
         }
-
 
 
         if (self.currentLabel) {
@@ -132,9 +130,8 @@ var paint = (function () {
         }
 
     }
-    self.drawPaletteColorLegend=function(){
-        var colors=self.getDataColorDomain();
-
+    self.drawPaletteColorLegend = function () {
+        var colors = self.getDataColorDomain();
 
 
     }
@@ -146,15 +143,15 @@ var paint = (function () {
         var type = $("#propertiesSelectionDialog_typeInput").val();
         if (property && property.length > 0) {
 
-            if(!d.neoAttrs[property])
+            if (!d.neoAttrs[property])
                 return false;
 
             if (common.isNumber(value))
                 value = value;
             else
                 value = "'" + value + "'"
-            var comparison = d.neoAttrs[property]+ operator + value;
-           var result=eval(comparison)
+            var comparison = d.neoAttrs[property] + operator + value;
+            var result = eval(comparison)
             return result;
 
 
@@ -166,7 +163,7 @@ var paint = (function () {
     }
 
     self.getDataColorDomain = function (data, property, nClasses) {
-        var dataClasses={}
+        var dataClasses = {}
         var min = d3.min(data, function (d) {
             return d[property];
         });
@@ -176,35 +173,33 @@ var paint = (function () {
         var domain = d3.scale.linear().domain([min, max]).range([0, nClasses])
 
         var colors = domain.interpolate(d3.interpolateHcl).range([d3.rgb("#007AFF"), d3.rgb('#FFF500')]);
-        self.colorsPalette=colors;
-      return colors;
+        self.colorsPalette = colors;
+        return colors;
 
     }
 
-    self.applyColorClasses=function(data, property, nClasses){
-        var defaultColor="#ddd";
-        var defaultNodeRadius=20;
-     var selectedNodeRadius=parseInt($("#propertiesSelectionDialog_circleRadiusInput").val());
-        var colorDomain=self.getDataColorDomain (data, property, nClasses) ;
+    self.applyColorClasses = function (data, property, nClasses) {
+        var defaultColor = "#ddd";
+        var defaultNodeRadius = 20;
+        var selectedNodeRadius = parseInt($("#propertiesSelectionDialog_circleRadiusInput").val());
+        var colorDomain = self.getDataColorDomain(data, property, nClasses);
         self.applyInitialGraphObjectAttrs(defaultColor, defaultNodeRadius, defaultColor, 1);
-            d3.selectAll(".pointsRadar").each(function (d) {
-               if(d.neoAttrs[property]) {
-                   var color=colorDomain(d.neoAttrs[property]);
-                   var node=d3.select(this);
-                   var shape = node.select("circle");
-                   shape.style("fill", color);
-                   shape.style("r", selectedNodeRadius);
+        d3.selectAll(".pointsRadar").each(function (d) {
+            if (d.neoAttrs[property]) {
+                var color = colorDomain(d.neoAttrs[property]);
+                var node = d3.select(this);
+                var shape = node.select("circle");
+                shape.style("fill", color);
+                shape.style("r", selectedNodeRadius);
 
-               }
+            }
 
-    })
+        })
 
     }
 
 
-
-
-        self.getDataPointSizeDomain = function (data, property, nClasses) {
+    self.getDataPointSizeDomain = function (data, property, nClasses) {
         var min = d3.min(data, function (d) {
             return d[property];
         });
@@ -269,6 +264,22 @@ var paint = (function () {
             }
 
         })
+
+    }
+
+
+    self.onActionTypeSelect = function (select) {
+        if (select.selectedIndex == 0) {
+            $("#paintDialogAction").css("visibility", "visible");
+        }
+        else if (select.selectedIndex == 1) {
+            $("#paintDialogPropDiv").css("visibility", "visible");
+
+        }
+
+        else if (select.selectedIndex == 2) {
+            $("#paintDiv").html("");
+        }
 
     }
 

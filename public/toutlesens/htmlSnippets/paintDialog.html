@@ -1,10 +1,28 @@
 <span id="paintDialogTypeSpan"></span><br>
 
 
+<button onclick="paint.paintAll('initial')">removeFilters</button>
+<button onclick="paint.paintClasses()">paint property values</button>
+apply to
+<select size="3" onclick="paint.onActionTypeSelect(this)">
+    <option> All nodes with this label</option>
+    <option> Select a property</option>
+    <option>Close </option>
+</select>
 
-<button onclick=$('#paintDialogPropDiv').css('visibility','visible')>Paint property values</button> <br>
 
-<div id="paintDialogPropDiv" style="visibility: visible">
+
+
+
+<div id="paintDialogAction"   class="paintDialogDiv"  style="visibility: hidden">
+    <button onclick="visjsGraph.clusterByColor()">Cluster nodes</button>
+    <button onclick="paint.paintAll('outline')">Apply color</button>
+</div>
+
+
+
+
+<div id="paintDialogPropDiv" class="paintDialogDiv" style="visibility: hidden">
     Properties
     <select id="propertiesSelectionDialog_propsSelect">
 
@@ -12,12 +30,13 @@
     <br>
 
 
-    <select id="propertiesSelectionDialog_operatorSelect">
+    <select id="propertiesSelectionDialog_operatorSelect" >
+        <option>contains</option>
         <option>=</option>
         <option>!=</option>
         <option>&lt;</option>
         <option>&gt;</option>
-        <option>contains</option>
+
 
     </select>
     <input id="propertiesSelectionDialog_valueInput">
@@ -28,23 +47,18 @@
 
 </div>
 <hr>
-<div id="paintDialogPalette" style="visibility: visible">
+<div id="paintDialogPalette"  class="paintDialogDiv"  style="visibility: hidden">
+
     Color
     <div id="paintDialogColorSelect"></div>
-    Point size<select id="paintDialogPointSizeSelect"></select>
-    Line width <select id="paintDialogLineWidthSelect"></select>
+    circleRadius <input id="propertiesSelectionDialog_circleRadiusInput" style="width:30px" value="10">
+    lineWidth <input id="propertiesSelectionDialog_lineWidthInput" style="width:30px" value="3"><br>
+
     <hr>
 
 
 </div>
-<div id="paintDialogSelectedAttrs" style="visibility: visible">
-    color
-    <div id="paintDialogSelectedColor"></div>
-    circleRadius <input id="propertiesSelectionDialog_circleRadiusInput" style="width:30px" value="10">
-    lineWidth <input id="propertiesSelectionDialog_lineWidthInput" style="width:30px" value="3"><br>
-    number of classes <input id="propertiesSelectionDialog_NclassesInput" style="width:30px" value="5">
-</div>
-<button onclick="paint.paintAll('outline')">Paint All values</button>
-<button onclick="paint.paintAll('initial')">removeFilters</button>
-<button onclick="paint.paintClasses()">paint property values</button>
+
+
+
 <!-- <button onclick="filters.filterOnProperty('remove')">Remove filter</button> <br>-->

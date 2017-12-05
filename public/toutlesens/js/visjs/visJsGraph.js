@@ -195,12 +195,11 @@ var visjsGraph = (function () {
 
     }
     self.clusterByColor=function() {
-        network.setData(data);
-
-        var clusterOptionsByData;
-        for (var i = 0; i < colors.length; i++) {
-            var color = colors[i];
-            clusterOptionsByData = {
+        var label=paint.currentLabel;
+        if(!label || !nodeColors[label])
+            return;
+       var color= nodeColors[label];
+        var  clusterOptionsByData = {
                 joinCondition: function (childOptions) {
                     return childOptions.color.background == color; // the color is fully defined in the node.
                 },
@@ -212,14 +211,16 @@ var visjsGraph = (function () {
                     clusterOptions.mass = totalMass;
                     return clusterOptions;
                 },
-                clusterNodeProperties: {id: 'cluster:' + color, borderWidth: 3, shape: 'database', color:color, label:'color:' + color}
+                clusterNodeProperties: {id: 'cluster:' + color, borderWidth: 3, shape: 'star', color:color, label:'All '+label,size:50}
             };
             network.cluster(clusterOptionsByData);
-        }
+
     }
 
-
     return self;
+
+
+
 
 
 })()

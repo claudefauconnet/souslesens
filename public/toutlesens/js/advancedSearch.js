@@ -587,16 +587,13 @@ var advancedSearch = (function () {
 
     }
 
-    self.searchByNamesList = function (list, callback) {
+    self.setSearchByNamesListStatement = function (list,callback) {
         var names;
-        var subGraphQuery = "";
-        if (subGraph)
-            subGraphQuery = "and  n.subGraph=\"" + subGraph + "\" ";
         if (typeof list == "string")
             names = list.split(",");
         else
             names = list;
-        var query = "MATCH path=(n)-[r]-(m) where n.id in ["
+        var query = "node1.id in ["
         for (var i = 0; i < names.length; i++) {
             if (i > 0 && i<names.length)
                 query += ","
@@ -604,11 +601,10 @@ var advancedSearch = (function () {
 			query +=  names[i];
         }
 
-        query += "] " + subGraphQuery + "return " + returnStr;
-
-
-        self.executeCypherAndDisplayGraph(query, "searchByNameList");
-        callback(null, []);
+        query += "] "
+        toutlesensData.whereFilter=query;
+        if(callback)
+            return callback();
 
     }
 //********************************************************old*****************************************
