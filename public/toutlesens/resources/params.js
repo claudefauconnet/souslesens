@@ -38,7 +38,9 @@ var Gparams = {
     defaultQueryDepth:1,
     defaultGraphtype:"FLOWER",
     graphNavigationMode: "expandNode",
-    modifyMode: 'onList',//''onList'
+    modifyMode: 'onList',//''onList',
+    useVisjsNetworkgraph:true,
+    graphAllowPaint:true,
 
 
 
@@ -49,10 +51,10 @@ var Gparams = {
     jsTreeMaxChildNodes:500,
     graphDisplayLimitMax: 5000,
     maxDepthExplorationAroundNode: 3,
-    graphDisplayLimitToDisplayAll:100,
     bulkGraphViewMaxNodesToDrawLinks:1000,
     bulkGraphDisplayLimit:5000,
     maxNodesForRelNamesOnGraph:20,
+    graphMaxDataLengthToDisplayGraphDirectly:300,
 
 
     //urls************************
@@ -73,6 +75,7 @@ var Gparams = {
     splitterMin:0,
     splitterNormal:300,
     legendWidth: 250,
+    leftPanelRatio:3,
 
 
     //durations************************************

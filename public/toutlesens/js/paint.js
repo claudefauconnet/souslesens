@@ -7,6 +7,7 @@ var paint = (function () {
     self.currentColor = "";
     self.currentLabel;
     self.currentRelType;
+    self.currentNodes;
     self.initialNodesattrs = {};
     self.initialLinksattrs = {};
 
@@ -16,9 +17,13 @@ var paint = (function () {
         self.currentRelType = reltype;
 
 
-        $("#dialog").dialog("option", "title", "Graph paint attributes");
+        // $( "#dialog" ).css("left",totalWidth-350);
+        // $( "#dialog" ).css("top",100);
+     //   $("#dialog").dialog("option", "title", "Graph paint attributes");
 
-        $("#dialog").load("htmlSnippets/paintDialog.html", function () {
+     //   $("#dialog").load("htmlSnippets/paintDialog.html", function () {
+        $("#paintDiv").load("htmlSnippets/paintDialog.html", function () {
+            $("#filtersDiv").css("visibility","hidden")
             if (label) {
 
                 filters.initLabelPropertySelection(label);
@@ -26,10 +31,15 @@ var paint = (function () {
             else
                 filters.initRelationPropertySelection(reltype);
             paint.initColorsPalette(10, "paintDialogPalette");
-            $("#dialog").dialog("open");
+        //    $("#dialog").dialog("open");
 
 
         });
+    }
+
+    self.closePaintDialog=function(){
+        $("#filtersDiv").css("visibility","visible");
+        $("#paintDiv").html("");
     }
 
     self.initColorsPalette = function (length, divId) {
@@ -45,6 +55,7 @@ var paint = (function () {
             var xxx = this;
             self.currentColor = $(this).css("background-color");
         })
+
 
     }
     self.setColor = function (index) {
@@ -64,7 +75,20 @@ var paint = (function () {
     }
 
 
+
+    self.paintClasses = function () {
+        self.closePaintDialog();
+        var property = $("#propertiesSelectionDialog_propsSelect").val();
+       var nClasses=parseInt($("#propertiesSelectionDialog_NclassesInput").val());
+       var data=[];
+       for(var i=0;i<d3simpleForceLight.nodes.length;i++){
+           data[i]=d3simpleForceLight.nodes[i].neoAttrs
+       }
+        self.applyColorClasses(data, property, nClasses);
+    }
+
     self.paintAll = function (option) {
+        self.closePaintDialog();
         var nodeColor = null;
         var nodeR = null;
         var linkStroke = null;
@@ -76,17 +100,15 @@ var paint = (function () {
             linkStroke = "#ddd";
         } else if (option == "initial") {// null values
         }
-        else if (option == "palette") {// null values
-            nodeColor = "#ddd";
-            linkStroke = "#ddd";
-        }
+
 
 
         if (self.currentLabel) {
+
             var r = $("#propertiesSelectionDialog_circleRadiusInput").val()
             self.applyInitialGraphObjectAttrs(nodeColor, nodeR, linkStroke, linkStrokeWidth);
             d3.selectAll(".pointsRadar").select("circle").each(function (d) {
-                if (option == "outline" && d.label == self.currentLabel) {
+                if (option == "outline" && self.isLabelNodeOk(d)) {
                     d3.select(this).style("fill", self.currentColor)
                     d3.select(this).style("r", r)
                 }
@@ -99,7 +121,7 @@ var paint = (function () {
             var strokeWidth = $("#propertiesSelectionDialog_strokeWidthInput").val()
             self.applyInitialGraphObjectAttrs(nodeColor, nodeR, linkStroke, linkStrokeWidth);
             d3.selectAll(".link").select("line").each(function (d) {
-                if (option == "outline" && d.target.relType == self.currentRelType) {
+                if (option == "outline" && self.isLabelNodeOk(d)) {
                     d3.select(this).style("stroke", self.currentColor)
                     d3.select(this).style("stroke-width", strokeWidth)
                 }
@@ -110,25 +132,79 @@ var paint = (function () {
         }
 
     }
+    self.drawPaletteColorLegend=function(){
+        var colors=self.getDataColorDomain();
+
+
+
+    }
+    self.isLabelNodeOk = function (d) {
+        var property = $("#propertiesSelectionDialog_propsSelect").val();
+        var value = $("#propertiesSelectionDialog_valueInput").val();
+        var filterMode = $("#propertiesSelectionDialog_filterModeInput").val();
+        var operator = $("#propertiesSelectionDialog_operatorSelect").val();
+        var type = $("#propertiesSelectionDialog_typeInput").val();
+        if (property && property.length > 0) {
+
+            if(!d.neoAttrs[property])
+                return false;
+
+            if (common.isNumber(value))
+                value = value;
+            else
+                value = "'" + value + "'"
+            var comparison = d.neoAttrs[property]+ operator + value;
+           var result=eval(comparison)
+            return result;
+
+
+        }
+        else {// all nodes with label
+            return (d.target.relType == self.currentRelType)
+        }
+
+    }
 
     self.getDataColorDomain = function (data, property, nClasses) {
+        var dataClasses={}
         var min = d3.min(data, function (d) {
             return d[property];
         });
         var max = d3.max(data, function (d) {
             return d[property];
         });
-        var domain = d3.scale.linear().domain([min, max]).range([0, 10])
-
+        var domain = d3.scale.linear().domain([min, max]).range([0, nClasses])
 
         var colors = domain.interpolate(d3.interpolateHcl).range([d3.rgb("#007AFF"), d3.rgb('#FFF500')]);
-        var xx = colors(data[0][property])
-        return colors;
-
+        self.colorsPalette=colors;
+      return colors;
 
     }
 
-    self.getDataPointSizeDomain = function (data, property, nClasses) {
+    self.applyColorClasses=function(data, property, nClasses){
+        var defaultColor="#ddd";
+        var defaultNodeRadius=20;
+     var selectedNodeRadius=parseInt($("#propertiesSelectionDialog_circleRadiusInput").val());
+        var colorDomain=self.getDataColorDomain (data, property, nClasses) ;
+        self.applyInitialGraphObjectAttrs(defaultColor, defaultNodeRadius, defaultColor, 1);
+            d3.selectAll(".pointsRadar").each(function (d) {
+               if(d.neoAttrs[property]) {
+                   var color=colorDomain(d.neoAttrs[property]);
+                   var node=d3.select(this);
+                   var shape = node.select("circle");
+                   shape.style("fill", color);
+                   shape.style("r", selectedNodeRadius);
+
+               }
+
+    })
+
+    }
+
+
+
+
+        self.getDataPointSizeDomain = function (data, property, nClasses) {
         var min = d3.min(data, function (d) {
             return d[property];
         });
@@ -173,7 +249,7 @@ var paint = (function () {
             var shape = node.select("circle");
             self.initialNodesattrs[node.attr("id")] = {
 
-                fill: shape.style("fill"),
+                fill: shape.attr("fill"),
                 r: shape.attr("r")
             }
 

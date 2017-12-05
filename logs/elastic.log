@@ -7,3 +7,125 @@
 
 
 
+
+
+
+
+
+
+
+info [Mon Nov 20 2017 17:45:26 GMT+0100 (Paris, Madrid)]  -----index test deleted-----
+info [Mon Nov 20 2017 17:45:26 GMT+0100 (Paris, Madrid)]  index test created
+info [Mon Nov 20 2017 17:45:26 GMT+0100 (Paris, Madrid)]  -----index testtemp does not exist-----
+info [Mon Nov 20 2017 17:45:27 GMT+0100 (Paris, Madrid)]  index testtemp created
+info [Mon Nov 20 2017 17:45:27 GMT+0100 (Paris, Madrid)]  indexing  directory D:\GitHub\mailarchiver_atd\public\pdfArchives  and sub directories
+info [Mon Nov 20 2017 17:45:27 GMT+0100 (Paris, Madrid)]  indexing D:\GitHub\mailarchiver_atd\public\pdfArchives
+info [Mon Nov 20 2017 17:45:27 GMT+0100 (Paris, Madrid)]  indexing D:\GitHub\mailarchiver_atd\public\pdfArchives/CF
+info [Mon Nov 20 2017 17:45:27 GMT+0100 (Paris, Madrid)]  indexing D:\GitHub\mailarchiver_atd\public\pdfArchives\CF/2017-10-24
+info [Mon Nov 20 2017 17:45:27 GMT+0100 (Paris, Madrid)]  indexing D:\GitHub\mailarchiver_atd\public\pdfArchives\CF\2017-10-24/ATD2
+info [Mon Nov 20 2017 17:45:27 GMT+0100 (Paris, Madrid)]  indexing D:\GitHub\mailarchiver_atd\public\pdfArchives\CF\2017-10-24\ATD2/level1a
+info [Mon Nov 20 2017 17:45:27 GMT+0100 (Paris, Madrid)]  indexing D:\GitHub\mailarchiver_atd\public\pdfArchives\CF\2017-10-24\ATD2\level1a/level2a
+info [Mon Nov 20 2017 17:45:27 GMT+0100 (Paris, Madrid)]  indexing D:\GitHub\mailarchiver_atd\public\pdfArchives\CF\2017-10-24\ATD2\level1a/level2b
+info [Mon Nov 20 2017 17:45:27 GMT+0100 (Paris, Madrid)]  indexing D:\GitHub\mailarchiver_atd\public\pdfArchives\CF\2017-10-24\ATD2/level1b
+info [Mon Nov 20 2017 17:45:27 GMT+0100 (Paris, Madrid)]  indexing D:\GitHub\mailarchiver_atd\public\pdfArchives\CF\2017-10-24\ATD2\level1b/level11
+info [Mon Nov 20 2017 17:45:27 GMT+0100 (Paris, Madrid)]  indexing D:\GitHub\mailarchiver_atd\public\pdfArchives\CF/2017-10-25
+info [Mon Nov 20 2017 17:45:27 GMT+0100 (Paris, Madrid)]  indexing D:\GitHub\mailarchiver_atd\public\pdfArchives\CF\2017-10-25/ATD2
+info [Mon Nov 20 2017 17:45:27 GMT+0100 (Paris, Madrid)]  indexing D:\GitHub\mailarchiver_atd\public\pdfArchives\CF\2017-10-25\ATD2/level1a
+info [Mon Nov 20 2017 17:45:27 GMT+0100 (Paris, Madrid)]  indexing D:\GitHub\mailarchiver_atd\public\pdfArchives\CF\2017-10-25\ATD2\level1a/level2a
+info [Mon Nov 20 2017 17:45:27 GMT+0100 (Paris, Madrid)]  indexing D:\GitHub\mailarchiver_atd\public\pdfArchives\CF\2017-10-25\ATD2\level1a/level2b
+info [Mon Nov 20 2017 17:45:27 GMT+0100 (Paris, Madrid)]  indexing D:\GitHub\mailarchiver_atd\public\pdfArchives\CF\2017-10-25\ATD2/level1b
+info [Mon Nov 20 2017 17:45:27 GMT+0100 (Paris, Madrid)]  indexing D:\GitHub\mailarchiver_atd\public\pdfArchives\CF\2017-10-25\ATD2\level1b/level11
+info [Mon Nov 20 2017 17:45:27 GMT+0100 (Paris, Madrid)]  indexing D:\GitHub\mailarchiver_atd\public\pdfArchives/fccc
+info [Mon Nov 20 2017 17:45:27 GMT+0100 (Paris, Madrid)]  indexing D:\GitHub\mailarchiver_atd\public\pdfArchives\fccc/2017-10-26
+info [Mon Nov 20 2017 17:45:27 GMT+0100 (Paris, Madrid)]  indexing D:\GitHub\mailarchiver_atd\public\pdfArchives\fccc\2017-10-26/ATD2
+info [Mon Nov 20 2017 17:45:27 GMT+0100 (Paris, Madrid)]  indexing D:\GitHub\mailarchiver_atd\public\pdfArchives\fccc\2017-10-26\ATD2/level1a
+info [Mon Nov 20 2017 17:45:27 GMT+0100 (Paris, Madrid)]  indexing D:\GitHub\mailarchiver_atd\public\pdfArchives\fccc\2017-10-26\ATD2\level1a/level2a
+info [Mon Nov 20 2017 17:45:27 GMT+0100 (Paris, Madrid)]  indexing D:\GitHub\mailarchiver_atd\public\pdfArchives\fccc\2017-10-26\ATD2\level1a/level2b
+info [Mon Nov 20 2017 17:45:27 GMT+0100 (Paris, Madrid)]  indexing D:\GitHub\mailarchiver_atd\public\pdfArchives\fccc\2017-10-26\ATD2/level1b
+info [Mon Nov 20 2017 17:45:27 GMT+0100 (Paris, Madrid)]  indexing D:\GitHub\mailarchiver_atd\public\pdfArchives\fccc\2017-10-26\ATD2\level1b/level11
+info [Mon Nov 20 2017 17:45:27 GMT+0100 (Paris, Madrid)]  indexing D:\GitHub\mailarchiver_atd\public\pdfArchives/sss
+info [Mon Nov 20 2017 17:45:27 GMT+0100 (Paris, Madrid)]  indexing D:\GitHub\mailarchiver_atd\public\pdfArchives\sss/2017-11-21
+info [Mon Nov 20 2017 17:45:27 GMT+0100 (Paris, Madrid)]  indexing D:\GitHub\mailarchiver_atd\public\pdfArchives\sss\2017-11-21/ATD
+info [Mon Nov 20 2017 17:45:27 GMT+0100 (Paris, Madrid)]  indexing D:\GitHub\mailarchiver_atd\public\pdfArchives\sss\2017-11-21\ATD/Level1
+info [Mon Nov 20 2017 17:45:27 GMT+0100 (Paris, Madrid)]  indexing D:\GitHub\mailarchiver_atd\public\pdfArchives\sss\2017-11-21\ATD\Level1/Level2
+info [Mon Nov 20 2017 17:45:27 GMT+0100 (Paris, Madrid)]  indexing D:\GitHub\mailarchiver_atd\public\pdfArchives\sss\2017-11-21\ATD\Level1\Level2/Level3
+info [Mon Nov 20 2017 17:45:27 GMT+0100 (Paris, Madrid)]  indexing D:\GitHub\mailarchiver_atd\public\pdfArchives\sss\2017-11-21/Level1
+info [Mon Nov 20 2017 17:45:27 GMT+0100 (Paris, Madrid)]  file D:\GitHub\mailarchiver_atd\public\pdfArchives/readMe.txt   indexed .Duration (ms) : 227
+info [Mon Nov 20 2017 17:45:28 GMT+0100 (Paris, Madrid)]  file D:\GitHub\mailarchiver_atd\public\pdfArchives\CF\2017-10-24\ATD2\level1a/7688.pdf   indexed .Duration (ms) : 1316
+info [Mon Nov 20 2017 17:45:28 GMT+0100 (Paris, Madrid)]  file D:\GitHub\mailarchiver_atd\public\pdfArchives\CF\2017-10-24\ATD2\level1a\level2a/2685.pdf   indexed .Duration (ms) : 54
+info [Mon Nov 20 2017 17:45:28 GMT+0100 (Paris, Madrid)]  file D:\GitHub\mailarchiver_atd\public\pdfArchives\CF\2017-10-24\ATD2\level1a\level2a/5079.pdf   indexed .Duration (ms) : 45
+info [Mon Nov 20 2017 17:45:28 GMT+0100 (Paris, Madrid)]  file D:\GitHub\mailarchiver_atd\public\pdfArchives\CF\2017-10-24\ATD2\level1a\level2b/3598.pdf   indexed .Duration (ms) : 101
+info [Mon Nov 20 2017 17:45:28 GMT+0100 (Paris, Madrid)]  file D:\GitHub\mailarchiver_atd\public\pdfArchives\CF\2017-10-24\ATD2\level1a\level2b/4018.pdf   indexed .Duration (ms) : 95
+info [Mon Nov 20 2017 17:45:28 GMT+0100 (Paris, Madrid)]  file D:\GitHub\mailarchiver_atd\public\pdfArchives\CF\2017-10-24\ATD2\level1b/681.pdf   indexed .Duration (ms) : 43
+info [Mon Nov 20 2017 17:45:29 GMT+0100 (Paris, Madrid)]  file D:\GitHub\mailarchiver_atd\public\pdfArchives\CF\2017-10-24\ATD2\level1b\level11/1156.pdf   indexed .Duration (ms) : 69
+info [Mon Nov 20 2017 17:45:29 GMT+0100 (Paris, Madrid)]  file D:\GitHub\mailarchiver_atd\public\pdfArchives\CF\2017-10-24\ATD2\level1b\level11/4036.pdf   indexed .Duration (ms) : 60
+info [Mon Nov 20 2017 17:45:29 GMT+0100 (Paris, Madrid)]  file D:\GitHub\mailarchiver_atd\public\pdfArchives\CF\2017-10-25\ATD2\level1a/9936.pdf   indexed .Duration (ms) : 50
+info [Mon Nov 20 2017 17:45:29 GMT+0100 (Paris, Madrid)]  file D:\GitHub\mailarchiver_atd\public\pdfArchives\CF\2017-10-25\ATD2\level1a\level2a/2424.pdf   indexed .Duration (ms) : 33
+info [Mon Nov 20 2017 17:45:29 GMT+0100 (Paris, Madrid)]  file D:\GitHub\mailarchiver_atd\public\pdfArchives\CF\2017-10-25\ATD2\level1a\level2a/7136.pdf   indexed .Duration (ms) : 31
+info [Mon Nov 20 2017 17:45:29 GMT+0100 (Paris, Madrid)]  file D:\GitHub\mailarchiver_atd\public\pdfArchives\CF\2017-10-25\ATD2\level1a\level2b/3788.pdf   indexed .Duration (ms) : 155
+info [Mon Nov 20 2017 17:45:29 GMT+0100 (Paris, Madrid)]  file D:\GitHub\mailarchiver_atd\public\pdfArchives\CF\2017-10-25\ATD2\level1a\level2b/9956.pdf   indexed .Duration (ms) : 41
+info [Mon Nov 20 2017 17:45:29 GMT+0100 (Paris, Madrid)]  file D:\GitHub\mailarchiver_atd\public\pdfArchives\CF\2017-10-25\ATD2\level1b/3591.pdf   indexed .Duration (ms) : 37
+info [Mon Nov 20 2017 17:45:29 GMT+0100 (Paris, Madrid)]  file D:\GitHub\mailarchiver_atd\public\pdfArchives\CF\2017-10-25\ATD2\level1b\level11/6521.pdf   indexed .Duration (ms) : 38
+info [Mon Nov 20 2017 17:45:29 GMT+0100 (Paris, Madrid)]  file D:\GitHub\mailarchiver_atd\public\pdfArchives\CF\2017-10-25\ATD2\level1b\level11/8035.pdf   indexed .Duration (ms) : 43
+info [Mon Nov 20 2017 17:45:29 GMT+0100 (Paris, Madrid)]  file D:\GitHub\mailarchiver_atd\public\pdfArchives\fccc\2017-10-26\ATD2\level1a/9392.pdf   indexed .Duration (ms) : 34
+info [Mon Nov 20 2017 17:45:29 GMT+0100 (Paris, Madrid)]  file D:\GitHub\mailarchiver_atd\public\pdfArchives\fccc\2017-10-26\ATD2\level1a\level2a/3153.pdf   indexed .Duration (ms) : 27
+info [Mon Nov 20 2017 17:45:29 GMT+0100 (Paris, Madrid)]  file D:\GitHub\mailarchiver_atd\public\pdfArchives\fccc\2017-10-26\ATD2\level1a\level2a/4844.pdf   indexed .Duration (ms) : 24
+info [Mon Nov 20 2017 17:45:29 GMT+0100 (Paris, Madrid)]  file D:\GitHub\mailarchiver_atd\public\pdfArchives\fccc\2017-10-26\ATD2\level1a\level2b/4374.pdf   indexed .Duration (ms) : 36
+info [Mon Nov 20 2017 17:45:29 GMT+0100 (Paris, Madrid)]  file D:\GitHub\mailarchiver_atd\public\pdfArchives\fccc\2017-10-26\ATD2\level1a\level2b/9729.pdf   indexed .Duration (ms) : 35
+info [Mon Nov 20 2017 17:45:29 GMT+0100 (Paris, Madrid)]  file D:\GitHub\mailarchiver_atd\public\pdfArchives\fccc\2017-10-26\ATD2\level1b/5094.pdf   indexed .Duration (ms) : 26
+info [Mon Nov 20 2017 17:45:29 GMT+0100 (Paris, Madrid)]  file D:\GitHub\mailarchiver_atd\public\pdfArchives\fccc\2017-10-26\ATD2\level1b\level11/2674.pdf   indexed .Duration (ms) : 30
+info [Mon Nov 20 2017 17:45:29 GMT+0100 (Paris, Madrid)]  file D:\GitHub\mailarchiver_atd\public\pdfArchives\fccc\2017-10-26\ATD2\level1b\level11/3266.pdf   indexed .Duration (ms) : 37
+info [Mon Nov 20 2017 17:45:29 GMT+0100 (Paris, Madrid)]  file D:\GitHub\mailarchiver_atd\public\pdfArchives\sss\2017-11-21\ATD\Level1/1400.pdf   indexed .Duration (ms) : 25
+info [Mon Nov 20 2017 17:45:29 GMT+0100 (Paris, Madrid)]  file D:\GitHub\mailarchiver_atd\public\pdfArchives\sss\2017-11-21\ATD\Level1/4194.pdf   indexed .Duration (ms) : 31
+info [Mon Nov 20 2017 17:45:29 GMT+0100 (Paris, Madrid)]  file D:\GitHub\mailarchiver_atd\public\pdfArchives\sss\2017-11-21\ATD\Level1/5412.pdf   indexed .Duration (ms) : 28
+info [Mon Nov 20 2017 17:45:29 GMT+0100 (Paris, Madrid)]  file D:\GitHub\mailarchiver_atd\public\pdfArchives\sss\2017-11-21\ATD\Level1\Level2/4512.pdf   indexed .Duration (ms) : 26
+info [Mon Nov 20 2017 17:45:29 GMT+0100 (Paris, Madrid)]  file D:\GitHub\mailarchiver_atd\public\pdfArchives\sss\2017-11-21\ATD\Level1\Level2/6597.pdf   indexed .Duration (ms) : 24
+info [Mon Nov 20 2017 17:45:29 GMT+0100 (Paris, Madrid)]  file D:\GitHub\mailarchiver_atd\public\pdfArchives\sss\2017-11-21\ATD\Level1\Level2\Level3/4671.pdf   indexed .Duration (ms) : 21
+info [Mon Nov 20 2017 17:45:29 GMT+0100 (Paris, Madrid)]  file D:\GitHub\mailarchiver_atd\public\pdfArchives\sss\2017-11-21\ATD\Level1\Level2\Level3/7753.pdf   indexed .Duration (ms) : 20
+info [Mon Nov 20 2017 17:45:29 GMT+0100 (Paris, Madrid)]  file D:\GitHub\mailarchiver_atd\public\pdfArchives\sss\2017-11-21\ATD\Level1\Level2\Level3/8761.pdf   indexed .Duration (ms) : 20
+info [Mon Nov 20 2017 17:45:29 GMT+0100 (Paris, Madrid)]  file D:\GitHub\mailarchiver_atd\public\pdfArchives\sss\2017-11-21\ATD\Level1\Level2\Level3/930.pdf   indexed .Duration (ms) : 22
+info [Mon Nov 20 2017 17:45:30 GMT+0100 (Paris, Madrid)]  file D:\GitHub\mailarchiver_atd\public\pdfArchives\sss\2017-11-21\Level1/1221.pdf   indexed .Duration (ms) : 24
+info [Mon Nov 20 2017 17:45:30 GMT+0100 (Paris, Madrid)]  file D:\GitHub\mailarchiver_atd\public\pdfArchives\sss\2017-11-21\Level1/2941.pdf   indexed .Duration (ms) : 23
+info [Mon Nov 20 2017 17:45:30 GMT+0100 (Paris, Madrid)]  file D:\GitHub\mailarchiver_atd\public\pdfArchives\sss\2017-11-21\Level1/3724.pdf   indexed .Duration (ms) : 33
+info [Mon Nov 20 2017 17:45:30 GMT+0100 (Paris, Madrid)]  file D:\GitHub\mailarchiver_atd\public\pdfArchives\sss\2017-11-21\Level1/7759.pdf   indexed .Duration (ms) : 33
+info [Mon Nov 20 2017 17:45:30 GMT+0100 (Paris, Madrid)]  file D:\GitHub\mailarchiver_atd\public\pdfArchives\sss\2017-11-21\Level1/8517.pdf   indexed .Duration (ms) : 23
+info [Mon Nov 20 2017 17:45:30 GMT+0100 (Paris, Madrid)]  file D:\GitHub\mailarchiver_atd\public\pdfArchives\sss\2017-11-21\Level1/9109.pdf   indexed .Duration (ms) : 26
+info [Mon Nov 20 2017 17:45:30 GMT+0100 (Paris, Madrid)]  indexation in tempIndex successfull indexation done 40documents  in 3071 msec.
+info [Mon Nov 20 2017 17:45:30 GMT+0100 (Paris, Madrid)]  index testtemp copied totest
+info [Mon Nov 20 2017 17:45:30 GMT+0100 (Paris, Madrid)]  index testtemp copied totest
+info [Mon Nov 20 2017 17:45:30 GMT+0100 (Paris, Madrid)]  index testtemp copied totest
+info [Mon Nov 20 2017 17:45:30 GMT+0100 (Paris, Madrid)]  index testtemp copied totest
+info [Mon Nov 20 2017 17:45:30 GMT+0100 (Paris, Madrid)]  index testtemp copied totest
+info [Mon Nov 20 2017 17:45:30 GMT+0100 (Paris, Madrid)]  index testtemp copied totest
+info [Mon Nov 20 2017 17:45:30 GMT+0100 (Paris, Madrid)]  index testtemp copied to test
+info [Mon Nov 20 2017 17:45:31 GMT+0100 (Paris, Madrid)]  -----index testtemp deleted-----
+info [Mon Nov 20 2017 17:45:31 GMT+0100 (Paris, Madrid)]  delete temporary index testtemp
+info [Tue Nov 21 2017 12:27:01 GMT+0100 (Paris, Madrid)]  -----index mailsATD does not exist-----
+info [Tue Nov 21 2017 12:27:01 GMT+0100 (Paris, Madrid)]  ERROR[object Object]
+
+info [Tue Nov 21 2017 12:27:27 GMT+0100 (Paris, Madrid)]  -----index mailsATD does not exist-----
+info [Tue Nov 21 2017 12:27:27 GMT+0100 (Paris, Madrid)]  ERROR[object Object]
+
+info [Tue Nov 21 2017 12:29:26 GMT+0100 (Paris, Madrid)]  -----index mailsATD does not exist-----
+info [Tue Nov 21 2017 12:29:26 GMT+0100 (Paris, Madrid)]  ERROR[object Object]
+info [Tue Nov 21 2017 12:30:14 GMT+0100 (Paris, Madrid)]  -----index mailsATD does not exist-----
+info [Tue Nov 21 2017 12:30:14 GMT+0100 (Paris, Madrid)]  ERROR[object Object]
+
+info [Tue Nov 21 2017 12:30:40 GMT+0100 (Paris, Madrid)]  -----index mailsATD does not exist-----
+info [Tue Nov 21 2017 12:30:40 GMT+0100 (Paris, Madrid)]  ERROR[object Object]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

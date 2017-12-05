@@ -24,14 +24,17 @@
             padding: 10px;
             background-color: #f4f0ec;
         }
+        .jsTree{
+            overflow: auto;
+        }
+
     </style>
     <script>
         $(function () {
             totalWidth = $(window).width();
             totalHeight = $(window).height();
-            $("#treeDiv1").height(totalHeight - 150);
-            $("#treeDiv2").height(totalHeight - 150);
-            $("#treeDiv3").height(totalHeight - 150);
+            $(".jsTree").height(totalHeight - 150);
+
         })
 
 
@@ -154,7 +157,7 @@
             <input id="searchInput1">
             <button onclick="searchTree('searchInput1')">search</button>
             <br>
-            <div id="treeContainer1">
+            <div id="treeContainer1"  class="jsTree">
                 <div id="treeDiv1">
                 </div>
             </div>
@@ -172,7 +175,7 @@
             <input id="searchInput2">
             <button onclick="searchTree('searchInput2')">search</button>
             <br>
-            <div id="treeContainer2">
+            <div id="treeContainer2"  class="jsTree">
                 <div id="treeDiv2">
                 </div>
             </div>
@@ -189,8 +192,8 @@
             <input id="searchInput3">
             <button onclick="searchTree('searchInput3')">search</button>
             <br>
-            <div id="treeContainer3">
-                <div id="treeDiv3">
+            <div id="treeContainer3" class="jsTree">
+                <div id="treeDiv3" >
                 </div>
             </div>
         <td>

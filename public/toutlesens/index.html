@@ -140,7 +140,7 @@
     <script src="js/functionalities.js"></script>
 
 
-    <!-- test visjs----------------------------------------
+  <!-- test visjs------------------------------------------>
     <script src="js/visjs/visjs.js"></script>
     <script src="js/visjs/visJsGraph.js"></script>
     <link rel="stylesheet" type="text/css" href="js/visjs/vis-network.min.css.js"/>
@@ -191,9 +191,11 @@
         }
 
         .displayIcon-selected {
-            border-width: 6px;
+            border-width: 5px;
             border-color: #666;
-            border-style: solid;
+            border-color: #af9d09;
+
+            border-style: inset;
         }
 
         .infoTitle {
@@ -223,36 +225,6 @@
             lang.setLangage();
 
 
-            var afterLoadModelTasks = [
-                infoGenericDisplay.initLabels,
-                customizeUI.customize,
-                toutlesensController.afterGraphInit,
-                statistics.initLabelsCurrentQueries,
-                advancedSearch.patternInitLabels,
-                advancedSearch.patternInitRelTypes,
-                // advancedDisplay.initDecorationDiv,
-                functionalities.initFunctionalities
-
-            ]
-
-            Schema.load(subGraph, function (err, schema) {
-                if (err)
-                    return setMessage("Error cannot load Schema");
-                // play init UI methods after schema is loaded
-                for (var i = 0; i < afterLoadModelTasks.length; i++) {
-                    try {
-                        afterLoadModelTasks[i](subGraph);
-                    }
-                    catch (err) {
-                        console.log("" + i + "  " + err);
-                    }
-                }
-
-
-                toutlesensController.appInitEnded = true;
-                toutlesensController.appInitEnded = true;
-
-            })
 
 
             var mode = queryParams.mode;
@@ -277,6 +249,8 @@
 
 
             $("#graphDiv").click(function (e) {
+                if(currentDisplayType = "VISJS-NETWORK")
+                    return;
                 var dat = e.target.__data__;
                 if (!dat) {
                     toutlesensController.hidePopupMenu();
@@ -289,34 +263,34 @@
 
             totalWidth = $(window).width();
             totalHeight = $(window).height();
-            var leftPanelRatio = 3
+
 
             $("#nodeInfosDiv").height(totalHeight - 200)
             $("#nodeInfosDiv").width(totalWidth - 650)
-            $("#treeContainer").width((totalWidth / leftPanelRatio) - 30)
+            $("#treeContainer").width((totalWidth / Gparams.leftPanelRatio) - 30)
             $("#treeContainer").height(totalHeight - 300)
 
 
             $("body").height(totalHeight - 20);
             $("#left").width(totalWidth / 4).height(totalHeight - 50);
-            $("#tabs-radarLeft").width(totalWidth / leftPanelRatio).height(totalHeight - 50);
+            $("#tabs-radarLeft").width(totalWidth / Gparams.leftPanelRatio).height(totalHeight - 50);
             $("#tabs-radarRight").height(totalHeight - 20);
-            $("#radarFiltersTab").width((totalWidth / leftPanelRatio) - 20).height(totalHeight - 50);
-            $("#info_panel").width(totalWidth / leftPanelRatio).height(totalHeight - 10);
-            $("#graphDiv").width((totalWidth / leftPanelRatio * 2) - Gparams.legendWidth).height(totalHeight - 50)
+            $("#radarFiltersTab").width((totalWidth / Gparams.leftPanelRatio) - 20).height(totalHeight - 50);
+          //  $("#info_panel").width(totalWidth / leftPanelRatio).height(totalHeight - 10);
+            $("#graphDiv").width((totalWidth / Gparams.leftPanelRatio * 2) - Gparams.legendWidth).height(totalHeight - 50)
             $("#graphLegendDiv").width(Gparams.legendWidth).height(totalHeight - 50).css("left", $("#graphDiv").width());
-            $("#table_Graph").width((totalWidth / leftPanelRatio * 2) - 50).height(totalHeight - 50);
-            $("#textDivContainer").width((totalWidth / leftPanelRatio * 2) - 50).height(totalHeight - 100);
-            $("#neoQueriesHistoryId").width((totalWidth / leftPanelRatio * 2) - 50).height(totalHeight - 100);
+         //   $("#table_Graph").width((totalWidth / leftPanelRatio * 2) - 50).height(totalHeight - 50);
+        //    $("#textDivContainer").width((totalWidth / leftPanelRatio * 2) - 50).height(totalHeight - 100);
+        //    $("#neoQueriesHistoryId").width((totalWidth / leftPanelRatio * 2) - 50).height(totalHeight - 100);
             $("#center").width(totalWidth / 4 * 3).height(totalHeight - 100);
-            $("#nodeDetailsDiv").width((totalWidth / leftPanelRatio * 2) - 50).height(totalHeight - 150);
-            $("#graphDecorationPanel").height(totalHeight / 2);
+       //     $("#nodeDetailsDiv").width((totalWidth / leftPanelRatio * 2) - 50).height(totalHeight - 150);
+       //     $("#graphDecorationPanel").height(totalHeight / 2);
 
 
-            $(".splitter_panel").width((totalWidth / leftPanelRatio * 2.5)).height(totalHeight - 50);
+            $(".splitter_panel").width((totalWidth / Gparams.leftPanelRatio * 2.5)).height(totalHeight - 50);
             //  $("#graphLegendDiv").width(totalWidth / 4 * 3).height(50);
 
-            $("#nodeIframe").width("100%").height(totalHeight - 100);
+         /*   $("#nodeIframe").width("100%").height(totalHeight - 100);
             $("#modifyControls").width((totalWidth / 4 * 3) - 50).height(totalHeight - 300);
 
 
@@ -325,19 +299,14 @@
             $("#graphFiltersPanel").height(totalHeight / 1.5).width((totalWidth / leftPanelRatio) - 35);
             $("#graphPathsPanel").height(totalHeight / 1.5).width((totalWidth / leftPanelRatio) - 35);
             $("#linkActionDiv").height(totalHeight / 1.5).width((totalWidth / leftPanelRatio) - 35);
-            $("#linkActionDiv").height(totalHeight - 150).width((totalWidth / leftPanelRatio) - 35);
+            $("#linkActionDiv").height(totalHeight - 150).width((totalWidth / leftPanelRatio) - 35);*/
 
 
-            //  $("#advancedSearchIframe").height(totalHeight / 3 * 2).width(totalWidth / 3 * 2);
-            //   $("#advancedDisplayIframe").height(totalHeight / 3 * 2).width(totalWidth / 3 * 2);
-
-            $("#advancedSearchIframe").height(Gparams.bigDialogSize.h - 100).width(Gparams.bigDialogSize.w - 40);
-            $("#advancedDisplayIframe").height(Gparams.bigDialogSize.h - 100).width(Gparams.bigDialogSize.w - 40);
 
             splitter = $('#main').width("100%").height("100%").split({
                 orientation: 'vertical',
                 limit: 100,
-                position: (totalWidth / leftPanelRatio) + 5
+                position: (totalWidth / Gparams.leftPanelRatio) + 5
             });
 
             $("#tabs-radarLeft").tabs({
@@ -464,9 +433,41 @@
             });
 
 
-            advancedSearch.init();
+          //  advancedSearch.init();
 
-            mainMenu.showDataMenu();
+            var afterLoadModelTasks = [
+                infoGenericDisplay.initLabels,
+                customizeUI.customize,
+                toutlesensController.afterGraphInit,
+                statistics.initLabelsCurrentQueries,
+                advancedSearch.patternInitLabels,
+                advancedSearch.patternInitRelTypes,
+                // advancedDisplay.initDecorationDiv,
+                functionalities.initFunctionalities
+
+            ]
+
+            Schema.load(subGraph, function (err, schema) {
+                if (err)
+                    return setMessage("Error cannot load Schema");
+                // play init UI methods after schema is loaded
+                for (var i = 0; i < afterLoadModelTasks.length; i++) {
+                    try {
+                        afterLoadModelTasks[i](subGraph);
+                    }
+                    catch (err) {
+                        console.log("" + i + "  " + err);
+                    }
+                }
+
+
+                toutlesensController.appInitEnded = true;
+                toutlesensController.appInitEnded = true;
+
+            })
+
+
+
 
             /*     var str="";
              for (var i=0;i< Gparams.palette.length;i++){
@@ -572,7 +573,7 @@
                             <tr>
 
                                 <td colspan="2">
-                                    <br> Label <select id="nodesLabelsSelect" onchange="onLabelSelect(this)"> </select>
+                                    <br> Label <select id="nodesLabelsSelect" onchange="toutlesensController.onLabelSelect(this)"> </select>
 
                                     <hr>
                                     <span id='lang_1'>Search</span>
@@ -1144,10 +1145,13 @@
             <div id="center">
 
                 <div id="graphLegendDiv">
-                    <button onclick="mainMenu.showDataMenu()"> Data menu</button>  <button onclick="mainMenu.showGraphDisplayMenu()"> Graph menu</button>
-                    <button id="backToPreviousGraph" onclick="toutlesensController.replayLastGraph()">Previous Graph</button>
+                    <input type="image" title="Data menu" height="40px"  onclick="mainMenu.showDataMenu()" id="dataMenuButton" src="images/data.png"/>
+                    <input type="image" title="Graph menu" height="40px"  onclick="mainMenu.showGraphDisplayMenu()" id="parametersMenuButton" src="images/parameters.png"/>
+                    <!--     <button onclick="mainMenu.showDataMenu()"> Data menu</button>  <button onclick="mainMenu.showGraphDisplayMenu()"> Graph menu</button>
+                   <!--    <button id="backToPreviousGraph" onclick="toutlesensController.replayLastGraph()">Previous Graph</button>-->
 
                     <!--   <button style="font-size:12px" onclick="toutlesensController.stopAnimation()">stop animation</button>-->
+                    <div id="paintDiv"></div>
                     <div id="filtersDiv"></div>
                     <div id="innerLegendDiv"></div>
                     <div id="graphMessage" class="message"></div>

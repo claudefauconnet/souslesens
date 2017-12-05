@@ -36,12 +36,15 @@ var d3simpleForceLight = (function () {
     self.isStopped = false;
     self.linksMap
     var sizeCoef = 1;
+    self.nodes;
+    self.links;
 self.zoom=function(scale){
     var xxx=d3.select(".container");
     d3.select(".container").attr("transform", "translate(" + (-scale*(w/2))+","+(scale*(h/2))+ ")" + " scale(" + scale + ")")
 
 }
     self.drawSimpleForce = function (nodes, links, linksMap) {
+        self.nodes=nodes;
     sizeCoef=Math.round(Math.log10(links.length))-1
         if(sizeCoef==0)
             sizeCoef=1;
@@ -171,6 +174,7 @@ var colors=paint.getDataColorDomain(nodes,"id",5)
             .start();
 
         self.force = force;
+
         //
 
         self.update = function () {

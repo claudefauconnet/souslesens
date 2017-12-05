@@ -2,10 +2,10 @@
     <tr>
         <td colspan="3">
 
-            <table class="visButtonTable" id="visButtonTableDiv">
+            <!--       <table class="visButtonTable" id="visButtonTableDiv">
 
 
-                <tr>
+         <tr>
                     <td><input type="image" height="30px" title="form" class="displayIcon"
                                onclick="toutlesensController.onVisButton('FORM',this)"
                                id="formButton"
@@ -32,7 +32,7 @@
                                         title="<span id='lang_7'>arbre</span>" height="30px"
                                         onclick="toutlesensController.onVisButton('TREE',this)"
                                         id="treeButton"
-                                        src="images/tree.png"/></td>-->
+                                        src="images/tree.png"/></td>
 
 
                     <td><input type="image" height="30px" title="treeMap" class="displayIcon"
@@ -42,7 +42,7 @@
 
 
                 </tr>
-            </table>
+            </table>-->
 
 
         </td>
@@ -57,22 +57,23 @@
 
     </tr>
     <tr>
+        <td colspan="3">
+            <input type="checkbox" id="showRelationTypesCbx"
+                   onclick="visjsGraph.displayRelationNames()">nom des relations
+            <input type="checkbox" id="groupByLabelsCbx"
+                   onclick="visjsGraph.clusterByColor()">grouper par label
+
+
+        </td>
+    </tr>
+   <!-- <tr>
         <td>Zoom
         </td>
         <td colspan="3">
             <div id="graphZoomSlider" style="width: 130px;"></div>
         </td>
     </tr>
-  <!--  <tr>
-        <td colspan="3">
-            <input type="checkbox" id="showRelationTypesCbx"
-                   onclick="toutlesensController.displayGraph()">nom des relations
-            <input type="checkbox" id="groupByLabelsCbx"
-                   onclick="toutlesensController.displayGraph()">grouper par label
-
-
-        </td>
-    </tr>-->
+  -->
 
 
 

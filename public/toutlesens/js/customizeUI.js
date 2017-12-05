@@ -64,6 +64,48 @@ var customizeUI = (function () {
     self.customize = function () {
 
         if (queryParams.ui == "basic") {
+
+
+        }
+        var initialQuery = queryParams.initialQuery;
+        if (initialQuery && initialQuery.length > 0) {
+
+            toutlesensController.setSplitterPosition(Gparams.splitterMin);
+            Gparams.startWithBulkGraphView = false;
+            currentDisplayType="SIMPLE_FORCE_GRAPH"
+
+            var normes = initialQuery.split(",");
+          Gparams.legendWidth=0
+
+           // $($("#tabs-radarRight").find("li")[2]).hide()
+            $("#graphLegendDiv").width( Gparams.legendWidth);
+            $("#graphDiv").width((totalWidth ));
+            advancedSearch.searchByNamesList(normes, function (err, result) {
+                    toutlesensController.generateGraph(null,false,function(){
+                        $("#tabs-radarRight").tabs("option", "disabled", [2]);
+                        $("#filtersDiv").html("");
+                        $("#graphMessage").html("");
+                        $("#dataMenuButton").css("visibility","hidden");
+                        $("#parametersMenuButton").css("visibility","hidden");
+
+
+                    });
+
+            })
+
+        }
+        else{
+            mainMenu.showDataMenu();
+            if(Gparams.startWithBulkGraphView )
+             advancedSearch.showBulkGraph(subGraph);
+        }
+
+
+    }
+
+    self.customizeOld = function () {
+
+        if (queryParams.ui == "basic") {
             customizeUI.noLeftDivDisplay();
             customizeUI.setVisButton();
         }
@@ -77,7 +119,7 @@ var customizeUI = (function () {
                 var graphDisplay = queryParams.graphDisplay;
                 if (graphDisplay && graphDisplay.length > 0) {
                     currentDisplayType = graphDisplay;
-               //     $("#representationSelect").val(graphDisplay);
+                    //     $("#representationSelect").val(graphDisplay);
                     toutlesensController.generateGraph(null,true)
 
                     /*
@@ -94,7 +136,7 @@ var customizeUI = (function () {
         }
         else{
             if(Gparams.startWithBulkGraphView )
-             advancedSearch.showBulkGraph(subGraph);
+                advancedSearch.showBulkGraph(subGraph);
         }
 
 

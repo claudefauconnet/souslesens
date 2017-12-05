@@ -122,6 +122,7 @@ var infoGenericDisplay = (function () {
 
         self.callAPIproxy(payload, "retrieve", function (error, data) {
             currentDisplayType = "FLOWER";
+            currentDisplayType = "VISJS-NETWORK";
             if (error)
                 return;
 
@@ -667,7 +668,7 @@ var infoGenericDisplay = (function () {
 
 
         toutlesensController.checkMaxNumberOfNodeRelations (parentId,Gparams.jsTreeMaxChildNodes,function(){
-
+            currentObject= node.data;
         currentObject.id = parentId;
         if (toutlesensController && currentDisplayType && currentDisplayType == "CARDS") {
 

@@ -1,0 +1,37 @@
+
+
+Select All  <span id="propertiesSelectionTypeSpan"></span>
+<br>
+ <button onclick="filters.filterOnProperty(null,'only')">Only this</button>
+ <button onclick="filters.filterOnProperty(null,'add')">Add</button> <br>
+<br>
+
+
+
+<div id="propertiesSelectionPropDiv" style="visibility: visible;">
+Property
+<select id="propertiesSelectionDialog_propsSelect">
+
+</select>
+<br>
+
+
+<select id="propertiesSelectionDialog_operatorSelect">
+    <option>=</option>
+    <option>!=</option>
+    <option>&lt;</option>
+    <option>&gt;</option>
+    <option>contains</option>
+
+</select>
+<input id="propertiesSelectionDialog_valueInput">
+<input type="hidden" id="propertiesSelectionDialog_filterModeInput">
+<input type="hidden" id="propertiesSelectionDialog_typeInput">
+
+</div>
+
+
+<div id="previouspropertiesDiv">
+
+</div>
+

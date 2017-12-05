@@ -43,8 +43,9 @@ var toutlesensController = (function () {
     /***************************main functions*****************************************************************************************************/
 
     self.onWordSelect = function (draw) {
-        if (currentDisplayType == "SIMPLE_FORCE_GRAPH_BULK")
-            currentDisplayType = "FLOWER";
+        currentDisplayType = "VISJS-NETWORK";
+       /* if (currentDisplayType == "SIMPLE_FORCE_GRAPH_BULK")
+            currentDisplayType = "FLOWER";*/
         var text = wordsSelect.options[wordsSelect.selectedIndex].text;
 
         currentLabel = text.substring(text.indexOf("[") + 1, text.indexOf("]"));
@@ -81,12 +82,12 @@ var toutlesensController = (function () {
     }
 
 
-    self.stackGraph = function (displayType, currentLabel, currentObjectId,filters) {
+    self.stackGraph = function (displayType, currentLabel, currentObjectId, filters) {
         var state = {
             displayType: displayType,
             currentLabel: currentLabel,
             currentObjectId: currentObjectId,
-            filters:filters
+            filters: filters
         }
         self.graphHistoryArray.splice(0, 0, state);
     }
@@ -138,6 +139,8 @@ var toutlesensController = (function () {
 
         if (currentDisplayType.indexOf("FORCE") > -1) {
             currentObject.id = null;
+           if(Gparams.useVisjsNetworkgraph)
+               currentDisplayType = "VISJS-NETWORK"
 
         }
         else {
@@ -174,9 +177,8 @@ var toutlesensController = (function () {
 
 
         var output = currentDisplayType;
-        if (applyFilters == "flowerFiltersInited")
-            filters.setQueryFilters()
-        else if (applyFilters) {
+
+       if (applyFilters) {
             filters.setQueryFilters()
         }
         else {
@@ -196,8 +198,21 @@ var toutlesensController = (function () {
                 return;
             }
             if (output == "filtersDescription") {
-                //    var xx = data;
+
                 filters.initGraphFilters(data, false);
+                var nRels=0;
+                for(var i=0;i<data.length;i++){
+                    nRels+=data[i].nRels;
+                }
+
+                if ( nRels <= Gparams.graphMaxDataLengthToDisplayGraphDirectly) {
+                    filters.applyAllRelationsFilter();
+                    self.generateGraph(currentObject.id, true);
+                    return;
+
+                }
+
+
                 //  filters.initGraphFilters0(data.labels, data.relTypes);
                 if (callback)
                     return callback(null, data);
@@ -211,15 +226,17 @@ var toutlesensController = (function () {
 
             }
 
+
+
             // after dblclik on force graph display flower directly without count
-            if (currentDisplayType == "FLOWER" && applyFilters != "flowerFiltersInited") {// add depth criteria ??
+         /*   if (currentDisplayType == "FLOWER" && applyFilters != "flowerFiltersInited") {// add depth criteria ??
                 //   filters.checkPreviouscheckedFilters();
                 // filters.currentFilters={}
 
                 self.generateGraph(currentObject.id, "flowerFiltersInited");
                 return;
 
-            }
+            }*/
 
             if (self.collapseTargetLabels.length > 0) {//if we want to collapse graph
                 data = self.collapseResult(data);
@@ -248,11 +265,11 @@ var toutlesensController = (function () {
     }
 
     self.setResultGraphMessage = function (resultLength) {
-        var message = "";
+        var message = " <i><b>click on graph to stop animation</b></i><br>";
         if (currentLabel)
-            message = "Label : " + currentLabel + "<br>"
+            message += "Label : " + currentLabel + "<br>"
         if (currentObject.id)
-            message = "Node : [" + currentObject.label + "]" + currentObject[Schema.getNameProperty(currentObject.label)] + "<br>";
+            message += "Node : [" + currentObject.label + "]" + currentObject[Schema.getNameProperty(currentObject.label)] + "<br>";
         message += filters.printRelationsFilters() + "<br>";
         message += filters.printPropertyFilters() + "<br>";
 
@@ -352,10 +369,11 @@ var toutlesensController = (function () {
 
             }
         }
-        if (output == "SIMPLE_FORCE_GRAPH" || output == "SIMPLE_FORCE_GRAPH_BULK") {
+
+     /*   if (output == "SIMPLE_FORCE_GRAPH" || output == "SIMPLE_FORCE_GRAPH_BULK") {
             $("#graphMessage").append("&nbsp;&nbsp; click on graph to stop animation");
         } else
-            $("#graphMessage").html("");
+            $("#graphMessage").html("");*/
         help.setGraphActionsHelp();
         /*     $("#tabs-radarLeft").tabs({
          disabled: false
@@ -382,6 +400,12 @@ var toutlesensController = (function () {
             selection.setSelectionFromQuery(json);
             return;
         }
+
+        else if (currentDisplayType == "VISJS-NETWORK") {
+            visjsGraph.draw("graphDiv", toutlesensData.cachedResultArray);
+
+        }
+
         else if (output == "FLOWER") {
             var jsonFlower = json;
             if ($("#groupByLabelsCbx").prop("checked"))
@@ -535,7 +559,8 @@ var toutlesensController = (function () {
             chronology.drawChronoChart();
         } else {
             currentPage = 0;
-            self.searchNodesUI("count");
+          //  self.searchNodesUI();
+            self.searchNodesUI('matchStr',null,null, infoGenericDisplay.loadSearchResultIntree)
         }
     }
 
@@ -669,6 +694,8 @@ var toutlesensController = (function () {
     }
 
     self.fillWordsSelect = function (neoResult) {
+
+            return;
         var nodes = self.extractNodesList(neoResult);
         wordsSelect.options.length = 0;
         self.fillSelectOptions(wordsSelect, nodes, "name", "id");
@@ -905,7 +932,7 @@ var toutlesensController = (function () {
                 self.searchRDF(name);
             }
             else {// minus sign on currentObject.id see toutlesensData 148
-                self.generateGraph(-currentObject.id, false);
+                self.generateGraph(currentObject.id, false);
             }
         } else if (action == "foldNode") {
             var output = $("#representationSelect").val();
@@ -1183,17 +1210,7 @@ var toutlesensController = (function () {
             popup = "popupMenuNodeInfoDiv";
             $("#popupMenuNodeInfoDiv").show();
         }
-        /* else if (type && type == "relationInfo") {
-         toutlesensDialogsController.setPopupMenuRelationInfoContent();
-         popup = "popupMenuNodeInfoDiv";
 
-         $("#popupMenuNodeInfoDiv").show();
-         }   */
-
-        /* else if (currentMode == "write")
-         popup = "popupMenuWrite";*/
-
-        //   console.log(x + "--" + y + "----" + $("#popupMenuNodeInfoDiv").html());
         $("#" + popup).css("visibility", "visible").css("top", y).css("left", x);
 
     }
@@ -1337,6 +1354,10 @@ var toutlesensController = (function () {
 
 
     self.afterGraphInit = function () {
+
+            $("#tabs-radarRight").tabs("option", "disabled", [2]);
+
+
         if (Gparams.showRelationNames) {
             $("#showRelationTypesCbx").prop("checked", "checked");
         }

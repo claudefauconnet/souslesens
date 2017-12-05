@@ -145,10 +145,11 @@ var toutlesensData = (function () {
         }*/
         var whereStatement = "";
         if (id){
-            if(id>0)
+            whereStatement = " WHERE ((ID(node1)=" + id+") OR (ID(m)=" + (id)+"))"
+           /* if(id>0)
             whereStatement = " WHERE (ID(node1)=" + id+")" ;//+" OR  ID(m)="+id+")" ;
             else
-                whereStatement = " WHERE (ID(m)=" + (-id)+")" ;
+                whereStatement = " WHERE (ID(m)=" + (-id)+")" ;*/
         }
         if (subGraphWhere) {
             if (id)
@@ -166,16 +167,19 @@ var toutlesensData = (function () {
             whereStatement += self.whereFilter + " ";
         }
 
-        var returnStatement = " RETURN EXTRACT(rel IN relationships(path) | type(rel)) as rels," +
-            "EXTRACT(rel IN relationships(path) | rel)  as relProperties," +
-          "nodes(path) as nodes," +//   !!!!!!!!!!!!!!!!!!!!! a voir pour alléger les données transmises
-         //   "EXTRACT(node IN nodes(path) | node.subGraph) as nodes,"+   !!!!!!!!!!!!!!!!!!!!! a voir pour alléger les données transmises
-        " EXTRACT(node IN nodes(path) | ID(node)) as ids," +
-            " EXTRACT(node IN nodes(path) | labels(node)) as labels "
-            + ", EXTRACT(rel IN relationships(path) | labels(startNode(rel))) as startLabels";
 
+        var returnStatement
         if (output == "filtersDescription") {
-            returnStatement = " RETURN COLLECT( distinct EXTRACT( rel IN relationships(path) |  type(rel))) as rels,EXTRACT( node IN nodes(path) | labels(node)) as labels"
+            returnStatement = " RETURN count(r) as nRels, COLLECT( distinct EXTRACT( rel IN relationships(path) |  type(rel))) as rels,EXTRACT( node IN nodes(path) | labels(node)) as labels"
+        }
+        else{
+             returnStatement = " RETURN EXTRACT(rel IN relationships(path) | type(rel)) as rels," +
+                "EXTRACT(rel IN relationships(path) | rel)  as relProperties," +
+                "nodes(path) as nodes," +//   !!!!!!!!!!!!!!!!!!!!! a voir pour alléger les données transmises
+                //   "EXTRACT(node IN nodes(path) | node.subGraph) as nodes,"+   !!!!!!!!!!!!!!!!!!!!! a voir pour alléger les données transmises
+                " EXTRACT(node IN nodes(path) | ID(node)) as ids," +
+                " EXTRACT(node IN nodes(path) | labels(node)) as labels "
+                + ", EXTRACT(rel IN relationships(path) | labels(startNode(rel))) as startLabels";
         }
 
 var node1Label="";
@@ -353,7 +357,7 @@ var node1Label="";
             output = currentDisplayType;
         var json;
 
-        if (output == "SIMPLE_FORCE_GRAPH" || output == "SIMPLE_FORCE_GRAPH_BULK") {
+        if (output == "SIMPLE_FORCE_GRAPH" || output == "SIMPLE_FORCE_GRAPH_BULK" || output == "VISJS-NETWORK") {
             totalNodesToDraw = resultArray.length;
             json = resultArray;
         }
@@ -389,6 +393,7 @@ var node1Label="";
         for (var i = 0; i < resultArray.length; i++) {
             var rels = resultArray[i].rels;
             var relProperties = resultArray[i].relProperties;
+
             var nodes = resultArray[i].nodes;
             if (!nodes)
                 continue;
@@ -577,6 +582,7 @@ var node1Label="";
             var labels = resultArray[i].labels;
             var startNodes = resultArray[i].startLabels;
             var relProperties = resultArray[i].relProperties;
+
             var legendRelIndex = 1;
             //  console.log("------------\n")
             for (var j = 0; j < nodes.length; j++) {
@@ -641,7 +647,10 @@ var node1Label="";
 
                     nodeObj.parent = ids[j - 1];
                     nodeObj.relType = rels[j - 1];
+                    if(relProperties && relProperties[j - 1])
                     nodeObj.relProperties = relProperties[j - 1].properties;
+                    else
+                        nodeObj.relProperties={};
                     var modelRels = dataModel.relations[labels[j - 1][0]];
                     if (modelRels && modelRels.length) {
                         for (var k = 0; k < modelRels.length; k++) {

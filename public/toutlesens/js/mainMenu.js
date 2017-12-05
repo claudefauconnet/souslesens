@@ -19,9 +19,11 @@ var mainMenu = (function () {
     }
 
     self.showGraphDisplayMenu = function () {
+        var dialog="graphDisplayMenu.html";
+if(Gparams.useVisjsNetworkgraph)
+    dialog="visjsGraphDisplayMenu.html";
 
-
-        $("#dialog").load("htmlSnippets/graphDisplayMenu.html", function () {
+        $("#dialog").load("htmlSnippets/"+dialog, function () {
             //  self.initLabelPropertySelection(label);
             $("#dialog").dialog("option", "title", "Toutlesens main menu");
             $("#dialog").dialog("open");

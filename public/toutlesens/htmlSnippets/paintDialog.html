@@ -21,7 +21,7 @@
 
     </select>
     <input id="propertiesSelectionDialog_valueInput">
-    <input type="hidden" id="propertiesSelectionDialog_natureInput">
+    <input type="hidden" id="propertiesSelectionDialog_filterModeInput">
     <input type="hidden" id="propertiesSelectionDialog_typeInput">
     <!--<button onclick="filters.outLineProperty()">outline property</button>-->
 
@@ -40,10 +40,11 @@
 <div id="paintDialogSelectedAttrs" style="visibility: visible">
     color
     <div id="paintDialogSelectedColor"></div>
-    circleRadius <input id="propertiesSelectionDialog_circleRadiusInput" value="30">
-    lineWidth <input id="propertiesSelectionDialog_lineWidthInput" value="3">
+    circleRadius <input id="propertiesSelectionDialog_circleRadiusInput" style="width:30px" value="10">
+    lineWidth <input id="propertiesSelectionDialog_lineWidthInput" style="width:30px" value="3"><br>
+    number of classes <input id="propertiesSelectionDialog_NclassesInput" style="width:30px" value="5">
 </div>
 <button onclick="paint.paintAll('outline')">Paint All values</button>
 <button onclick="paint.paintAll('initial')">removeFilters</button>
-<button onclick="paint.paintAll('palette')">Apply</button>
+<button onclick="paint.paintClasses()">paint property values</button>
 <!-- <button onclick="filters.filterOnProperty('remove')">Remove filter</button> <br>-->

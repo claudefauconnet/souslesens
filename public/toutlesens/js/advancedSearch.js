@@ -42,7 +42,7 @@ var advancedSearch = (function () {
 
 
     self.traversalCurrentInput=null;
-    self.init = function () {
+   /* self.init = function () {
 
         currentActionObj = {type: types[0], subGraph: subGraph};
         $("#advancedQueriesDiv").tabs(
@@ -62,7 +62,7 @@ var advancedSearch = (function () {
         statistics.setCurrentQueriesSelect();
 
 
-    }
+    }*/
     self.onSourceNodeClick = function () {
         currentActionObj.currentTarget = "graphPathSourceNode";// initialisé dans page html
         currentActionObj.graphPathSourceNode = {};
@@ -517,7 +517,10 @@ var advancedSearch = (function () {
             if (currentActionObj.selection) {
                 currentDataStructure = "flat";
                 currentDisplayType = "NODES_SELECTION";
-            } else {
+            }
+            else if(currentActionObj=="searchByNameList"){
+                currentDataStructure = "flat";
+            }   else{
                 currentDataStructure = "tree";
                 currentDisplayType = "SIMPLE_FORCE_GRAPH";
             }

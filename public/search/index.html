@@ -605,7 +605,7 @@ var classifierSourceStr=$("#classifierSource").val();
             <button id="searchButton" onclick="search()">Search</button>
             &nbsp;words distance <input id="slopInput" size="2"> &nbsp&nbsp;
           <!--  <button onclick='admin()'>admin</button>-->
-            classifierSource  <select id="classifierSource">
+            classifierSource  <select id="classifierSource" onchange="search()">
             <option></option>
             <option>BNF</option>
             <option>unesco</option>

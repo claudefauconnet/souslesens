@@ -132,7 +132,17 @@ self.getAllpropertiesDialogContent("setSearchNodeReturnFilterVal()");
 
 
    self.setPopupMenuNodeInfoContent=function() {
-var name=textOutputs.formatNode(currentObject).name+"<br";
+       var name;
+      var label;
+      if(currentObject.labelNeo)// because visjs where label is the node name
+          label=currentObject.labelNeo;
+      else
+          label=currentObject.label;
+       if(currentObject.neoAttrs)
+           name= currentObject.neoAttrs[Schema.schema.defaultNodeNameProperty]
+       else
+           name= currentObject[Schema.defaultNodeNameProperty]
+ name=textOutputs.formatNode(name+"<br>");
 
   /*  var str =
         "<input type='image' height='15px' alt='infos'  onclick='dispatchAction(\"nodeInfosPopup\")' src='images/infos.png'/>" +
@@ -152,7 +162,7 @@ var name=textOutputs.formatNode(currentObject).name+"<br";
     }
     str+="</tr></table>";
 
-    str+=   "<B><span style='color:" + nodeColors[currentObject.label] + "'> [" + currentObject.label + "]<span>" +"</B>"+name;
+    str+=   "<B><span style='color:" + nodeColors[label] + "'> [" + label + "]<span>" +"</B>"+name;
        str +="<br><br>"+customizeUI.customInfo(currentObject)+"<br>";
 
 
