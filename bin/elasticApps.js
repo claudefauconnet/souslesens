@@ -9,7 +9,7 @@ var elasticApps = {
 
     generateDocProximityMatrix: function (index, minScore, word, callback) {
         var proximityMatrix = {}
-        elasticProxy.findDocuments(index, word, 0, 10000, null, ["title","content"], null, false, function (err, result) {
+        elasticProxy.findDocuments(index,null, word, 0, 10000, null, ["title","content"], null, false, function (err, result) {
             if (err)
                 return callback(err);
             var docs = [];

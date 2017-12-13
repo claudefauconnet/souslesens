@@ -26,10 +26,7 @@ var graphTraversalQueries = (function () {
      * SOFTWARE.
      *
      ******************************************************************************/
-    self.getAllSimplePaths = function (startId, endId, depth, algo) {
-
-
-
+    self.getAllSimplePaths = function (startId, endId, depth, algo,callback) {
 
 
         var body = '{ "to":"' + endId + '","max_depth":' + depth + ',"algorithm":"'
@@ -40,9 +37,6 @@ var graphTraversalQueries = (function () {
             mode: "POST",
             urlSuffix: urlSuffix,
             payload: body,
-
-
-
         }
         console.log(JSON.stringify(paramsObj),"null",2);
 
@@ -53,34 +47,33 @@ var graphTraversalQueries = (function () {
             data: paramsObj,
             dataType: "json",
             success: function (data, textStatus, jqXHR) {
-
                 if (!data || data.length == 0) {
-                    alert("pas de résultat . Pour dessiner le graphe.Modifiez les parametres");
-                    return;
-
+                    return  callback("No result")
                 }
                 if (data.length > Gparams.graphDisplayLimitMax) {
 
-                    alert("trop de resultats "
-                        + data.length
-                        + " pour dessiner le graphe.Modifiez les parametres");
-                    return;
+                    return callback("trop de resultats "
+                    + data.length
+                    + " pour dessiner le graphe.Modifiez les parametres")
 
                 }
-                self.processPathResults(data);
+
+
+               self.processPathResults(data,callback);
             },
             error: function (xhr, err, msg) {
                 console.log(xhr);
                 console.log(err);
                 console.log(msg);
+                callback(err)
             },
 
         });
 
     }
 
-    self.processPathResults = function (data,callback) {
-        /* graphPathDebugInfo += "\n---------result------------\n" */
+ self.processPathResults = function (data,callback) {
+
 
         var RelIds = [];
 
@@ -108,12 +101,7 @@ var graphTraversalQueries = (function () {
             if(err)
                return console.log(err);
 
-            filters.initGraphFilters(rels);
-            toutlesensData.cachedResultArray = data;
-            toutlesensDialogsController.hideAdvancedSearch();
-            currentDisplayType = "SIMPLE_FORCE_GRAPH";
-            currentDataStructure = "flat";
-            toutlesensController.displayGraph(data, "SIMPLE_FORCE_GRAPH", null);
+           callback(null,data)
 
         });
 
@@ -195,97 +183,7 @@ var rels={}
      * http://neo4j.com/docs/stable/rest-api-traverse.html
      * http://www.ekino.com/optimization-strategies-traversals-neo4j/
      */
-    self.drawGraphTraversal = function (startNodeId, graphTravReturnType,
-                                        graphTravPriority, graphTravUnicity, graphTravPruneEvaluator,
-                                        graphTravReturnEvaluator, graphTravReturnFilter, graphTravDepth,
-                                        graphTravRelTypes) {
 
-        var json = {
-
-            max_depth: graphTravDepth,
-            uniqueness: graphTravUnicity,
-            order: graphTravPriority,
-
-        }
-
-        if (graphTravPruneEvaluator.indexOf('position') > -1) {
-            graphTravPruneEvaluator = graphTravPruneEvaluator.replace(/\t/g, "")
-                .replace(/\n/g, "");
-            json["prune_evaluator"] = {
-                "language": "javascript",
-                "body": graphTravPruneEvaluator
-            }
-
-        }
-
-        if (graphTravReturnEvaluator.indexOf('position') > -1) {
-            graphTravReturnEvaluator = graphTravReturnEvaluator.replace(/\t/g, "")
-                .replace(/\n/g, "");
-            json["return_filter"] = {
-                "language": "javascript",
-                "body": graphTravReturnEvaluator
-            }
-
-        }
-        /*
-         * if(graphTravRelTypes.length>0){
-         * json["relationships"]=JSON.parse(graphTravRelTypes); }
-         */
-
-        if (false)
-            json.return_filter = graphTravReturnFilter;
-
-        var body = JSON.stringify(json);
-        var urlSuffix = "db/data/node/" + startNodeId + "/traverse/"
-            + graphTravReturnType;
-
-        var payload = {
-            payload: body,
-            urlSuffix: urlSuffix
-        };
-
-
-        $.ajax({
-                type: "POST",
-                url: Gparams.neo4jProxyUrl,
-                data: payload,
-                dataType: "json",
-                success: function (data, textStatus, jqXHR) {
-
-                    if (!data || data.length == 0) {
-                        setMessage("No results", blue);
-                        var more = confirm("Aucun chemin trouve, voulez vous  augmenter la profondeur de la recherche (actuellement "
-                            + currentDepth + ")?");
-                        if (more === true) {
-                            $("#depth").val(++currentDepth);
-                            toutlesensController.generateGraph()
-
-                        }
-
-                        return;
-
-                    }
-                    if (data.length > Gparams.graphDisplayLimitMax) {
-                        currentGraphPanel = "";
-                        alert("trop de resultats "
-                            + data.length
-                            + " pour dessiner le graphe.Modifiez les parametres");
-                        return;
-
-                    }
-
-                    self.processPathResults(data);
-
-                },
-                error: function (xhr, err, msg) {
-                    console.log(xhr);
-                    console.log(err);
-                    console.log(msg);
-                },
-
-            });
-
-    }
 
     return self;
 })()

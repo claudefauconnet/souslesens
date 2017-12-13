@@ -80,6 +80,8 @@ var d3treemap = (function () {
 
 
     self.drawTreeMpap = function (root) {
+        $("#graphDiv").html("");
+        $("canvas").remove()
          width = $("#graphDiv").width() - 50;
          height = $("#graphDiv").height() - 50;
 

@@ -99,7 +99,7 @@ var classifierManager = {
                     classifierManager.sendMessage("put doc ids for each concepts ");
                     async.eachSeries(words, function (word, callbackInner) {
 
-                            elasticProxy.findDocuments(index, word, 0, serverParams.elasticMaxFetch, null, ["id"], null, null, function (err, result) {
+                            elasticProxy.findDocuments(index,null, word, 0, serverParams.elasticMaxFetch, null, ["id"], null, null, function (err, result) {
                                 if (err)
                                     return callbackInner(err);
                                 classifier.words[word].docIds = [];
@@ -363,7 +363,7 @@ var classifierManager = {
                     var slop = null;
                     if (subWords.length > 1)
                         slop = subWords.length + 1
-                    elasticProxy.findDocuments(index, word, 0, serverParams.elasticMaxFetch, slop, ["id"], null, null, function (err, result) {
+                    elasticProxy.findDocuments(index,null, word, 0, serverParams.elasticMaxFetch, slop, ["id"], null, null, function (err, result) {
                         if (err)
                             return callbackInner(err);
                         classifier.words[word].docIds = [];

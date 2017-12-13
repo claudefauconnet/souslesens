@@ -87,7 +87,7 @@ var customizeUI = (function () {
             $("#graphLegendDiv").html( 'relations<br> depth<br><select onchange=" customizeUI.onDepthSelectChange();" align="right" id="depth" ><option>1</option><option>2</option><option>3</option></select>')
             $("#graphDiv").width((totalWidth- Gparams.legendWidth ));
             $("#center").width((totalWidth));
-            advancedSearch.setSearchByNamesListStatement(idsList, function (err, result) {
+            advancedSearch.setSearchByIdsListStatement(idsList, function (err, result) {
                     toutlesensController.generateGraph(null,true,function(){
 
                         $("#filtersDiv").html("");
@@ -114,7 +114,8 @@ var customizeUI = (function () {
               //  $("#depth").val("1");
             });
         else
-            advancedSearch.setSearchByNamesListStatement(idsList, function (err, result) {
+            toutlesensData.setSearchByIdsListStatement(idsList, function (err, result) {
+                currentDisplayType = "VISJS-NETWORK";
                 toutlesensController.generateGraph(null, true,function(){
                   //  $("#depth").val("1");
                 });
@@ -133,7 +134,7 @@ var customizeUI = (function () {
         if (initialQuery && initialQuery.length > 0) {
             var normes = initialQuery.split(",");
 
-            advancedSearch.setSearchByNamesListStatement(normes, function (err, result) {
+            advancedSearch.setSearchByIdsListStatement(normes, function (err, result) {
 
                 Gparams.startWithBulkGraphView = false;
                 var graphDisplay = queryParams.graphDisplay;

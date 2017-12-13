@@ -126,6 +126,7 @@ var filters = (function () {
             $("#filtersDiv").css("visibility", "visible");
 
         $(".filterName").on("click", function () {
+            paint.closePaintDialog();
             var array = this.id.split(":");
             var option = "all";
             if ($(this).hasClass("displayIcon-selected")) {
@@ -374,7 +375,7 @@ var filters = (function () {
     }
 
 
-    self.initRelationPropertySelection = function (type) {
+    self.initRelationPropertySelection = function (type,selectId) {
         self.postFilter = null;
         var relations = Schema.getRelationsByType(type);
         var propertiesArray = ["ALL"];
@@ -391,12 +392,14 @@ var filters = (function () {
         $("#propertiesSelectionTypeSpan").html("Relation type" + type);
         $("#propertiesSelectionDialog_filterModeInput").val("relation");
         $("#propertiesSelectionDialog_typeInput").val(type);
-        var select = document.getElementById("propertiesSelectionDialog_propsSelect")
-        common.fillSelectOptionsWithStringArray(select, propertiesArray)
+        if(!selectId)
+            selectId = document.getElementById("propertiesSelectionDialog_propsSelect")
+        common.fillSelectOptionsWithStringArray(selectId, propertiesArray)
 
     }
 
-    self.initLabelPropertySelection = function (type) {
+    self.initLabelPropertySelection = function (type,selectId) {
+
         self.postFilter = null;
         var properties = Schema.schema.properties[type];
         var propertiesArray = ["ALL"];
@@ -408,8 +411,10 @@ var filters = (function () {
         $("#propertiesSelectionTypeSpan").html("Node label " + type);
         $("#propertiesSelectionDialog_typeInput").val(type);
         $("#propertiesSelectionDialog_filterModeInput").val("startNode");
-        var select = document.getElementById("propertiesSelectionDialog_propsSelect")
-        common.fillSelectOptionsWithStringArray(select, propertiesArray)
+
+        if(!selectId)
+        selectId = document.getElementById("propertiesSelectionDialog_propsSelect")
+        common.fillSelectOptionsWithStringArray(selectId, propertiesArray)
 
     }
 

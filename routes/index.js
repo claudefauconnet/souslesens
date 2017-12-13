@@ -101,7 +101,7 @@ router.post(serverParams.routesRootUrl+'/elastic', function (req, response) {
             processResponse(response, error, result)
         });
     else if (req.body && req.body.findDocuments)
-        elasticProxy.findDocuments(req.body.indexName, req.body.word, req.body.from, req.body.size, req.body.slop, req.body.fields, req.body.andWords, req.body.classifierSource, function (error, result) {
+        elasticProxy.findDocuments(req.body.indexName, req.body.type,req.body.word, req.body.from, req.body.size, req.body.slop, req.body.fields, req.body.andWords, req.body.classifierSource, function (error, result) {
             processResponse(response, error, result)
         });
     else if (req.body && req.body.findDocumentsById)

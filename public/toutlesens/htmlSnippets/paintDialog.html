@@ -1,11 +1,12 @@
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/4.2.2/d3.min.js"></script>
+
+
 <span id="paintDialogTypeSpan"></span><br>
 
 
-<button onclick="paint.paintAll('initial')">removeFilters</button>
-<button onclick="paint.paintClasses()">paint property values</button>
 apply to
 <select size="3" onclick="paint.onActionTypeSelect(this)">
-    <option> All nodes with this label</option>
+    <option> All items</option>
     <option> Select a property</option>
     <option>Close </option>
 </select>
@@ -15,8 +16,8 @@ apply to
 
 
 <div id="paintDialogAction"   class="paintDialogDiv"  style="visibility: hidden">
-    <button onclick="visjsGraph.clusterByColor()">Cluster nodes</button>
-    <button onclick="paint.paintAll('outline')">Apply color</button>
+    <button id="paintDialog_clusterNodesButton" onclick="visjsGraph.clusterByLabel()">Cluster nodes</button>
+    <button onclick="$('#paintDialogPaletteDiv').css('visibility','visible');$('#paintDialogPropDiv').css('visibility','visible')">Apply color</button>
 </div>
 
 
@@ -24,13 +25,13 @@ apply to
 
 <div id="paintDialogPropDiv" class="paintDialogDiv" style="visibility: hidden">
     Properties
-    <select id="propertiesSelectionDialog_propsSelect">
+    <select id="paintDialog_propsSelect">
 
     </select>
     <br>
 
 
-    <select id="propertiesSelectionDialog_operatorSelect" >
+    <select id="paintDialog_operatorSelect" >
         <option>contains</option>
         <option>=</option>
         <option>!=</option>
@@ -39,24 +40,28 @@ apply to
 
 
     </select>
-    <input id="propertiesSelectionDialog_valueInput">
-    <input type="hidden" id="propertiesSelectionDialog_filterModeInput">
-    <input type="hidden" id="propertiesSelectionDialog_typeInput">
+    <input id="paintDialog_valueInput">
+    <input type="hidden" id="paintDialog_filterModeInput">
+    <input type="hidden" id="paintDialog_typeInput">
     <!--<button onclick="filters.outLineProperty()">outline property</button>-->
 
 
 </div>
 <hr>
-<div id="paintDialogPalette"  class="paintDialogDiv"  style="visibility: hidden">
+<div id="paintDialogPaletteDiv"  class="paintDialogDiv"  style="visibility: hidden">
 
     Color
-    <div id="paintDialogColorSelect"></div>
-    circleRadius <input id="propertiesSelectionDialog_circleRadiusInput" style="width:30px" value="10">
-    lineWidth <input id="propertiesSelectionDialog_lineWidthInput" style="width:30px" value="3"><br>
+    <div id="paintDialogPalette"></div>
+    circleRadius <input id="paintDialog_circleRadiusInput" style="width:30px" value="15">
+    lineWidth <input id="paintDialog_lineWidthInput" style="width:30px" value="3"><br>
 
     <hr>
 
 
+</div>
+<div id="paintDialog_classesDiv"   style="visibility: hidden">
+    Nclasses <input id="paintDialog_NclassesInput" style="width:30px" value="5">
+    <button onclick="paint.paintClasses()">Paint classes</button>
 </div>
 
 

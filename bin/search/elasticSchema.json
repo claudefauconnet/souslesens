@@ -1,0 +1,76 @@
+{
+  "archivesatd": {
+    "mappings": {
+      "archive": {
+        "properties": {
+          "annee": {
+            "type": "integer"
+          },
+          "boite": {
+            "type": "text"
+          },
+          "chemise": {
+            "type": "text"
+          },
+          "souschemise": {
+            "type": "text"
+          },
+          "source": {
+            "type": "text"
+          },
+          "titre": {
+            "type": "text"
+          },
+          "content": {
+            "type": "text",
+            "index_options": "offsets",
+            "fielddata": true,
+
+            "fields": {
+              "contentKeyWords": {
+                "type": "keyword",
+                "ignore_above": 256
+              }
+            }
+          }
+        }
+      },
+      "mail": {
+
+        "properties": {
+          "content": {
+            "type": "text",
+            "fielddata": true,
+            "index_options": "offsets",
+
+            "fields": {
+              "contentKeyWords": {
+                "type": "keyword",
+                "ignore_above": 256
+              }
+            }
+          }
+        }
+      }
+    },
+    "fields": [
+      "annee",
+      "boite",
+      "chemise",
+      "souschemise",
+      "source",
+      "titre"
+    ],
+
+    "uiMappings":{
+      "title":"titre"
+    }
+    ,
+    "icons":{
+  "docTypes": {
+    "mail": "mail2.png",
+    "archive": "archive.png"
+  }
+}
+  }
+}

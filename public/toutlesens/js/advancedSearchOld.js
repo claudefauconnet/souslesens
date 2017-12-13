@@ -26,35 +26,278 @@
 var advancedSearch = (function () {
     var self = {};
     var types = {0: "pathes", 1: "frequentQuery", 2: "pattern", 3: "cypher"};
+    //moved   var currentCypherQueryTextArea = "";
+//moved  var currentNodeRole;
+//moved  var matchIndex = 0;
+//moved  var currentTabIndex = 0;
+//moved  var currentActionObj;
+//moved  var currentLabel;
 
+//moved  var limit = 300;
+
+//moved  var returnStr = "EXTRACT(rel IN relationships(path) | type(rel))as rels,nodes(path)as nodes, EXTRACT(node IN nodes(path) | ID(node)) AS ids, EXTRACT(node IN nodes(path) | labels(node)) as labels ";// ,
+// EXTRACT(rel
+// IN
+// relationships(path))";
 
 
     self.traversalCurrentInput=null;
+   /* self.init = function () {
 
-    self.setSearchByIdsListStatement = function (idsList, callback) {
-        var ids;
+        currentActionObj = {type: types[0], subGraph: subGraph};
+        $("#advancedQueriesDiv").tabs(
+            {
+                active: 0, activate: function (event, ui) {
+                currentTabIndex = ui.newTab.index();
+                currentActionObj = {type: types[currentTabIndex], subGraph: subGraph};
 
-        if (typeof list == "string")
-            ids = list.split(",");
-        else
-            ids = list;
-        var query = "n.id in ["
-        for (var i = 0; i < names.length; i++) {
-            if (i > 0 && i<names.length)
-                query += ","
-            query +=  names[i];
+
+            }
+            });
+
+
+        advancedSearch.patternInitLabels();
+        advancedSearch.patternInitRelTypes();
+        statistics.initLabelsCurrentQueries();
+        statistics.setCurrentQueriesSelect();
+
+
+    }*/
+    self.onSourceNodeClick = function () {
+        currentActionObj.currentTarget = "graphPathSourceNode";// initialisé dans page html
+        currentActionObj.graphPathSourceNode = {};
+        self.showLabelSelectionDialog("advancedSearch.setTargetNodeLabel");
+    }
+
+    self.onTargetNodeClick = function () {
+
+        currentActionObj.currentTarget = "graphPathTargetNode";// initialisé dans page html
+        currentActionObj.graphPathTargetNode = {};
+        self.showLabelSelectionDialog("advancedSearch.setTargetNodeLabel");
+    }
+
+
+    self.showSimpleSearchDialog = function () {
+        $("#dialog").dialog("option", "title", "valeur d'une propriete");
+        toutlesensDialogsController.getAllpropertiesDialogContent("advancedSearch.setSearchNodeReturnFilterVal(true)");
+        str += '<button onclick=" advancedSearch.closeDialog()">Cancel</button><br>';
+        $("#dialog").html(str);
+        $("#dialog").dialog("open");
+
+
+    }
+
+    self.closeDialog = function () {
+        $("#dialog").dialog("close")
+    }
+
+    self.showLabelSelectionDialog = function (callback) {
+
+        var str = '<div id="Labeldialog"><table border="0"><tr>' +
+            '<td><span id="lang_100">Labels</span></td>' +
+            '</tr>' +
+            '<tr>' +
+            '<td><select id="dialogNodesLabelsSelect" size="15" class="ui-widget-content" ondblclick="' + callback + '(this)"></select></td><td>';
+        if (currentActionObj.currentTarget != "customQueryMatch") {
+            str += '<button onclick="advancedSearch.showNodeSelectionDialog()"> select a node</button>';
+            str += '<button onclick="advancedSearch.showSearchPropertyDialog()">add property filter</button><br>';
+
         }
-        query += "] " ;
-        toutlesensData.whereFilter=query;
-        callback(null, []);
+
+        if (callback) {
+            str += '<button onclick="' + callback + '(this)">OK</button>';
+        }
+
+        str += '<button onclick=" advancedSearch.closeDialog()">Cancel</button><br>';
+
+        str += '</td></tr></table>'
+
+        $("#dialog").html(str);
+        toutlesensController.initLabels("dialogNodesLabelsSelect");
+        $("#dialog").dialog("open");
+        //   $("#dialog").dialog("open").position({my: 'center', at: 'center', of: '#tabs-radarLeft'});
+    }
+
+
+    self.showSearchPropertyDialog = function () {
+        var value = $("#dialogNodesLabelsSelect option:selected").val();
+        currentActionObj[currentActionObj.currentTarget].label = value;
+        $("#dialog").dialog("option", "title", "valeur d'une propriete");
+        var str = toutlesensDialogsController.getAllpropertiesDialogContent("advancedSearch.setTargetNodeProperty()");
+
+
+        str += '<button onclick=" advancedSearch.closeDialog()">Cancel</button><br>';
+        str += "<button onclick='advancedSearch.showNodeSelectionDialog()'>Select a node</button>";
+        $("#dialog").html(str);
+        $("#dialog").dialog("open");
+        /*  if (currentActionObj.currentTarget == "graphPathSourceNode")
+         $("#getAllpropertiesDialogOkBtn").css("visibility", "hidden");*/
+
 
     }
 
 
+    self.showNodeSelectionDialog = function (value,input) {
+        self.traversalCurrentInput=input;
+        var value = $("#dialogNodesLabelsSelect option:selected").val();
+        if (!value) {
+            alert("select a node label before choosing a property")
+        }
+
+        currentActionObj[currentActionObj.currentTarget].label = value;
+        self.setSearchNodeReturnFilterVal();
+        if (value)
+            currentActionObj[currentActionObj.currentTarget].property = value;
+        var type = "";
+
+        $("#dialog").dialog("option", "title", "Selectionner un Noeud " + type);
+        dialogStr = "	<table><tr><td><div id='startNodePageNavigation'></div></td></tr><tr><td ><select size='15' id='wordsSelect'"
+            + "onclick='advancedSearch.setNode(this)'><option>----------</option></select></td>";
+        dialogStr += '<button onclick=" advancedSearch.closeDialog()">Cancel</button><br>';
+        $("#dialog").html(dialogStr);
+        toutlesensData.searchNodes(Schema.subGraph, currentActionObj[currentActionObj.currentTarget].label,null);
+    //    toutlesensData.searchNodes(Schema.subGraph, currentActionObj[currentActionObj.currentTarget].label, currentActionObj[currentActionObj.currentTarget].property, "count");// 10000, 0);
+        $("#dialog").dialog("open");
+
+
+    }
+
+
+    self.setTargetNodeVisibility = function (hide) {
+        if (hide || $("#graphPathSourceNode").val() == "")
+            $(".targetNode").css("visibility", "hidden");
+        else
+            $(".targetNode").css("visibility", "visible");
+    }
+
+    self.setTargetNodeLabel = function () {
+
+        var value = $("#dialogNodesLabelsSelect option:selected").val();
+        self.setTargetNodeVisibility()
+        currentActionObj[currentActionObj.currentTarget].label = value;
+        //  $("#graphPathTargetNode").val(":" + value);
+        $("#" + currentActionObj.currentTarget).val("[" + value + "]");
+      //  $("#dialog").dialog("close");
+
+
+    }
+    self.setTargetNodeProperty = function () {
+        self.setSearchNodeReturnFilterVal();
+        self.setTargetNodeVisibility()
+        currentActionObj[currentActionObj.currentTarget].property = value;
+        $("#" + currentActionObj.currentTarget).val(value);
+       // $("#dialog").dialog("close");
+
+
+    }
+    self.setSearchNodeReturnFilterVal = function (execSearch) {
+        $("#dialog").dialog("close");
+
+        var propertyType = $("#propertyType").val();
+        if (!propertyType || propertyType == "")
+            propertyType = "any"
+
+        var operators = {
+            Contains: "~",
+            Equals: "=",
+            Greater: ">",
+            Lower: "<"
+        }
+        for (var key in operators) {
+
+            var value = $("#property" + key).val();
+
+            if (value && value != "") {
+
+                var str = propertyType + ":" + operators[key] + " " + value;
+
+                if (execSearch) {
+                    $("#word").val(str);
+                    toutlesensController.searchNodesUI("count");
+                }
+                return str;
+            }
+        }
+
+
+    }
+
+    self.setNode = function () {
+        var index = wordsSelect.selectedIndex;
+        var valueText = wordsSelect.options[wordsSelect.selectedIndex].text;
+        var valueId = $("#wordsSelect").val();
+        self.setTargetNodeVisibility()
+        currentActionObj[currentActionObj.currentTarget].nodeId = valueId;
+        currentActionObj[currentActionObj.currentTarget].nodeText = valueText;
+      //  $("#dialog").dialog("close");
+        mainMenu.onSelectOption("traversal");
+        $(self.traversalCurrentInput).val(valueText);
+    //    $("#" + currentActionObj.currentTarget).val(valueText);
+
+
+
+    }
+
+
+    self.onQueryMatchTextAreaClick = function () {
+        currentActionObj.currentTarget = "customQueryMatch";// initialisé dans page html
+        currentActionObj.customQueryMatch = {}
+
+    }
+
+
+    self.setCustomMatchQueryLabel = function (select) {
+        var value = $("#dialogNodesLabelsSelect option:selected").val();
+        $("#dialog").dialog("close");
+        currentActionObj.label = value;
+
+        $("#cypherQueryReturnTextArea").val(returnStr);
+
+
+        self.getCaretPosition(currentCypherQueryTextArea);
+        var str = $(currentCypherQueryTextArea).val();
+        if (true) {
+            if (str == "") {
+                str = "(n:" + value + ")";
+                $(currentCypherQueryTextArea).val(str);
+            } else {
+
+                $("#dialog").dialog("option", "title", "distance de la relation");
+                dialogStr = "<input  name='matchMode'type='radio' checked='checked' value='replace' > Remplacer"
+                    + "<input  name='matchMode'type='radio' value='add' onclick='$(\"#distanceDiv\").css(\"visibility\",\"visible\")'; > Ajouter<br>"
+                    + "<div style='visibility:hidden;' id='distanceDiv'> <hr>distance entre les noeuds :"
+                    + "<table><tr><td> Minimum</td><td><input id='matchMinRdistance' size='2' value='1'></td>"
+                    + "<table><tr><td> Maximum</td><td><input id='matchMaxRdistance' size='2' value='1'></td></tr></table></div>"
+                    +
+
+                    " <button onclick='advancedSearch.setManualqueryMatch()'>OK</button>";
+                $("#dialog").html(dialogStr);
+                $("#dialog").dialog("open");
+
+            }
+
+        }
+
+    }
+
+    self.getCaretPosition = function (ctrl) {
+        var CaretPos = 0; // IE Support
+        if (document.selection) {
+            ctrl.focus();
+            var Sel = document.selection.createRange();
+            Sel.moveStart('character', -ctrl.value.length);
+            CaretPos = Sel.text.length;
+        }
+        // Firefox support
+        else if (ctrl.selectionStart || ctrl.selectionStart == '0')
+            CaretPos = ctrl.selectionStart;
+        return (CaretPos);
+    }
+
 
 //********************************************************execute*****************************************
 
-  /*  self.executeSearch = function () {
+    self.executeSearch = function () {
         var tabIndex=$("#advancedQueriesDiv").tabs('option', 'active');
         currentActionObj.type=types[tabIndex];
 
@@ -100,7 +343,7 @@ var advancedSearch = (function () {
         var algo = "allSimplePaths"// $("#graphPathsAlgorithm").val();
         graphTraversalQueries.getAllSimplePaths(currentActionObj.graphPathSourceNode.nodeId, currentActionObj.graphPathTargetNode.nodeId, maxDistance, algo);
 
-    }*/
+    }
 
 
     self.buildCypherQuery = function () {
@@ -232,7 +475,7 @@ var advancedSearch = (function () {
 
 
     }
-  /*  self.executeCypherAndDisplayGraph = function (query, _currentActionObj) {
+    self.executeCypherAndDisplayGraph = function (query, _currentActionObj) {
         toutlesensDialogsController.hideAdvancedSearch();
       //  $("#tabs-radarLeft").tabs("enable");
         $("#tabs-radarRight").tabs("enable");
@@ -296,10 +539,10 @@ var advancedSearch = (function () {
                 toutlesensController.displayGraph(data, currentDisplayType, null)
             });
         });
-    }*/
+    }
 
 
-    /*self.showCypherMatchDialog = function () {
+    self.showCypherMatchDialog = function () {
         self.getCaretPosition(currentCypherQueryTextArea);
         var str = $("#cypherQueryMatchTextArea").val();
 
@@ -452,7 +695,7 @@ var advancedSearch = (function () {
             graphTravReturnEvaluator, graphTravReturnFilter, graphTravDepth,
             graphTravRelTypes);
 
-    }*/
+    }
 
 
     /*********************Patterns***************************/

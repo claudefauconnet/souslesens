@@ -10,6 +10,8 @@ self.tree;
 self.types={}
     self.load = function (data, divId, callback) {
         self.tree=$('#' + divId);
+        if(!data)
+            return;
     for(var i=0;i<data.length;i++){
         self.nodesData[data[i].id]=data[i].data;
     }

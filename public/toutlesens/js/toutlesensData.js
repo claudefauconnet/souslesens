@@ -143,17 +143,19 @@ var toutlesensData = (function () {
                     numberOfLevelsVal = Gparams.defaultQueryDepth;
                 else
                     numberOfLevelsVal = parseInt(numberOfLevelsVal);
-                /*   if (Gparams.graphNavigationMode != "expandNode") {
-                 if (!currentDisplayType || currentDisplayType == "FLOWER" || currentDisplayType == "TREE" || currentDisplayType == "SIMPLE_FORCE_GRAPH" || currentDisplayType == "TREEMAP")
-                 numberOfLevelsVal += 1;
-                 }*/
+                var relCardinalityStr="";
+                if(numberOfLevelsVal>1)
+                    relCardinalityStr=  "*.." + numberOfLevelsVal;
+
                 var whereStatement = "";
                 if (id) {
-                    whereStatement = " WHERE ((ID(node1)=" + id + "))";// OR (ID(m)=" + (id)+"))"
-                    /* if(id>0)
-                     whereStatement = " WHERE (ID(node1)=" + id+")" ;//+" OR  ID(m)="+id+")" ;
-                     else
-                     whereStatement = " WHERE (ID(m)=" + (-id)+")" ;*/
+                  /*  whereStatement = " WHERE ((ID(node1)=" + id + "))";// OR (ID(m)=" + (id)+"))"*/
+                    if(id>0)
+                     whereStatement = " WHERE (ID(node1)=" + id+")" ;//+" OR  ID(m)="+id+")"
+                     else {
+                        whereStatement = " WHERE (ID(m)=" + (-id) + ")";
+                        id=-id;
+                    }
                 }
                 if (subGraphWhere) {
                     if (id)
@@ -198,8 +200,7 @@ var toutlesensData = (function () {
                 statement = "MATCH path=(node1" + node1Label
                     + ")-[r"
                     + toutlesensData.queryRelTypeFilters
-                    + "*.."
-                    + numberOfLevelsVal
+                        +relCardinalityStr
                     + "]-(m) "
                     + whereStatement
                     + graphQueryTargetFilter
@@ -234,8 +235,9 @@ var toutlesensData = (function () {
 
 
                 if (data.length == 0) {
-                    if(false)
-                        self.showInfos2(id, toutlesensController.zeroRelationsForNodeAction);
+                   if(id>-1)// we retry with inverse relation
+                       self.getNodeAllRelations (-id, output, addToExistingTree, callback);
+                   else
                     return callback(null, []);
 
                 }
@@ -268,6 +270,83 @@ var toutlesensData = (function () {
             error: function (xhr, err, msg) {
                 return (err);
             }
+
+        });
+
+    }
+    self.setSearchByIdsListStatement = function (idsList, callback) {
+        var ids;
+
+        if (typeof idsList == "string")
+            ids = idsList.split(",");
+        else
+            ids = idsList;
+        var query = "n.id in ["
+        for (var i = 0; i < ids.length; i++) {
+            if (i > 0 && i<ids.length)
+                query += ","
+            query +=  ids[i];
+        }
+        query += "] " ;
+        toutlesensData.whereFilter=query;
+        callback(null, []);
+
+    }
+
+    self.getAllSimplePaths = function (startId, endId, depth, algo,callback) {
+
+
+        var body = '{ "to":"' + endId + '","max_depth":' + depth + ',"algorithm":"'
+            + algo + '"}';
+        var urlSuffix = "/db/data/node/" + startId + "/paths";
+        var paramsObj = {
+            cypher:1,
+            mode: "POST",
+            urlSuffix: urlSuffix,
+            payload: body,
+        }
+        console.log(JSON.stringify(paramsObj),"null",2);
+
+        console.log(urlSuffix);
+        $.ajax({
+            type: "POST",
+            url: Gparams.neo4jProxyUrl,
+            data: paramsObj,
+            dataType: "json",
+            success: function (data, textStatus, jqXHR) {
+                if (!data || data.length == 0) {
+                    return  callback("No result")
+                }
+                if (data.length > Gparams.graphDisplayLimitMax) {
+
+                    return callback("trop de resultats "
+                        + data.length
+                        + " pour dessiner le graphe.Modifiez les parametres")
+
+                }
+
+                var RelIds = [];
+
+                for (var i = 0; i < data.length; i++) {
+                    for (var j = 0; j < data[i].relationships.length; j++) {
+
+                        var str = data[i].relationships[j];
+                        var id = parseInt(str.substring(str.lastIndexOf("/") + 1));
+
+                        RelIds.push(id);
+
+                    }
+                }
+                callback(null,RelIds);
+
+                // self.processPathResults(data,callback);
+            },
+            error: function (xhr, err, msg) {
+                console.log(xhr);
+                console.log(err);
+                console.log(msg);
+                callback(err)
+            },
 
         });
 

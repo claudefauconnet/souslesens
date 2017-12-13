@@ -37,3 +37,95 @@ info [Wed Nov 22 2017 07:50:57 GMT+0100 (Paris, Madrid)]  classifier done :D:\Gi
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+info [Tue Dec 12 2017 09:44:54 GMT+0100 (Paris, Madrid)]  searching most frequent words in index archivesatd
+info [Tue Dec 12 2017 09:44:54 GMT+0100 (Paris, Madrid)]  Most frequentwords []
+info [Tue Dec 12 2017 09:44:54 GMT+0100 (Paris, Madrid)]  searching SKOS concepts in Ontology :BNF... 
+info [Tue Dec 12 2017 09:44:54 GMT+0100 (Paris, Madrid)]  parent concepts found 
+info [Tue Dec 12 2017 09:44:54 GMT+0100 (Paris, Madrid)]  put doc ids for each concepts 
+info [Tue Dec 12 2017 09:44:54 GMT+0100 (Paris, Madrid)]  classifier done :D:\GitHub\souslesens\bin\rdf\classifiers\archivesatd_BNF.json
+info [Tue Dec 12 2017 09:46:54 GMT+0100 (Paris, Madrid)]  searching most frequent words in index archivesatd
+info [Tue Dec 12 2017 09:46:54 GMT+0100 (Paris, Madrid)]  Most frequentwords []
+info [Tue Dec 12 2017 09:46:54 GMT+0100 (Paris, Madrid)]  searching SKOS concepts in Ontology :BNF... 
+info [Tue Dec 12 2017 09:46:54 GMT+0100 (Paris, Madrid)]  parent concepts found 
+info [Tue Dec 12 2017 09:46:54 GMT+0100 (Paris, Madrid)]  put doc ids for each concepts 
+info [Tue Dec 12 2017 09:46:54 GMT+0100 (Paris, Madrid)]  classifier done :D:\GitHub\souslesens\bin\rdf\classifiers\archivesatd_BNF.json
+info [Tue Dec 12 2017 09:48:54 GMT+0100 (Paris, Madrid)]  searching most frequent words in index archivesatd
+info [Tue Dec 12 2017 09:48:54 GMT+0100 (Paris, Madrid)]  Most frequentwords []
+info [Tue Dec 12 2017 09:48:54 GMT+0100 (Paris, Madrid)]  searching SKOS concepts in Ontology :BNF... 
+info [Tue Dec 12 2017 09:48:54 GMT+0100 (Paris, Madrid)]  parent concepts found 
+info [Tue Dec 12 2017 09:48:54 GMT+0100 (Paris, Madrid)]  put doc ids for each concepts 
+info [Tue Dec 12 2017 09:48:54 GMT+0100 (Paris, Madrid)]  classifier done :D:\GitHub\souslesens\bin\rdf\classifiers\archivesatd_BNF.json
+
+
+
+
+
+
+
+
+
+
+
+
+

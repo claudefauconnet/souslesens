@@ -7,6 +7,7 @@ var mainMenu = (function () {
     var self = {};
 
 
+
     self.showDataMenu = function () {
 
         toutlesensController.setSplitterPosition(Gparams.splitterMin);
@@ -69,7 +70,9 @@ if(Gparams.useVisjsNetworkgraph)
             toutlesensController.setSplitterPosition(Gparams.splitterMin);
             //  self.traversal();
             $("#dialog").load("htmlSnippets/traversalDialog.html", function () {
-
+                $("#dialog").dialog({
+                    modal: false
+                });
                 $("#dialog").dialog("option", "title", "Pathes beetwen nodes");
                 $("#dialog").dialog("open");
                 self.initLabels(dialogNodesLabelsSelect);
@@ -94,58 +97,7 @@ if(Gparams.useVisjsNetworkgraph)
 
 
 
-    self.traversalInitNodeDialog = function (select) {
 
-        var value = $(select).val()
-        if (value.length > 0) {
-            currentActionObj[currentActionObj.currentTarget].label = value;
-            toutlesensData.searchNodes(Schema.subGraph, value, null, null, Gparams.listDisplayLimitMax, 0, function (err, data) {
-                var nodes = [];
-                var nodeNames = [];
-                for (var i = 0; i < data.length; i++) {
-                    var node = data[i].n.properties;
-                    if (nodeNames.indexOf(node.id) < 0) {
-                        nodeNames.push(node.id)
-                        nodes.push(node)
-                    }
-                }
-                common.fillSelectOptions(traversalDialogWordsSelect, nodes, Gparams.defaultNodeNameProperty, "id")
-
-                bringToFront('traversalDialogNode')
-            });
-        }
-
-    }
-
-    self.traversalSetLabel=function(select){
-        var value = $(select).val()
-        $("#"+currentActionObj.currentTarget).val( value)
-        currentActionObj[currentActionObj.currentTarget].label = value;
-        $("#graphPathSourceNode").text( value)
-
-    }
-
-
-    self.traversalSetNode=function(select){
-        var index = select.selectedIndex;
-        var valueText = select.options[select.selectedIndex].text;
-        var valueId = $(select).val();
-        var xxx= currentActionObj.currentTarget;
-
-        currentActionObj[currentActionObj.currentTarget].nodeId = valueId;
-        currentActionObj[currentActionObj.currentTarget].nodeText = valueText;
-        //  $("#dialog").dialog("close");
-        $("#"+currentActionObj.currentTarget).val( "["+currentActionObj[currentActionObj.currentTarget].label+"] "+valueText )
-        $("#"+currentActionObj.currentTarget).val("zzzzzzzzzzzz");
-            bringToFront('traversalDialogMain')
-
-
-    }
-
-    self.traversalSetCurrentAction =function(input){
-        currentActionObj.currentTarget = input.id;
-        currentActionObj[input.id]={}
-    }
 
 
     return self;

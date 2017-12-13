@@ -47,12 +47,27 @@ logger.setLevel('info');
 var baseUrl = "http://vps254642.ovh.net:9200/"
 var baseUrl = "http://localhost:9200/"
 var maxContentLength = 150;
+var elasticSchema = null;
 
 var client = null;
 
 var elasticProxy = {
 
+    getSchema: function () {
+        if (!elasticSchema) {
+            var str = fs.readFileSync(__dirname + "/search/elasticSchema.json");
 
+            try {
+                console.log("" + str)
+                elasticSchema = JSON.parse("" + str);
+            }
+            catch (e) {
+                console.log(e)
+                return null;
+            }
+        }
+        return elasticSchema;
+    },
     ping: function () {
         getClient().ping({
             // ping usually has a 3000ms timeout
@@ -139,42 +154,80 @@ var elasticProxy = {
         });
     },
     exportMongoToElastic: function (mongoDB, mongoCollection, mongoQuery, elasticIndex, elasticFields, elasticType, callback) {
-        mongoQuery = JSON.parse(mongoQuery);
-        elasticFields = JSON.parse(elasticFields);
-        mongoProxy.pagedFind(serverParams.mongoFetchSize, mongoDB, mongoCollection, mongoQuery, null, function (err, result) {
-            if (err) {
-                callback(err);
-                return;
-            }
-            var startId = Math.round(Math.random() * 10000000);
-            var elasticPayload = [];
+        if (typeof mongoQuery !== "object")
+            mongoQuery = JSON.parse(mongoQuery);
+        if (typeof elasticFields !== "object")
+            elasticFields = JSON.parse(elasticFields);
+        var currentIndex = 0;
+        var resultSize = 1;
+        async.whilst(
+            function () {//test
+                return resultSize > 0;
+            },
+            function (_callback) {//iterate
+                var callback = _callback;
 
-            for (var i = 0; i < result.length; i++) {
-                elasticPayload.push({index: {_index: elasticIndex, _type: elasticType, _id: "_" + (startId++)}})
-                var payload = {};
-                for (var j = 0; j < elasticFields.length; j++) {
-                    var value = result[i][elasticFields[j]];
-                    if (value) {
-                        payload[elasticFields[j]] = value;
+                mongoProxy.pagedFind(currentIndex, serverParams.mongoFetchSize, mongoDB, mongoCollection, mongoQuery, null, function (err, result) {
+                    if (err) {
+                        callback(err);
+                        return;
                     }
 
-                }
-                elasticPayload.push(payload);
+
+                    resultSize = result.length;
+                    currentIndex += serverParams.mongoFetchSize;
+                    var startId = Math.round(Math.random() * 10000000);
+                    var elasticPayload = [];
+
+                    // contcat all fields values in content field
+                    for (var i = 0; i < result.length; i++) {
+                        var content = ""
+                        for (var j = 0; j < elasticFields.length; j++) {
+                            var value = result[i][elasticFields[j]];
+                            if (value) {
+                                content += " " + value;
+                            }
+                        }
+                        result[i].content = content;
+
+                        elasticPayload.push({index: {_index: elasticIndex, _type: elasticType, _id: "_" + (startId++)}})
+                        var payload = {};
+                        for (var j = 0; j < elasticFields.length; j++) {
+                            var value = result[i][elasticFields[j]];
+                            if (value) {
+                                payload[elasticFields[j]] = value;
+                            }
+
+                        }
+                        elasticPayload.push(payload);
+
+                    }
+
+                    getClient().bulk({
+                        body: elasticPayload
+                    }, function (err, resp) {
+                        if (err) {
+                            callback(err);
+
+                        } else {
+                            callback(null, resp);
+                        }
+                    });
+
+
+                });
 
             }
-            getClient().bulk({
-                body: elasticPayload
-            }, function (err, resp) {
+            ,
+            function (err, result) {//end
                 if (err) {
                     callback(err);
 
                 } else {
                     callback(null, resp);
                 }
+
             });
-
-
-        });
     },
 
 
@@ -391,11 +444,12 @@ var elasticProxy = {
         })
 
     },
-    indexDocumentFile: function (file, index, base64, callback) {
+    indexDocumentFile: function (_file, index, base64, callback) {
         var id = "R" + Math.round(Math.random() * 1000000000)
         //  var file = "./search/testDocx.doc";
         //  var file = "./search/testPDF.pdf";
         var fileContent;
+        var file = _file;
         var options;
         if (base64) {
             index = index + "temp"
@@ -427,18 +481,18 @@ var elasticProxy = {
 
         request(options, function (error, response, body) {
             if (error) {
-                logger.error(error);
-                console.error(error);
-                return callback(error);
+                logger.error(file + " : " + error);
+                console.error(file + " : " + error);
+                // return callback(file+" : "+error);
             }
             if (body.error) {
-                logger.error(body.error);
-                console.error(body.error);
+                logger.error(file + " : " + body.error);
+                console.error(file + " : " + body.error);
                 if (body.error.reason) {
-                    logger.error(body.error.reason);
-                    console.error(body.error.reason);
+                    logger.error(file + " : " + body.error.reason);
+                    console.error(file + " : " + body.error.reason);
                 }
-                return callback(body.error);
+                //  return callback(file+" : "+body.error);
             }
             return callback(null, body);
 
@@ -558,7 +612,7 @@ var elasticProxy = {
 
         console.log(JSON.stringify(payload, null, 2));
         request(options, function (error, response, body) {
-            elasticProxy.processSearchResult(error, body, classifierSource, callback);
+            elasticProxy.processSearchResult(error, index, body, classifierSource, callback);
 
         });
     },
@@ -630,10 +684,19 @@ var elasticProxy = {
     },
 
 
-    findDocuments: function (index, word, from, size, slop, fields, andWords, classifierSource, callback) {
+    findDocuments: function (index, type, word, from, size, slop, fields, andWords, classifierSource, callback) {
         var match = {"content": word};
-        if (!fields)
+        if (!fields) {
             fields = ["title", "date", "type", "path"];
+            schema = elasticProxy.getSchema();
+            if (schema && schema[index])
+                fields = schema[index].fields
+            if (!fields)
+                fields = ["title", "date", "type", "path"];
+
+
+        }
+
         var query = "";
         if (!slop || slop < 2) {
             query = {
@@ -650,6 +713,10 @@ var elasticProxy = {
                 }
             }
         }
+
+
+        if (word == null || word == "*" || word == "")
+            query = {"match_all": {}}
 
         if (word.indexOf("*") > -1) {
             query = {
@@ -692,20 +759,24 @@ var elasticProxy = {
 
         }
         console.log(JSON.stringify(payload, null, 2));
+        if (!type)
+            type = "";
+        else
+            type = "/" + type;
 
         var options = {
             method: 'POST',
             json: payload,
-            url: baseUrl + index + "/_search"
+            url: baseUrl + index + type + "/_search"
         };
 
 
         request(options, function (error, response, body) {
-            elasticProxy.processSearchResult(error, body, classifierSource, callback);
+            elasticProxy.processSearchResult(error, index, body, classifierSource, callback);
 
         });
     },
-    processSearchResult: function (error, body, classifierSource, callback) {
+    processSearchResult: function (error, index, body, classifierSource, callback) {
 
         if (error)
             return callback(error);
@@ -715,29 +786,56 @@ var elasticProxy = {
         var hits = body.hits.hits;
         var total = body.hits.total;
         var docs = [];
-        var index;
+
+        var uiMappings = {}
+        schema = elasticProxy.getSchema();
+        if (schema && schema[index] && schema[index].uiMappings)
+            uiMappings = schema[index].uiMappings;
+        var icons = [];
+        if (schema && schema[index] && schema[index].icons) {
+            icons = schema[index].icons;
+        }
+
         for (var i = 0; i < hits.length; i++) {
-            if (i == 0)
-                index = hits[i]._index;
+
             var obj = {};
             var objElastic = hits[i]._source;
             obj.title = objElastic.title;
+            if (!obj.title || obj.title == undefined)
+                obj.title = "??"
             obj._id = hits[i]._id;
+
             obj.date = objElastic.date;
+            if (!obj.date || obj.date == undefined)
+                obj.date = "";
+
             obj.path = objElastic.path;
+            if (!obj.path || obj.path == undefined)
+                obj.path = objElastic.path;
+
             if (hits[i].highlight)
                 obj.highlights = hits[i].highlight.content
             if (objElastic.content)
                 obj.content = objElastic.content;
+
+            for (var key in uiMappings) {
+                if (!obj[key])
+                    obj[key] = objElastic[uiMappings[key]];
+            }
+            obj.type = hits[i]._type;
+
             docs.push(obj);
         }
         var classifier;
-        if (index && classifierSource && classifierSource.length>0)
+        if (index && classifierSource && classifierSource.length > 0)
             classifier = classifierManager.getClassifierOutput(index, classifierSource, docs);
+
         var result = {
             docs: docs,
             classifier: classifier,
-            total: total
+            total: total,
+            icons: icons,
+
         }
 
         return callback(null, result);
@@ -802,7 +900,8 @@ var elasticProxy = {
         }
         var payload = {
             "query": query,
-            "size": 0,
+            "size": 10000,
+            _source: "",
             "aggs": {
                 "associatedWords": {
                     "terms": {
@@ -918,8 +1017,6 @@ var elasticProxy = {
                             "l",
 
 
-
-
                             "shall",
                             "be",
                             "to",
@@ -947,8 +1044,6 @@ var elasticProxy = {
                             "than"
 
 
-
-
                         ]
                     }
                 }
@@ -960,15 +1055,28 @@ var elasticProxy = {
             url: baseUrl + index + "/_search"
         };
 
-        //  console.log(JSON.stringify(payload,null,2))
+        //   console.log(JSON.stringify(payload,null,2))
         request(options, function (error, response, body) {
             if (error)
                 return callback(error);
             if (!body.hits) {
                 return callback(null, []);
             }
+
+            var types = [];
+            var hits = body.hits.hits;
+            for (var i = 0; i < hits.length; i++) {
+                if (types.indexOf(hits[i]._type) < 0) {
+                    types.push(hits[i]._type)
+                }
+            }
+
+
             var buckets = body.aggregations.associatedWords.buckets;
-            var result = [];
+            var result = {
+                buckets: [],
+                types: types
+            };
             for (var i = 0; i < buckets.length; i++) {
 
                 var obj = {};
@@ -976,7 +1084,7 @@ var elasticProxy = {
                 obj.key = objElastic.key;
                 obj.count = objElastic.doc_count;
 
-                result.push(obj);
+                result.buckets.push(obj);
             }
             return callback(null, result);
 
@@ -1078,7 +1186,7 @@ var elasticProxy = {
 
 
                 elasticProxy.sendMessage("indexing  directory " + rootDir + "  and sub directories");
-                elasticProxy.indexDocumentDir(rootDir, indexTemp, true, function (err, result) {
+                elasticProxy.indexDocumentDir(rootDir, index, true, function (err, result) {
                     if (err) {
                         elasticProxy.sendMessage("ERROR" + err);
                         return callback(err);
@@ -1098,7 +1206,7 @@ var elasticProxy = {
                             var message = "-----------Index " + index + " is ready to use-----------"
                             elasticProxy.sendMessage("delete temporary index " + indexTemp);
                             if (doClassifier.toLowerCase() == "y") {
-                                classifierManager.createIndexClassifier(index, 200, 10, ["BNF"],"fr", 1, function (err, result) {
+                                classifierManager.createIndexClassifier(index, 200, 10, ["BNF"], "fr", 1, function (err, result) {
 
                                     elasticProxy.sendMessage("classifier done");
                                     elasticProxy.sendMessage(message);
@@ -1156,7 +1264,7 @@ function indexJsonFile(filePath, ealasticUrl) {
 }
 
 module.exports = elasticProxy;
-
+elasticProxy.getSchema();
 
 //**********************************************Command Line args***********************************
 const args = process.argv;
@@ -1271,4 +1379,5 @@ if (false) {
     })
 
 }
+
 

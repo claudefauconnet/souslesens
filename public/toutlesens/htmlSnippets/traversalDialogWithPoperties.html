@@ -91,30 +91,89 @@
                 <tr>
                     <td>
                         <select id="dialogNodesLabelsSelect" size="15"
-                                onclick="traversalMenu.traversalInitNodeDialog(this)">
+                                ondblclick="traversalMenu.traversalInitNodeDialog(this)">
 
                         </select>
                     </td>
                     <td>
-
-
-
-                            <select size="15" id="traversalDialogNodeSelect" onchange="traversalMenu.traversalSetNode(this)">
-
-                            </select>
-
-
-
+                        <button onclick="bringToFront('traversalDialogMain');traversalMenu.traversalSetLabel(dialogNodesLabelsSelect);">
+                            OK
+                        </button>
                         <button onclick=" bringToFront('traversalDialogMain')">
                             Cancel
                         </button>
                         <br>
-
+                        <button onclick="traversalMenu.traversalInitPropertiesDialog();bringToFront('traversalDialogProperty')">
+                            add property filter
+                        </button>
+                        <br>
+                        <button onclick="traversalMenu.traversalInitNodeDialog()">
+                            select a node
+                        </button>
                     </td>
                 </tr>
                 </tbody>
             </table>
         </div>
+
+    </div>
+    <!***********************************************************traversalDialogProperty*******************************************************>
+
+    <div id="traversalDialogProperty" class="back">
+
+
+        Properties
+        <select id="propertiesSelectionDialog_propsSelect">
+        </select>
+
+        <br>
+
+
+        <select id="propertiesSelectionDialog_operatorSelect">
+            <option>
+                =
+            </option>
+
+            <option>
+                !=
+            </option>
+
+            <option>
+                &lt;
+            </option>
+
+            <option>
+                &gt;
+            </option>
+
+            <option>
+                contains
+            </option>
+
+        </select>
+
+        <input id="propertiesSelectionDialog_valueInput"/>
+
+        <input type="hidden" id="propertiesSelectionDialog_natureInput" value="relation"/>
+
+        <button onclick="filters.filterOnProperty()"> filter on property</button>
+
+
+        <button onclick=" bringToFront('traversalDialogLabel')"></button>
+
+    </div>
+
+
+    <!***********************************************************traversalDialogNode*******************************************************>
+    <div id="traversalDialogNode" class="back">
+
+
+        <select size="15" id="traversalDialogNodeSelect" onchange="traversalMenu.traversalSetNode(this)">
+
+        </select>
+        <button onclick=" bringToFront('traversalDialogLabel')">
+            Cancel
+        </button>
 
     </div>
 
