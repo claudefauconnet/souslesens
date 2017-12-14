@@ -7,7 +7,6 @@ var mainMenu = (function () {
     var self = {};
 
 
-
     self.showDataMenu = function () {
 
         toutlesensController.setSplitterPosition(Gparams.splitterMin);
@@ -20,13 +19,16 @@ var mainMenu = (function () {
     }
 
     self.showGraphDisplayMenu = function () {
-        var dialog="graphDisplayMenu.html";
-if(Gparams.useVisjsNetworkgraph)
-    dialog="visjsGraphDisplayMenu.html";
+        $("#dialog").dialog({modal:false});
+        $("#dialog").dialog("option", "title", "Toutlesens main menu");
 
-        $("#dialog").load("htmlSnippets/"+dialog, function () {
+        var dialog = "graphDisplayMenu.html";
+        if (Gparams.useVisjsNetworkgraph)
+            dialog = "visjsGraphDisplayMenu.html";
+
+        $("#dialog").load("htmlSnippets/" + dialog, function () {
             //  self.initLabelPropertySelection(label);
-            $("#dialog").dialog("option", "title", "Toutlesens main menu");
+
             $("#dialog").dialog("open");
 
         })
@@ -93,11 +95,6 @@ if(Gparams.useVisjsNetworkgraph)
         $("#dialog").dialog("close");
 
     }
-
-
-
-
-
 
 
     return self;

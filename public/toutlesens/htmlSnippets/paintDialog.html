@@ -4,20 +4,14 @@
 <span id="paintDialogTypeSpan"></span><br>
 
 
-apply to
-<select size="3" onclick="paint.onActionTypeSelect(this)">
-    <option> All items</option>
-    <option> Select a property</option>
-    <option>Close </option>
-</select>
 
 
-
-
+<button onclick='paint.onActionTypeSelect("outline")'>Outline</button>
+<button id="paintDialogClusterButton" onclick='paint.onActionTypeSelect("cluster")'>Cluster</button>
+<button id="paintDialogClassesButton" onclick='paint.onActionTypeSelect("classes")'>Classes</button>
 
 <div id="paintDialogAction"   class="paintDialogDiv"  style="visibility: hidden">
-    <button id="paintDialog_clusterNodesButton" onclick="visjsGraph.clusterByLabel()">Cluster nodes</button>
-    <button onclick="$('#paintDialogPaletteDiv').css('visibility','visible');$('#paintDialogPropDiv').css('visibility','visible')">Apply color</button>
+
 </div>
 
 
@@ -25,12 +19,11 @@ apply to
 
 <div id="paintDialogPropDiv" class="paintDialogDiv" style="visibility: hidden">
     Properties
-    <select id="paintDialog_propsSelect">
+    <select id="paintDialog_propsSelect" onchange='paint.onPropertySelect(this)'>
 
     </select>
-    <br>
 
-
+<div id="paintDialogPropQueryDiv" style="visibility: hidden">
     <select id="paintDialog_operatorSelect" >
         <option>contains</option>
         <option>=</option>
@@ -40,7 +33,10 @@ apply to
 
 
     </select>
+
+
     <input id="paintDialog_valueInput">
+</div>
     <input type="hidden" id="paintDialog_filterModeInput">
     <input type="hidden" id="paintDialog_typeInput">
     <!--<button onclick="filters.outLineProperty()">outline property</button>-->
@@ -52,8 +48,7 @@ apply to
 
     Color
     <div id="paintDialogPalette"></div>
-    circleRadius <input id="paintDialog_circleRadiusInput" style="width:30px" value="15">
-    lineWidth <input id="paintDialog_lineWidthInput" style="width:30px" value="3"><br>
+
 
     <hr>
 
@@ -64,6 +59,8 @@ apply to
     <button onclick="paint.paintClasses()">Paint classes</button>
 </div>
 
-
+<div id="paintDialog_GraphicAttrsDiv"   style="visibility: hidden">
+circleRadius <input id="paintDialog_circleRadiusInput" style="width:30px" value="15">
+lineWidth <input id="paintDialog_lineWidthInput" style="width:30px" value="3"><br>
 
 <!-- <button onclick="filters.filterOnProperty('remove')">Remove filter</button> <br>-->

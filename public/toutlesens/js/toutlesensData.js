@@ -281,7 +281,7 @@ var toutlesensData = (function () {
             ids = idsList.split(",");
         else
             ids = idsList;
-        var query = "n.id in ["
+        var query = "node1.id in ["
         for (var i = 0; i < ids.length; i++) {
             if (i > 0 && i<ids.length)
                 query += ","

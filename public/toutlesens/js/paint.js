@@ -8,18 +8,24 @@ var paint = (function () {
     self.currentLabel;
     self.currentRelType;
     self.currentNodes;
+
     self.initialNodesattrs = {};
     self.initialLinksattrs = {};
+    var currentAction="";
 
 
-    self.showPaintDialog = function (label, reltype) {
+    self.showPaintDialog = function (label, relType) {
         self.currentLabel = label;
-        self.currentRelType = reltype;
+        self.currentRelType = relType;
 
 
         // $( "#dialog" ).css("left",totalWidth-350);
         // $( "#dialog" ).css("top",100);
         //   $("#dialog").dialog("option", "title", "Graph paint attributes");
+        $("#dialog").html("");
+      //  $("#dialog").css("font-size","12px");
+     /*   $("#dialog").height(200);
+        $("#dialog").width(150);*/
 
         $("#dialog").load("htmlSnippets/paintDialog.html", function () {
             // $("#paintDiv").load("htmlSnippets/paintDialog.html", function () {
@@ -27,21 +33,24 @@ var paint = (function () {
             if (label) {
 
                 filters.initLabelPropertySelection(label, paintDialog_propsSelect);
-                $("#paintDialog_clusterNodesButton").css("visibility","visible")
+                $("#paintDialog_clusterNodesButton").css("visibility","visible");
+                $("#paintDialogTypeSpan").html("Node label :"+label)
             }
             else {
-                filters.initRelationPropertySelection(reltype, paintDialog_propsSelect);
+
                 $("#paintDialog_clusterNodesButton").css("visibility","hidden")
+                filters.initRelationPropertySelection(relType, paintDialog_propsSelect);
+                $("#paintDialogTypeSpan").html("Relation type :"+relType)
             }
             paint.initColorsPalette(10, "paintDialogPalette");
             $("#dialog").dialog({
                 modal: false
             });
-            $("#dialog").css("font-size","12px");
-            $("#dialog").height(200);
-            $("#dialog").width(150);
-            $("#dialog").dialog("open");
 
+
+           if(paintDialog_propsSelect.options.length<1)
+               $("#paintDialogClassesButton").css("visibility","hidden")
+            $("#dialog").dialog("open");
 
         });
     }
@@ -341,21 +350,56 @@ var paint = (function () {
     }
 
 
-    self.onActionTypeSelect = function (select) {
-        if (select.selectedIndex == 0) {
-            $("#paintDialogAction").css("visibility", "visible");
-        }
-        else if (select.selectedIndex == 1) {
+    self.onActionTypeSelect = function (action) {
+        currentAction=action;
+        if (action == "outline") {//outline
+         //   $("#paintDialogAction").css("visibility", "visible");
+            $("#paintDialogPaletteDiv").css("visibility", "visible");
             $("#paintDialogPropDiv").css("visibility", "visible");
+            $("#paintDialog_classesDiv").css("visibility", "hidden");
+            $("#paintDialog_GraphicAttrsDiv").css("visibility", "visible");
+
+
+
+        }
+        if (action == "cluster") {//cluster
+            $("#paintDialogPaletteDiv").css("visibility", "hidden");
+            $("#paintDialogPropDiv").css("visibility", "hidden");
+            $("#paintDialog_GraphicAttrsDiv").css("visibility", "visible");
+            visjsGraph.clusterByLabel();
+        }
+
+        if (action == "classes") {//classes
+           $("#paintDialog_classesDiv").css("visibility", "hidden");
+            $("#paintDialog_operatorSelect").css("visibility", "hidden");
+
+            $("#paintDialogPropDiv").css("visibility", "visible");
+            $("#paintDialogPaletteDiv").css("visibility", "hidden");
+            $("#paintDialog_GraphicAttrsDiv").css("visibility", "visible");
+           // $("#paintDialog_classesDiv").css("visibility", "visible");
+
+
+        }
+
+
+    }
+
+
+    self.onPropertySelect=function(select){
+        var prop=$(select).val();
+        if(currentAction=="classes") {
+            $("#paintDialogPropQueryDiv").css("visibility", "hidden");
             $("#paintDialog_classesDiv").css("visibility", "visible");
 
-
         }
-
-        else if (select.selectedIndex == 2) {
-            $("#paintDiv").html("");
+        if(currentAction=="outline") {
+            if(prop=="ALL") {
+                $("#paintDialogPropQueryDiv").css("visibility", "hidden");
+            }
+            else{
+                $("#paintDialogPropQueryDiv").css("visibility", "visible");
+            }
         }
-
     }
     self.rgb2hex = function (rgb) {
         if (/^#[0-9A-F]{6}$/i.test(rgb)) return rgb;

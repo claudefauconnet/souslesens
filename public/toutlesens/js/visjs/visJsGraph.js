@@ -6,13 +6,14 @@ var visjsGraph = (function () {
     var network;
     self.physicsOn = true;
     self.nodesMap = {};
+    self.layout = "physics";
     var nodes;
     self.visjsData = {nodes: [], edges: []};
     var dataLabels = [];
     var colors = [];
     var stopPhysicsTimeout = 5000
 
-    var formatData = function (resultArray) {
+    var formatData = function (resultArray, relationNames) {
 
 
         self.nodesMap = {};
@@ -20,7 +21,7 @@ var visjsGraph = (function () {
         for (var i = 0; i < resultArray.length; i++) {
             var rels = resultArray[i].rels;
             var nodes = resultArray[i].nodes;
-            var relProperties= resultArray[i].relProperties;
+            var relProperties = resultArray[i].relProperties;
 
 
             if (!nodes)
@@ -62,11 +63,14 @@ var visjsGraph = (function () {
                 var relObj = {
                     from: ids[j],
                     to: ids[j + 1],
-                    type:rel,
-                    neoId:relProperties[j]._id,
-                    neoAttrs:relProperties[j].properties,
+                    type: rel,
+                    neoId: relProperties[j]._id,
+                    neoAttrs: relProperties[j].properties,
                     color: linkColors[self.nodesMap[ids[j + 1]].endRel]
                 }
+                if (Gparams.showRelationNames === true)
+                    relObj.label = relObj.type;
+                relObj.font = {"font-style": 'italic', "font-size": "12px"}
                 self.visjsData.edges.push(relObj);
             }
         }
@@ -78,13 +82,18 @@ var visjsGraph = (function () {
 
 
     self.draw = function (divId, resultArray) {
+
         var t0 = new Date();
         var data0 = formatData(resultArray);
-        var t1 = new Date();
-        console.log("--------------t0   " + (t1 - t0));
+
+
         var container = document.getElementById(divId);
         self.nodes = new vis.DataSet(data0.nodes);
         self.edges = new vis.DataSet(data0.edges);
+
+        var x=Math.log10(self.edges.length*2)+1;
+        stopPhysicsTimeout=Math.pow(10,x);
+        console.log("x" +x+" stopPhysicsTimeout: "+self.edges.length+" time " +stopPhysicsTimeout)
         data = {
             nodes: self.nodes,
             edges: self.edges
@@ -109,6 +118,7 @@ var visjsGraph = (function () {
             },
             physics: {
                 stabilization: false,
+                timestep: 0.46,
                 /*  barnesHut: {
                  gravitationalConstant: -80000,
                  springConstant: 0.001,
@@ -124,15 +134,16 @@ var visjsGraph = (function () {
                 smooth: true
             },
             interaction: {
-               // navigationButtons: true,
+                // navigationButtons: true,
                 keyboard: true
             }
 
 
         };
 
-        if (false && data.edges.length > 100)
-            options.improvedLayout = false,
+        if (data.edges.length > 1000)
+            options.layout={improvedLayout :false}
+
 
                 self.physicsOn = true;
         network = new vis.Network(container, data, options);
@@ -206,10 +217,9 @@ var visjsGraph = (function () {
         var label = paint.currentLabel;
         if (!label || !nodeColors[label])
             return;
-        var color = nodeColors[label];
         var clusterOptionsByData = {
             joinCondition: function (childOptions) {
-                return childOptions.color.background == color; // the color is fully defined in the node.
+                return childOptions.labelNeo == label; // the color is fully defined in the node.
             },
             processProperties: function (clusterOptions, childNodes, childEdges) {
                 var totalMass = 0;
@@ -241,13 +251,13 @@ var visjsGraph = (function () {
          }*/
         for (var key in  self.nodes._data) {
             var node = self.nodes._data[key];
-            if (nodeIds.indexOf(key)>-1) {
+            if (nodeIds.indexOf(key) > -1) {
                 node.color = {background: color};
                 node.size = 2 * radius;
             }
             else {
-                if(otherNodesColor)
-                node.color = {background: otherNodesColor};
+                if (otherNodesColor)
+                    node.color = {background: otherNodesColor};
             }
             nodes.push(node);
         }
@@ -257,8 +267,8 @@ var visjsGraph = (function () {
 
 
     }
-    self.selectNode=function(ids){
-        network.selectNodes(ids,true);
+    self.selectNode = function (ids) {
+        network.selectNodes(ids, true);
 
     }
     self.paintEdges = function (relIds, color, otherRelColor, radius) {
@@ -270,24 +280,82 @@ var visjsGraph = (function () {
          }*/
 
         //var relations=self.visjsData.edges;
-     //   for (var i=0;i<relations.length;i++) {
-        for (var key in self.edges){
-            var edge=self.edges[key];
+        //   for (var i=0;i<relations.length;i++) {
+        for (var key in self.edges._data) {
+            var edge = self.edges._data[key];
             if (relIds.indexOf(edge.neoId) > -1) {
-                edge.color = {color: color,opacity:1,width:3};
-                edge.width = 3;
+                self.edges._data[key].color = {color: color};
+                self.edges._data[key].width = 3;
+                // self.edges[key].width = 3;
             }
             else {
                 if (otherRelColor)
-                    edge.color = {color: otherRelColor,opacity:0.3,width:1};
+                    self.edges._data[key].color = {color: otherRelColor};
 
-               edges.push(edge);
+                edges.push(edge);
             }
 
         }
-        self.edges.update(edges);
+        network.setData({nodes: self.nodes, edges: self.edges});
+
+        //  physics: {enabled: true}
+        network.setOptions({
+            physics: {enabled: true}
+        });
+        network.fit()
+
+        //  self.edges.update(edges);
 
 
+    }
+
+    self.displayRelationNames = function () {
+        var show = $("#showRelationTypesCbx").prop("checked");
+        Gparams.showRelationNames = show;
+
+        for (var key in self.edges._data) {
+            if (show) {
+                self.edges._data[key].label = self.edges._data[key].type;
+                self.edges._data[key].font = {"font-style": 'italic', "font-size": "12px"}
+            }
+            else
+                delete self.edges._data[key].label;
+
+        }
+        network.setData({nodes: self.nodes, edges: self.edges});
+
+        //  physics: {enabled: true}
+        network.setOptions({
+            physics: {enabled: true}
+        });
+        network.fit()
+    }
+
+    self.changeLayout = function (select) {
+        self.layout = $(select).val();
+        var options = {}
+        if (self.layout == "physics") {
+
+            options.physics = {
+                enabled: true,
+                stabilization: false,
+                timestep: 0.46
+            };
+
+        }
+
+        if (self.layout == "hierarchical") {
+            options.layout = {
+                hierarchical: {
+                    direction: "UD"
+                }
+                ,
+                stabilization: false,
+                timestep: 0.46
+            };
+        }
+        network.setOptions(options);
+        network.fit()
     }
 
 
