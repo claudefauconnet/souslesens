@@ -154,7 +154,7 @@ var toutlesensData = (function () {
                      whereStatement = " WHERE (ID(node1)=" + id+")" ;//+" OR  ID(m)="+id+")"
                      else {
                         whereStatement = " WHERE (ID(m)=" + (-id) + ")";
-                        id=-id;
+
                     }
                 }
                 if (subGraphWhere) {
@@ -237,8 +237,10 @@ var toutlesensData = (function () {
                 if (data.length == 0) {
                    if(id>-1)// we retry with inverse relation
                        self.getNodeAllRelations (-id, output, addToExistingTree, callback);
-                   else
-                    return callback(null, []);
+                   else {
+                       id=-id;
+                       return callback(null, []);
+                   }
 
                 }
 

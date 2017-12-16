@@ -670,7 +670,7 @@ var infoGenericDisplay = (function () {
         toutlesensController.checkMaxNumberOfNodeRelations (parentId,Gparams.jsTreeMaxChildNodes,function(){
             currentObject= node.data;
         currentObject.id = parentId;
-        if (toutlesensController && currentDisplayType && currentDisplayType == "CARDS") {
+      /*  if (toutlesensController && currentDisplayType && currentDisplayType == "CARDS") {
 
             toutlesensController.onVisButton("CARDS");
 
@@ -678,11 +678,13 @@ var infoGenericDisplay = (function () {
         if (toutlesensController && currentDisplayType && currentDisplayType != "FORM") {
             toutlesensController.generateGraph(parentId, toutlesensController.drawGraph);
 
-        }
+        }*/
 
-        else {
+        if(true) {
              node = ids[parentJstreeId];
+            $("#tabs-radarRight").tabs("enable", 2);
             self.showNodeData(node);
+            toutlesensController.generateGraph(parentId, toutlesensController.drawGraph);
         }
 
         /*   if (node.data.label)
@@ -739,7 +741,8 @@ var infoGenericDisplay = (function () {
 
             self.setAttributesValue(label, attrObject, node);
             self.drawAttributes(attrObject, "nodeInfosDiv");
-            $("#infosHeaderDiv").css("visibility", "visible");
+            if (queryParams.write)
+                $("#infosHeaderDiv").css("visibility", "visible");
 
 
         })
@@ -899,7 +902,8 @@ var infoGenericDisplay = (function () {
 
 
     self.setEntityDiv = function (str) {
-        $("#infosHeaderDiv").css("visibility", "visible");
+        if (queryParams.write)
+            $("#infosHeaderDiv").css("visibility", "visible");
         $("#relInfosDivWrapper").css("visibility", "visibility");
         $("#nodeInfosDiv").html(str);
     }

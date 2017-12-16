@@ -149,8 +149,8 @@ self.getAllpropertiesDialogContent("setSearchNodeReturnFilterVal()");
         "<input type='image' height='15px'  alt='set as rootNode' onclick='dispatchAction(\"setAsRootNode\")' src='images/squareRoot.png'/>" + "&nbsp;" +
         "<B><span style='color:" + nodeColors[currentObject.label] + "'> [" + currentObject.label + "]<span>" +name+"</B>"*/
 
-  var str="<table> <tr>" +
-        "<td> <input type='image' height='20px' alt='infos'  onclick='toutlesensController.dispatchAction(\"nodeInfosPopup\")' src='images/infos.png'/></td>";
+  var str="<table> <tr>" ;//+
+      //  "<td> <input type='image' height='20px' alt='infos'  onclick='toutlesensController.dispatchAction(\"nodeInfosPopup\")' src='images/infos.png'/></td>";
   if(currentDisplayType=="SIMPLE_FORCE_GRAPH")
     str+= "<input type='image' height='15px'  alt='set as rootNode' onclick='toutlesensController.dispatchAction(\"addNodeToGraph\",null," + currentObject.id + ")' src='images/add.jpg'/>" + "&nbsp;";
     str+=   "<td><input type='image' height='15px'  alt='set as rootNode' onclick='toutlesensController.dispatchAction(\"setAsRootNode\")' src='images/squareRoot.png'/></td>"
@@ -162,9 +162,23 @@ self.getAllpropertiesDialogContent("setSearchNodeReturnFilterVal()");
     }
     str+="</tr></table>";
 
-    str+=   "<B><span style='color:" + nodeColors[label] + "'> [" + label + "]<span>" +"</B>"+name;
-       str +="<br><br>"+customizeUI.customInfo(currentObject)+"<br>";
+    str+=   "<B><span style='color:" + nodeColors[label] + "'> [" + label + "]<span>" +"</B>"+name+"<br>";
+    var customInfo=customizeUI.customInfo(currentObject);
 
+    if(customInfo && customInfo.length>0)
+       str +=customizeUI.customInfo(currentObject)+"<br>";
+
+
+       if( true){// show properties
+           toutlesensData.showInfos2(currentObject.id, function (obj) {
+
+               str += textOutputs.formatNodeInfo(obj[0].n.properties);
+               str += "<br>" + customizeUI.customInfo(obj);
+               $("#popupMenuNodeInfo").html(str);
+               return;
+           });
+
+       }
 
     if (currentObject.hiddenChildren) {
         str += "<ul>";

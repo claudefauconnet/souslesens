@@ -198,6 +198,11 @@ var toutlesensController = (function () {
                     return callback(err);
                 return;
             }
+
+            if(data.length==0){
+                self.setGraphMessage("No  result");
+                return;
+            }
             if (output == "filtersDescription") {
 
                 filters.initGraphFilters(data, false);
@@ -1376,12 +1381,15 @@ var toutlesensController = (function () {
             $("#tabs-radarLeft").tabs("option", "disabled", [2, 3]);
 
         }
-        $("#advancedQueriesDiv").tabs("option", "disabled", [2, 3, 4]);
+        if (queryParams.write) {
+            Gparams.readOnly = false
+        }
+      //  $("#advancedQueriesDiv").tabs("option", "disabled", [2, 3, 4]);
 
         if (Gparams.showBItab)
             $("#tabs-radarLeft").tabs("enable", 2);
 
-        if (queryParams.write) {
+       if(Gparams.readOnly==false){
             $("#infosHeaderDiv").css("visibility", "visible");
             infoGenericDisplay.userRole = "write";
             cards.userRole = "write";

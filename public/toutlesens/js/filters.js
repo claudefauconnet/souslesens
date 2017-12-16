@@ -69,6 +69,8 @@ var filters = (function () {
             for (var k = 0;k < filterObj.labels.length; k++) {
                 for (var j = 0; j < filterObj.labels[k].length; j++) {
                     var label = filterObj.labels[k][j];
+                    if(Array.isArray(label))
+                        label=label[0];
                     if (labelFilters.indexOf(label) < 0)
                         labelFilters.push(label);
                     if (self.currentFilters[relName].labels.indexOf(label) < 0)

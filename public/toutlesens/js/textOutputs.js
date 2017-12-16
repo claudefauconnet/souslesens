@@ -450,7 +450,7 @@ var textOutputs = (function () {
                 obj[key] = "<a href='javascript:showImage(\"" + encodeURI(Gparams.imagesRootPath + str) + "\")'>voir <a/>";
             }
             if (obj[key] && ("" + obj[key]).toLowerCase().indexOf("http") == 0)
-                obj[key] = "<a href='" + obj[key]
+                obj[key] = "<a href='" + decodeURIComponent(obj[key])
                     + "' target =='_blank'>cliquez ici</a>"
 
             if (obj["imageBlog"]) {

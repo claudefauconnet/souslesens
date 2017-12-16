@@ -91,9 +91,9 @@ var visjsGraph = (function () {
         self.nodes = new vis.DataSet(data0.nodes);
         self.edges = new vis.DataSet(data0.edges);
 
-        var x=Math.log10(self.edges.length*2)+1;
-        stopPhysicsTimeout=Math.pow(10,x);
-        console.log("x" +x+" stopPhysicsTimeout: "+self.edges.length+" time " +stopPhysicsTimeout)
+        var x = Math.log10(self.edges.length * 2) + 1;
+        stopPhysicsTimeout = Math.pow(10, x);
+        console.log("x" + x + " stopPhysicsTimeout: " + self.edges.length + " time " + stopPhysicsTimeout)
         data = {
             nodes: self.nodes,
             edges: self.edges
@@ -142,10 +142,10 @@ var visjsGraph = (function () {
         };
 
         if (data.edges.length > 1000)
-            options.layout={improvedLayout :false}
+            options.layout = {improvedLayout: false}
 
 
-                self.physicsOn = true;
+        self.physicsOn = true;
         network = new vis.Network(container, data, options);
         window.setTimeout(function () {
             network.setOptions({
@@ -329,6 +329,20 @@ var visjsGraph = (function () {
             physics: {enabled: true}
         });
         network.fit()
+    }
+
+
+    self.toList = function () {
+        var outputNodes = {};
+        var nodes = self.nodes._data;
+        for (var key in self.edges._data) {
+            var edge = self.edges._data[key];
+            if (!outputNodes[edge.from]) {
+                var node = nodes[edge.from]
+            }
+            outputNodes[edge.from] = {name: "aaa"}
+
+        }
     }
 
     self.changeLayout = function (select) {
