@@ -370,7 +370,10 @@ var paint = (function () {
         }
 
         if (action == "classes") {//classes
-           $("#paintDialog_classesDiv").css("visibility", "hidden");
+            var visibility="visible";
+            if($("#paintDialog_propsSelect").val()=="ALL")
+                visibility="hidden";
+          $("#paintDialog_classesDiv").css("visibility",visibility);
             $("#paintDialog_operatorSelect").css("visibility", "hidden");
 
             $("#paintDialogPropDiv").css("visibility", "visible");
@@ -392,12 +395,20 @@ var paint = (function () {
             $("#paintDialog_classesDiv").css("visibility", "visible");
 
         }
-        if(currentAction=="outline") {
+        if(currentAction=="outline" ) {
             if(prop=="ALL") {
                 $("#paintDialogPropQueryDiv").css("visibility", "hidden");
             }
             else{
                 $("#paintDialogPropQueryDiv").css("visibility", "visible");
+            }
+        }
+        if(currentAction=="classes" ) {
+            if(prop=="ALL") {
+                $("#paintDialog_classesDiv").css("visibility", "hidden");
+            }
+            else{
+                $("#paintDialog_classesDiv").css("visibility", "visible");
             }
         }
     }
