@@ -5,36 +5,92 @@
 var httpProxy = require("../httpProxy.js");
 var restApi = require("../restAPI.js");
 var async = require('async');
-var util = require('../util.js')
+
 var fs = require('fs');
+var xml2js = require('xml2js');
+var parser = new xml2js.Parser();
+var labels = [
+    "City",
+    "Man",
+    "Woman",
+]
 
-var rels0 = {
-    residents: {},
-    films: {},
-    species: {},
-    vehicles: {},
-    starships: {},
-    characters: {},
-    planets: {},
-    people: {},
-    pilots: {},
+var nodes={
+    City:[],
+    Man:[],
+    Woman:[],
+}
+var rels=[
+    "residentPlace",
+    "childOf"
 
-};
+]
+
 var rels = []
 
 // data from https://swapi.co/api/
 // http://eo.dbpedia.org/page/Star_Wars
-var starwars = {
+var nodes=[]
 
-    importStarWarsJson: function () {
-        var str = "" + fs.readFileSync("./thesaurii/starwars.json");
-        var json = JSON.parse(str);
+var bible = {
+    importBible: function () {
+
+        function recurseXmlNodes(node,json) {
+            for (var key in json) {
+
+
+                for (var key2 in json[key]) {
+                    var nodes = json[key][key2];
+                    for (var i = 0; i < nodes.length; i++) {
+                        var obj=nodes[i]
+                        if (labels.indexOf(key2) > -1) {
+                            var node = {label: key2, id: nodes[i]["$"]["rdf:ID"], children: {}}
+                            nodes.push(node);
+                        }
+                        recurseXmlNodes(node, obj[key2])
+
+                    }
+                }
+
+
+            }
+
+        }
+
+
+        var str = "" + fs.readFileSync("./thesaurii/bibleOntologIndividuals.owl");
+        parser.parseString(str, function (err, result) {
+            if (err) {
+                if (callback)
+                    callback(err);
+            }
+               var xx=result;
+               var root=[];
+                recurseXmlNodes(root,result);
+
+        })
+    },
+
+
+
+
+
+    importBibleRegEx: function () {
+        var str = "" + fs.readFileSync("./thesaurii/bibleOntologIndividuals.owl");
+        for(var i=0;i<labels.length;i++){
+            var reg=new RegExp('<'+labels[i]+'.*"(.*)">','gm');
+            var array;
+            while((array=reg.exec(str))!=null){
+                console.log(labels[i]+","+array[1])
+            }
+        }
 
 
         var cleanData = [];
         for (var key in json) {
             var label = key;
             var data = json[key];
+
 
             for (var i = 0; i < data.length; i++) {
                 var obj = data[i]
@@ -147,12 +203,12 @@ var starwars = {
 
 
 }
-module.exports = starwars;
+module.exports = bible;
 
 
 if (true) {
 
-    starwars.importStarWarsJson();
+    bible.importBible();
 }
 
 

@@ -32,8 +32,8 @@
     <title>souslesens</title>
 
 
-  <!--  <link rel="stylesheet" type="text/css" title="Design"
-          href="../common/js/jquery/theme_humanity/jquery-ui.min.css"/>-->
+    <!--  <link rel="stylesheet" type="text/css" title="Design"
+            href="../common/js/jquery/theme_humanity/jquery-ui.min.css"/>-->
     <link rel="stylesheet" media="screen" type="text/css" title="Design" href="../common/js/jquery/jquery-ui.min.css"/>
 
 
@@ -99,7 +99,6 @@
     <script src="js/cards.js"></script>
 
 
-
     <script src="../common/js/util.js"></script>
 
 
@@ -145,7 +144,7 @@
     <script src="js/functionalities.js"></script>
 
 
-  <!-- test visjs------------------------------------------>
+    <!-- test visjs------------------------------------------>
     <script src="js/visjs/visjs.js"></script>
     <script src="js/visjs/visJsGraph.js"></script>
     <link rel="stylesheet" type="text/css" href="js/visjs/vis-network.min.css.js"/>
@@ -230,8 +229,6 @@
             lang.setLangage();
 
 
-
-
             var mode = queryParams.mode;
             if (mode == "write")
                 Gparams.readOnly = false;
@@ -254,7 +251,7 @@
 
 
             $("#graphDiv").click(function (e) {
-                if(currentDisplayType = "VISJS-NETWORK")
+                if (currentDisplayType = "VISJS-NETWORK")
                     return;
                 var dat = e.target.__data__;
                 if (!dat) {
@@ -281,31 +278,33 @@
             $("#tabs-radarLeft").width(totalWidth / Gparams.leftPanelRatio).height(totalHeight - 50);
             $("#tabs-radarRight").height(totalHeight - 20);
             $("#radarFiltersTab").width((totalWidth / Gparams.leftPanelRatio) - 20).height(totalHeight - 50);
-          //  $("#info_panel").width(totalWidth / leftPanelRatio).height(totalHeight - 10);
+            //  $("#info_panel").width(totalWidth / leftPanelRatio).height(totalHeight - 10);
             $("#graphDiv").width((totalWidth / Gparams.leftPanelRatio * 2) - Gparams.legendWidth).height(totalHeight - 50)
+            $("#dataDiv").width((totalWidth / Gparams.leftPanelRatio * 2) - Gparams.legendWidth).height(totalHeight - 50);
+            $("#textDivContainer").width((totalWidth / Gparams.leftPanelRatio * 2) - Gparams.legendWidth).height(totalHeight - 50);
+
             $("#graphLegendDiv").width(Gparams.legendWidth).height(totalHeight - 50).css("left", $("#graphDiv").width());
-         //   $("#table_Graph").width((totalWidth / Gparams.leftPanelRatio * 2) - 50).height(totalHeight - 50);
-         $("#textDivContainer").width((totalWidth / Gparams.leftPanelRatio * 2) - 50).height(totalHeight - 100);
-        //    $("#neoQueriesHistoryId").width((totalWidth / Gparams.leftPanelRatio * 2) - 50).height(totalHeight - 100);
+            //   $("#table_Graph").width((totalWidth / Gparams.leftPanelRatio * 2) - 50).height(totalHeight - 50);
+            $("#textDivContainer").width((totalWidth / Gparams.leftPanelRatio * 2) - 50).height(totalHeight - 100);
+            //    $("#neoQueriesHistoryId").width((totalWidth / Gparams.leftPanelRatio * 2) - 50).height(totalHeight - 100);
             $("#center").width(totalWidth / 4 * 3).height(totalHeight - 100);
-       //     $("#nodeDetailsDiv").width((totalWidth / Gparams.leftPanelRatio * 2) - 50).height(totalHeight - 150);
-       //     $("#graphDecorationPanel").height(totalHeight / 2);
+            //     $("#nodeDetailsDiv").width((totalWidth / Gparams.leftPanelRatio * 2) - 50).height(totalHeight - 150);
+            //     $("#graphDecorationPanel").height(totalHeight / 2);
 
 
             $(".splitter_panel").width((totalWidth / Gparams.leftPanelRatio * 2.5)).height(totalHeight - 50);
             //  $("#graphLegendDiv").width(totalWidth / 4 * 3).height(50);
 
-         /*   $("#nodeIframe").width("100%").height(totalHeight - 100);
-            $("#modifyControls").width((totalWidth / 4 * 3) - 50).height(totalHeight - 300);
+            /*   $("#nodeIframe").width("100%").height(totalHeight - 100);
+             $("#modifyControls").width((totalWidth / 4 * 3) - 50).height(totalHeight - 300);
 
 
-            $(".accordionLeft").width((totalWidth / leftPanelRatio) - 30)//;.height(totalHeight-10);
-            $("#graphParametersPanel").height(totalHeight / 1.5).width((totalWidth / leftPanelRatio) - 35);
-            $("#graphFiltersPanel").height(totalHeight / 1.5).width((totalWidth / leftPanelRatio) - 35);
-            $("#graphPathsPanel").height(totalHeight / 1.5).width((totalWidth / leftPanelRatio) - 35);
-            $("#linkActionDiv").height(totalHeight / 1.5).width((totalWidth / leftPanelRatio) - 35);
-            $("#linkActionDiv").height(totalHeight - 150).width((totalWidth / leftPanelRatio) - 35);*/
-
+             $(".accordionLeft").width((totalWidth / leftPanelRatio) - 30)//;.height(totalHeight-10);
+             $("#graphParametersPanel").height(totalHeight / 1.5).width((totalWidth / leftPanelRatio) - 35);
+             $("#graphFiltersPanel").height(totalHeight / 1.5).width((totalWidth / leftPanelRatio) - 35);
+             $("#graphPathsPanel").height(totalHeight / 1.5).width((totalWidth / leftPanelRatio) - 35);
+             $("#linkActionDiv").height(totalHeight / 1.5).width((totalWidth / leftPanelRatio) - 35);
+             $("#linkActionDiv").height(totalHeight - 150).width((totalWidth / leftPanelRatio) - 35);*/
 
 
             splitter = $('#main').width("100%").height("100%").split({
@@ -397,8 +396,6 @@
             }
 
 
-
-
             $("#dialog").dialog({
                 autoOpen: false,
                 height: Gparams.bigDialogSize.h,
@@ -407,38 +404,38 @@
 
             });
 
-          /*  $("#dialogAdvancedSearch").dialog({
-                autoOpen: false,
-                height: Gparams.bigDialogSize.h,
-                width: Gparams.bigDialogSize.w,
+            /*  $("#dialogAdvancedSearch").dialog({
+             autoOpen: false,
+             height: Gparams.bigDialogSize.h,
+             width: Gparams.bigDialogSize.w,
 
-                appendTo: "#tabs-radarRight",
-                modal: true,
+             appendTo: "#tabs-radarRight",
+             modal: true,
 
-            });
-            $("#dialogAdvancedDisplay").dialog({
-                autoOpen: false,
-                height: Gparams.bigDialogSize.h,
-                width: Gparams.bigDialogSize.w,
-                appendTo: "#tabs-radarRight",
-                modal: true,
+             });
+             $("#dialogAdvancedDisplay").dialog({
+             autoOpen: false,
+             height: Gparams.bigDialogSize.h,
+             width: Gparams.bigDialogSize.w,
+             appendTo: "#tabs-radarRight",
+             modal: true,
 
-            });
-            $("#dialogGantt").dialog({
-                autoOpen: false,
-                height: Gparams.bigDialogSize.h,
-                width: Gparams.bigDialogSize.w,
-                appendTo: "#tabs-radarRight",
-                modal: true,
+             });
+             $("#dialogGantt").dialog({
+             autoOpen: false,
+             height: Gparams.bigDialogSize.h,
+             width: Gparams.bigDialogSize.w,
+             appendTo: "#tabs-radarRight",
+             modal: true,
 
-            });*/
+             });*/
 
             $("#popupMenuNodeInfoDiv").mouseleave(function () {
                 $(this).hide();
             });
 
 
-          //  advancedSearch.init();
+            //  advancedSearch.init();
 
             var afterLoadModelTasks = [
                 infoGenericDisplay.initLabels,
@@ -470,8 +467,6 @@
                 toutlesensController.appInitEnded = true;
 
             })
-
-
 
 
             /*     var str="";
@@ -508,10 +503,10 @@
 
         function onLabelSelect(select) {
             var value = $(select).val();
-          /*  if (value == "")
-                $("#onLabelActionSelect").val("displayGraphForLabel");
-            else
-                $("#onLabelActionSelect").val("listNodes");*/
+            /*  if (value == "")
+             $("#onLabelActionSelect").val("displayGraphForLabel");
+             else
+             $("#onLabelActionSelect").val("listNodes");*/
             var actionType = $("#onLabelActionSelect").val();
             if (actionType == "listNodes") {
                 infoGenericDisplay.clearNodePropertiesDiv();
@@ -531,7 +526,6 @@
 
             }
         }
-
 
 
     </script>
@@ -571,14 +565,11 @@
                         <table border="0">
 
 
-
-
-
-
                             <tr>
 
                                 <td colspan="2">
-                                    <br> Label <select id="nodesLabelsSelect" onchange="toutlesensController.onLabelSelect(this)"> </select>
+                                    <br> Label <select id="nodesLabelsSelect"
+                                                       onchange="toutlesensController.onLabelSelect(this)"> </select>
 
                                     <hr>
                                     <span id='lang_1'>Search</span>
@@ -617,390 +608,6 @@
 
 
                         </table>
-                    </div>
-                </div>
-
-
-                <!--   /*******************************************************advancedQueriesDiv************************************************************/
-                   /*******************************************************advancedQueriesDiv************************************************************/
-                   /*******************************************************advancedQueriesDiv************************************************************/-->
-
-                <div id="advancedQueriesDiv">
-
-                    <ul>
-
-                        <li><a href="#graphPathDiv"><span id='lang_103'>Chemin entre  noeuds</span></a></li>
-                        <li><a href="#currentQueriesDiv"><span id='lang_168'>Current queries</span></a></li>
-                        <li><a href="#PatternVizDiv"><span id='lang_169'>Pattern viz</span></a></li>
-                        <li><a href="#cypherQueryDivX"><span id='lang_101'>Cypher query</span></a></li>
-
-                        <!--  <li><a href="#graphTraversalDiv"><span id='lang_102'>Traversee de graphe</span></a></li>-->
-                        <li><a href="#graphSavedRequestsDiv"><span id='lang_162'>requetes enregistrees</span></a></li>
-
-                    </ul>
-
-                    <div id="graphPathDiv">
-                        <!--    this first tab is IN PROGRESS, currentQueries is OK...-->
-
-                            <br>
-                            <table border="0">
-                                <tr>
-                                    <td><span id='lang_109'>noeud source</span></td>
-                                    <td><input id="graphPathSourceNode" value=" ?"
-                                               onclick="advancedSearch.onSourceNodeClick()">
-                                        <button onclick="$('#graphPathSourceNode').val('?');advancedSearch.setTargetNodeVisibility(true)">
-                                            X
-                                        </button>
-                                        </input></td>
-
-                                </tr>
-                                <tr>
-
-                                    <td><span id='lang_133' class="targetNode">noeud cible</span></td>
-
-                                    <td><span class="targetNode"><input onclick="advancedSearch.onTargetNodeClick()"
-                                                                        id="graphPathTargetNode" value=" ?">
-                        <button onclick="$('#graphPathTargetNode').val('?'); ">X</button>
-                                        </input></span></td>
-                                <tr>
-                                <tr>
-
-                                    <td><span id='lang_134' class='targetNode'>>distance maximum entre les noeuds</span>
-                                    </td>
-                                    <td><span class="targetNode"><input id="graphPathMaxDistance" value="1"/></span></td>
-                                </tr>
-
-
-                            </table>
-
-
-                    </div>
-                    <div id="PatternVizDiv">
-                        <table>
-                            <tr>
-
-                                <td>
-                                    <table>
-                                        <tr>
-                                            <td>
-                                                Add Label
-                                            </td>
-                                            <td>
-                                                <select id="patternLabelSelect"
-                                                        onchange="advancedSearch.onPatternLabelSelect(this)">
-                                                    <option></option>
-                                                </select>
-                                                <button onclick="advancedSearch.patternResetLabel()">Reset</button>
-                                            </td>
-
-                                        </tr>
-                                        <tr>
-                                            <td>
-                                                Add relation type
-                                            </td>
-                                            <td>
-                                                <select id="patternRelTypeSelect"
-                                                        onchange="advancedSearch.onPatternRelTypeSelect(this)">
-                                                    <option></option>
-                                                </select>
-                                            </td>
-
-                                        </tr>
-                                        <!-- <tr>
-                                             <td>
-                                                 All RelType
-                                             </td>
-                                             <td>
-                                                 <select id="patternRelTypeSelect" onchange="patternAdd(this)"><option></option></select>
-                                             </td>
-
-                                         </tr>-->
-                                    </table>
-
-
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-
-                                    Pattern
-                                    <br>
-                                    <select id="patternPatternSelect" size="10"></select>
-
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <button onclick="advancedSearch.removeFromPatternSelect()">-</button>
-                                    &nbsp;
-                                    <button onclick="advancedSearch.executePatternUI(true)">Count</button>
-                                    <br>
-                                    <input id="patternCount">
-                                </td>
-                            </tr>
-                        </table>
-
-
-                    </div>
-
-                    <div id="cypherQueryDivX">
-                        <table>
-                            <tr>
-
-                                <td><span id='lang_104'>Match</span></td>
-                                <td><textArea id="cypherQueryMatchTextArea"
-                                              ondblclick="advancedSearch.showLabelSelectionDialog('setCypherqueryMatch()')"
-                                              class="cypherQueryTextArea"></textArea></td>
-
-
-                            </tr>
-                            <tr>
-                                <td><span id='lang_105'>Where</span></td>
-                                <td><textArea id="cypherQueryWhereTextArea"
-                                              class="cypherQueryTextArea"></textArea></td>
-
-
-                            </tr>
-                            <!--  <tr>
-                                  <td><span id='lang_106'>GroupBy</span></td>
-                                  <td><textArea id="cypherQueryGroupByTextArea"
-                                                onclick="onClickCypherQueryMatchTextArea(this)"
-                                                class="cypherQueryTextArea"></textArea></td>
-
-
-                              </tr>
-                              <tr>
-                                  <td><span id='lang_107'>Return</span></td>
-                                  <td><textArea id="cypherQueryReturnTextArea"
-                                                class="cypherQueryTextArea"> </textArea></td>
-
-
-                              </tr>-->
-
-
-                        </table>
-                    </div>
-
-
-                    <div id="graphSavedRequestsDiv">
-
-                    </div>
-
-
-                    <div id="currentQueriesDiv">
-                        <table>
-                            <tr>
-                                <td>
-                                    Source label
-                                </td>
-                                <td>
-                                    <select id="currentQueriesSourceLabelSelect"> </select>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    Target label(optional)
-                                </td>
-                                <td>
-                                    <select id="currentQueriesTargetLabelSelect"> </select>
-
-                                    &nbsp;direction <select id="currentQueriesDirectionSelect">
-                                    <option>any</option>
-                                    <option>outgoing</option>
-                                    <option>incoming</option>
-                                </select>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    Standard queries
-                                </td>
-                                <td>
-                                    <select id="currentQueriesSelect"
-                                            onchange="statistics.onCurrentQueriesSelect()"> </select>&nbsp;limit<input
-                                        id="currentQueriesLimit" value="100">
-                                </td>
-                            </tr>
-
-
-                        </table>
-
-
-                    </div>
-
-
-                    <div class="executeDiv">
-                        <button onclick="advancedSearch.executeSearch()"><span id='lang_152'>Draw Graph</span></button>
-                        <button onclick="currentActionObj.selection=true;advancedSearch.executeSearch()"><span
-                                id='lang_174'>Selection</span></button>
-                        <span id='lang_108'>Limite</span></td>
-                        <input id="cypherQueryLimitInput" size="5" value="2000">&nbsp;
-                        <button onclick="currentActionObj.selection=false;toutlesensDialogsController.hideAdvancedSearch()">
-                            <span id='lang_153'>Annuler</span></button>
-                        <div id="message" class="message"></div>
-                    </div>
-                </div>
-
-
-                <!--  /*******************************************************graphBIDiv************************************************************/
-                  /*******************************************************graphBIDiv************************************************************/
-                  /*******************************************************graphBIDiv************************************************************/-->
-
-                <div id="graphBIDiv">
-                    <div id="graphDecorationDiv">
-                        <table border="0" align="center">
-
-                            <tr>
-                                <td><span id='lang_100'><span id='lang_140'>Labels</span></span></td>
-                            </tr>
-
-                            <tr>
-                                <td><select id="nodesLabelsBISelect" size="8"
-                                            onclick="advancedDisplay.onLabelClick(this)"></select></td>
-
-                            </tr>
-
-
-                            <tr>
-                                <td><span id='lang_141'>Proprietes</span></td>
-                            </tr>
-
-                            <tr>
-
-                                <td><select id="nodesLabelsPropertiesSelect" size="8"
-                                            onclick="advancedDisplay.onPropertyClick(this)">
-                                    <option><span id='lang_139'>------</span>----</option>
-                                </select></td>
-
-                            </tr>
-
-
-                        </table>
-                    </div>
-
-                    <div id="graphDecorationTabsDiv">
-                        <ul>
-                            <li><a href="#graphDecorationNodeVal"><span id='lang_142'>proprietes</span></a></li>
-                            <li><a href="#graphSavedPropsDiv"><span id='lang_161'>proprietes enregistr?es</span></a>
-                            </li>
-
-                        </ul>
-
-                        <div id="graphDecorationNodeVal">
-                            <span class="help">Representer la valeur d'un parametre</span>
-                            <table border="0">
-
-                                <tr>
-                                    <td>
-                                        <span id='lang_144'>Valeurs</span>
-                                        <button onclick="advancedDisplay.clearGraphDecorationValues()">X</button>
-                                    </td>
-
-                                    <td>
-                                        <select id="graphDecorationValues" size="8">
-                                        </select>
-                                    </td>
-                                    <td>
-                                        number of classes<br>
-                                        <input id="nClassesInput" onclick="advancedDisplay.setNumberOfclasses()">
-                                        <button onclick="setNoClasses()">No classes</button>
-
-                                    </td>
-                                </tr>
-
-
-                                <tr>
-                                    <td>
-                                        <span id='lang_145'>Couleur</span>
-                                    </td>
-
-                                    <td>
-                                        <button id="graphDecorationColor"
-                                                class="jscolor {valueElement:colorInput,value:'66ccff'}">choose
-                                        </button>
-                                        <input type="hidden" id="colorInput"
-                                               onchange="advancedDisplay.setPropertyValueOptionColor()">
-                                    </td>
-                                    <td>
-                                        <button onclick="advancedDisplay.setAutoRangeColors()">Range</button>
-                                        <button onclick="advancedDisplay.setAutoAllColors()">All</button>
-                                        <!--  <button onclick="showPaletteDialog()">Palette...</button>-->
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        <span id='lang_146'>Taille</span> <input id="graphDecorationSize" size="3">
-                                    </td>
-                                    <td>
-
-                                        <div id="graphDecorationSizeSlider" style="width: 130px;"></div>
-                                    </td>
-                                    <td>
-                                        <button onclick="advancedDisplay.setAutoRangeSize()">Range</button>
-                                        <button onclick="advancedDisplay.setAutoAllSize()">All</button>
-
-
-                                    </td>
-                                </tr>
-                                <!--          <tr>
-                                              <td>
-                                                  <span id='lang_147'>Symbole</span>
-                                              </td>
-
-                                              <td>
-                                                  <select id="graphDecorationShape">
-                                                      <option value="circle"><span id='lang_148'>aucun</span></option>
-                                                      <option value="square"><span id='lang_154'>carre</span></option>
-                                                      <option value="triangleUp"><span id='lang_149'>triangle</span></option>
-                                                      <option value="triangleDown"><span id='lang_150'>triangle inverse</span></option>
-                                                  </select>
-                                              </td>
-                                              <td>
-                                              -->
-                                <button onclick="advancedDisplay.setAutoAllShape()"> All</button>
-                                </td>
-                                </tr>
-                                <!--   <tr>
-                                       <td>
-                                           <button onclick="setPropertyValueAttr()"><span id='lang_151'>Ajouter</span></button>
-                                       </td>
-
-                                       <td colspan="2">
-
-                                           <select id="graphDecorationDoneValues" size=8>
-                                           </select>
-
-
-                                       </td>
-                                   </tr>-->
-
-
-                            </table>
-
-
-                            <div>
-                                <button oncLick="advancedDisplay.executeDisplay()"><span id='lang_152'>Executer</span>
-                                </button>
-                                <button oncLick="advancedDisplay.saveStoredDecorationObjsDialog()"><span id='lang_155'>Enregistrer</span>
-                                </button>
-                                <button oncLick="toutlesensController.hideAdvancedDisplay()"><span
-                                        id='lang_153'>Annuler</span></button>
-                                <input type="checkbox" id="groupByClassCBx"> grouper les valeurs &nbsp;<input
-                                    type="checkbox" checked="checked" id="crossLabel"> pour tous les labels
-                            </div>
-
-                        </div>
-                        <div id="graphSavedPropsDiv">
-                            <select id="storedDecorationObjsSelect"
-                                    onclick="advancedDisplay.onStoredDecorationObjsSelect()"
-                                    size="10">
-                            </select>
-                            description
-                            <div id="storedDecorationObjsTA"></div>
-                            <button onclick="advancedDisplay.executeStoredDecorationObjs()">executer</button>
-
-
-                        </div>
                     </div>
                 </div>
 
@@ -1095,37 +702,37 @@
 
                 </div>
 
-
-                <!-- /*******************************************************selection************************************************************/
-                 /*******************************************************selection************************************************************/
-                 /*******************************************************selection************************************************************/-->
-                <!--  ****************************************************selection***************************-->
-                <!-- <div id="selectionTab">
-                     nodes
-                     <select size="15" id="d3SelectionSelect"></select>
-                     <button onclick="removeNodeFromSelection()" ;>-</button>
-
-
-                     <br> action <select onchange="toutlesensController.d3SelectionAction(this)">
-                     <option></option>
-                     <option value="clear"><span id='lang_172'>clear</span></option>
-                     <option value="setAttributeDialog"><span id='lang_172'>set attribute</span></option>
-                     <option value="defineAsLinkSourceNodes"><span id='lang_173'>define as link Source</span></option>
-                     <option value="defineAsLinkTargetNodes"><span id='lang_171'>define as link Target</span></option>
-                     <option value="deleteRelationTypeDialog"><span id='lang_174'>delete link</span></option>
-
-
-                 </select>
-                     <button onclick="selectAllGraphNodes()"><span id='lang_176'>Select all graph nodes</span></button>
-
-
-                 </div>-->
-
-
             </div>
+
+            <!-- /*******************************************************selection************************************************************/
+             /*******************************************************selection************************************************************/
+             /*******************************************************selection************************************************************/-->
+            <!--  ****************************************************selection***************************-->
+            <!-- <div id="selectionTab">
+                 nodes
+                 <select size="15" id="d3SelectionSelect"></select>
+                 <button onclick="removeNodeFromSelection()" ;>-</button>
+
+
+                 <br> action <select onchange="toutlesensController.d3SelectionAction(this)">
+                 <option></option>
+                 <option value="clear"><span id='lang_172'>clear</span></option>
+                 <option value="setAttributeDialog"><span id='lang_172'>set attribute</span></option>
+                 <option value="defineAsLinkSourceNodes"><span id='lang_173'>define as link Source</span></option>
+                 <option value="defineAsLinkTargetNodes"><span id='lang_171'>define as link Target</span></option>
+                 <option value="deleteRelationTypeDialog"><span id='lang_174'>delete link</span></option>
+
+
+             </select>
+                 <button onclick="selectAllGraphNodes()"><span id='lang_176'>Select all graph nodes</span></button>
+
+
+             </div>-->
 
 
         </div>
+
+
     </div>
 
 
@@ -1140,7 +747,7 @@
             <li><a href="#textTab"><span id='lang_29'>Liste</span></a></li>
 
             <!--    <li id="li_nodeDetails"><a href="#nodeDetailsTab">Details </a></li>-->
-            <li id="li_modify"><a href="#modifyTab"><span id='lang_31'>Data</span></a></li>
+            <li id="li_modify"><a href="#dataTab"><span id='lang_31'>Data</span></a></li>
 
         </ul>
 
@@ -1149,109 +756,9 @@
         <div id="graphTab">
             <div id="center">
 
-                <div id="graphLegendDiv">
-                    <input type="image" title="Data menu" height="40px"  onclick="mainMenu.showDataMenu()" id="dataMenuButton" src="images/data.png"/>
-                    <input type="image" title="Graph menu" height="40px"  onclick="mainMenu.showGraphDisplayMenu()" id="parametersMenuButton" src="images/parameters.png"/>
-                    <input type="image" title="Previous display" height="40px"  onclick="toutlesensController.replayGraph('previous')" id="previousMenuButton" src="images/previous.png"/>
-                    <input type="image" title="Next display" height="40px"  onclick="toutlesensController.replayGraph('next')" id="nextMenuButton" src="images/next.png"/>
-
-                    <!--     <button onclick="mainMenu.showDataMenu()"> Data menu</button>  <button onclick="mainMenu.showGraphDisplayMenu()"> Graph menu</button>
-                   <!--    <button id="backToPreviousGraph" onclick="toutlesensController.replayGraph()">Previous Graph</button>-->
-
-                    <!--   <button style="font-size:12px" onclick="toutlesensController.stopAnimation()">stop animation</button>-->
-                    <div id="paintDiv"></div>
-                    <div id="filtersDiv"></div>
-                    <div id="innerLegendDiv"></div>
-                    <div id="graphMessage" class="message"> <br><img id="waitImg" src="images/waitAnimated.gif" width="50px" style="visibility: hidden;"></div>
-                    <div id="relInfoDiv"></div>
-                </div>
 
                 <div id="graphDiv"></div>
-                <div id="popupMenuWrite" class="popupmenuDiv">
-                    <table border="0" class="popupMenuTable">
-                        <tr>
-                            <td><span onclick=toutlesensController.dispatchAction('nodeInfos')><span
-                                    id='lang_67'>Infos</span></span></td>
-                        </tr>
-                        <tr>
-                            <td><span onclick="toutlesensController.dispatchAction('setAsRootNode')"><span
-                                    id='lang_68'>Devient Noeud racine</span></span></td>
-                        </tr>
-                        <tr>
-                            <td><span onclick="toutlesensController.dispatchAction('unfoldNode')"><span
-                                    id='lang_34'>Deplier</span></span></td>
-                        </tr>
 
-                        <tr>
-                            <td><span onclick="toutlesensController.dispatchAction('foldNode')"><span
-                                    id='lang_35'>Replier</span></span></td>
-                        </tr>
-
-                        <tr>
-                            <td><span onclick="toutlesensController.dispatchAction('modifyNode')"><span
-                                    id='lang_36'>Modifier</span></span></td>
-                        </tr>
-                        <tr>
-                            <td><span onclick="toutlesensController.dispatchAction('linkSource')"><span
-                                    id='lang_64'>Source d'un lien</span></span></td>
-                        </tr>
-                        <tr>
-                            <td><span onclick="toutlesensController.dispatchAction('linkTarget')"><span
-                                    id='lang_65'>Cible du lien</span></span></td>
-                        </tr>
-
-                    </table>
-
-
-                </div>
-                <div id="popupMenuRead" class="popupmenuDiv">
-                    <table border="0" class="popupMenuTable">
-                        <tr>
-                            <td><span onclick="toutlesensController.dispatchAction('nodeInfos')"><span
-                                    id='lang_67'>Infos</span></span></td>
-                        </tr>
-                        <tr>
-                            <td><span onclick="toutlesensController.dispatchAction('setAsRootNode')"><span
-                                    id='lang_68'>Devient Noeud racine</span></span></td>
-                        </tr>
-                        <tr>
-                            <td><span onclick="toutlesensController.dispatchAction('unfoldNode')"><span
-                                    id='lang_38'>Deplier</span></span></td>
-                        </tr>
-
-                        <tr>
-                            <td><span onclick="toutlesensController.dispatchAction('foldNode')"
-                                      id='lang_39'>Replier</span></td>
-                        </tr>
-
-
-                    </table>
-
-
-                </div>
-                <div id="popupMenuLabel" class="popupmenuDiv">
-                    <table border="0" class="popupMenuTable">
-                        <tr>
-                            <td><span onclick="toutlesensController.dispatchAction('closeNodesFromLabel')"
-                                      id='lang_40'>Fermer</span></td>
-                        </tr>
-                        <tr>
-                            <td><span onclick="toutlesensController.dispatchAction('openNodesFromLabel')"
-                                      id='lang_41'>Ouvrir</span></td>
-                        </tr>
-                        <!--  	<tr>
-                            <td><span onclick="dispatchAction('listNodesFromLabel')">Liste
-                        </tr>
-                        <tr>
-                            <td><span onclick="dispatchAction('drawGraphFromLabel')">Graphe</span>
-                            </td>
-                        </tr>-->
-
-
-                    </table>
-
-
-                </div>
                 <div id="popupMenuNodeInfoDiv" class="popupmenuDiv">
                     <div id="popupMenuNodeInfo">//onblur="hidePopupMenu()" >
                     </div>
@@ -1272,6 +779,10 @@
 
             </div>
         </div>
+
+
+
+
         <!--  ****************************************************textTab***************************-->
         <div id="textTab">
             <div id="textDivContainer">
@@ -1302,17 +813,12 @@
                 <br>
                 <div id="textDiv"></div>
             </div>
-            <!--  <button onclick="exportCSV()"><span id='lang_44'>Telecharger</span></button>
 
-                <table id="table_Graph" class="cell-border,compact">
-                </table>-->
-            <!-- <div class="scroll-container" id="SSSpreadsheetDivContainer">
-                <div id="spreadsheetDiv"></div>
-            </div> -->
         </div>
 
+
         <!--  ****************************************************modify***************************-->
-        <div id="modifyTab">
+        <div id="dataTab">
             <div id="infosDiv">
                 <div id="infosHeaderDiv">
                     &nbsp;&nbsp;<button onclick="infoGenericDisplay.saveNode()">Save</button>
@@ -1333,59 +839,35 @@
         </div>
 
 
-        <!--  ****************************************************nodeDetailsTab***************************-->
-        <!--
-        <div id="cardsInfosControlsDiv">
-            <button onclick="cards.save();">Save</button>
-            <button onclick="cards.delete();">Delete</button>
-            <button onclick="cards.add();">Add</button>
-        </div>
 
-        <div id="nodeDetailsTab">
-
-            <div id="nodeDetailsDiv"></div>
-
-        </div>
-
-        <div id="neoQueriesTab">
-            <div id="colorTest"></div>
-            <table border="0">
-                <tr>
-                    <td>url</td>
-                    <td><textarea id="neoUrlTextArea" cols="100" rows="1"></textarea></td>
-                </tr>
-                <tr>
-                    <td>requete</td>
-                    <td><textarea id="neoQueriesTextArea" cols="100" rows="5"></textarea></td>
-                </tr>
-
-                <tr>
-                    <td colspan="2">
-                        <button onclick="modifyData.execNeoQuery()">
-                            <span id='lang_53'>Executer</span>
-                        </button>
-                    </td>
-
-                </tr>
-                <tr>
-                    <td><span id='lang_54'>historique session</span></td>
-                    <td>
-                        <div id="neoQueriesHistoryId"></div>
-                    </td>
-                </tr>
-            </table>
-
-        </div>-->
 
     </div>
+    <div id="graphLegendDiv">
+        <input type="image" title="Data menu" height="40px" onclick="mainMenu.showDataMenu()" id="dataMenuButton"
+               src="images/data.png"/>
+        <input type="image" title="Graph menu" height="40px" onclick="mainMenu.showGraphDisplayMenu()"
+               id="parametersMenuButton" src="images/parameters.png"/>
+        <input type="image" title="Previous display" height="40px"
+               onclick="toutlesensController.replayGraph('previous')" id="previousMenuButton"
+               src="images/previous.png"/>
+        <input type="image" title="Next display" height="40px" onclick="toutlesensController.replayGraph('next')"
+               id="nextMenuButton" src="images/next.png"/>
+
+        <!--     <button onclick="mainMenu.showDataMenu()"> Data menu</button>  <button onclick="mainMenu.showGraphDisplayMenu()"> Graph menu</button>
+       <!--    <button id="backToPreviousGraph" onclick="toutlesensController.replayGraph()">Previous Graph</button>-->
+
+        <!--   <button style="font-size:12px" onclick="toutlesensController.stopAnimation()">stop animation</button>-->
+        <div id="paintDiv"></div>
+        <div id="filtersDiv"></div>
+        <div id="innerLegendDiv"></div>
+        <div id="graphMessage" class="message"><br><img id="waitImg" src="images/waitAnimated.gif" width="50px"
+                                                        style="visibility: hidden;"></div>
+        <div id="relInfoDiv"></div>
+    </div>
+
 
 </div>
-<div id="dialogGantt" title="Gantt">
-    <!--   <iframe id="dialogGanttIframe" src="ganttDialog.html"></iframe>-->
-</div>
 
-<input type="hidden" id="graphTravReturnEvaluator">
-<input type="hidden" id="graphTravPruneEvaluator"></input>
-<input type="hidden" id="graphTravRelTypes"></input>
+
 </body>
 </html>

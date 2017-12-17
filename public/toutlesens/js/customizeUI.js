@@ -176,6 +176,8 @@ var customizeUI = (function () {
 
         legendDivWidth=30;
         $("#graphDiv").width((totalWidth - 10)-legendDivWidth)
+        $("#dataDiv").width((totalWidth - 10)-legendDivWidth)
+        $("#textDivContainer").width((totalWidth - 10)-legendDivWidth)
         $("#graphLegendDiv").css("left", (totalWidth - 10) -legendDivWidth)
         $("#graphLegendDiv").width(legendDivWidth);
     }

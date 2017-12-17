@@ -65,7 +65,7 @@ var toutlesensController = (function () {
             $("#currentNodeSpan").html("Noeud central : " + text);
 
             if (Gparams.modifyMode == 'onList' && currentMode == "write") {
-                var index = $('#tabs-radarRight a[href="#modifyTab"]').parent().index();
+                var index = $('#tabs-radarRight a[href="#dataTab"]').parent().index();
                 $("#tabs-radarRight").tabs("option", "active", index);
 
                 self.dispatchAction("modifyNode");
@@ -984,7 +984,7 @@ var state=null;
                 sourceNode: sourceNode,
             }
         } else if (action == "linkTarget") {
-            //	selectLeftTab('#modifyTab');
+            //	selectLeftTab('#dataTab');
             $("#linkActionDiv").css("visibility", "visible");
             var targetNode = currentObject;
             $("#linkTargetNode").val(targetNode.name);
@@ -995,27 +995,38 @@ var state=null;
             currentRelationData.targetNode = targetNode;
             modifyData.setLinkTypes();
         } else if (action == "modifyNode") {
-            $("#ModifyNodeActionDiv").css("visibility", "visible");
-            $("#accordionModifyPanel").accordion("option", "active", 0);
-            // var index = $('#tabs-radarRight
-            // a[href="li_modify"]').parent().index();
-            $("#tabs-radarRight").tabs("option", "active", 3);
-            if (id) {
-                var query = "MATCH (n) WHERE ID(n) =" + id + " RETURN n";//,'m','r',labels(n),'x',ID(n) ";// limit 1 ";
 
-                toutlesensData.executeNeoQuery(QUERY_TYPE_MATCH, query, function (data) {
-                    if (data.length == 0)
-                        return;
-                    var obj = data[0].n.properties;
-                    obj.id = data[0].n._id;
-                    obj.label = data[0].n.labels[0];
-                    modifyData.drawFieldInputs(obj);
-                    $("#accordionModifyPanel").accordion({active: 1});
-                    $("#accordionModifyPanel").accordion({active: 0});
-                    //$( "#accordionModifyPanel" ).accordion( "option", "animate", 200 );
+            var label = currentObject.labelNeo;
+            var attrObject = Schema.schema.properties[label];
+            $("#nodeLabel").html(label);
+            infoGenericDisplay.setAttributesValue(label, attrObject, currentObject.neoAttrs);
+            infoGenericDisplay.drawAttributes(attrObject, "nodeInfosDiv");
+            if (queryParams.write)
+                $("#infosHeaderDiv").css("visibility", "visible");
+            $("#tabs-radarRight").tabs("enable", 2);
+            $("#tabs-radarRight").tabs("option", "active", 2);
 
-                });
-            }
+            /*  $("#ModifyNodeActionDiv").css("visibility", "visible");
+              $("#accordionModifyPanel").accordion("option", "active", 0);
+              // var index = $('#tabs-radarRight
+              // a[href="li_modify"]').parent().index();
+              $("#tabs-radarRight").tabs("option", "active", 3);
+              if (id) {
+                  var query = "MATCH (n) WHERE ID(n) =" + id + " RETURN n";//,'m','r',labels(n),'x',ID(n) ";// limit 1 ";
+
+                  toutlesensData.executeNeoQuery(QUERY_TYPE_MATCH, query, function (data) {
+                      if (data.length == 0)
+                          return;
+                      var obj = data[0].n.properties;
+                      obj.id = data[0].n._id;
+                      obj.label = data[0].n.labels[0];
+                      modifyData.drawFieldInputs(obj);
+                      $("#accordionModifyPanel").accordion({active: 1});
+                      $("#accordionModifyPanel").accordion({active: 0});
+                      //$( "#accordionModifyPanel" ).accordion( "option", "animate", 200 );
+
+                  });
+              }*/
 
         } else if (action == "newNode") {
             $("#ModifyNodeActionDiv").css("visibility", "visible");

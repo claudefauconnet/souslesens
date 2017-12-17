@@ -49,6 +49,13 @@ var visjsGraph = (function () {
 
 
                     }
+                    if (nodeNeo.icon && nodeNeo.icon.length > 0) {
+                        nodeObj.shape = 'image';
+                        nodeObj.image = nodeNeo.icon;
+                        nodeObj. borderWidth=4
+                        nodeObj.size=30;
+
+                    }
                     self.visjsData.nodes.push(nodeObj);
                     self.nodesMap[neoId] = nodeObj;
                     if (dataLabels.indexOf(nodeObj.labelNeo) < 0)
