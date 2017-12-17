@@ -35,7 +35,9 @@ var toutlesensController = (function () {
     self.currentSource = "NEO4J";
     self.appInitEnded = false;
     self.graphHistoryArray = [];
-    self.graphHistoryArray.index=0
+    self.graphHistoryArray.index = 0;
+
+    self.addToHistory = true;
 
 
 // http://graphaware.com/neo4j/2015/01/16/neo4j-graph-model-design-labels-versus-indexed-properties.html
@@ -98,29 +100,31 @@ var toutlesensController = (function () {
     }
 
     self.replayGraph = function (direction) {
-var state=null;
+        self.addToHistory = false;
+        var state = null;
 
         if (direction == "previous") {
             if (self.graphHistoryArray.length > 1) {
-            self.graphHistoryArray.index+=1
+                self.graphHistoryArray.index += 1
 
-                 state = self.graphHistoryArray[self.graphHistoryArray.index]
+                state = self.graphHistoryArray[self.graphHistoryArray.index]
 
-             //   $("#nextMenuButton").css("visibility", "visible")
+                //   $("#nextMenuButton").css("visibility", "visible")
             }
-           } /* else if (direction == "next") {
-            if (self.graphHistoryArray.index>0) {
-                self.graphHistoryArray.index -= 1
-            } else
-                $("#nextMenuButton").css("visibility", "hidden")
-        }*/
-            if(state) {
-                currentObject.id = state.currentObjectId;
-                currentLabel = state.currentLabel;
-                currentDisplayType = state.displayType;
-                filters.currentSelectdFilters = state.filters;
-                filters.setQueryFilters(true);
-            }
+        }
+        /* else if (direction == "next") {
+         if (self.graphHistoryArray.index>0) {
+         self.graphHistoryArray.index -= 1
+         } else
+         $("#nextMenuButton").css("visibility", "hidden")
+         }*/
+        if (state) {
+            currentObject.id = state.currentObjectId;
+            currentLabel = state.currentLabel;
+            currentDisplayType = state.displayType;
+            filters.currentSelectdFilters = state.filters;
+            filters.setQueryFilters(true);
+        }
 
 
     }
@@ -281,6 +285,7 @@ var state=null;
 
                 toutlesensController.displayGraph(data, currentDisplayType, self.currentLabels);
                 $("#waitImg").css("visibility", "hidden")
+                if(self.addToHistory)
                 self.stackGraph(currentDisplayType, currentLabel, currentObject.id, filters.currentSelectdFilters);
                 if (callback)
                     return callback(null, data);
@@ -1007,26 +1012,26 @@ var state=null;
             $("#tabs-radarRight").tabs("option", "active", 2);
 
             /*  $("#ModifyNodeActionDiv").css("visibility", "visible");
-              $("#accordionModifyPanel").accordion("option", "active", 0);
-              // var index = $('#tabs-radarRight
-              // a[href="li_modify"]').parent().index();
-              $("#tabs-radarRight").tabs("option", "active", 3);
-              if (id) {
-                  var query = "MATCH (n) WHERE ID(n) =" + id + " RETURN n";//,'m','r',labels(n),'x',ID(n) ";// limit 1 ";
+             $("#accordionModifyPanel").accordion("option", "active", 0);
+             // var index = $('#tabs-radarRight
+             // a[href="li_modify"]').parent().index();
+             $("#tabs-radarRight").tabs("option", "active", 3);
+             if (id) {
+             var query = "MATCH (n) WHERE ID(n) =" + id + " RETURN n";//,'m','r',labels(n),'x',ID(n) ";// limit 1 ";
 
-                  toutlesensData.executeNeoQuery(QUERY_TYPE_MATCH, query, function (data) {
-                      if (data.length == 0)
-                          return;
-                      var obj = data[0].n.properties;
-                      obj.id = data[0].n._id;
-                      obj.label = data[0].n.labels[0];
-                      modifyData.drawFieldInputs(obj);
-                      $("#accordionModifyPanel").accordion({active: 1});
-                      $("#accordionModifyPanel").accordion({active: 0});
-                      //$( "#accordionModifyPanel" ).accordion( "option", "animate", 200 );
+             toutlesensData.executeNeoQuery(QUERY_TYPE_MATCH, query, function (data) {
+             if (data.length == 0)
+             return;
+             var obj = data[0].n.properties;
+             obj.id = data[0].n._id;
+             obj.label = data[0].n.labels[0];
+             modifyData.drawFieldInputs(obj);
+             $("#accordionModifyPanel").accordion({active: 1});
+             $("#accordionModifyPanel").accordion({active: 0});
+             //$( "#accordionModifyPanel" ).accordion( "option", "animate", 200 );
 
-                  });
-              }*/
+             });
+             }*/
 
         } else if (action == "newNode") {
             $("#ModifyNodeActionDiv").css("visibility", "visible");

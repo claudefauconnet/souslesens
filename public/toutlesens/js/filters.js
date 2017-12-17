@@ -346,8 +346,10 @@ var filters = (function () {
         if (allRelTypesStr.length > 0)
             toutlesensData.queryRelTypeFilters = ":" + allRelTypesStr;
 
-        if (generateGraph)
+        if (generateGraph) {
+            toutlesensController.addToHistory=true;
             toutlesensController.generateGraph(null, true);
+        }
 
 
     }

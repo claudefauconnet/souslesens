@@ -45,8 +45,13 @@ var visjsGraph = (function () {
                         children: [],
                         neoAttrs: nodeNeo,
 
+
                         endRel: rels[0]
 
+
+                    }
+                    if (nodeObj.labelNeo==currentLabel) {
+                        nodeObj.size=20;
 
                     }
                     if (nodeNeo.icon && nodeNeo.icon.length > 0) {

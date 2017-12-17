@@ -684,6 +684,7 @@ var infoGenericDisplay = (function () {
              node = ids[parentJstreeId];
             $("#tabs-radarRight").tabs("enable", 2);
             self.showNodeData(node);
+            toutlesensController.addToHistory=true;
             toutlesensController.generateGraph(parentId, toutlesensController.drawGraph);
         }
 
