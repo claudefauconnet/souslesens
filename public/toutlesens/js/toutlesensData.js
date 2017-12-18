@@ -235,6 +235,9 @@ var toutlesensData = (function () {
 
 
                 if (data.length == 0) {
+                    if(id==null){
+                        return callback(null, []);
+                    }
                    if(id>-1)// we retry with inverse relation
                        self.getNodeAllRelations (-id, output, addToExistingTree, callback);
                    else {

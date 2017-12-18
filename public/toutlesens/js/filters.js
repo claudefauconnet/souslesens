@@ -438,9 +438,9 @@ var filters = (function () {
         if(filterMode=="relation"){
             var labels=self.currentFilters[type].labels;
 
-            $(".displayIcon-selected").each(function (index, value) {
+            $(".filterName").each(function (index, value) {
                 var label=this.id.substring(this.id.indexOf(":")+1)
-                if (labels.indexOf(label)>-1)
+                if (labels.indexOf(label)>-1 )
                     $(this).addClass("displayIcon-selected");
             });
 
