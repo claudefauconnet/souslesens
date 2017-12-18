@@ -53,7 +53,7 @@ var Gparams = {
     maxDepthExplorationAroundNode: 3,
     bulkGraphViewMaxNodesToDrawLinks:1000,
     bulkGraphDisplayLimit:5000,
-    maxNodesForRelNamesOnGraph:20,
+    maxNodesForRelNamesOnGraph:100,
     graphMaxDataLengthToDisplayGraphDirectly:300,
 
 

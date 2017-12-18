@@ -18,6 +18,8 @@ var visjsGraph = (function () {
 
         self.nodesMap = {};
         self.visjsData = {nodes: [], edges: []};
+        if(!resultArray)
+            return;
         for (var i = 0; i < resultArray.length; i++) {
             var rels = resultArray[i].rels;
             var nodes = resultArray[i].nodes;
@@ -36,20 +38,23 @@ var visjsGraph = (function () {
                     var nodeNeo = nodes[j].properties;
 
                     var labels = nodes[j].labels;
+                    var color= nodeColors[nodes[j].labels[0]]
                     var nodeObj = {
                         label: nodeNeo[Gparams.defaultNodeNameProperty],
                         labelNeo: labels[0],// because visjs where label is the node name
-                        color: nodeColors[nodes[j].labels[0]],
+                        color: color,
                         myId: nodeNeo.id,
                         id: neoId,
                         children: [],
                         neoAttrs: nodeNeo,
+                      //  font:{background:color},
 
 
                         endRel: rels[0]
 
 
                     }
+                    nodeObj.initialColor=nodeObj.color;
                     if (nodeObj.labelNeo==currentLabel) {
                         nodeObj.size=20;
 
@@ -61,7 +66,13 @@ var visjsGraph = (function () {
                         nodeObj.size=30;
 
                     }
+
+
+
+
+
                     self.visjsData.nodes.push(nodeObj);
+
                     self.nodesMap[neoId] = nodeObj;
                     if (dataLabels.indexOf(nodeObj.labelNeo) < 0)
                         dataLabels.push(nodeObj.labelNeo);
@@ -70,19 +81,24 @@ var visjsGraph = (function () {
 
             }
 
+
+
             for (var j = 0; j < rels.length; j++) {
                 var rel = rels[j];
+                var color=linkColors[self.nodesMap[ids[j + 1]].endRel];
                 var relObj = {
                     from: ids[j],
                     to: ids[j + 1],
                     type: rel,
                     neoId: relProperties[j]._id,
                     neoAttrs: relProperties[j].properties,
-                    color: linkColors[self.nodesMap[ids[j + 1]].endRel]
+                    color: color,
+                    font:{background:color},
                 }
                 if (Gparams.showRelationNames === true)
                     relObj.label = relObj.type;
-                relObj.font = {"font-style": 'italic', "font-size": "12px"}
+
+
                 self.visjsData.edges.push(relObj);
             }
         }
@@ -143,7 +159,9 @@ var visjsGraph = (function () {
                 font: {size: 14}
             },
             edges: {
-                smooth: true
+                smooth: true,
+                font: {size: 10}
+                //font: { "font-style":'italic'}
             },
             interaction: {
                 // navigationButtons: true,
@@ -254,6 +272,11 @@ var visjsGraph = (function () {
 
     }
 
+
+
+
+
+
     self.paintNodes = function (nodeIds, color, otherNodesColor, radius) {
         var nodes = []
         /* for(var i=0;i< nodeIds.length;i++) {
@@ -314,7 +337,7 @@ var visjsGraph = (function () {
         network.setOptions({
             physics: {enabled: true}
         });
-        network.fit()
+       // network.fit()
 
         //  self.edges.update(edges);
 
@@ -340,7 +363,7 @@ var visjsGraph = (function () {
         network.setOptions({
             physics: {enabled: true}
         });
-        network.fit()
+     //   network.fit()
     }
 
 
@@ -384,6 +407,27 @@ var visjsGraph = (function () {
         network.fit()
     }
 
+    self.findNode=function(expression,color,radius){
+        var regex=new RegExp(".*"+expression+".*",'i');
+        var nodes=[];
+        for (var key in  self.nodes._data) {
+            var node = self.nodes._data[key];
+            if (node.label.match(regex)) {
+                node.color = {background: color};
+                node.size = 2 * radius;
+            }
+            else {
+
+                    node.color = node.initialColor;
+            }
+            nodes.push(node);
+        }
+
+
+        self.nodes.update(nodes);
+        network.fit()
+
+    }
 
     return self;
 

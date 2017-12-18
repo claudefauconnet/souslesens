@@ -10,6 +10,7 @@ var fs = require('fs');
 var xml2js = require('xml2js');
 var parser = new xml2js.Parser();
 var util = require('../util.js')
+var path=require('path');
 var xpath = require('xpath')
     , dom = require('xmldom').DOMParser
 
@@ -34,19 +35,16 @@ var rels = [
 var rels = []
 
 var tagNames = [];
-// data from https://swapi.co/api/
-// http://eo.dbpedia.org/page/Star_Wars
-
-//http://bibleontology.com/linked_data/sparql
-
-  //  http://www.semanticbible.com/
+//http://quranontology.com/Query
     var nodes = {}
 
 var bible = {
 
 
-    importBible: function () {
-        var str = "" + fs.readFileSync("./thesaurii/bibleOntologIndividuals.owl");
+    importQuran: function () {
+     //   var pathStr= path.resolve("D:\\rdf\\quran_data_full.owl")
+        var pathStr= path.resolve("D:\\rdf\\quran.owl")
+        var str = "" + fs.readFileSync(pathStr);
 
         var doc = new dom().parseFromString(str);
 
@@ -54,7 +52,7 @@ var bible = {
         var allElts = doc.documentElement.getElementsByTagName("*");
 
         for (var j = 0; j < allElts.length; j++) {
-            if (allElts[j].attributes && allElts[j].attributes[0] && allElts[j].attributes[0].name == "rdf:ID") {
+            if (allElts[j].attributes && allElts[j].attributes[0] && allElts[j].attributes[0].name == "rdf:about") {
                 var tag = allElts[j].tagName;
                 if (tagNames.indexOf(tag) < 0) {
                     tagNames.push(tag);
@@ -63,14 +61,15 @@ var bible = {
             }
         }
 
-        for (var i = 0; i < tagNames.length; i++) {
-            var xmlNodes = doc.documentElement.getElementsByTagName(tagNames[i]);
+
+var nodeTag="owl:NamedIndividual"
+            var xmlNodes = doc.documentElement.getElementsByTagName(nodeTag);
             for (var j = 0; j < xmlNodes.length; j++) {
                 if (xmlNodes[j].attributes && xmlNodes[j].attributes[0]) {
                     var ID = xmlNodes[j].attributes[0].nodeValue;
 
 
-                    var node = {labelNeo: tagNames[i], id: ID, name: "", rels: [], attrs: {}};
+                    var node = {labelNeo:nodeTag, id: ID, name: "", rels: [], attrs: {}};
                     nodes[ID] = node;
 
                     for (var k = 0; k < xmlNodes[j].childNodes.length; k++) {
@@ -115,7 +114,7 @@ var bible = {
                 }
             }
 
-        }
+
         var www = 5
         //    console.log(JSON.stringify(nodes,null,2))
         //    console.log(JSON.stringify(rels,null,2))
@@ -207,7 +206,7 @@ module.exports = bible;
 
 if (true) {
 
-    bible.importBible();
+    bible.importQuran();
 }
 
 

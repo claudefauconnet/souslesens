@@ -36,8 +36,8 @@
     "xml2js": "^0.4.19",
     "xmlbuilder": "^9.0.4",
     "logger":"latest",
-    "node-kmeans":"latest"
-
+    "node-kmeans":"latest",
+    "xmldom":"latest"
   },
   "devDependencies": {},
   "scripts": {
@@ -53,7 +53,10 @@
     "Nodejs",
     "D3js",
     "jstree",
-    "dataviz"
+    "dataviz",
+    "visjs",
+    "rdf",
+    "elasticsearch"
   ],
   "author": "Claude.fauconnet",
   "license": "MIT",

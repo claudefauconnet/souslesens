@@ -423,7 +423,7 @@ var toutlesensData = (function () {
         var relations = [];
 
         for (var i = 0; i < resultArray.length; i++) {
-            if (!resultArray[i].labels) // !!!!bug à trouver
+            if (!resultArray[i].nodes ) // !!!!bug à trouver
                 continue;
             for (var j = 0; j < resultArray[i].nodes.length; j++) {
              /*   if(!resultArray[i].nodes[j].properties)
@@ -432,12 +432,15 @@ var toutlesensData = (function () {
                     resultArray[i].nodes[j].properties.name = resultArray[i].nodes[j].properties.nom;
             }
 
+            if (!resultArray[i].labels ) // !!!!bug à trouver
+                continue;
             for (var j = 0; j < resultArray[i].labels.length; j++) {
                 var label = resultArray[i].labels[j][0];
                 if (labels.indexOf(label) < 0)
                     labels.push(label)
             }
-
+            if (!resultArray[i].rels ) // !!!!bug à trouver
+                continue;
             for (var j = 0; j < resultArray[i].rels.length; j++) {
                 var relation = resultArray[i].rels[j];
                 if (relations.indexOf(relation) < 0)

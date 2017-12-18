@@ -18,7 +18,7 @@ textarea {
     font-family: verdana, sans-serif !important;
 }
 
-button {
+button, .mainMenuDiv {
     color: white;
     font-size: 16px;
     font-family: verdana, sans-serif;
@@ -27,6 +27,8 @@ button {
     margin: 1px;
     padding: 4px;
 }
+
+
 
 select {
     font-size: 16px;

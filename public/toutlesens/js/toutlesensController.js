@@ -279,7 +279,11 @@ var toutlesensController = (function () {
             if (data.length > Gparams.maxNodesForRelNamesOnGraph) {
                 Gparams.showRelationNames = false;
                 $("#showRelationTypesCbx").removeAttr("checked");
+            }else{
+                Gparams.showRelationNames = true;
+                $("#showRelationTypesCbx").prop("checked","checked");
             }
+            $("#visJsSearchGraphButton").css("visibility: visible");
             toutlesensData.prepareRawData(data, addToExistingTree, currentDisplayType, function (err, data, labels, relations) {
 
 

@@ -380,6 +380,13 @@
 
             });
 
+            $('#visJsSearchGraphButton').on('keypress', function (e) {
+                if(e.which === 13){
+                    var expression=$("#visJsSearchGraphButton").val();
+                    visjsGraph.findNode(expression,"blue",15);
+                }
+            });
+
 
             filterDiv = "radarFiltersDiv";
             bcsTreeDiv = "#bcsTreeDiv";
@@ -858,7 +865,9 @@
 
         <!--   <button style="font-size:12px" onclick="toutlesensController.stopAnimation()">stop animation</button>-->
         <div id="paintDiv"></div>
+       <div> Outline nodes<input id="visJsSearchGraphButton" style="visibility: hidden"></div>
         <div id="filtersDiv"></div>
+
         <div id="innerLegendDiv"></div>
         <div id="graphMessage" class="message"><br><img id="waitImg" src="images/waitAnimated.gif" width="50px"
                                                         style="visibility: hidden;"></div>

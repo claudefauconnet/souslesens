@@ -79,6 +79,9 @@ var filters = (function () {
             }
 
         }
+
+
+
         for (var relName in self.currentFilters) {
 
 
@@ -127,7 +130,11 @@ var filters = (function () {
         if (!customizeUI.hideFilters == true)
             $("#filtersDiv").css("visibility", "visible");
 
-        $(".filterName").on("click", function () {
+        $(".filterName").on("click", function (event) {
+            var mode="only";
+            if(event.ctrlKey) {
+            var mode="add"
+            }
             paint.closePaintDialog();
             var array = this.id.split(":");
             var option = "all";
@@ -137,133 +144,14 @@ var filters = (function () {
             } else {
                 $(this).addClass("displayIcon-selected");
             }
-            filters.filterOnProperty(option, "only", array[0], array[1])
+            filters.filterOnProperty(option, mode, array[0], array[1])
 
         })
 
         // generateGraph(currentObject.id,drawGraph);
     }
 
-    self.initGraphFiltersOld = function (data) {
-        self.hasFiltersSelected = false;
-        self.currentFilters = {};
-        self.currentSelectdFilters = []
-        self.postFilter = null;
 
-        $("#innerLegendDiv").html("");
-
-
-        var str = "";
-        var targetLabels = [];
-        var relationTypes = [];
-
-
-        var checked = "' checked='checked' ";
-        var noChecked = "";
-        var onclick = " onclick='filters.startQueryFilterMode() '"
-        onclick = "onclick='filters.onFilterCbxClik(this);'";
-
-        str += "<table style='border-style:solid;font-size:12px; '>"
-        var relName = "zz"
-
-        if (currentObject.id) {
-            if (!currentObject.neoAttrs)
-                currentObject.neoAttrs = {}
-            str += "<tr><td style='color:" + nodeColors[currentObject.label] + "'>";
-            str += "Node <b>" + currentObject.neoAttrs[Schema.schema.defaultNodeNameProperty] + "</b></td>";
-            str += "<td><img  src='./images/filter.png'  width='15px'  title='set filter' onclick='filters.showFilterDialog(\"" + currentObject.label + "\",\"" + relName + "\")'></td>"
-            if (Gparams.graphAllowPaint)
-                str += "<td><img  src='./images/paint.jpg'  width='15px'  title='set filter' onclick='paint.showPaintDialog(\"" + currentObject.label + "\",\"" + relName + "\")'></td>"
-            str += "</tr>";
-        }
-        else if (currentLabel) {
-            str += "<tr> </tr><td style='background-color:" + nodeColors[currentLabel] + "'>";
-            str += " Label <b>" + currentLabel + "</b></td>";
-            str += "<td><img  src='./images/filter.png'  width='15px'  title='set filter' onclick='filters.showFilterDialog(\"" + currentLabel + "\",\"" + relName + "\")'></td>"
-            if (Gparams.graphAllowPaint)
-                str += "<td><img  src='./images/paint.jpg'  width='15px'  title='set filter' onclick='paint.showPaintDialog(\"" + currentLabel + "\",\"" + relName + "\")'></td>"
-            str += "</tr>";
-        }
-
-
-        str += "<tr align='center'  class='italicSpecial'><td><span class='bigger'>Relations/labels</span></td><td></td><td></td></tr>";//<td>Exclure<br><input type='checkbox' id='#comuteAllFiltersRelationsExclude' onchange='filters.comuteAllFilters(this)'></td></tr>";
-        for (var i = 0; i < data.length; i++) {
-            var filterObj = data[i];
-            for (var k = 0; k < filterObj.rels.length; k++) {
-                var relName = filterObj.rels[k];
-
-
-                if (!self.currentFilters[relName]) {
-                    self.currentFilters[relName] = {name: relName, labels: [], selected: false};
-
-                }
-                for (var j = 0; j < filterObj.labels.length; j++) {
-                    var label = filterObj.labels[j][0];
-                    if (self.currentFilters[relName].labels.indexOf(label) < 0)
-                        self.currentFilters[relName].labels.push(label);
-                }
-            }
-        }
-        for (var relName in self.currentFilters) {
-
-            var relLabels = self.currentFilters[relName].labels;
-            str += "<tr align='center' class='relationType'>";
-            str += "<td class='filterName'  id='relation:" + relName + "' style='background-color:" + linkColors[relName] + "'>";
-            str += " relation <b>" + relName + "</b></td>";
-            str += "<td> <img  src='./images/filter.png'  width='15px' title='set filter' onclick='filters.showFilterDialog(null,\"" + relName + "\")'></td>"
-            if (Gparams.graphAllowPaint)
-                str += "<td> <img  src='./images/paint.jpg'  width='15px' title='set filter' onclick='paint.showPaintDialog(null,\"" + relName + "\")'></td>"
-
-            str += "</tr>";
-
-            for (var j = 0; j < relLabels.length; j++) {
-
-                var label = relLabels[j];
-                if (label != currentLabel) {
-                    str += "<tr align='center'>";
-                    //str += "<td><button  onclick='filters.showFilterDialog(\"" + label + "\",\"" + relName + "\")'><img  src='./icons/filter.png'  width='15px'></button></td>";
-                    str += "<td class='filterName' id='endNode:" + label + "' style='color:" + nodeColors[label] + "'>";
-                    str += "label <b>" + label + "</b></td>";
-                    str += "<td><img  src='./images/filter.png'  width='15px'  title='set filter' onclick='filters.showFilterDialog(\"" + label + "\",\"" + relName + "\")'></td>"
-                    if (Gparams.graphAllowPaint)
-                        str += "<td><img  src='./images/paint.jpg'  width='15px'  title='set filter' onclick='paint.showPaintDialog(\"" + label + "\",\"" + relName + "\")'></td>"
-
-                    str += "</tr>";
-
-
-                }
-            }
-            str += "</tr>";
-            str += "<tr><td colspan='3' >&nbsp;</B></td></td></tr>";
-        }
-
-
-        // str += "<tr class='italicSpecial'><td colspan='3'><span
-        // class='bigger'>Relations</span></tr>";
-
-
-        str += "</table>"
-        $("#filtersDiv").html(str);
-
-
-        if (!customizeUI.hideFilters == true)
-            $("#filtersDiv").css("visibility", "visible");
-
-        $(".filterName").on("click", function () {
-            var array = this.id.split(":");
-            var option = "all";
-            if ($(this).hasClass("displayIcon-selected")) {
-                option = "remove";
-                $(this).removeClass("displayIcon-selected");
-            } else {
-                $(this).addClass("displayIcon-selected");
-            }
-            filters.filterOnProperty(option, "only", array[0], array[1])
-
-        })
-
-        // generateGraph(currentObject.id,drawGraph);
-    }
 
 
     self.setQueryFilters = function (generateGraph) {
@@ -414,7 +302,7 @@ var filters = (function () {
 
         $("#propertiesSelectionTypeSpan").html("Node label " + type);
         $("#propertiesSelectionDialog_typeInput").val(type);
-        $("#propertiesSelectionDialog_filterModeInput").val("startNode");
+        $("#propertiesSelectionDialog_filterModeInput").val("endNode");
 
         if(!selectId)
         selectId = document.getElementById("propertiesSelectionDialog_propsSelect")
@@ -446,7 +334,7 @@ var filters = (function () {
 
             self.currentSelectdFilters = [];
         }
-
+        self.synchronizeRelsAndlabels(filterMode,type);
 
         var newFilter = null;
         if (property == "ALL" || option == "all") {
@@ -543,6 +431,22 @@ var filters = (function () {
                 str += "Relation :" + filter.name
         }
         return str;
+    }
+
+
+    self.synchronizeRelsAndlabels=function(filterMode,type){
+        if(filterMode=="relation"){
+            var labels=self.currentFilters[type].labels;
+
+            $(".displayIcon-selected").each(function (index, value) {
+                var label=this.id.substring(this.id.indexOf(":")+1)
+                if (labels.indexOf(label)>-1)
+                    $(this).addClass("displayIcon-selected");
+            });
+
+        }
+
+
     }
 
 
