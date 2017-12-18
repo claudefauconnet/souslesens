@@ -117,6 +117,7 @@ Util = {
                 value = value.replace(/,/g, "\\,");
                 value = value.replace(/\//g, "%2F");
                 value = value.replace(/\\/g,"")
+                value = value.replace(/:/g,"")
             }
             else if (value.indexOf(".") > -1)
                 value = parseFloat(value)
