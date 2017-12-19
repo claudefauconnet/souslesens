@@ -66,11 +66,11 @@ var filters = (function () {
 
                 }
             }
-            for (var k = 0;k < filterObj.labels.length; k++) {
+            for (var k = 0; k < filterObj.labels.length; k++) {
                 for (var j = 0; j < filterObj.labels[k].length; j++) {
                     var label = filterObj.labels[k][j];
-                    if(Array.isArray(label))
-                        label=label[0];
+                    if (Array.isArray(label))
+                        label = label[0];
                     if (labelFilters.indexOf(label) < 0)
                         labelFilters.push(label);
                     if (self.currentFilters[relName].labels.indexOf(label) < 0)
@@ -79,7 +79,6 @@ var filters = (function () {
             }
 
         }
-
 
 
         for (var relName in self.currentFilters) {
@@ -102,9 +101,9 @@ var filters = (function () {
             if (label != currentLabel) {
                 str += "<tr align='center'>";
                 //str += "<td><button  onclick='filters.showFilterDialog(\"" + label + "\",\"" + relName + "\")'><img  src='./icons/filter.png'  width='15px'></button></td>";
-              //  str += "<td class='filterName' id='endNode:" + label + "' style='background-color:" + nodeColors[label] + "'>";
+                //  str += "<td class='filterName' id='endNode:" + label + "' style='background-color:" + nodeColors[label] + "'>";
                 str += "<td class='filterName' id='endNode:" + label + "'  '>";
-                str+="<span style='background-color:" + nodeColors[label]+";width:15px;height:15px;'>&nbsp;&nbsp;&nbsp;</span>"
+                str += "<span style='background-color:" + nodeColors[label] + ";width:15px;height:15px;'>&nbsp;&nbsp;&nbsp;</span>"
                 str += "label <b>" + label + "</b></td>";
                 str += "<td><img  src='./images/filter.png'  width='15px'  title='set filter' onclick='filters.showFilterDialog(\"" + label + "\",\"" + relName + "\")'></td>"
                 if (Gparams.graphAllowPaint)
@@ -131,9 +130,9 @@ var filters = (function () {
             $("#filtersDiv").css("visibility", "visible");
 
         $(".filterName").on("click", function (event) {
-            var mode="only";
-            if(event.ctrlKey) {
-            var mode="add"
+            var mode = "only";
+            if (event.ctrlKey) {
+                var mode = "add"
             }
             paint.closePaintDialog();
             var array = this.id.split(":");
@@ -150,8 +149,6 @@ var filters = (function () {
 
         // generateGraph(currentObject.id,drawGraph);
     }
-
-
 
 
     self.setQueryFilters = function (generateGraph) {
@@ -235,7 +232,7 @@ var filters = (function () {
             toutlesensData.queryRelTypeFilters = ":" + allRelTypesStr;
 
         if (generateGraph) {
-            toutlesensController.addToHistory=true;
+            toutlesensController.addToHistory = true;
             toutlesensController.generateGraph(null, true);
         }
 
@@ -267,7 +264,7 @@ var filters = (function () {
     }
 
 
-    self.initRelationPropertySelection = function (type,selectId) {
+    self.initRelationPropertySelection = function (type, selectId) {
         self.postFilter = null;
         var relations = Schema.getRelationsByType(type);
         var propertiesArray = ["ALL"];
@@ -284,13 +281,13 @@ var filters = (function () {
         $("#propertiesSelectionTypeSpan").html("Relation type" + type);
         $("#propertiesSelectionDialog_filterModeInput").val("relation");
         $("#propertiesSelectionDialog_typeInput").val(type);
-        if(!selectId)
+        if (!selectId)
             selectId = document.getElementById("propertiesSelectionDialog_propsSelect")
         common.fillSelectOptionsWithStringArray(selectId, propertiesArray)
 
     }
 
-    self.initLabelPropertySelection = function (type,selectId) {
+    self.initLabelPropertySelection = function (type, selectId) {
 
         self.postFilter = null;
         var properties = Schema.schema.properties[type];
@@ -304,8 +301,8 @@ var filters = (function () {
         $("#propertiesSelectionDialog_typeInput").val(type);
         $("#propertiesSelectionDialog_filterModeInput").val("endNode");
 
-        if(!selectId)
-        selectId = document.getElementById("propertiesSelectionDialog_propsSelect")
+        if (!selectId)
+            selectId = document.getElementById("propertiesSelectionDialog_propsSelect")
         common.fillSelectOptionsWithStringArray(selectId, propertiesArray)
 
     }
@@ -334,7 +331,7 @@ var filters = (function () {
 
             self.currentSelectdFilters = [];
         }
-        self.synchronizeRelsAndlabels(filterMode,type);
+        self.synchronizeRelsAndlabels(filterMode, type);
 
         var newFilter = null;
         if (property == "ALL" || option == "all") {
@@ -434,15 +431,35 @@ var filters = (function () {
     }
 
 
-    self.synchronizeRelsAndlabels=function(filterMode,type){
-        if(filterMode=="relation"){
-            var labels=self.currentFilters[type].labels;
+    self.synchronizeRelsAndlabels = function (filterMode, type) {
+        if (filterMode == "relation") {
+            var labels = self.currentFilters[type].labels;
 
             $(".filterName").each(function (index, value) {
-                var label=this.id.substring(this.id.indexOf(":")+1)
-                if (labels.indexOf(label)>-1 )
+                var p=this.id.indexOf(":");
+                var name = this.id.substring(p+1)
+                var eachType = this.id.substring(0,p)
+                if ( eachType=="endNode" && labels.indexOf(name) > -1)
                     $(this).addClass("displayIcon-selected");
             });
+
+        }
+        else if (filterMode == "endNode") {
+            var rels = []
+            for (var key in self.currentFilters) {
+                labels = self.currentFilters[key].labels;
+                if (labels.indexOf(type) > -1)
+                    rels.push(key)
+            }
+
+            $(".filterName").each(function (index, value) {
+                var p=this.id.indexOf(":");
+                var name = this.id.substring(p+1)
+                var eachType = this.id.substring(0,p)
+                if ( eachType=="relation" && rels.indexOf(name) > -1)
+                    $(this).addClass("displayIcon-selected");
+            });
+
 
         }
 

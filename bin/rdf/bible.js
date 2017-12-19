@@ -10,8 +10,7 @@ var fs = require('fs');
 var xml2js = require('xml2js');
 var parser = new xml2js.Parser();
 var util = require('../util.js')
-var xpath = require('xpath')
-    , dom = require('xmldom').DOMParser
+var  dom = require('xmldom').DOMParser
 
 
 var labels = [
@@ -64,6 +63,10 @@ var bible = {
         }
 
         for (var i = 0; i < tagNames.length; i++) {
+
+          if(tagNames[i]=="GeographicLocation"){
+              var uu=2
+          }
             var xmlNodes = doc.documentElement.getElementsByTagName(tagNames[i]);
             for (var j = 0; j < xmlNodes.length; j++) {
                 if (xmlNodes[j].attributes && xmlNodes[j].attributes[0]) {

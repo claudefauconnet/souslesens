@@ -112,6 +112,11 @@ var visjsGraph = (function () {
     self.draw = function (divId, resultArray) {
 
         var t0 = new Date();
+        if(resultArray.length==0 ){
+            $("#graphDiv").html("No  data to display")
+            return;
+
+        }
         var data0 = formatData(resultArray);
 
 
