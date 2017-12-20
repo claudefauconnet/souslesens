@@ -38,7 +38,7 @@ var customizeUI = (function () {
 			
             var str = "";
 
-            if (obj.neoAttrs.id_doc){
+            if (obj.neoAttrs && obj.neoAttrs.id_doc){
 				
                 // str = "<a href='" + queryParams.sinequaCallbackUrl + "?~~ID~~=" + obj.neoAttrs.id_doc + "target='_parent'>search in Sinequa</a>";
 				str = '<a href="'+
