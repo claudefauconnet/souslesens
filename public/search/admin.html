@@ -36,6 +36,7 @@
         function elasticExec(operation) {
             $("#message").html("");
             var indexName = $("#indexName").val();
+            var mappingsType = $("#mappingsType").val();
             var rootDir = $("#rootDir").val();
             //  var doClassifier=$("#doClassifier").val();
             var indexName = $("#indexName").val();
@@ -47,9 +48,11 @@
                     indexDocDirInNewIndex: 1,
                     indexName: indexName,
                     rootDir: rootDir,
-                     doClassifier:"false"
+                     doClassifier:"false",
+                     type:mappingsType
 
-                };
+
+                 };
 
 
             }
@@ -58,7 +61,8 @@
                     indexDirInExistingIndex: 1,
                     indexName: indexName,
                     rootDir: rootDir,
-                     doClassifier:"false"
+                     doClassifier:"false",
+                     type:mappingsType
 
                 };
 
@@ -113,12 +117,21 @@
     </tr>
     <tr>
         <td>
+            mappings type
+        </td>
+        <td>
+            <input id="mappingsType" value="general_document">
+        </td>
+    </tr>
+    <tr>
+        <td>
             rootDir
         </td>
         <td>
             <input id="rootDir">
         </td>
     </tr>
+
     <tr>
         <td>
             <button onclick="elasticExec('indexDocDirInNewIndex')">indexDocDirInNewIndex</button>

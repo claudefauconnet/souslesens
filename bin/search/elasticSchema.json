@@ -1,52 +1,122 @@
 {
   "archivesatd": {
     "mappings": {
-      "archive": {
-        "properties": {
-          "annee": {
-            "type": "integer"
+      "archivesatd": {
+        "mappings": {
+          "archive": {
+            "properties": {
+              "anneeDebut": {
+                "type": "integer"
+              },
+              "anneeFin": {
+                "type": "integer"
+              },
+              "auteur": {
+                "type": "text"
+              },
+              "commentaire": {
+                "type": "text"
+              },
+              "confidentiel": {
+                "type": "keyword"
+              },
+              "content": {
+                "type": "text",
+                "index_options": "offsets",
+                "fields": {
+                  "contentKeyWords": {
+                    "type": "keyword",
+                    "ignore_above": 256
+                  }
+                },
+                "fielddata": true
+              },
+              "coteBoite": {
+                "type": "keyword"
+              },
+              "coteSerie": {
+                "type": "keyword"
+              },
+              "coteSousSerie": {
+                "type": "keyword"
+              },
+              "dateStr": {
+                "type": "text"
+              },
+              "destinataire": {
+                "type": "text"
+              },
+              "format": {
+                "type": "text"
+              },
+              "genre": {
+                "type": "keyword"
+              },
+              "lieu": {
+                "type": "text"
+              },
+              "nbFeuilles": {
+                "type": "integer"
+              },
+              "source": {
+                "type": "text"
+              },
+              "title": {
+                "type": "text"
+              }
+            }
           },
-          "boite": {
-            "type": "text"
-          },
-          "chemise": {
-            "type": "text"
-          },
-          "souschemise": {
-            "type": "text"
-          },
-          "source": {
-            "type": "text"
-          },
-          "titre": {
-            "type": "text"
-          },
-          "content": {
-            "type": "text",
-            "index_options": "offsets",
-            "fielddata": true,
-
-            "fields": {
-              "contentKeyWords": {
-                "type": "keyword",
-                "ignore_above": 256
+          "mail": {
+            "properties": {
+              "author": {
+                "type": "text"
+              },
+              "content": {
+                "type": "text",
+                "index_options": "offsets",
+                "fields": {
+                  "contentKeyWords": {
+                    "type": "keyword",
+                    "ignore_above": 256
+                  }
+                },
+                "fielddata": true
+              },
+              "date": {
+                "type": "text"
+              },
+              "path": {
+                "type": "text"
+              },
+              "title": {
+                "type": "text"
               }
             }
           }
-        }
-      },
-      "mail": {
-
-        "properties": {
-          "content": {
-            "type": "text",
-            "fielddata": true,
-            "index_options": "offsets",
-
-            "fields": {
-              "contentKeyWords": {
-                "type": "keyword",
-                "ignore_above": 256
+          ,  "general_document": {
+            "properties": {
+              "author": {
+                "type": "text"
+              },
+              "content": {
+                "type": "text",
+                "index_options": "offsets",
+                "fields": {
+                  "contentKeyWords": {
+                    "type": "keyword",
+                    "ignore_above": 256
+                  }
+                },
+                "fielddata": true
+              },
+              "date": {
+                "type": "text"
+              },
+              "path": {
+                "type": "text"
+              },
+              "title": {
+                "type": "text"
               }
             }
           }
@@ -54,23 +124,33 @@
       }
     },
     "fields": [
-      "annee",
-      "boite",
-      "chemise",
-      "souschemise",
+      "anneeDebut",
+      "anneeFin",
+      "auteur",
+      "coteBoite",
+      "coteSerie",
+      "commentaire",
+      "confidentiel",
+      "contenu",
+      "dateStr",
+      "destinataire",
+      "format",
+      "genre",
+      "lieu",
+      "nbFeuilles",
       "source",
-      "titre"
+      "coteSousSerie",
+      "title"
     ],
-
-    "uiMappings":{
-      "title":"titre"
+    "uiMappings": {
+      "title": "titre",
+      "content": "contenu"
+    },
+    "icons": {
+      "docTypes": {
+        "mail": "mail2.png",
+        "archive": "archive.png"
+      }
     }
-    ,
-    "icons":{
-  "docTypes": {
-    "mail": "mail2.png",
-    "archive": "archive.png"
-  }
-}
   }
 }

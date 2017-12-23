@@ -113,11 +113,11 @@ router.post(serverParams.routesRootUrl+'/elastic', function (req, response) {
             processResponse(response, error, result)
         });
     else if (req.body && req.body.indexDocDirInNewIndex)
-        elasticProxy.indexDocDirInNewIndex(req.body.indexName, req.body.rootDir, req.body.doClassifier, function (error, result) {
+        elasticProxy.indexDocDirInNewIndex(req.body.indexName,req.body.type, req.body.rootDir, req.body.doClassifier, function (error, result) {
             processResponse(response, error, result)
         });
     else if (req.body && req.body.indexDirInExistingIndex)
-        elasticProxy.indexDirInExistingIndex(req.body.indexName, req.body.rootDir, req.body.doClassifier, function (error, result) {
+        elasticProxy.indexDirInExistingIndex(req.body.indexName,req.body.type, req.body.rootDir, req.body.doClassifier, function (error, result) {
             processResponse(response, error, result)
         });
 

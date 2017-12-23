@@ -111,23 +111,7 @@ var elasticProxy = {
             callback(err);
         });
     },
-    index: function (index, type, id, payload, callback) {
-        getClient().index({
-            index: index,
-            type: type,
-            id: id,
-            body: payload
-        }, function (err, response) {
-            if (err) {
-                console.log(err);
-                callback(err);
-                return;
 
-            } else {
-                callback(null, response);
-            }
-        });
-    },
     /* body: [
      // action description
      { index:  { _index: 'myindex', _type: 'mytype', _id: 1 } },
@@ -153,434 +137,14 @@ var elasticProxy = {
             }
         });
     },
-    exportMongoToElastic: function (mongoDB, mongoCollection, mongoQuery, elasticIndex, elasticFields, elasticType, callback) {
-        if (typeof mongoQuery !== "object")
-            mongoQuery = JSON.parse(mongoQuery);
-        if (typeof elasticFields !== "object")
-            elasticFields = JSON.parse(elasticFields);
-        var currentIndex = 0;
-        var resultSize = 1;
-        async.whilst(
-            function () {//test
-                return resultSize > 0;
-            },
-            function (_callback) {//iterate
-                var callback = _callback;
 
-                mongoProxy.pagedFind(currentIndex, serverParams.mongoFetchSize, mongoDB, mongoCollection, mongoQuery, null, function (err, result) {
-                    if (err) {
-                        callback(err);
-                        return;
-                    }
-
-
-                    resultSize = result.length;
-                    currentIndex += serverParams.mongoFetchSize;
-                    var startId = Math.round(Math.random() * 10000000);
-                    var elasticPayload = [];
-
-                    // contcat all fields values in content field
-                    for (var i = 0; i < result.length; i++) {
-                        var content = ""
-                        for (var j = 0; j < elasticFields.length; j++) {
-                            var value = result[i][elasticFields[j]];
-                            if (value) {
-                                content += " " + value;
-                            }
-                        }
-                        result[i].content = content;
-
-                        elasticPayload.push({index: {_index: elasticIndex, _type: elasticType, _id: "_" + (startId++)}})
-                        var payload = {};
-                        for (var j = 0; j < elasticFields.length; j++) {
-                            var value = result[i][elasticFields[j]];
-                            if (value) {
-                                payload[elasticFields[j]] = value;
-                            }
-
-                        }
-                        elasticPayload.push(payload);
-
-                    }
-
-                    getClient().bulk({
-                        body: elasticPayload
-                    }, function (err, resp) {
-                        if (err) {
-                            callback(err);
-
-                        } else {
-                            callback(null, resp);
-                        }
-                    });
-
-
-                });
-
-            }
-            ,
-            function (err, result) {//end
-                if (err) {
-                    callback(err);
-
-                } else {
-                    callback(null, resp);
-                }
-
-            });
-    },
-
-
-    indexDocumentDir: function (dir, index, recursive, callback) {
-
-        var acceptedExtensions = ["doc", "docx", "xls", "xslx", "pdf", "ppt", "pptx", "html", "htm", "txt", "csv"];
-
-        var indexedFiles = [];
-
-        function getFilesRecursive(dir) {
-            elasticProxy.sendMessage("indexing " + dir);
-            dir = path.normalize(dir);
-            if (dir.charAt(dir.length - 1) != '/')
-                dir += '/';
-            var files = fs.readdirSync(dir);
-            for (var i = 0; i < files.length; i++) {
-                var fileName = dir + files[i];
-                var stats = fs.statSync(fileName);
-
-                if (stats.isDirectory()) {
-                    getFilesRecursive(fileName)
-                }
-                else {
-                    var p = fileName.lastIndexOf(".");
-                    if (p < 0)
-                        continue;
-                    var extension = fileName.substring(p + 1).toLowerCase();
-                    if (acceptedExtensions.indexOf(extension) < 0) {
-                        logger.info("!!!!!!  refusedExtension " + fileName);
-                        continue;
-                    }
-
-
-                    // console.log("File" + fileName + " size " + stats.size + " ---------------" + (i++));
-                    if (stats.size > serverParams.elasticsaerchMaxDocSizeForIndexing) {
-                        logger.info("!!!!!! file  too big " + Math.round(stats.size / 1000) + " Ko , not indexed ");
-                        continue;
-
-                    }
-                    indexedFiles.push(fileName);
-                }
-            }
-
-        }
-
-        getFilesRecursive(dir);
-
-        indexedFiles.sort();
-        var t0 = new Date().getTime();
-        async.eachSeries(indexedFiles, function (fileName, callbackInner) {
-                var base64Extensions = ["doc", "docx", "xls", "xslx", "pdf", "ppt", "pptx"];
-                var p = fileName.lastIndexOf(".");
-                if (p < 0)
-                    callback("no extension for file " + fileName);
-                var extension = fileName.substring(p + 1).toLowerCase();
-                var base64 = false;
-
-                if (base64Extensions.indexOf(extension) > -1) {
-                    base64 = true;
-
-
-                }
-                var t1 = new Date().getTime();
-                elasticProxy.indexDocumentFile(fileName, index, base64, function (err, result) {
-                    if (err) {
-                        logger.error(err)
-                        return callbackInner(err)
-                    }
-                    var duration = new Date().getTime() - t1;
-                    logger.info("file " + fileName + "   indexed .Duration (ms) : " + duration)
-
-                    callbackInner(null)
-
-
-                });
-
-
-            }, function (err, result) {
-                if (err)
-                    return callback(err);
-                var duration = new Date().getTime() - t0;
-                var message = "indexation done " + indexedFiles.length + "documents  in " + duration + " msec.";
-                console.log(message)
-                return callback(null, message);
-
-            }
-        );
-
-
-    }
-
-
-    ,
-
-
-    deleteIndex: function (index, force, callback) {
-        var options = {
-            method: 'HEAD',
-            url: baseUrl + index + "/"
-        }
-        request(options, function (error, response, body) {
-
-            var status = response.statusCode;
-            if (!status) {
-                return callback("elastic server did not respond, is the service on?")
-            }
-            if (status == 200 && force) {
-                var options = {
-                    method: 'DELETE',
-                    url: baseUrl + index + "/"
-                }
-                request(options, function (error, response, body) {
-                    if (error) {
-                        logger.error(error)
-                        return callback(error);
-                    }
-                    logger.info("-----index " + index + " deleted-----");
-                    callback(null);
-                })
-
-            }
-            else {
-                logger.info("-----index " + index + " does not exist-----");
-                callback(null);
-            }
-        })
-    }
-    ,
-
-
-    initDocIndex: function (index, callback) {
-
-        elasticProxy.deleteIndex(index, true, function (err) {
-            if (err)
-                return callback(err);
-//******************************* init attachment Pipeline*******************************
-
-            var options = {
-                method: 'PUT',
-                description: "Extract attachment information",
-                url: baseUrl + "_ingest/pipeline/attachment",
-                json: {
-                    processors: [
-                        {
-                            "attachment": {
-                                "field": "data"
-                            }
-                        }
-                    ]
-                }
-            };
-
-
-            request(options, function (error, response, body) {
-                if (error)
-                    return callback(error);
-
-//******************************* init content Mapping*******************************
-                var options = {
-                    method: 'PUT',
-                    description: "init mapping on attachment content",
-                    url: baseUrl + index + "/",
-
-                    json: {
-                        "mappings": {
-                            "type_document": {
-
-                                "properties": {
-                                    "content": {
-                                        "type": "text",
-                                        "index_options": "offsets",
-
-                                        "fields": {
-                                            "contentKeyWords": {
-                                                "type": "keyword",
-                                                "ignore_above": 256
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                };
-
-                request(options, function (error, response, body) {
-                    if (error)
-                        return callback(error);
-                    //******************************* initfielddata*******************************
-                    //    http://localhost:9200/my_index2/_mapping/my_type
-                    var options = {
-                        method: 'PUT',
-                        description: "init fielddata",
-                        url: baseUrl + index + "/_mapping/type_document",
-                        json: {
-                            "properties": {
-                                "content": {
-                                    "type": "text",
-                                    "fielddata": true
-                                }
-                            }
-                        }
-                    }
-                    request(options, function (error, response, body) {
-                        if (error)
-                            return callback(error);
-                        if (body.error)
-                            return callback(body.error);
-                        callback(null, body)
-
-                    });
-                });
-            });
-        })
-
-    },
-    indexDocumentFile: function (_file, index, base64, callback) {
-        var id = "R" + Math.round(Math.random() * 1000000000)
-        //  var file = "./search/testDocx.doc";
-        //  var file = "./search/testPDF.pdf";
-        var fileContent;
-        var file = _file;
-        var options;
-        if (base64) {
-            index = index + "temp"
-            fileContent = util.base64_encodeFile(file);
-            options = {
-                method: 'PUT',
-                url: baseUrl + index + "/type_document/" + id + "?pipeline=attachment",
-                json: {
-                    "data": fileContent,
-                    "path": file
-                }
-            }
-        }
-        else {
-            fileContent = "" + fs.readFileSync(file);
-            fileContent = elasticCustom.processContent(fileContent);
-            var title = file.substring(file.lastIndexOf("/") + 1);
-            options = {
-                method: 'PUT',
-                url: baseUrl + index + "/type_document/" + id,
-                json: {
-                    "content": fileContent,
-                    "path": file,
-                    "title": title
-                }
-            }
-        }
-
-
-        request(options, function (error, response, body) {
-            if (error) {
-                logger.error(file + " : " + error);
-                console.error(file + " : " + error);
-                // return callback(file+" : "+error);
-            }
-            if (body.error) {
-                logger.error(file + " : " + body.error);
-                console.error(file + " : " + body.error);
-                if (body.error.reason) {
-                    logger.error(file + " : " + body.error.reason);
-                    console.error(file + " : " + body.error.reason);
-                }
-                //  return callback(file+" : "+body.error);
-            }
-            return callback(null, body);
-
-
-        });
-
-    },
-
-
-    copyDocIndex: function (oldIndex, newIndex, callback) {
-
-        var payload = {
-            "from": 0, "size": serverParams.elasticMaxFetch,
-            "_source": ["attachment.content", "path", "attachment.date", "attachment.title", "content"],
-            "query": {
-                "match_all": {}
-            }
-        }
-
-        var options = {
-            method: 'POST',
-            json: payload,
-            url: baseUrl + oldIndex + "/_search"
-        };
-
-        console.log(JSON.stringify(payload, null, 2));
-        request(options, function (error, response, body) {
-
-            if (error)
-                return callback(error);
-            if (!body.hits || !body.hits.hits)
-                console.log("aaaaaaaaaaaaaaaaaaa")
-            var hits = body.hits.hits;
-            var result = [];
-            var newObjs = []
-            for (var i = 0; i < hits.length; i++) {
-                var obj = {};
-                var objElastic = hits[i]._source;
-
-                var newObj = {
-                    path: objElastic.path,
-                }
-                if (objElastic.attachment) {
-                    newObj.content = objElastic.attachment.content;
-                    newObj.date = objElastic.attachment.date,
-                        newObj.title = objElastic.attachment.title;
-                }
-                else {
-                    newObj.content = objElastic.content;
-                    newObj.title = objElastic.title;
-                }
-
-
-                newObjs.push(newObj);
-            }
-            async.eachSeries(newObjs, function (newObj, callbackInner) {
-                var id = "R" + Math.round(Math.random() * 1000000000)
-                options.url = baseUrl + newIndex + "/type_document/" + id;
-                options.json = newObj;
-                request(options, function (error, response, body) {
-                    if (error)
-                        return callbackInner(error);
-                    logger.info("index " + oldIndex + " copied to" + newIndex)
-                    return callbackInner(null);
-                });
-
-            }, function (err) {
-                callback(err, result);
-            });
-
-
-        });
-
-    }
-    ,
 
     findDocumentsById: function (index, ids, words, classifierSource, callback) {
 
         var payload =
             {
                 "from": "0",
-                "_source": [
-                    "title",
-                    "date",
-                    "type",
-                    "path",
-                    "content"
-                ],
+
                 "query": {
                     "bool": {
                         "must": [
@@ -600,8 +164,20 @@ var elasticProxy = {
                     }
                 }
             };
-        for (var i = 0; i < words.length; i++) {
-            payload.query.bool.must.push({"match": {"content": words[i]}})
+        var fields = elasticProxy.getShemaFields(index);
+        if (fields.indexOf("content") < 0)
+            fields.push("content");
+        payload._source = fields;
+
+        if (words) {
+            for (var i = 0; i < words.length; i++) {
+                if (words[i].indexOf("*") > -1) {
+                    payload.query.bool.must.push({"wildcard": {"content": words[i]}})
+
+                } else
+
+                    payload.query.bool.must.push({"match": {"content": words[i]}})
+            }
         }
 
         var options = {
@@ -687,13 +263,7 @@ var elasticProxy = {
     findDocuments: function (index, type, word, from, size, slop, fields, andWords, classifierSource, callback) {
         var match = {"content": word};
         if (!fields) {
-            fields = ["title", "date", "type", "path"];
-            schema = elasticProxy.getSchema();
-            if (schema && schema[index])
-                fields = schema[index].fields
-            if (!fields)
-                fields = ["title", "date", "type", "path"];
-
+            fields = elasticProxy.getShemaFields(index);
 
         }
 
@@ -784,6 +354,7 @@ var elasticProxy = {
             return callback(null, []);
         }
         var hits = body.hits.hits;
+
         var total = body.hits.total;
         var docs = [];
 
@@ -800,29 +371,23 @@ var elasticProxy = {
 
             var obj = {};
             var objElastic = hits[i]._source;
-            obj.title = objElastic.title;
-            if (!obj.title || obj.title == undefined)
-                obj.title = "??"
-            obj._id = hits[i]._id;
 
-            obj.date = objElastic.date;
-            if (!obj.date || obj.date == undefined)
-                obj.date = "";
 
-            obj.path = objElastic.path;
-            if (!obj.path || obj.path == undefined)
-                obj.path = objElastic.path;
+            for (var key in objElastic) {
+                var value = objElastic[key];
+                if (value) {
+                   if(typeof value==="string")
+                     value = value.replace("undefined", "")
+                    if (uiMappings[key]) {
+                        obj[uiMappings[key]] = value;
+                    }
 
-            if (hits[i].highlight)
-                obj.highlights = hits[i].highlight.content
-            if (objElastic.content)
-                obj.content = objElastic.content;
-
-            for (var key in uiMappings) {
-                if (!obj[key])
-                    obj[key] = objElastic[uiMappings[key]];
+                    obj[key] = value;
+                }
             }
+            obj.highlights = hits[i].highlight.content;
             obj.type = hits[i]._type;
+            obj._id = hits[i]._id;
 
             docs.push(obj);
         }
@@ -1091,11 +656,458 @@ var elasticProxy = {
         });
 
     }
+
+
+
+
+
+
+
+
+
+
+
+
+    //******************************************************************INDEXING**********************************************************
+    //******************************************************************INDEXING**********************************************************
+    //******************************************************************INDEXING**********************************************************
+
+
     ,
-    indexDocDirInNewIndex: function (index, rootDir, doClassifier, callback) {
+    index: function (index, type, id, payload, callback) {
+        getClient().index({
+            index: index,
+            type: type,
+            id: id,
+            body: payload
+        }, function (err, response) {
+            if (err) {
+                console.log(err);
+                callback(err);
+                return;
+
+            } else {
+                callback(null, response);
+            }
+        });
+    }
+    ,
+    indexDocumentDir: function (dir, index,type, recursive, callback) {
+
+        var acceptedExtensions = ["doc", "docx", "xls", "xslx", "pdf", "ppt", "pptx", "html", "htm", "txt", "csv"];
+
+        var indexedFiles = [];
+
+        function getFilesRecursive(dir) {
+            elasticProxy.sendMessage("indexing " + dir);
+            dir = path.normalize(dir);
+            if (dir.charAt(dir.length - 1) != '/')
+                dir += '/';
+            var files = fs.readdirSync(dir);
+            for (var i = 0; i < files.length; i++) {
+                var fileName = dir + files[i];
+                var stats = fs.statSync(fileName);
+
+                if (stats.isDirectory()) {
+                    getFilesRecursive(fileName)
+                }
+                else {
+                    var p = fileName.lastIndexOf(".");
+                    if (p < 0)
+                        continue;
+                    var extension = fileName.substring(p + 1).toLowerCase();
+                    if (acceptedExtensions.indexOf(extension) < 0) {
+                        logger.info("!!!!!!  refusedExtension " + fileName);
+                        continue;
+                    }
+
+
+                    // console.log("File" + fileName + " size " + stats.size + " ---------------" + (i++));
+                    if (stats.size > serverParams.elasticsaerchMaxDocSizeForIndexing) {
+                        logger.info("!!!!!! file  too big " + Math.round(stats.size / 1000) + " Ko , not indexed ");
+                        continue;
+
+                    }
+                    indexedFiles.push(fileName);
+                }
+            }
+
+        }
+
+        getFilesRecursive(dir);
+
+        indexedFiles.sort();
+        var t0 = new Date().getTime();
+        async.eachSeries(indexedFiles, function (fileName, callbackInner) {
+                var base64Extensions = ["doc", "docx", "xls", "xslx", "pdf", "ppt", "pptx"];
+                var p = fileName.lastIndexOf(".");
+                if (p < 0)
+                    callback("no extension for file " + fileName);
+                var extension = fileName.substring(p + 1).toLowerCase();
+                var base64 = false;
+
+                if (base64Extensions.indexOf(extension) > -1) {
+                    base64 = true;
+
+
+                }
+                var t1 = new Date().getTime();
+                elasticProxy.indexDocumentFile(fileName, index,type, base64, function (err, result) {
+                    if (err) {
+                        logger.error(err)
+                        return callbackInner(err)
+                    }
+                    var duration = new Date().getTime() - t1;
+                    logger.info("file " + fileName + "   indexed .Duration (ms) : " + duration)
+
+                    callbackInner(null)
+
+
+                });
+
+
+            }, function (err, result) {
+                if (err)
+                    return callback(err);
+                var duration = new Date().getTime() - t0;
+                var message = "indexation done " + indexedFiles.length + "documents  in " + duration + " msec.";
+                console.log(message)
+                return callback(null, message);
+
+            }
+        );
+
+
+    },
+    exportMongoToElastic: function (mongoDB, mongoCollection, mongoQuery, elasticIndex, elasticFields, elasticType, callback) {
+        if (typeof mongoQuery !== "object")
+            mongoQuery = JSON.parse(mongoQuery);
+        if (typeof elasticFields !== "object")
+            elasticFields = JSON.parse(elasticFields);
+        var currentIndex = 0;
+        var resultSize = 1;
+        async.whilst(
+            function () {//test
+                return resultSize > 0;
+            },
+            function (_callback) {//iterate
+                var callback = _callback;
+
+                mongoProxy.pagedFind(currentIndex, serverParams.mongoFetchSize, mongoDB, mongoCollection, mongoQuery, null, function (err, result) {
+                    if (err) {
+                        callback(err);
+                        return;
+                    }
+
+
+                    resultSize = result.length;
+                    if (resultSize == 0)
+                        callback(null, "end");
+
+                    currentIndex += serverParams.mongoFetchSize;
+                    var startId = Math.round(Math.random() * 10000000);
+                    var elasticPayload = [];
+
+                    // contcat all fields values in content field
+                    for (var i = 0; i < result.length; i++) {
+                        var content = ""
+                        for (var j = 0; j < elasticFields.length; j++) {
+                            var value = result[i][elasticFields[j]];
+                            if (value) {
+                                content += " " + value;
+                            }
+                        }
+                        result[i].content = content;
+
+                        elasticPayload.push({index: {_index: elasticIndex, _type: elasticType, _id: "_" + (startId++)}})
+                        var payload = {};
+                        for (var j = 0; j < elasticFields.length; j++) {
+                            var value = result[i][elasticFields[j]];
+                            if (value) {
+                                payload[elasticFields[j]] = value;
+                            }
+
+                        }
+                        elasticPayload.push(payload);
+
+                    }
+
+                    getClient().bulk({
+                        body: elasticPayload
+                    }, function (err, resp) {
+                        if (err) {
+                            callback(err);
+
+                        } else {
+                            callback(null, resp);
+                        }
+                    });
+
+
+                });
+
+            }
+            ,
+            function (err, result) {//end
+                if (err) {
+                    callback(err);
+
+                } else {
+                    callback(null, "done");
+                }
+
+            });
+    },
+
+
+    deleteIndex: function (index, force, callback) {
+        var options = {
+            method: 'HEAD',
+            url: baseUrl + index + "/"
+        }
+        request(options, function (error, response, body) {
+
+            var status = response.statusCode;
+            if (!status) {
+                return callback("elastic server did not respond, is the service on?")
+            }
+            if (status == 200 && force) {
+                var options = {
+                    method: 'DELETE',
+                    url: baseUrl + index + "/"
+                }
+                request(options, function (error, response, body) {
+                    if (error) {
+                        logger.error(error)
+                        return callback(error);
+                    }
+                    logger.info("-----index " + index + " deleted-----");
+                    callback(null);
+                })
+
+            }
+            else {
+                logger.info("-----index " + index + " does not exist-----");
+                callback(null);
+            }
+        })
+    }
+    ,
+
+
+    initDocIndex: function (index, callback) {
+
+        elasticProxy.deleteIndex(index, true, function (err) {
+            if (err)
+                return callback(err);
+//******************************* init attachment Pipeline*******************************
+
+            var options = {
+                method: 'PUT',
+                description: "Extract attachment information",
+                url: baseUrl + "_ingest/pipeline/attachment",
+                json: {
+                    processors: [
+                        {
+                            "attachment": {
+                                "field": "data"
+                            }
+                        }
+                    ]
+                }
+            };
+
+
+            request(options, function (error, response, body) {
+                if (error)
+                    return callback(error);
+
+//******************************* init content Mapping*******************************
+                var options = {
+                    method: 'PUT',
+                    description: "init mapping on attachment content",
+                    url: baseUrl + index + "/",
+
+                    json: {
+                        "mappings": {
+                            "type_document": {
+
+                                "properties": {
+                                    "content": {
+                                        "type": "text",
+                                        "index_options": "offsets",
+
+                                        "fields": {
+                                            "contentKeyWords": {
+                                                "type": "keyword",
+                                                "ignore_above": 256
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                };
+
+                request(options, function (error, response, body) {
+                    if (error)
+                        return callback(error);
+                    //******************************* initfielddata*******************************
+                    //    http://localhost:9200/my_index2/_mapping/my_type
+                    var options = {
+                        method: 'PUT',
+                        description: "init fielddata",
+                        url: baseUrl + index + "/_mapping/type_document",
+                        json: {
+                            "properties": {
+                                "content": {
+                                    "type": "text",
+                                    "fielddata": true
+                                }
+                            }
+                        }
+                    }
+                    request(options, function (error, response, body) {
+                        if (error)
+                            return callback(error);
+                        if (body.error)
+                            return callback(body.error);
+                        callback(null, body)
+
+                    });
+                });
+            });
+        })
+
+    },
+    indexDocumentFile: function (_file, index,type, base64, callback) {
+        var id = "R" + Math.round(Math.random() * 1000000000)
+        //  var file = "./search/testDocx.doc";
+        //  var file = "./search/testPDF.pdf";
+        var fileContent;
+        var file = _file;
+        var options;
+        if (base64) {
+            index = index + "temp"
+            fileContent = util.base64_encodeFile(file);
+            options = {
+                method: 'PUT',
+                url: baseUrl + index + "/"+type+"/" + id + "?pipeline=attachment",
+                json: {
+                    "data": fileContent,
+                    "path": file
+                }
+            }
+        }
+        else {
+            fileContent = "" + fs.readFileSync(file);
+            fileContent = elasticCustom.processContent(fileContent);
+            var title = file.substring(file.lastIndexOf("/") + 1);
+            options = {
+                method: 'PUT',
+                url: baseUrl + index + "/"+type+"/" + id,
+                json: {
+                    "content": fileContent,
+                    "path": file,
+                    "title": title
+                }
+            }
+        }
+
+
+        request(options, function (error, response, body) {
+            if (error) {
+                logger.error(file + " : " + error);
+                console.error(file + " : " + error);
+                // return callback(file+" : "+error);
+            }
+            if (body.error) {
+                logger.error(file + " : " + body.error);
+                console.error(file + " : " + body.error);
+                if (body.error.reason) {
+                    logger.error(file + " : " + body.error.reason);
+                    console.error(file + " : " + body.error.reason);
+                }
+                //  return callback(file+" : "+body.error);
+            }
+            return callback(null, body);
+
+
+        });
+
+    },
+
+
+    copyDocIndex: function (oldIndex, newIndex, type,callback) {
+
+        var payload = {
+            "from": 0, "size": serverParams.elasticMaxFetch,
+            "_source": ["attachment.content", "path", "attachment.date", "attachment.title", "content"],
+            "query": {
+                "match_all": {}
+            }
+        }
+
+        var options = {
+            method: 'POST',
+            json: payload,
+            url: baseUrl + oldIndex +"/"+type+ "/_search"
+        };
+
+        console.log(JSON.stringify(payload, null, 2));
+        request(options, function (error, response, body) {
+
+            if (error)
+                return callback(error);
+            if (!body.hits || !body.hits.hits)
+                console.log("aaaaaaaaaaaaaaaaaaa")
+            var hits = body.hits.hits;
+            var result = [];
+            var newObjs = []
+            for (var i = 0; i < hits.length; i++) {
+                var obj = {};
+                var objElastic = hits[i]._source;
+                var newObj = {};
+                if (objElastic.attachment) {
+                    newObj=objElastic.attachment;
+                    newObj.path= objElastic.path;
+                }
+                else {
+                    newObj=objElastic;
+
+                }
+
+
+
+                newObjs.push(newObj);
+            }
+            async.eachSeries(newObjs, function (newObj, callbackInner) {
+                var id = "R" + Math.round(Math.random() * 1000000000)
+                options.url = baseUrl + newIndex + "/"+type+"/" + id;
+                options.json = newObj;
+                request(options, function (error, response, body) {
+                    if (error)
+                        return callbackInner(error);
+                    logger.info("index " + oldIndex + " copied to" + newIndex)
+                    return callbackInner(null);
+                });
+
+            }, function (err) {
+                callback(err, result);
+            });
+
+
+        });
+
+    }
+
+
+    ,
+    indexDocDirInNewIndex: function (index,type, rootDir, doClassifier, callback) {
 
         if (!fs.existsSync(rootDir)) {
-            var message = ("directory " + rootDir + " does not not exist on server" )
+            var message = ("directory " + rootDir + " does not not exist on server")
             elasticProxy.sendMessage("ERROR" + message);
             return callback(message);
         }
@@ -1117,7 +1129,7 @@ var elasticProxy = {
 
 
                 elasticProxy.sendMessage("indexing  directory " + rootDir + "  and sub directories");
-                elasticProxy.indexDocumentDir(rootDir, index, true, function (err, result) {
+                elasticProxy.indexDocumentDir(rootDir, index,type, true, function (err, result) {
                     if (err) {
                         elasticProxy.sendMessage("ERROR" + err);
                         return callback(err);
@@ -1126,7 +1138,7 @@ var elasticProxy = {
                     elasticProxy.sendMessage("indexation in tempIndex successfull " + result);
 
 
-                    elasticProxy.copyDocIndex(indexTemp, index, function (err, result) {
+                    elasticProxy.copyDocIndex(indexTemp, index,type, function (err, result) {
                         if (err) {
                             elasticProxy.sendMessage("ERROR" + err);
                             return callback(err);
@@ -1155,9 +1167,9 @@ var elasticProxy = {
             });
         })
     }
-    , indexDirInExistingIndex: function (index, rootDir, doClassifier, callback) {
+    , indexDirInExistingIndex: function (index,type, rootDir, doClassifier, callback) {
         if (!fs.existsSync(rootDir)) {
-            var message = ("directory " + rootDir + " does not not exist on server" )
+            var message = ("directory " + rootDir + " does not not exist on server")
             elasticProxy.sendMessage("ERROR" + message);
             return callback(message);
         }
@@ -1186,7 +1198,7 @@ var elasticProxy = {
 
 
                 elasticProxy.sendMessage("indexing  directory " + rootDir + "  and sub directories");
-                elasticProxy.indexDocumentDir(rootDir, index, true, function (err, result) {
+                elasticProxy.indexDocumentDir(rootDir, index,type, true, function (err, result) {
                     if (err) {
                         elasticProxy.sendMessage("ERROR" + err);
                         return callback(err);
@@ -1195,7 +1207,7 @@ var elasticProxy = {
                     elasticProxy.sendMessage("indexation in tempIndex successfull " + result);
 
 
-                    elasticProxy.copyDocIndex(indexTemp, index, function (err, result) {
+                    elasticProxy.copyDocIndex(indexTemp, index,type, function (err, result) {
                         if (err) {
                             elasticProxy.sendMessage("ERROR" + err);
                             return callback(err);
@@ -1231,6 +1243,17 @@ var elasticProxy = {
         socket.message(message);
         logger.info(message);
         console.log(message);
+    }
+    ,
+    getShemaFields: function (index) {
+
+        schema = elasticProxy.getSchema();
+        if (schema && schema[index])
+            fields = schema[index].fields
+        if (!fields || fields.length == 0)
+            fields = ["title", "date", "type", "path"];
+        return fields;
+
     }
 
 
@@ -1277,6 +1300,11 @@ if (args.length > 2) {
                     message: "indexName",
                     required: true
                 },
+                type: {
+                    message: "mappings type",
+                    required: true
+
+                },
                 rootDir: {
                     message: "root directory",
                     required: true
@@ -1299,7 +1327,7 @@ if (args.length > 2) {
                 var index = result.index;
                 var rootDir = result.rootDir;
                 var doClassifier = result.generateBNFclassifier;
-                elasticProxy.indexDocDirInNewIndex(index, rootDir, doClassifier, function (err, result) {
+                elasticProxy.indexDocDirInNewIndex( index,type,rootDir, doClassifier, function (err, result) {
                     if (err)
                         console.log("ERROR " + err);
                     console.log("DONE");
@@ -1319,6 +1347,11 @@ if (args.length > 2) {
 
                 index: {
                     message: "indexName",
+                    required: true
+
+                },
+                type: {
+                    message: "mappings type",
                     required: true
 
                 },
@@ -1349,7 +1382,7 @@ if (args.length > 2) {
                 var indexTemp = index + "Temp";
                 var rootDir = result.rootDir;
                 var doClassifier = result.updateBNFclassifier;
-                elasticProxy.indexDirInExistingIndex(index, rootDir, doClassifier, function (err, result) {
+                elasticProxy.indexDirInExistingIndex(index,type,  rootDir,doClassifier, function (err, result) {
                     if (err)
                         console.log("ERROR " + err);
                     console.log("DONE");
