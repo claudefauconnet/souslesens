@@ -24,6 +24,9 @@
  * SOFTWARE.
  *
  ******************************************************************************/
+
+//did you mean
+// http://www.bilyachat.com/2015/07/search-like-google-with-elasticsearch.html
 var elasticsearch = require('elasticsearch');
 var serverParams = require('./serverParams.js');
 var mongoProxy = require('./mongoProxy.js');
@@ -366,7 +369,9 @@ var elasticProxy = {
         if (schema && schema[index] && schema[index].icons) {
             icons = schema[index].icons;
         }
-
+        var mode="read"
+        if (schema && schema[index] && schema[index].mode && schema[index].mode)
+            var mode= schema[index].mode
         for (var i = 0; i < hits.length; i++) {
 
             var obj = {};
@@ -385,7 +390,11 @@ var elasticProxy = {
                     obj[key] = value;
                 }
             }
+            if(hits[i].highlight && hits[i].highlight.content)
             obj.highlights = hits[i].highlight.content;
+            else
+                obj.highlights=[];
+
             obj.type = hits[i]._type;
             obj._id = hits[i]._id;
 
@@ -400,6 +409,7 @@ var elasticProxy = {
             classifier: classifier,
             total: total,
             icons: icons,
+            mode:mode
 
         }
 
