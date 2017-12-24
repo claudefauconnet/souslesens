@@ -53,12 +53,12 @@ var elasticArchives = {
         }
 
 
-        elasticProxy.exportMongoToElastic(mongoDB, mongoCollection, mongoQuery, elasticIndex, elasticFields, elasticType, function (err, result) {
+        elasticProxy.indexMongoCollection(mongoDB, mongoCollection, mongoQuery, elasticIndex, elasticType, function (err, result) {
             if (err) {
                 return console.log(err)
 
             }
-            console.log("Done " + result.length())
+            console.log("Done " + result.length)
 
         });
 

@@ -1,128 +1,123 @@
 {
   "archivesatd": {
     "mappings": {
-      "archivesatd": {
-        "mappings": {
-          "archive": {
-            "properties": {
-              "anneeDebut": {
-                "type": "integer"
-              },
-              "anneeFin": {
-                "type": "integer"
-              },
-              "auteur": {
-                "type": "text"
-              },
-              "commentaire": {
-                "type": "text"
-              },
-              "confidentiel": {
-                "type": "keyword"
-              },
-              "content": {
-                "type": "text",
-                "index_options": "offsets",
-                "fields": {
-                  "contentKeyWords": {
-                    "type": "keyword",
-                    "ignore_above": 256
-                  }
-                },
-                "fielddata": true
-              },
-              "coteBoite": {
-                "type": "keyword"
-              },
-              "coteSerie": {
-                "type": "keyword"
-              },
-              "coteSousSerie": {
-                "type": "keyword"
-              },
-              "dateStr": {
-                "type": "text"
-              },
-              "destinataire": {
-                "type": "text"
-              },
-              "format": {
-                "type": "text"
-              },
-              "genre": {
-                "type": "keyword"
-              },
-              "lieu": {
-                "type": "text"
-              },
-              "nbFeuilles": {
-                "type": "integer"
-              },
-              "source": {
-                "type": "text"
-              },
-              "title": {
-                "type": "text"
-              }
-              ,
-              "_id": {
-                "type": "text"
-              }
-            }
+      "archive": {
+        "properties": {
+          "anneeDebut": {
+            "type": "integer"
           },
-          "mail": {
-            "properties": {
-              "author": {
-                "type": "text"
-              },
-              "content": {
-                "type": "text",
-                "index_options": "offsets",
-                "fields": {
-                  "contentKeyWords": {
-                    "type": "keyword",
-                    "ignore_above": 256
-                  }
-                },
-                "fielddata": true
-              },
-              "date": {
-                "type": "text"
-              },
-              "path": {
-                "type": "text"
-              },
-              "title": {
-                "type": "text"
+          "anneeFin": {
+            "type": "integer"
+          },
+          "auteur": {
+            "type": "text"
+          },
+          "coteBoite": {
+            "type": "keyword"
+          },
+          "coteSerie": {
+            "type": "keyword"
+          },
+          "commentaire": {
+            "type": "text"
+          },
+          "confidentiel": {
+            "type": "keyword"
+          },
+          "dateStr": {
+            "type": "text"
+          },
+          "destinataire": {
+            "type": "text"
+          },
+          "format": {
+            "type": "text"
+          },
+          "genre": {
+            "type": "keyword"
+          },
+          "lieu": {
+            "type": "text"
+          },
+          "nbFeuilles": {
+            "type": "text"
+          },
+          "source": {
+            "type": "text"
+          },
+          "coteSousSerie": {
+            "type": "keyword"
+          },
+          "title": {
+            "type": "text"
+          },
+          "mongodId": {
+            "type": "keyword"
+          },
+          "content": {
+            "type": "text",
+            "index_options": "offsets",
+            "fielddata": true,
+            "fields": {
+              "contentKeyWords": {
+                "type": "keyword",
+                "ignore_above": 256
               }
             }
           }
-          ,  "general_document": {
-            "properties": {
-              "author": {
-                "type": "text"
-              },
-              "content": {
-                "type": "text",
-                "index_options": "offsets",
-                "fields": {
-                  "contentKeyWords": {
-                    "type": "keyword",
-                    "ignore_above": 256
-                  }
-                },
-                "fielddata": true
-              },
-              "date": {
-                "type": "text"
-              },
-              "path": {
-                "type": "text"
-              },
-              "title": {
-                "type": "text"
+        }
+      },
+      "mail": {
+        "properties": {
+          "author": {
+            "type": "text"
+          },
+          "content": {
+            "type": "text",
+            "index_options": "offsets",
+            "fields": {
+              "contentKeyWords": {
+                "type": "keyword",
+                "ignore_above": 256
               }
-            }
+            },
+            "fielddata": true
+          },
+          "date": {
+            "type": "text"
+          },
+          "path": {
+            "type": "text"
+          },
+          "title": {
+            "type": "text"
+          }
+        }
+      },
+      "general_document": {
+        "properties": {
+          "author": {
+            "type": "text"
+          },
+          "content": {
+            "type": "text",
+            "index_options": "offsets",
+            "fields": {
+              "contentKeyWords": {
+                "type": "keyword",
+                "ignore_above": 256
+              }
+            },
+            "fielddata": true
+          },
+          "date": {
+            "type": "text"
+          },
+          "path": {
+            "type": "text"
+          },
+          "title": {
+            "type": "text"
           }
         }
       }
@@ -145,7 +140,8 @@
       "source",
       "coteSousSerie",
       "title",
-      "_id"
+      "mongoId",
+     "content"
     ],
     "uiMappings": {
       "title": "titre",
@@ -157,15 +153,12 @@
         "archive": "archive.png"
       }
     },
-    "mode":{
-      "archive":{
-
-        "source":"MongoDB",
-        "dbName":"ATD",
-        "collectionName":"archives"
-
+    "mode": {
+      "archive": {
+        "source": "MongoDB",
+        "dbName": "ATD",
+        "collectionName": "archives"
       }
-
     }
   }
 }

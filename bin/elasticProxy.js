@@ -331,7 +331,7 @@ var elasticProxy = {
             }
 
         }
-        console.log(JSON.stringify(payload, null, 2));
+
         if (!type)
             type = "";
         else
@@ -343,7 +343,7 @@ var elasticProxy = {
             url: baseUrl + index + type + "/_search"
         };
 
-
+        console.log(JSON.stringify(options, null, 2));
         request(options, function (error, response, body) {
             elasticProxy.processSearchResult(error, index, body, classifierSource, callback);
 
@@ -369,9 +369,9 @@ var elasticProxy = {
         if (schema && schema[index] && schema[index].icons) {
             icons = schema[index].icons;
         }
-        var mode="read"
+        var mode = "read"
         if (schema && schema[index] && schema[index].mode && schema[index].mode)
-            var mode= schema[index].mode
+            var mode = schema[index].mode
         for (var i = 0; i < hits.length; i++) {
 
             var obj = {};
@@ -381,8 +381,8 @@ var elasticProxy = {
             for (var key in objElastic) {
                 var value = objElastic[key];
                 if (value) {
-                   if(typeof value==="string")
-                     value = value.replace("undefined", "")
+                    if (typeof value === "string")
+                        value = value.replace("undefined", "")
                     if (uiMappings[key]) {
                         obj[uiMappings[key]] = value;
                     }
@@ -390,10 +390,10 @@ var elasticProxy = {
                     obj[key] = value;
                 }
             }
-            if(hits[i].highlight && hits[i].highlight.content)
-            obj.highlights = hits[i].highlight.content;
+            if (hits[i].highlight && hits[i].highlight.content)
+                obj.highlights = hits[i].highlight.content;
             else
-                obj.highlights=[];
+                obj.highlights = [];
 
             obj.type = hits[i]._type;
             obj._id = hits[i]._id;
@@ -409,7 +409,7 @@ var elasticProxy = {
             classifier: classifier,
             total: total,
             icons: icons,
-            mode:mode
+            mode: mode
 
         }
 
@@ -702,7 +702,7 @@ var elasticProxy = {
         });
     }
     ,
-    indexDocumentDir: function (dir, index,type, recursive, callback) {
+    indexDocumentDir: function (dir, index, type, recursive, callback) {
 
         var acceptedExtensions = ["doc", "docx", "xls", "xslx", "pdf", "ppt", "pptx", "html", "htm", "txt", "csv"];
 
@@ -762,7 +762,7 @@ var elasticProxy = {
 
                 }
                 var t1 = new Date().getTime();
-                elasticProxy.indexDocumentFile(fileName, index,type, base64, function (err, result) {
+                elasticProxy.indexDocumentFile(fileName, index, type, base64, function (err, result) {
                     if (err) {
                         logger.error(err)
                         return callbackInner(err)
@@ -789,21 +789,29 @@ var elasticProxy = {
 
 
     },
-    exportMongoToElastic: function (mongoDB, mongoCollection, mongoQuery, elasticIndex, elasticFields, elasticType, callback) {
+    indexMongoCollection: function (mongoDB, mongoCollection, mongoQuery, elasticIndex, elasticType, callback) {
         if (typeof mongoQuery !== "object")
             mongoQuery = JSON.parse(mongoQuery);
-        if (typeof elasticFields !== "object")
-            elasticFields = JSON.parse(elasticFields);
+
         var currentIndex = 0;
         var resultSize = 1;
+       var  elasticFields= elasticProxy.getShemaFields (elasticIndex) ;
+       var mongoFields={};
+      for(var i=0;i<elasticFields.length;i++){
+          var field=elasticFields[i];
+          if(field[i]=="mongoId")
+              field="_id";
+          mongoFields[field]=1;
+
+      }
         async.whilst(
             function () {//test
                 return resultSize > 0;
             },
-            function (_callback) {//iterate
-                var callback = _callback;
+            function (callbackWhilst) {//iterate
 
-                mongoProxy.pagedFind(currentIndex, serverParams.mongoFetchSize, mongoDB, mongoCollection, mongoQuery, null, function (err, result) {
+
+                mongoProxy.pagedFind(currentIndex, serverParams.mongoFetchSize, mongoDB, mongoCollection, mongoQuery, mongoFields, function (err, result) {
                     if (err) {
                         callback(err);
                         return;
@@ -811,8 +819,9 @@ var elasticProxy = {
 
 
                     resultSize = result.length;
-                    if (resultSize == 0)
-                        callback(null, "end");
+                    if (resultSize == 0) {
+                       return  callback(null, "end");
+                    }
 
                     currentIndex += serverParams.mongoFetchSize;
                     var startId = Math.round(Math.random() * 10000000);
@@ -820,36 +829,39 @@ var elasticProxy = {
 
                     // contcat all fields values in content field
                     for (var i = 0; i < result.length; i++) {
-                        var content = ""
-                        for (var j = 0; j < elasticFields.length; j++) {
-                            var value = result[i][elasticFields[j]];
-                            if (value) {
-                                content += " " + value;
-                            }
-                        }
-                        result[i].content = content;
+
 
                         elasticPayload.push({index: {_index: elasticIndex, _type: elasticType, _id: "_" + (startId++)}})
                         var payload = {};
+                        var content = "";
                         for (var j = 0; j < elasticFields.length; j++) {
-                            var value = result[i][elasticFields[j]];
-                            if (value) {
-                                payload[elasticFields[j]] = value;
+                            var key = elasticFields[j];
+                            var value = result[i][key];
+                            if (!value)
+                                continue;
+
+                            if (key == "mongoId") {
+                                value = result[i]["_id"].toString();
                             }
+                            content += " " + value;
+                            payload[key] = value;
 
                         }
+                        payload["content"] = content;
                         elasticPayload.push(payload);
 
                     }
+
 
                     getClient().bulk({
                         body: elasticPayload
                     }, function (err, resp) {
                         if (err) {
-                            callback(err);
+                          console.log("ERROR "+err)
+                            console.log(JSON.stringify(elasticPayload,null,2))
 
                         } else {
-                            callback(null, resp);
+                            return callbackWhilst(null);
                         }
                     });
 
@@ -991,7 +1003,7 @@ var elasticProxy = {
         })
 
     },
-    indexDocumentFile: function (_file, index,type, base64, callback) {
+    indexDocumentFile: function (_file, index, type, base64, callback) {
         var id = "R" + Math.round(Math.random() * 1000000000)
         //  var file = "./search/testDocx.doc";
         //  var file = "./search/testPDF.pdf";
@@ -1003,7 +1015,7 @@ var elasticProxy = {
             fileContent = util.base64_encodeFile(file);
             options = {
                 method: 'PUT',
-                url: baseUrl + index + "/"+type+"/" + id + "?pipeline=attachment",
+                url: baseUrl + index + "/" + type + "/" + id + "?pipeline=attachment",
                 json: {
                     "data": fileContent,
                     "path": file
@@ -1016,7 +1028,7 @@ var elasticProxy = {
             var title = file.substring(file.lastIndexOf("/") + 1);
             options = {
                 method: 'PUT',
-                url: baseUrl + index + "/"+type+"/" + id,
+                url: baseUrl + index + "/" + type + "/" + id,
                 json: {
                     "content": fileContent,
                     "path": file,
@@ -1049,7 +1061,7 @@ var elasticProxy = {
     },
 
 
-    copyDocIndex: function (oldIndex, newIndex, type,callback) {
+    copyDocIndex: function (oldIndex, newIndex, type, callback) {
 
         var payload = {
             "from": 0, "size": serverParams.elasticMaxFetch,
@@ -1062,7 +1074,7 @@ var elasticProxy = {
         var options = {
             method: 'POST',
             json: payload,
-            url: baseUrl + oldIndex +"/"+type+ "/_search"
+            url: baseUrl + oldIndex + "/" + type + "/_search"
         };
 
         console.log(JSON.stringify(payload, null, 2));
@@ -1080,21 +1092,20 @@ var elasticProxy = {
                 var objElastic = hits[i]._source;
                 var newObj = {};
                 if (objElastic.attachment) {
-                    newObj=objElastic.attachment;
-                    newObj.path= objElastic.path;
+                    newObj = objElastic.attachment;
+                    newObj.path = objElastic.path;
                 }
                 else {
-                    newObj=objElastic;
+                    newObj = objElastic;
 
                 }
-
 
 
                 newObjs.push(newObj);
             }
             async.eachSeries(newObjs, function (newObj, callbackInner) {
                 var id = "R" + Math.round(Math.random() * 1000000000)
-                options.url = baseUrl + newIndex + "/"+type+"/" + id;
+                options.url = baseUrl + newIndex + "/" + type + "/" + id;
                 options.json = newObj;
                 request(options, function (error, response, body) {
                     if (error)
@@ -1114,7 +1125,7 @@ var elasticProxy = {
 
 
     ,
-    indexDocDirInNewIndex: function (index,type, rootDir, doClassifier, callback) {
+    indexDocDirInNewIndex: function (index, type, rootDir, doClassifier, callback) {
 
         if (!fs.existsSync(rootDir)) {
             var message = ("directory " + rootDir + " does not not exist on server")
@@ -1139,7 +1150,7 @@ var elasticProxy = {
 
 
                 elasticProxy.sendMessage("indexing  directory " + rootDir + "  and sub directories");
-                elasticProxy.indexDocumentDir(rootDir, index,type, true, function (err, result) {
+                elasticProxy.indexDocumentDir(rootDir, index, type, true, function (err, result) {
                     if (err) {
                         elasticProxy.sendMessage("ERROR" + err);
                         return callback(err);
@@ -1148,7 +1159,7 @@ var elasticProxy = {
                     elasticProxy.sendMessage("indexation in tempIndex successfull " + result);
 
 
-                    elasticProxy.copyDocIndex(indexTemp, index,type, function (err, result) {
+                    elasticProxy.copyDocIndex(indexTemp, index, type, function (err, result) {
                         if (err) {
                             elasticProxy.sendMessage("ERROR" + err);
                             return callback(err);
@@ -1177,7 +1188,7 @@ var elasticProxy = {
             });
         })
     }
-    , indexDirInExistingIndex: function (index,type, rootDir, doClassifier, callback) {
+    , indexDirInExistingIndex: function (index, type, rootDir, doClassifier, callback) {
         if (!fs.existsSync(rootDir)) {
             var message = ("directory " + rootDir + " does not not exist on server")
             elasticProxy.sendMessage("ERROR" + message);
@@ -1208,7 +1219,7 @@ var elasticProxy = {
 
 
                 elasticProxy.sendMessage("indexing  directory " + rootDir + "  and sub directories");
-                elasticProxy.indexDocumentDir(rootDir, index,type, true, function (err, result) {
+                elasticProxy.indexDocumentDir(rootDir, index, type, true, function (err, result) {
                     if (err) {
                         elasticProxy.sendMessage("ERROR" + err);
                         return callback(err);
@@ -1217,7 +1228,7 @@ var elasticProxy = {
                     elasticProxy.sendMessage("indexation in tempIndex successfull " + result);
 
 
-                    elasticProxy.copyDocIndex(indexTemp, index,type, function (err, result) {
+                    elasticProxy.copyDocIndex(indexTemp, index, type, function (err, result) {
                         if (err) {
                             elasticProxy.sendMessage("ERROR" + err);
                             return callback(err);
@@ -1337,7 +1348,7 @@ if (args.length > 2) {
                 var index = result.index;
                 var rootDir = result.rootDir;
                 var doClassifier = result.generateBNFclassifier;
-                elasticProxy.indexDocDirInNewIndex( index,type,rootDir, doClassifier, function (err, result) {
+                elasticProxy.indexDocDirInNewIndex(index, type, rootDir, doClassifier, function (err, result) {
                     if (err)
                         console.log("ERROR " + err);
                     console.log("DONE");
@@ -1392,7 +1403,7 @@ if (args.length > 2) {
                 var indexTemp = index + "Temp";
                 var rootDir = result.rootDir;
                 var doClassifier = result.updateBNFclassifier;
-                elasticProxy.indexDirInExistingIndex(index,type,  rootDir,doClassifier, function (err, result) {
+                elasticProxy.indexDirInExistingIndex(index, type, rootDir, doClassifier, function (err, result) {
                     if (err)
                         console.log("ERROR " + err);
                     console.log("DONE");

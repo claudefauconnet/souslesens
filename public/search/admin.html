@@ -6,9 +6,13 @@
     <script src="../common/js/jquery/jquery.min.js"></script>
     <script src="../common/js/jquery/jquery-ui.min.js"></script>
     <script src="../common/js/socket.io.js"></script>
+    <link rel="stylesheet" href="../common/js/jquery/jquery-ui.min.css"/>
 
     <script>
         $(function () {
+
+$("#tabs").tabs();
+
             var url = window.location.href;
             var p = url.indexOf('/search');
             url = url.substring(0, p);
@@ -20,13 +24,13 @@
                 if (!message || message.length == 0)
                     return;
                 if (typeof message == 'string') {
-                    color="blue";
+                    color = "blue";
                     if (message.toLowerCase().indexOf("error") > -1)
                         color = "red";
 
 
                     $("#message").css("color", color);
-                    $("#message").append(message+"<br>");
+                    $("#message").append(message + "<br>");
                 }
             })
 
@@ -44,25 +48,25 @@
 
             var payload;
             if (operation == "indexDocDirInNewIndex") {
-                 payload = {
+                payload = {
                     indexDocDirInNewIndex: 1,
                     indexName: indexName,
                     rootDir: rootDir,
-                     doClassifier:"false",
-                     type:mappingsType
+                    doClassifier: "false",
+                    type: mappingsType
 
 
-                 };
+                };
 
 
             }
             else if (operation == "indexDirInExistingIndex") {
-                 payload = {
+                payload = {
                     indexDirInExistingIndex: 1,
                     indexName: indexName,
                     rootDir: rootDir,
-                     doClassifier:"false",
-                     type:mappingsType
+                    doClassifier: "false",
+                    type: mappingsType
 
                 };
 
@@ -73,19 +77,42 @@
                 var minFreq = $("#minFreq").val();
                 var lang = $("#lang").val();
                 minFreq = parseInt(minFreq);
-                var ontologies=JSON.parse( $("#ontologies").val());
-                 payload = {
+                var ontologies = JSON.parse($("#ontologies").val());
+                payload = {
                     createIndexClassifier: 1,
                     indexName: indexName,
                     nWords: nWords,
                     minFreq: minFreq,
                     ontologies: ontologies,
-                     lang:lang
+                    lang: lang
 
 
                 };
 
             }
+            else if (operation == "indexMongo") {
+                var mongoDB = $("#mongoDB").val();
+
+                var mongoCollection = $("#mongoCollection").val();
+                var mongoQuery = $("#mongoQuery").val();
+              //  mongoQuery=JSON.parse(mongoQuery)
+                var lang = $("#lang").val();
+                minFreq = parseInt(minFreq);
+                payload = {
+                    indexMongoCollection: 1,
+                    elasticIndex: indexName,
+                    elasticType: mappingsType,
+                    mongoDB:mongoDB,
+                    mongoCollection: mongoCollection,
+                    mongoQuery: mongoQuery,
+                    indexName: indexName,
+
+
+                };
+
+            }
+
+
 
 
             $.ajax({
@@ -123,68 +150,130 @@
             <input id="mappingsType" value="general_document">
         </td>
     </tr>
-    <tr>
-        <td>
-            rootDir
-        </td>
-        <td>
-            <input id="rootDir">
-        </td>
-    </tr>
-
-    <tr>
-        <td>
-            <button onclick="elasticExec('indexDocDirInNewIndex')">indexDocDirInNewIndex</button>
-        </td>
-        <td>
-            <button onclick="elasticExec('indexDirInExistingIndex')">indexDirInExistingIndex</button>
-        </td>
-    </tr>
-    <tr>
-        <td>
-            nWords
-        </td>
-        <td>
-            <input id="nWords" value="200">
-        </td>
-    </tr>
-
-    <tr>
-        <td>
-            minFreq
-        </td>
-        <td>
-            <input id="minFreq" value="10">
-        </td>
-    </tr>
-    <tr>
-        <td>
-            ontologies
-        </td>
-        <td>
-            <input id="ontologies" value='["BNF"]'>
-        </td>
-    </tr>
-    <tr>
-        <td>
-            lang
-        </td>
-        <td>
-            <input id="lang" value='fr'>
-        </td>
-    </tr>
-    <tr>
-        <td>
-            <button onclick="elasticExec('createIndexClassifier')">createIndexClassifier</button>
-        </td>
-        <td>
-            &nbsp;
-        </td>
-    </tr>
-
-
-
 </table>
+
+<div id="tabs">
+
+    <ul>
+        <li><a href="#makeDocIndexTab">make Doc Index</span></a> </li>
+        <li><a href="#makeMongoIndexTab">make Mongo Index</span></a> </li>
+        <li><a href="#makeClassifierTab">make Classifier</span></a> </li>
+
+
+
+    </ul>
+
+
+    <div id="makeDocIndexTab">
+
+        <table>
+            <tr>
+                <td>
+                    rootDir
+                </td>
+                <td>
+                    <input id="rootDir">
+                </td>
+            </tr>
+
+            <tr>
+                <td>
+                    <button onclick="elasticExec('indexDocDirInNewIndex')">indexDocDirInNewIndex</button>
+                </td>
+                <td>
+                    <button onclick="elasticExec('indexDirInExistingIndex')">indexDirInExistingIndex</button>
+                </td>
+            </tr>
+
+        </table>
+    </div>
+    <div id="makeClassifierTab">
+        <table>
+            <tr>
+                <td>
+                    nWords
+                </td>
+                <td>
+                    <input id="nWords" value="200">
+                </td>
+            </tr>
+
+            <tr>
+                <td>
+                    minFreq
+                </td>
+                <td>
+                    <input id="minFreq" value="10">
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    ontologies
+                </td>
+                <td>
+                    <input id="ontologies" value='["BNF"]'>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    lang
+                </td>
+                <td>
+                    <input id="lang" value='fr'>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <button onclick="elasticExec('createIndexClassifier')">createIndexClassifier</button>
+                </td>
+                <td>
+                    &nbsp;
+                </td>
+            </tr>
+
+
+        </table>
+
+    </div>
+    <div id="makeMongoIndexTab">
+        <table>
+            <tr>
+                <td>
+                    mongo DB
+                </td>
+                <td>
+                    <input id="mongoDB">
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    mongo Collection
+                </td>
+                <td>
+                    <input id="mongoCollection">
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    mongoQuery
+                </td>
+                <td>
+                    <input id="mongoQuery" value="{}">
+                </td>
+            </tr>
+
+            <tr>
+                <td>
+                    <button onclick="elasticExec('indexMongo')">index Mongo Collection</button>
+                </td>
+
+            </tr>
+
+        </table>
+
+    </div>
+
+</div>
 <div id="message"></div>
 
 </body>

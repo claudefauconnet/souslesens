@@ -7,11 +7,14 @@
 <script src="../common/js/jquery/jquery.min.js"></script>
 <script src="../common/js/common.js"></script>
 <script src="../toutlesens/resources/params.js"></script>
-<script src="../toutlesens/js/infosGenericDisplay.js"></script>
+<script src="./js/infosGenericMongo.js"></script>
 
 
 
 <script>
+    var callerId=null;
+    var dbName;
+    var collectionName;
     var Schema = {
         schema: {
 
@@ -116,17 +119,21 @@
 
 
     $(function(){
-        if(queryParams.mongo, queryParams.dbName && queryParams.collectionName && queryParams.id){
-            loadFormDataFromMongo(dbName, collectionName, id)
-        }
-    })
-    function loadFormDataFromMongo(dbName, collection, id) {
 
+            loadFormDataFromMongo("ATD", "archives","5a3d1b1dc3508e853c7eacbe")
+
+
+    })
+
+
+    function loadFormDataFromMongo(_dbName, _collectionName, id) {
+        dbName=_dbName;
+        collectionName=_collectionName;
         var payload = {
 
             find: 1,
             dbName: dbName,
-            collectionName: collection,
+            collectionName: collectionName,
             mongoQuery: {_id: id},
         }
 
@@ -141,8 +148,8 @@
 
                 }
                 var attrObject = Schema.schema.properties;
-                infoGenericDisplay.setAttributesValue("archive", attrObject, data[0]);
-                infoGenericDisplay.drawAttributes(attrObject, "genericFormDiv");
+                infosGenericMongo.setAttributesValue("archive",  data[0],attrObject);
+                infosGenericMongo.drawAttributes(attrObject, "genericFormDiv");
 
 
             },
@@ -152,6 +159,15 @@
         })
     }
 
+    function save(){
+        var obj={}
+        var obj=  infosGenericMongo.setModifiedValues(obj,".objAttrInput")
+        infosGenericMongo.save(dbName, collectionName, obj, true, {})
+    }
+
+
+
+
 
 </script>
 
@@ -160,6 +176,7 @@
 
 
 </div>
-<button onclick='loadFormDataFromMongo("ATD","archives","5a3d1b1dc3508e853c7eacb6");'>load</button>
+<button onclick='save()'>Save</button>
+
 </body>
 </html>
