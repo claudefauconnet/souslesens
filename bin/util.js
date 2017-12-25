@@ -62,6 +62,7 @@ Util = {
                 }
             }
         }
+        return obj;
     }
     ,
     base64_encodeFile: function (file) {

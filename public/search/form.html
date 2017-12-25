@@ -10,11 +10,13 @@
 <script src="./js/infosGenericMongo.js"></script>
 
 
-
 <script>
-    var callerId=null;
+    var callerId = null;
     var dbName;
     var collectionName;
+    var currentObject;
+    var currentElasticId;
+    var currentMongoId;
     var Schema = {
         schema: {
 
@@ -104,7 +106,8 @@
                         {
                             "type": "text"
                         }
-                    ,
+
+
 
                 },
             fieldsSelectValues: {
@@ -118,17 +121,19 @@
     }
 
 
-    $(function(){
+    $(function () {
 
-            loadFormDataFromMongo("ATD", "archives","5a3d1b1dc3508e853c7eacbe")
+    //  loadFormDataFromMongo("ATD", "archives", "5a3d1b1bc3508e853c7e9f69","_6059177")
 
 
     })
 
 
-    function loadFormDataFromMongo(_dbName, _collectionName, id) {
-        dbName=_dbName;
-        collectionName=_collectionName;
+    function loadFormDataFromMongo(_dbName, _collectionName, id,elasticId) {
+        dbName = _dbName;
+        collectionName = _collectionName;
+        currentElasticId=elasticId;
+        debugger;
         var payload = {
 
             find: 1,
@@ -147,8 +152,10 @@
                     return;
 
                 }
+                currentObject = data[0];
+                currentMongoId=id;
                 var attrObject = Schema.schema.properties;
-                infosGenericMongo.setAttributesValue("archive",  data[0],attrObject);
+                infosGenericMongo.setAttributesValue("archive", currentObject, attrObject);
                 infosGenericMongo.drawAttributes(attrObject, "genericFormDiv");
 
 
@@ -159,14 +166,87 @@
         })
     }
 
-    function save(){
-        var obj={}
-        var obj=  infosGenericMongo.setModifiedValues(obj,".objAttrInput")
-        infosGenericMongo.save(dbName, collectionName, obj, true, {})
+    function save() {
+
+        currentObject = infosGenericMongo.setModifiedValues(currentObject, ".objAttrInput")
+        infosGenericMongo.save(dbName, collectionName, currentObject, true, {}, function (err, result) {
+            elasticIndexObj(currentObject, function (err, result) {
+                closeDialog();
+            });
+        })
+    }
+
+    function deleteObj() {
+
+        infosGenericMongo.delete(dbName, collectionName, currentObject, function (err, result) {
+            elasticDeleteObj(currentObject, function (err, result) {
+                closeDialog();
+            });
+        });
     }
 
 
+    function elasticIndexObj(obj, callback) {
+        obj.mongoId=obj._id;
+        delete obj._id;
+        var indexName = "archivesatd";
+        var mappingsType = "archive";
+        var payload = {
+            indexOneDoc:1,
+            id:currentElasticId,
+            payload: obj,
+            indexName: indexName,
+            type: mappingsType,
 
+
+
+        };
+
+
+        $.ajax({
+            type: "POST",
+            url: "/elastic",
+            data: payload,
+            dataType: "json",
+            success: function (data, textStatus, jqXHR) {
+
+                callback(null, "done")
+            }
+            , error: function (xhr, err, msg) {
+                callback(err)
+            }
+
+        });
+    }
+
+    function elasticDeleteObj(obj, callback) {
+        var indexName = "archivesatd";
+        var mappingsType = "archive";
+        var payload = {
+            deleteDoc: 1,
+            index: indexName,
+            type: mappingsType,
+            elasticId: {_id: currentElasticId}
+
+
+        };
+
+
+        $.ajax({
+            type: "POST",
+            url: "/elastic",
+            data: payload,
+            dataType: "json",
+            success: function (data, textStatus, jqXHR) {
+                callback(err)
+            }
+            , error: function (xhr, err, msg) {
+                callback(null, "done")
+            }
+
+        });
+
+    }
 
 
 </script>
@@ -177,6 +257,6 @@
 
 </div>
 <button onclick='save()'>Save</button>
-
+<button onclick='deleteObj()'>Delete</button>
 </body>
 </html>

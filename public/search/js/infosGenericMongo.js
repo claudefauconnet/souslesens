@@ -13,13 +13,11 @@ var infosGenericMongo = (function () {
             if (!value)
                 value = "";
             var type = attrObject[key].type;
-            var _userRole = userRole;
-            if (!_userRole)
-                _userRole = window.parent.userRole
-            //  if (!_userRole)
+            var _userRole = common.userRole;
+
             _userRole = "write"
             if (type && type == 'readOnly' || _userRole == "read") {
-                value = util.convertHyperlinks(value);
+            //    value = util.convertHyperlinks(value);
                 attrObject[key].value = "&nbsp;:&nbsp;<b>" + value + "</b>";
                 continue;
             }
@@ -70,7 +68,9 @@ var infosGenericMongo = (function () {
                 str += "</select>";
                 value = str;
             }
-
+            else if (type == 'hidden') {
+                value = "<input  type='hidden' class='objAttrInput' id='attr_"+ key + "' value='" + value + "'>";
+            }
             else if (type == 'password') {
                 value = "<input type='password' onchange='infosGenericMongo.incrementChanges();' class='objAttrInput' " + strCols + "id='attr_"
                     + key + "' value='" + value + "'>";
@@ -159,7 +159,7 @@ var infosGenericMongo = (function () {
                 var className = 'fieldLabel';
                 var desc = attrObject[key].desc;
                 if (desc && desc.length > 0)
-                    title+= "<img onclick=  'common.setMessage(\""+desc+"\",\"blue\",\"window.parent.attrsTabMessage\")'; src='images/info.jpg' width='15px' title='" + desc + "'>"
+                 ;//   title+= "<img onclick=  'common.setMessage(\""+desc+"\",\"blue\",\"window.parent.attrsTabMessage\")'; src='images/info.jpg' width='15px' title='" + desc + "'>"
 
                 if (attrObject[key].control == 'mandatory')
                     className = 'mandatoryFieldLabel';
@@ -257,7 +257,23 @@ var infosGenericMongo = (function () {
     }
 
 
-    self.save = function (dbName, collection, obj, display, additionalAttrsObj) {
+
+    self.delete = function (dbName, collection,obj, callback) {
+        var payload={
+            delete:1,
+            dbName:dbName,
+            collectionName:collectionName,
+            query:{_id:obj._id}
+        }
+        self.callMongo(payload, function (err, result){
+            if(err)
+                return callback(err);
+            //    result.newId = true;
+            return callback(null, result);
+        })
+    }
+
+    self.save = function (dbName, collection, obj, display, additionalAttrsObj, callback) {
         infosGenericMongo.isModifying=false;
         var fields = $(".objAttrInput")
         for (var i = 0; i < fields.length; i++) {
@@ -280,7 +296,7 @@ var infosGenericMongo = (function () {
         }
 
 
-        obj.userLogin = userLogin;
+        obj.userLogin = common.userLogin;
         //  obj.lastModified="";
         if (additionalAttrsObj) {
             for (var key in additionalAttrsObj) {
@@ -288,34 +304,64 @@ var infosGenericMongo = (function () {
             }
         }
 
-        if (!obj.id) {//new
-            var result = devisuProxy.addItem(dbName, collection, obj, false);
+        if (!obj._id) {//new
 
-            window.parent.common.setMessage(result.status, "green", "attrsTabMessage");
-            obj.id = result.object.id;
-            obj._id = result.object._id;
-
-            if (Gparams.synchronizeMongoToNeo) {
-                mongoToNeoSynchronizer.pushToNeo("create", {dbName: dbName, collection: collection}, result.object);
+            var payload={
+                insertOne:1,
+                dbName:dbName,
+                collectionName:collectionName,
+                data:obj
             }
+            self.callMongo(payload, function (err, result){
+                if(err)
+                    return callback(err);
+            //    result.newId = true;
+                return callback(null, result);
+            })
 
 
-            obj.newId = true;
+
+
 
 
             return {status: "created", data: obj};
         }
         else {//update
-            //  if(obj._id)
-            //   obj.mongoId=obj._id.$oid;
-            var result = devisuProxy.saveData(dbName, collection, obj);
+            var payload={
+                updateOrCreate:1,
+                dbName:dbName,
+                collectionName:collectionName,
+                query:{_id:obj._id},
 
-            window.parent.common.setMessage(result.id, "green", "attrsTabMessage");
-            if (Gparams.synchronizeMongoToNeo) {
-                mongoToNeoSynchronizer.pushToNeo("update", {dbName: dbName, collection: collection}, obj);
             }
-            return {status: "modified", data: obj};
+          //  delete obj._id;// in the query
+            payload.data=obj;
+
+            self.callMongo(payload, function (err, result){
+                if(err)
+                    return callback(err);
+                return callback(null, result);
+            })
+
+
         }
+
+    }
+
+
+    self.callMongo=function(payload,callback){
+        $.ajax({
+            type: "POST",
+            url: Gparams.mongoProxyUrl,
+            data: payload,
+            dataType: "json",
+            success: function (data, textStatus, jqXHR) {
+                callback(null,data);
+            }, error: function (err) {
+                console.log(err);
+                callback(err);
+            }
+        })
 
     }
 

@@ -96,8 +96,8 @@ router.post(serverParams.routesRootUrl + '/elastic', function (req, response) {
         elasticProxy.search(req.body.indexName, req.body.type, req.body.payload, function (error, result) {
             processResponse(response, error, result)
         });
-    else if (req.body && req.body.indexDo)
-        elasticProxy.index(req.body.indexName, req.body.type, req.body.payload, function (error, result) {
+    else if (req.body && req.body.indexOneDoc)
+        elasticProxy.indexOneDoc(req.body.indexName, req.body.type, req.body.id,req.body.payload, function (error, result) {
             processResponse(response, error, result)
         });
     else if (req.body && req.body.findDocuments)
@@ -142,6 +142,12 @@ router.post(serverParams.routesRootUrl + '/elastic', function (req, response) {
         elasticProxy.indexMongoCollection(req.body.mongoDB, req.body.mongoCollection, req.body.mongoQuery, req.body.elasticIndex, req.body.elasticType, function (error, result) {
             processResponse(response, error, result)
         });
+    else if (req.body && req.body.deleteDoc)
+        elasticProxy.deleteDoc(req.body.index, req.body.type, req.body.elasticId,  function (error, result) {
+            processResponse(response, error, result)
+        });
+
+
 
 });
 

@@ -684,7 +684,23 @@ var elasticProxy = {
 
 
     ,
-    index: function (index, type, id, payload, callback) {
+    indexOneDoc: function (index, type, id, payload, callback) {
+        if(!id)
+            id="_"+Math.round(Math.random()*10000000);
+        var elasticFields = elasticProxy.getShemaFields(index);
+        var content = "";
+        for (var j = 0; j < elasticFields.length; j++) {
+            var key = elasticFields[j];
+            var value = payload[key];
+            if (!value)
+                continue;
+
+            content += " " + value;
+            payload[key] = value;
+
+        }
+        payload["content"] = content;
+
         getClient().index({
             index: index,
             type: type,
@@ -795,22 +811,24 @@ var elasticProxy = {
 
         var currentIndex = 0;
         var resultSize = 1;
-       var  elasticFields= elasticProxy.getShemaFields (elasticIndex) ;
-       var mongoFields={};
-      for(var i=0;i<elasticFields.length;i++){
-          var field=elasticFields[i];
-          if(field[i]=="mongoId")
-              field="_id";
-          mongoFields[field]=1;
+        var elasticFields = elasticProxy.getShemaFields(elasticIndex);
+        var mongoFields = {};
+        for (var i = 0; i < elasticFields.length; i++) {
+            var field = elasticFields[i];
+            if (field[i] == "mongoId")
+                field = "_id";
+            mongoFields[field] = 1;
 
-      }
+        }
         async.whilst(
             function () {//test
                 return resultSize > 0;
             },
             function (callbackWhilst) {//iterate
 
-
+                if (mongoQuery && mongoQuery._id) {
+                    mongoQuery = util.prepareJsonForMongo(mongoQuery)
+                }
                 mongoProxy.pagedFind(currentIndex, serverParams.mongoFetchSize, mongoDB, mongoCollection, mongoQuery, mongoFields, function (err, result) {
                     if (err) {
                         callback(err);
@@ -820,7 +838,7 @@ var elasticProxy = {
 
                     resultSize = result.length;
                     if (resultSize == 0) {
-                       return  callback(null, "end");
+                        return callback(null, "end");
                     }
 
                     currentIndex += serverParams.mongoFetchSize;
@@ -857,8 +875,8 @@ var elasticProxy = {
                         body: elasticPayload
                     }, function (err, resp) {
                         if (err) {
-                          console.log("ERROR "+err)
-                            console.log(JSON.stringify(elasticPayload,null,2))
+                            console.log("ERROR " + err)
+                            console.log(JSON.stringify(elasticPayload, null, 2))
 
                         } else {
                             return callbackWhilst(null);
@@ -881,6 +899,22 @@ var elasticProxy = {
             });
     },
 
+    deleteDoc: function (index, type, elasticId, callback) {
+
+        var options = {
+            method: 'DELETE',
+            url: baseUrl + index + "/" + type + "/" + elasticId
+        }
+        request(options, function (error, response, body) {
+            if (error) {
+                return callback(error);
+            }
+            return callback(null, body);
+
+        });
+
+
+    },
 
     deleteIndex: function (index, force, callback) {
         var options = {

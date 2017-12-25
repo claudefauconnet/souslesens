@@ -507,13 +507,14 @@
 
 
                         html += "</table>";
-
+                        html +=doc._id;
                         html += doc.content.replace(/[\n\r]/g, "<br>");
 
                         mode = data.mode[doc.type];
                        if(mode.source=="MongoDB"){
-                            var str="<button onclick=editMongoForm('"+doc.mongoId+"')>Edit</button>"
+                            var str="<button onclick=editMongoForm('"+doc.mongoId+"','"+doc._id+"')>Edit</button>"
                             $("#dialogLeftDiv").append(str);
+                           $("#dialogLeftDiv").css("visibility", "visible");
                         }
 
                         $("#dialogContentDiv").html(html);
@@ -668,12 +669,12 @@
 
         }
 
-        function editMongoForm(mongoId){
+        function editMongoForm(mongoId,elasticId){
             var url="./form.html";
             $("#dialogLeftDiv").css("visibility","hidden");
             $("#dialogContentDiv").load(url, function () {
 
-                loadFormDataFromMongo(mode.dbName,mode.collectionName,mongoId)
+                loadFormDataFromMongo(mode.dbName,mode.collectionName,mongoId,elasticId)
 
         })
         }
