@@ -5,13 +5,55 @@
     <title>Title</title>
     <script src="../common/js/jquery/jquery.min.js"></script>
     <script src="../common/js/jquery/jquery-ui.min.js"></script>
+    <script src="../common/js/common.js"></script>
     <script src="../common/js/socket.io.js"></script>
+    <script src="../common/js/jsTree/jstree.min.js"></script>
+    <script src="../common/js/jsTreeController.js"></script>
+    <script src="../semanticWeb/skosTree.js"></script>
     <link rel="stylesheet" href="../common/js/jquery/jquery-ui.min.css"/>
+    <link rel="stylesheet" href="../common/js/jsTree/themes/default/style.min.css"/>
 
+    <style>
+        td {
+            vertical-align: top;
+        }
+
+    </style>
     <script>
+        var arrayExclude = []
+        var wordSelectMode = "include";
         $(function () {
 
-$("#tabs").tabs();
+            $("#wordsSelect").keypress(function (e) {
+                if (e.ctrlKey)
+                    wordSelectMode = "exclude"
+                else
+                    wordSelectMode = "include"
+
+            })
+            $("#tabs").tabs();
+            /*  $("#includeWordsSelect option").draggable({
+                  start: function( event, ui ) {
+                      var x=1
+              }
+              });*/
+            jsTreeController.addtionalMenuItems["addWord"] =
+
+                {
+                    "separator_before": false,
+                    "separator_after": false,
+                    "label": "addWord",
+                    "action": function (obj, xx, zz) {
+                        var parent = obj.reference[0].id;
+                        parent = parent.substring(0, parent.indexOf("_anchor"))
+                        var word = $("#includeWordsSelect").val();
+                        var node = {text: word};
+                        $('#treeDiv1').jstree('create_node', parent, node, 'first');
+                        $("#treeDiv1").jstree("open_node", parent);
+
+
+                    }
+                }
 
             var url = window.location.href;
             var p = url.indexOf('/search');
@@ -40,6 +82,9 @@ $("#tabs").tabs();
         function elasticExec(operation) {
             $("#message").html("");
             var indexName = $("#indexName").val();
+            if (!indexName || indexName == "") {
+                return alert("enter index name")
+            }
             var mappingsType = $("#mappingsType").val();
             var rootDir = $("#rootDir").val();
             //  var doClassifier=$("#doClassifier").val();
@@ -71,6 +116,55 @@ $("#tabs").tabs();
                 };
 
             }
+
+            else if (operation == "indexMongo") {
+                var mongoDB = $("#mongoDB").val();
+
+                var mongoCollection = $("#mongoCollection").val();
+                var mongoQuery = $("#mongoQuery").val();
+                //  mongoQuery=JSON.parse(mongoQuery)
+                var lang = $("#lang").val();
+                minFreq = parseInt(minFreq);
+                payload = {
+                    indexMongoCollection: 1,
+                    elasticIndex: indexName,
+                    elasticType: mappingsType,
+                    mongoDB: mongoDB,
+                    mongoCollection: mongoCollection,
+                    mongoQuery: mongoQuery,
+
+
+                };
+
+            }
+            else if (operation == "listAssociatedWords") {
+                var size = $("#associatedWordsSize").val();
+                var seedWord = $("#seedWord").val();
+                size = parseInt(size);
+                var minFreq = $("#minFreq").val();
+                var stopWords = [];
+                $("#stopWordsSelect option").each(function () {
+                    stopWords.push($(this).val());
+                });
+                var lang = $("#lang").val();
+                minFreq = parseInt(minFreq);
+                payload = {
+                    getAssociatedWords: 1,
+                    indexName: indexName,
+                    size: size,
+                    word: seedWord,
+                    stopWords: stopWords
+                };
+
+            }
+
+
+            else if (operation == "generateThesaurus") {
+
+             return  generateThesaurus();
+
+
+            }
             else if (operation == "createIndexClassifier") {
                 var nWords = $("#nWords").val();
                 nWords = parseInt(nWords);
@@ -78,41 +172,25 @@ $("#tabs").tabs();
                 var lang = $("#lang").val();
                 minFreq = parseInt(minFreq);
                 var ontologies = JSON.parse($("#ontologies").val());
+
+                var includedWords = [];
+                $("#includeWordsSelect option").each(function () {
+                    includedWords.push($(this).val());
+                });
+
                 payload = {
                     createIndexClassifier: 1,
                     indexName: indexName,
                     nWords: nWords,
                     minFreq: minFreq,
                     ontologies: ontologies,
-                    lang: lang
+                    lang: lang,
+                    includedWords: includedWords
 
 
                 };
 
             }
-            else if (operation == "indexMongo") {
-                var mongoDB = $("#mongoDB").val();
-
-                var mongoCollection = $("#mongoCollection").val();
-                var mongoQuery = $("#mongoQuery").val();
-              //  mongoQuery=JSON.parse(mongoQuery)
-                var lang = $("#lang").val();
-                minFreq = parseInt(minFreq);
-                payload = {
-                    indexMongoCollection: 1,
-                    elasticIndex: indexName,
-                    elasticType: mappingsType,
-                    mongoDB:mongoDB,
-                    mongoCollection: mongoCollection,
-                    mongoQuery: mongoQuery,
-
-
-
-                };
-
-            }
-
-
 
 
             $.ajax({
@@ -121,6 +199,30 @@ $("#tabs").tabs();
                 data: payload,
                 dataType: "json",
                 success: function (data, textStatus, jqXHR) {
+                    var minWordLength = $("#minWordLength").val();
+                    if (operation == "listAssociatedWords") {
+                        var array = []
+
+                        for (var i = 0; i < data.buckets.length; i++) {
+                            var word = data.buckets[i].key;
+                            data.buckets[i].label = word + " (" + data.buckets[i].count + ")";
+                            if (word.match(/[a-zA-Z]+/) && word.length > minWordLength && word.indexOf("," < 0))
+                                array.push(data.buckets[i])
+                            else
+                                arrayExclude.push(data.buckets[i])
+
+                        }
+                        array.sort(function (a, b) {
+                            if (a.count > b.count)
+                                return -1;
+                            if (a.count < b.count)
+                                return 1;
+                            return 0;
+                        });
+                        common.fillSelectOptions(wordsSelect, array, "label", "key");
+                        common.fillSelectOptions(stopWordsSelect, arrayExclude, "label", "key")
+                    }
+
                     console.log("done")
                 }
                 , error: function (xhr, err, msg) {
@@ -128,18 +230,77 @@ $("#tabs").tabs();
                 }
 
             });
+
+
+        }
+
+        function generateThesaurus() {
+            var ontology = JSON.parse($("#ontologies").val())[0];
+
+            var includedWords = [];
+            $("#includeWordsSelect option").each(function () {
+                includedWords.push($(this).val());
+            });
+            var lang = $("#lang").val();
+
+            payload = {
+                findOntologySKOSterms: 1,
+                words: includedWords,
+                ontology: ontology,
+                lang: lang,
+            };
+            $.ajax({
+                type: "POST",
+                url: "/rdf",
+                data: payload,
+                dataType: "json",
+                success: function (data, textStatus, jqXHR) {
+                    var ww=data;
+                    console.log(JSON.stringify(data,null,2))
+                }, error: function (xhr, err, msg) {
+                    console.log("ERROR :" + err)
+                }
+            });
+        }
+
+        function onWordSelect(select) {
+            var word = $(select).val();
+            $('#wordsSelect option[value="' + word + '"]').remove();
+            if (wordSelectMode == "include") {
+
+                $('#includeWordsSelect').append($('<option>', {
+                    value: word,
+                    text: word
+                }));
+            } else {
+                $('#wordsSelect option[value="' + word + '"]').remove();
+                $('#stopWordsSelect').append($('<option>', {
+                    value: word,
+                    text: word
+                }));
+            }
+        }
+
+        function includeWord(select) {
+            var word = $(select).val();
+            $('#stopWordsSelect option[value="' + word + '"]').remove();
+            $('#wordsSelect').append($('<option>', {
+                value: word,
+                text: word
+            }));
         }
 
     </script>
 </head>
 <body>
+<p align="center"><B>Souslesens Search admin</B></p>
 <table>
     <tr>
         <td>
             index
         </td>
         <td>
-            <input id="indexName">
+            <input id="indexName" value="jfm">
         </td>
     </tr>
     <tr>
@@ -155,10 +316,10 @@ $("#tabs").tabs();
 <div id="tabs">
 
     <ul>
-        <li><a href="#makeDocIndexTab">make Doc Index</span></a> </li>
-        <li><a href="#makeMongoIndexTab">make Mongo Index</span></a> </li>
-        <li><a href="#makeClassifierTab">make Classifier</span></a> </li>
-
+        <li><a href="#makeDocIndexTab">make Doc Index</span></a></li>
+        <li><a href="#makeMongoIndexTab">make Mongo Index</span></a></li>
+        <li><a href="#thesaurusTab">Thesaurus</span></a></li>
+        <li><a href="#makeClassifierTab">make Classifier</span></a></li>
 
 
     </ul>
@@ -206,28 +367,14 @@ $("#tabs").tabs();
                     <input id="minFreq" value="10">
                 </td>
             </tr>
+
             <tr>
-                <td>
-                    ontologies
-                </td>
-                <td>
-                    <input id="ontologies" value='["BNF"]'>
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    lang
-                </td>
-                <td>
-                    <input id="lang" value='fr'>
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    <button onclick="elasticExec('createIndexClassifier')">createIndexClassifier</button>
-                </td>
+
                 <td>
                     &nbsp;
+                </td>
+                <td>
+                    <button onclick="elasticExec('createIndexClassifier')">createIndexClassifier</button>
                 </td>
             </tr>
 
@@ -271,6 +418,93 @@ $("#tabs").tabs();
 
         </table>
 
+    </div>
+
+
+    <div id="thesaurusTab">
+        <table>
+            <tr>
+                <td></td>
+
+
+                <td>asscoiated words</td>
+                <td>include</td>
+
+                <td>thesaurus</td>
+            <tr>
+            </tr>
+            <td>
+                size<input id="associatedWordsSize" size="5" value="100">
+                <br>
+                seed word<input id="seedWord" size="10" value="*">
+                <br>
+                minWordLength<input id="minWordLength" size="5" value="3">
+                <br>
+                <button onclick="elasticExec('listAssociatedWords')">list Associated words</button>
+                <br>
+                exclude<br> <select id="stopWordsSelect" size="10" onclick="includeWord(this)">
+
+            </select>
+
+            </td>
+
+
+            <td>
+                <select id="wordsSelect" size="20" onclick="onWordSelect(this)">
+
+                </select>
+            </td>
+            <td>
+                <select id="includeWordsSelect" size="20" onclick="includeWord(this)">
+
+                </select>
+            </td>
+
+            <td>
+                <div id="treeContainer1" class="jsTree">
+                    <div id="treeDiv1">
+                    </div>
+                </div>
+            </td>
+            <td>
+                <table>
+                    <tr>
+                        <td>
+                            ontologies<input id="ontologies" value='["BNF"]'>
+
+                            <br> lang<input id="lang" value='fr'>
+                            <br>
+                            <button onclick="elasticExec('generateThesaurus')">generate thesaurus</button>
+
+
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <hr>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td>
+                            thesaurus<input id=" skosInput1 " value="" size="12">
+                            <button onclick="skosTree.loadTree('treeDiv1','skosInput1')">load</button>
+                            <br>
+                            <button onclick="skosTree.createTree('treeDiv1')">create</button>
+                            <button onclick="skosTree.saveTree('treeDiv1','skosInput1')">save</button>
+                            <br>
+                            <input id="searchInput1">
+                            <button onclick="skosTree.searchTree('searchInput1')">search</button>
+                            <br>
+
+                        </td>
+                    </tr>
+                </table>
+            </td>
+
+            </tr>
+
+        </table>
     </div>
 
 </div>

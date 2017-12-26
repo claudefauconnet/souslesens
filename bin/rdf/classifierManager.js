@@ -41,211 +41,133 @@ logger.setLevel('info');
 
 var classifierManager = {
 
+
+
+   /* listAssociatedWords:function (index,nWords,stopWords){
+        elasticProxy.getAssociatedWords(index, "*", nWords, null, null,stopWords, function (err, result) {
+
+
+    })
+    },*/
+
     /*
      extract most frequent terms from elastic infdex and search skos terms in BNF to build a classifier
 
      */
-    createIndexClassifier: function (index, nWords, minFreq, ontologies,lang, nSkosAncestors, callback) {
+    createIndexClassifier: function (index, nWords,includedWords,excludedWords, minFreq, ontologies,lang, nSkosAncestors, callback) {
         classifierManager.sendMessage("searching most frequent words in index " + index);
         elasticProxy = require("../elasticProxy.js");
-        elasticProxy.getAssociatedWords(index, "*", nWords, null, null, function (err, result) {
-            if (err) {
-                classifierManager.sendMessage("ERROR " + err);
-                return callback(err);
-            }
-            var words = [];
 
-            function isNumber(n) {
-                return !isNaN(parseFloat(n)) && isFinite(n);
-            }
+        if(includedWords && includedWords.length>0){
+          classifierManager.wordsToClassifier (index,includedWords, ontologies,lang, nSkosAncestors, function( err,result){
 
-            for (var i = 0; i < result.length; i++) {
-                if (minFreq < 1 || result[i].count > minFreq) {
-                    var word = result[i].key
-                    if (isNumber(word)) {
-                        continue;
-                    }
-                    if (word.match(/[\'\"{}]/g)) {
-                        continue;
-                    }
-                    words.push(word);
+        });
+        }
+        else {
+            elasticProxy.getAssociatedWords(index, "*", nWords, null, null, excludedWords,function (err, result) {
+                if (err) {
+                    classifierManager.sendMessage("ERROR " + err);
+                    return callback(err);
+                }
+                var words = [];
 
+                function isNumber(n) {
+                    return !isNaN(parseFloat(n)) && isFinite(n);
                 }
 
+                for (var i = 0; i < result.buckets.length; i++) {
+                    if (minFreq < 1 || result.buckets[i].count > minFreq) {
+                        var word = result.buckets[i].key;
+                        if (isNumber(word)) {
+                            continue;
+                        }
+                        if (word.match(/[\'\"{}]/g)) {
+                            continue;
+                        }
+                        words.push(word);
 
-            }
-            classifierManager.sendMessage("Most frequentwords " + JSON.stringify(words));
-            var classifier;
-            async.eachSeries(ontologies, function (ontology, callbackOntology) {
-                classifierManager.sendMessage("searching SKOS concepts in Ontology :"+ontology+"... ");
-                classifierManager.findOntologySKOSterms(ontology,lang,words, function (err, result) {
-                    if (err)
-                        return callbackOntology(err);
-
-                     classifier = result;
-                    classifier.docIds = {};
-                    var wordObj = classifier.words;
-
-                    var words = [];
-                    for (var key in wordObj) {
-                        words.push(key);
                     }
-                    classifierManager.sendMessage("parent concepts found " + words);
-                    /*
-                     fill the classifier with ids in index
 
-                     */
 
-                    classifierManager.sendMessage("put doc ids for each concepts ");
-                    async.eachSeries(words, function (word, callbackInner) {
+                }
+                classifierManager.sendMessage("Most frequentwords " + JSON.stringify(words));
+                classifierManager.wordsToClassifier(index,words, ontologies, lang, nSkosAncestors, function (err, result) {
 
-                            elasticProxy.findDocuments(index,null, word, 0, serverParams.elasticMaxFetch, null, ["id"], null, null, function (err, result) {
-                                if (err)
-                                    return callbackInner(err);
-                                classifier.words[word].docIds = [];
-                                for (var i = 0; i < result.docs.length; i++) {
-                                    var id = result.docs[i]._id;
-                                    classifier.words[word].docIds.push(id);
-                                    if (!classifier.docIds[id])
-                                        classifier.docIds[id] = [];
-                                    classifier.docIds[id].push(word)
-                                }
+                });
 
-                                callbackInner(null);
+            })
+        }
 
-                            })
-                        },
-                        function (err, result) {
-                          if(err)
-                              return callbackOntologys(err);
-                            callbackOntology();
+
+    },
+
+    wordsToClassifier:function (index,words, ontologies,lang, nSkosAncestors, callback){
+        var classifier;
+        async.eachSeries(ontologies, function (ontology, callbackOntology) {
+            classifierManager.sendMessage("searching SKOS concepts in Ontology :"+ontology+"... ");
+            skos.findOntologySKOSterms(ontology,lang,words, function (err, result) {
+                if (err)
+                    return callbackOntology(err);
+
+                classifier = result;
+                classifier.docIds = {};
+                var wordObj = classifier.words;
+
+                var words = [];
+                for (var key in wordObj) {
+                    words.push(key);
+                }
+                classifierManager.sendMessage("parent concepts found " + words);
+                /*
+                 fill the classifier with ids in index
+
+                 */
+
+                classifierManager.sendMessage("put doc ids for each concepts ");
+                async.eachSeries(words, function (word, callbackInner) {
+
+                        elasticProxy.findDocuments(index,null, word, 0, serverParams.elasticMaxFetch, null, ["id"], null, null, function (err, result) {
+                            if (err)
+                                return callbackInner(err);
+                            if(!result.docs || result.docs.length==0)
+                                return callbackInner(err);
+                            classifier.words[word].docIds = [];
+                            for (var i = 0; i < result.docs.length; i++) {
+                                var id = result.docs[i]._id;
+                                classifier.words[word].docIds.push(id);
+                                if (!classifier.docIds[id])
+                                    classifier.docIds[id] = [];
+                                classifier.docIds[id].push(word)
+                            }
+
+                            callbackInner(null);
 
                         })
+                    },
+                    function (err, result) {
+                        if(err)
+                            return callbackOntologys(err);
+                        callbackOntology();
 
-                })
-            }, function (err) {
-                /*
-                 at the end od all ontologies store the classifier
-                 */
-                if (err) {
-                    classifierManager.sendMessage("ERROR" + err);
-                    return callback(err);
-                }
-                var file = path.resolve(__dirname, "./classifiers/" + index + "_BNF.json");
-                var str = JSON.stringify(classifier, null, 2);
-                fs.writeFileSync(file, str);
-                classifierManager.sendMessage("classifier done :" + file);
+                    })
+
             })
+        }, function (err) {
+            /*
+             at the end od all ontologies store the classifier
+             */
+            if (err) {
+                classifierManager.sendMessage("ERROR" + err);
+                return callback(err);
+            }
+            var file = path.resolve(__dirname, "./classifiers/" + index + "_BNF.json");
+            var str = JSON.stringify(classifier, null, 2);
+            fs.writeFileSync(file, str);
+            classifierManager.sendMessage("classifier done :" + file);
 
         })
-
-
     },
-    findOntologySKOSterms: function (ontology, lang, words, callback) {
 
-
-        function capitalizeFirstLetter(string) {
-            return string.charAt(0).toUpperCase() + string.slice(1);
-        }
-
-
-        var skos = {
-            broaderNodes: {},
-            words: {}
-        }
-
-        async.eachSeries(words, function (word, callback) {
-
-
-                word = capitalizeFirstLetter(word);
-                console.log(word);
-
-                var payload =
-                    [
-                        {name: "broader", optional: false},
-                        {name: "related", optional: true},
-                        {name: "narrower", optional: true}
-                    ]
-
-
-                rdfProxy.getOntologyTriples(ontology, word, payload, lang, false, 100, function (err, json) {
-                    if (err) {
-                        console.log(err)
-                        return callback(err);
-                    }
-                    if (!skos.words[word])
-                        skos.words[word] = {broaders: [], narrowers: [], relateds: [], count: 0};
-
-
-                    if(json.length==0){
-                        if (skos.words[word].broaders.indexOf("orphans") < 0)
-                            skos.words[word].broaders.push("orphans");
-                        if (!skos.broaderNodes["orphans"])
-                            skos.broaderNodes["orphans"] = []
-                        skos.broaderNodes["orphans"].push(word);
-                    }
-
-                    var relId = 1;
-                    var relTypes = ["narrower", "broader", "related"];
-                    for (var i = 0; i < json.length; i++) {
-                        var obj = json[i];
-                        for (var j = 0; j < relTypes.length; j++) {
-                            var relDoc = relTypes[j] + "Doc";
-                            var relLabel = relTypes[j] + "Label";
-                            if (obj[relDoc]) {
-                                var docId = obj.doc.value;
-                                docId = docId.substring(docId.lastIndexOf("/") + 1);
-                                var relDocId = obj[relDoc].value;
-                                relDocId = relDocId.substring(relDocId.lastIndexOf("/") + 1);
-                                var label = obj.label.value;
-                                var relLabelValue = obj[relLabel].value;
-                             //   console.log("___________________" + word + "  : " + relLabelValue);
-
-
-
-                                if (relTypes[j] == "broader") {
-                                    if (!skos.broaderNodes[relLabelValue])
-                                        skos.broaderNodes[relLabelValue] = []
-                                    if (skos.broaderNodes[relLabelValue].indexOf(word) < 0)
-                                        skos.broaderNodes[relLabelValue].push(word);
-
-                                    if (skos.words[word].broaders.indexOf(relLabelValue) < 0)
-                                        skos.words[word].broaders.push(relLabelValue);
-
-                                }
-                                if (relTypes[j] == "narrower") {
-                                    if (skos.words[word].narrowers.indexOf(relLabelValue) < 0)
-                                        skos.words[word].narrowers.push(relLabelValue);
-
-                                }
-                                if (relTypes[j] == "related") {
-                                    if (skos.words[word].relateds.indexOf(relLabelValue) < 0)
-                                        skos.words[word].relateds.push(relLabelValue);
-
-                                }
-                            }
-                        }
-                    }
-                    callback(null);
-
-
-                })
-
-
-            }
-
-            , function (err, result) {
-                if (err) {
-                    return callback(err);
-                }
-                callback(null, skos);
-                /* console.log("___________________" + JSON.stringify(broader, null, 2));
-                 console.log("___________________" + JSON.stringify(narrower, null, 2));
-                 console.log("___________________" + JSON.stringify(related, null, 2));*/
-
-            }
-        )
-    },
 
 
     getClassifierOutput: function (index, source, data) {
@@ -441,7 +363,7 @@ if (args.length > 2) {
                 console.log(err);
             var index = result.index;
             if (result.confirm.toLowerCase() == "y") {
-                classifierManager.createIndexClassifier(index, 200, 10, ["BNF"],"fr", 1, function (err, result) {
+                classifierManager.createIndexClassifier(index, 200,null,null, 10, ["BNF"],"fr", 1, function (err, result) {
 
 
                     console.log("done");

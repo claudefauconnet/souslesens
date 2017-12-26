@@ -10,6 +10,7 @@
     <script src="../../common/js/jsTree/jstree.min.js"></script>
     <script src="../../common/js/common.js"></script>
     <script src="../../common/js/jsTreeController.js"></script>
+    <script src="./skosTree.js"></script>
     <link rel="stylesheet" href="../../common/js/jsTree/themes/default/style.min.css"/>
 
     <style>
@@ -38,103 +39,7 @@
         })
 
 
-        function loadTree(treeDivId,skosInput) {
-            var ontology = $("#"+skosInput).val();
-            var payload = {
-                loadSkosToTree: 1,
-                ontology: ontology,
-            };jsTreeController.types={
-                "draft" :{icon: "/toutlesens/icons/" + "BU.png"},
-                "toValidate":{icon: "/toutlesens/icons/" + "DC.png"},
-                "ok" :{icon: "/toutlesens/icons/" + "BB.png"}
-            }
 
-            jsTreeController.addtionalMenuItems={
-                ":status-draft":{
-                        "separator_before": false,
-                        "separator_after": false,
-                        "label": "status-draft",
-                        "action": function (obj) {
-                            obj.item.data.status="draft";
-                            obj.item.type="draft"
-
-                          var xxx="";//  jsTreeController.jstree('delete_node', $node);
-
-                    }
-                }
-            }
-
-            $.ajax({
-                type: "POST",
-                url: "/rdf",
-                data: payload,
-                dataType: "json",
-                success: function (data, textStatus, jqXHR) {
-                    console.log(JSON.stringify(data,null,2))
-                    jsTreeController.load(data,treeDivId, function (err, result) {
-                        $("#"+treeDivId).jstree("select_node", "ul > li:first");
-                        var selectedNode = $("#"+treeDivId).jstree("get_selected");
-                         $("#"+treeDivId).jstree("open_node", selectedNode, false, true);
-
-                    })
-                }
-            })
-        }
-        function saveTree(DivId,thesaurusInput) {
-            var treeData = $("#"+DivId).jstree()._model.data;
-            var ontology = $("#"+thesaurusInput).val();
-            var payload = {
-                saveTreeToSkos: 1,
-                ontology: ontology,
-                treeData: treeData
-            };
-
-
-            $.ajax({
-                type: "POST",
-                url: "/rdf",
-                data: payload,
-                dataType: "json",
-                success: function (data, textStatus, jqXHR) {
-                    setMessage("thesaurus saved", "green")
-                }
-                , error: function (err) {
-                    setMessage("Error", "red")
-                }
-            })
-        }
-
-        function searchTree(searchInput) {
-            var word = $("#"+searchInput).val();
-            $("#treeDiv").jstree("search", word);
-
-        }
-
-
-
-
-
-        function createTree(jsTreeDivId) {
-
-            var root = {}
-            jsTreeController.load(root, jsTreeDivId, function (err, result) {
-            })
-        }
-        function createNode(jsTreeDivId) {
-            var name = prompt("node name");
-            if (name && name.length > 0) {
-                var node = {
-                    text: name,
-                    children: [],
-                    id: Math.round(Math.random() * 100000000)
-            }
-                $('#' + jsTreeDivId).jstree().create_node("#", node, "first", function (www) {
-                    $('#' + jsTreeDivId).jstree('open_node', "#");
-
-                })
-            }
-
-        }
 
 
     </script>
@@ -150,12 +55,12 @@
 
     <tr>
         <td>
-           thesaurus<input id="skosInput1" value="" size="12"> <button onclick="loadTree('treeDiv1','skosInput1')">load</button><br>
-            <button onclick="createTree('treeDiv1')">create</button>
-            <button onclick="saveTree('treeDiv1','skosInput1')">save</button>
+           thesaurus<input id="skosInput1" value="" size="12"> <button onclick="skosTree.loadTree('treeDiv1','skosInput1')">load</button><br>
+            <button onclick="skosTree.createTree('treeDiv1')">create</button>
+            <button onclick="skosTree.saveTree('treeDiv1','skosInput1')">save</button>
             <br>
             <input id="searchInput1">
-            <button onclick="searchTree('searchInput1')">search</button>
+            <button onclick="skosTree.searchTree('searchInput1')">search</button>
             <br>
             <div id="treeContainer1"  class="jsTree">
                 <div id="treeDiv1">
@@ -168,12 +73,12 @@
 <table  class="thesaurusTable">
     <tr>
         <td>
-            thesaurus <input id="skosInput2" value="" size="12">  <button onclick="loadTree('treeDiv2','skosInput2')">load</button><br>
-            <button onclick="createTree('treeDiv2')">create</button>
-            <button onclick="saveTree('treeDiv2','skosInput2')">save</button>
+            thesaurus <input id="skosInput2" value="" size="12">  <button onclick="skosTree.loadTree('treeDiv2','skosInput2')">load</button><br>
+            <button onclick="skosTree.createTree('treeDiv2')">create</button>
+            <button onclick="skosTree.saveTree('treeDiv2','skosInput2')">save</button>
             <br>
             <input id="searchInput2">
-            <button onclick="searchTree('searchInput2')">search</button>
+            <button onclick="skosTree.searchTree('searchInput2')">search</button>
             <br>
             <div id="treeContainer2"  class="jsTree">
                 <div id="treeDiv2">
@@ -185,12 +90,12 @@
     <table  class="thesaurusTable">
     <tr>
         <td>
-            thesaurus <input id="skosInput3" value="" size="12">  <button onclick="loadTree('treeDiv3','skosInput3')">load</button><br>
-            <button onclick="createTree('treeDiv3')">create</button>
-            <button onclick="saveTree('treeDiv3','skosInput3')">save</button>
+            thesaurus <input id="skosInput3" value="" size="12">  <button onclick="skosTree.loadTree('treeDiv3','skosInput3')">load</button><br>
+            <button onclick="skosTree.createTree('treeDiv3')">create</button>
+            <button onclick="skosTree.saveTree('treeDiv3','skosInput3')">save</button>
             <br>
             <input id="searchInput3">
-            <button onclick="searchTree('searchInput3')">search</button>
+            <button onclick="skosTree.searchTree('searchInput3')">search</button>
             <br>
             <div id="treeContainer3" class="jsTree">
                 <div id="treeDiv3" >

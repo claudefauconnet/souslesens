@@ -49,6 +49,7 @@ var rdfProxy = {
         else if (ontology == "DBPEDIA") {
 
             url = "https://dbpedia.org/sparql?default-graph-uri=http%3A%2F%2Fdbpedia.org&query="
+       url="http://fr.dbpedia.org/sparql?default-graph-uri=&query="
         }
 
 

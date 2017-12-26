@@ -109,7 +109,7 @@ router.post(serverParams.routesRootUrl + '/elastic', function (req, response) {
             processResponse(response, error, result)
         });
     else if (req.body && req.body.getAssociatedWords)
-        elasticProxy.getAssociatedWords(req.body.indexName, req.body.word, req.body.size, req.body.slop, req.body.andWords, function (error, result) {
+        elasticProxy.getAssociatedWords(req.body.indexName, req.body.word, req.body.size, req.body.slop, req.body.andWords, req.body.stopWords, function (error, result) {
             processResponse(response, error, result)
         });
     else if (req.body && req.body.indexDocDirInNewIndex)
@@ -122,7 +122,7 @@ router.post(serverParams.routesRootUrl + '/elastic', function (req, response) {
         });
 
     else if (req.body && req.body.createIndexClassifier)
-        classifierManager.createIndexClassifier(req.body.indexName, parseInt("" + req.body.nWords), parseInt("" + req.body.minFreq), req.body.ontologies, req.body.lang, parseInt("" + req.body.nSkosAncestors), function (error, result) {
+        classifierManager.createIndexClassifier(req.body.indexName, parseInt("" + req.body.nWords),  req.body.includedWords, req.body.excludedWords,parseInt("" + req.body.minFreq), req.body.ontologies, req.body.lang, parseInt("" + req.body.nSkosAncestors), function (error, result) {
             processResponse(response, error, result)
         });
 
@@ -192,6 +192,7 @@ router.post(serverParams.routesRootUrl + '/rdf', function (req, response) {
         });
     }
 
+
     if (req.body && req.body.treeToSkos) {
         skos.treeDataToSkos(req.body.tree, req.body.identifier, req.body.date, description, creator, function (error, result) {
             processResponse(response, error, result)
@@ -207,6 +208,13 @@ router.post(serverParams.routesRootUrl + '/rdf', function (req, response) {
             processResponse(response, error, result)
         });
     }
+
+    if (req.body && req.body.findOntologySKOSterms) {
+        skos.findOntologySKOSterms( req.body.ontology,req.body.lang,req.body.words, function (error, result) {
+            processResponse(response, error, result)
+        });
+    }
+
 
 
 });

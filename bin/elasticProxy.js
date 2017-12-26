@@ -417,7 +417,7 @@ var elasticProxy = {
 
 
     }
-    , getAssociatedWords: function (index, word, size, slop, andWords, callback) {
+    , getAssociatedWords: function (index, word, size, slop, andWords,stopWords, callback) {
 
         if (typeof word === "object" && word.ids) {
             query = {
@@ -473,6 +473,7 @@ var elasticProxy = {
 
 
         }
+
         var payload = {
             "query": query,
             "size": 10000,
@@ -622,6 +623,11 @@ var elasticProxy = {
                         ]
                     }
                 }
+            }
+        }
+        if( stopWords){
+            for (var i=0;i<stopWords.length;i++){
+                payload.aggs.associatedWords.terms.exclude.push(stopWords[i]);
             }
         }
         var options = {
@@ -1111,7 +1117,7 @@ var elasticProxy = {
             url: baseUrl + oldIndex + "/" + type + "/_search"
         };
 
-        console.log(JSON.stringify(payload, null, 2));
+  //      console.log(JSON.stringify(payload, null, 2));
         request(options, function (error, response, body) {
 
             if (error)
@@ -1205,7 +1211,7 @@ var elasticProxy = {
                             var message = "-----------Index " + index + " is ready to use-----------"
                             if (doClassifier.toLowerCase() == "y") {
 
-                                classifierManager.createIndexClassifier(index, 200, 10, ["BNF"], "fr", 1, function (err, result) {
+                                classifierManager.createIndexClassifier(index, 200,null,null, 10, ["BNF"], "fr", 1, function (err, result) {
                                     elasticProxy.sendMessage("classifier done");
 
                                     elasticProxy.sendMessage(message);
@@ -1273,7 +1279,7 @@ var elasticProxy = {
                             var message = "-----------Index " + index + " is ready to use-----------"
                             elasticProxy.sendMessage("delete temporary index " + indexTemp);
                             if (doClassifier.toLowerCase() == "y") {
-                                classifierManager.createIndexClassifier(index, 200, 10, ["BNF"], "fr", 1, function (err, result) {
+                                classifierManager.createIndexClassifier(index, 200,null,null, 10, ["BNF"], "fr", 1, function (err, result) {
 
                                     elasticProxy.sendMessage("classifier done");
                                     elasticProxy.sendMessage(message);

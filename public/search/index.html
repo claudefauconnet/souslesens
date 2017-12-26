@@ -3,10 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <title>Search</title>
-
+    <link rel="stylesheet" type="text/css" href="list.css"/>
     <style>
-        body {
+       body {
             font-family: verdana, sans-serif;
+            font-size: 12px;
         }
 
         em {
@@ -76,8 +77,12 @@
             font-weight: normal;
         }
 
-        highlight {
+        .highlight {
             font-size: 10px;
+        }
+        #top{
+            font-size: 14px;
+            font-weight: bold;
         }
 
         #dialog {
@@ -94,6 +99,8 @@
             left: 300px;
             background-color: #b3b6c2;
             visibility: hidden;
+            border: beige;
+            border-style: ridge;
         }
 
         #associatedWordsBreadcrumbDiv {
@@ -106,16 +113,26 @@
             vertical-align: middle;
         }
 
+
+
+        a:link , a:visited,  a:hover ,  a:active{
+            text-decoration: none;
+            color: #261803;
+      
+        }
+
         #top {
             font-size: 14px;
         }
 
-        #conceptDiv, #typesDiv, #sourcesDiv {
+        #conceptDiv, #typesDiv, #associatedWordsDiv,#sourcesDiv {
             width: 200px;
         / / height: 250 px;
             overflow: auto;
             background-color: #eaeaea;
         }
+
+
 
         .currentPageLink {
             font-weight: bold;
@@ -155,12 +172,30 @@
             $("#leftPanel").height(totalHeight);
             $("#rightPanel").height(totalHeight);
             $("#dialog").css("left", ((totalWidth) / 2) - 400)
+            $("#slopSpan").css("visibility","hidden");
+            $("#showMongoFormInput").css("visibility","hidden");
 
 
             if (queryParams.index) {
                 $("#indexInput").val(queryParams.index);
 
             }
+            if( queryParams.index=="archivesatd"){
+                $("#showMongoFormInput").css("visibility","visible");
+            }
+
+            $("#searchInput").keyup(function(){
+                var val=$(this).val()
+                if(val.indexOf(" ")>0){
+                    $("#slopSpan").css("visibility","visible")
+                }
+                else
+                    $("#slopSpan").css("visibility","hidden")
+
+            });
+
+
+
 
             /*  $("#dialog").dialog({
              autoOpen: false,
@@ -201,7 +236,7 @@
 
 
             var index = $("#indexInput").val();
-            var word = $("#searchInput").val();
+            var word = $("#searchInput").val().trim();
             if (word != oldWord) {
                 associatedWords = []
             }
@@ -351,7 +386,7 @@
                     html += "<li>" + "<a href='javascript:addAssociatedWord(\"" + data[i].key + "\")'>" + data[i].key + " (" + data[i].count + ")</a></li>"
             }
             html += "</ul>";
-            $("#leftPanel").html("<br><br><br><br><br>Mots associes<br>" + html);
+            $("#leftPanel").html("<br><br><br><br><br><div id='associatedWordsDiv'>Mots associes<br>" + html+"</div>");
 
         }
 
@@ -359,11 +394,14 @@
             var str = "";
             if (icons["docTypes"] && icons["docTypes"][obj.type])
                 str += "<img  src='" + icons["docTypes"][obj.type] + "'>";
-            if (obj.date) {
-                str += "<span class=title>" + obj.title + "</span>&nbsp;&nbsp;<span class=date>" + obj.date + "</span>&nbsp;&nbsp;";
+            if (obj.title) {
+                str += "<span class=title>" + obj.title + "</span>"
             }
-            str += "<img  title='pre-visualize' onclick='visualizeDocContent(\"" + obj._id + "\")' src='view.png' width='15px'> </a>";
-            str += "<img title='go to document' onclick='openDocument(\"" + obj.path + "\")' src='document.png' width='15px'> </a><br>";
+            if (obj.date) {
+                str += "&nbsp;&nbsp;<span class=date>" + obj.date + "</span>&nbsp;&nbsp;";
+            }
+            str += "<img  title='pre-visualize' onclick='visualizeDocContent(\"" + obj._id + "\")' src='view.png' width='20px'> </a>";
+         //   str += "<img title='go to document' onclick='openDocument(\"" + obj.path + "\")' src='document.png' width='15px'> </a><br>";
             // str += "<span class=path>" + obj.path + "</span><br>";
 
             str += "<ul>";
@@ -511,7 +549,7 @@
                         html += doc.content.replace(/[\n\r]/g, "<br>");
 
                         mode = data.mode[doc.type];
-                       if(mode.source=="MongoDB"){
+                       if(mode && mode.source=="MongoDB"){
                             var str="<button onclick=editMongoForm('"+doc.mongoId+"','"+doc._id+"')>Edit</button>"
                             $("#dialogLeftDiv").append(str);
                            $("#dialogLeftDiv").css("visibility", "visible");
@@ -683,6 +721,17 @@
             $("#dialogContentDiv").html("");
            $("#dialog").css("visibility","hidden")
        }
+
+       function showMongoForm(){
+           var url="./form.html";
+           $("#dialogLeftDiv").css("visibility","hidden");
+           $("#dialogContentDiv").load(url, function () {
+               displayNewForm();
+               $("#dialog").css("visibility","visible")
+
+           })
+
+       }
     </script>
 
 
@@ -698,18 +747,13 @@
     </div>
     <div id="centerPanel">
         <div id="top">
-            index <input id="indexInput" value="jfm" size="6">&nbsp;words
+        <input type="hidden" id="indexInput" value="jfm" size="6">&nbsp;
             <input id="searchInput" fetchSize="40" onkeydown="if (event.keyCode == 13)
                         document.getElementById('searchButton').click()">
             &nbsp;
             <button id="searchButton" onclick="search()">Search</button>
-            &nbsp;words distance <input id="slopInput" size="2">
-            classifierSource <select id="classifierSource" onchange="search()">
-            <option></option>
-            <option>BNF</option>
-            <option>unesco</option>
-            <option>PLM</option>
-        </select>
+           <span id="slopSpan"> &nbsp; distance <input id="slopInput" size="2"></span>
+            <button id="showMongoFormInput" onclick="showMongoForm()">Create</button>
 
         </div>
         <br>
@@ -730,7 +774,14 @@
         <div id="typesDiv"></div>
         <!--  sources
           <div id="sourcesDiv"></div>-->
-        concepts
+        <br><br>
+        classifierSource <select id="classifierSource" onchange="search()">
+            <option></option>
+            <option>BNF</option>
+            <option>unesco</option>
+            <option>PLM</option>
+        </select>
+
         <div id="conceptDiv"></div>
     </div>
     <div id="dialog"><br>

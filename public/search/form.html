@@ -128,6 +128,16 @@
 
     })
 
+    function displayNewForm(){
+        dbName ="ATD"
+        collectionName = "archives";
+        currentElasticId=null;
+        currentObject = {};
+        currentMongoId=null;
+        var attrObject = Schema.schema.properties;
+        infosGenericMongo.setAttributesValue("archive",currentObject, attrObject);
+        infosGenericMongo.drawAttributes(attrObject, "genericFormDiv");
+    }
 
     function loadFormDataFromMongo(_dbName, _collectionName, id,elasticId) {
         dbName = _dbName;
@@ -169,7 +179,11 @@
     function save() {
 
         currentObject = infosGenericMongo.setModifiedValues(currentObject, ".objAttrInput")
+
         infosGenericMongo.save(dbName, collectionName, currentObject, true, {}, function (err, result) {
+
+            if(!currentObject._id && result[0]._id)// new item
+                currentObject._id = result[0]._id;
             elasticIndexObj(currentObject, function (err, result) {
                 closeDialog();
             });
@@ -179,6 +193,7 @@
     function deleteObj() {
 
         infosGenericMongo.delete(dbName, collectionName, currentObject, function (err, result) {
+
             elasticDeleteObj(currentObject, function (err, result) {
                 closeDialog();
             });
@@ -193,7 +208,7 @@
         var mappingsType = "archive";
         var payload = {
             indexOneDoc:1,
-            id:currentElasticId,
+
             payload: obj,
             indexName: indexName,
             type: mappingsType,
@@ -201,7 +216,8 @@
 
 
         };
-
+        if(currentElasticId)
+            payload.id=currentElasticId;
 
         $.ajax({
             type: "POST",

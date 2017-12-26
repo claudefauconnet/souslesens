@@ -141,7 +141,7 @@
       "coteSousSerie",
       "title",
       "mongoId",
-     "content"
+      "content"
     ],
     "uiMappings": {
       "title": "titre",
@@ -159,6 +159,12 @@
         "dbName": "ATD",
         "collectionName": "archives"
       }
+    }
+  },
+  "jfm": {
+    "uiMappings": {
+      "title": "titre",
+      "content": "contenu"
     }
   }
 }
