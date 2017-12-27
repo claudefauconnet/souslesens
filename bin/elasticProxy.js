@@ -269,7 +269,8 @@ var elasticProxy = {
             fields = elasticProxy.getShemaFields(index);
 
         }
-
+        if (size)
+            size = parseInt("" + size)
         var query = "";
         if (!slop || slop < 2) {
             query = {
@@ -369,9 +370,14 @@ var elasticProxy = {
         if (schema && schema[index] && schema[index].icons) {
             icons = schema[index].icons;
         }
-        var mode = "read"
-        if (schema && schema[index] && schema[index].mode && schema[index].mode)
-            var mode = schema[index].mode
+        var mode = "read";
+
+        if (schema && schema[index] && schema[index].mode )
+             mode = schema[index].mode
+        var csvFields=[]
+        if (schema && schema[index] && schema[index].csvFields)
+            csvFields = schema[index].csvFields;
+
         for (var i = 0; i < hits.length; i++) {
 
             var obj = {};
@@ -409,7 +415,8 @@ var elasticProxy = {
             classifier: classifier,
             total: total,
             icons: icons,
-            mode: mode
+            mode: mode,
+            csvFields:csvFields,
 
         }
 
@@ -417,7 +424,7 @@ var elasticProxy = {
 
 
     }
-    , getAssociatedWords: function (index, word, size, slop, andWords,stopWords, callback) {
+    , getAssociatedWords: function (index, word, size, slop, andWords, stopWords, callback) {
 
         if (typeof word === "object" && word.ids) {
             query = {
@@ -452,6 +459,12 @@ var elasticProxy = {
             var match;
             if (word == null || word == "*" || word == "")
                 match = {"match_all": {}}
+            else if (word.indexOf("*") > -1) {
+                query = {
+                    "wildcard": {"content": word}
+                }
+            }
+
             else
                 match = {"match": {"content": word}};
 
@@ -625,8 +638,8 @@ var elasticProxy = {
                 }
             }
         }
-        if( stopWords){
-            for (var i=0;i<stopWords.length;i++){
+        if (stopWords) {
+            for (var i = 0; i < stopWords.length; i++) {
                 payload.aggs.associatedWords.terms.exclude.push(stopWords[i]);
             }
         }
@@ -691,8 +704,8 @@ var elasticProxy = {
 
     ,
     indexOneDoc: function (index, type, id, payload, callback) {
-        if(!id)
-            id="_"+Math.round(Math.random()*10000000);
+        if (!id)
+            id = "_" + Math.round(Math.random() * 10000000);
         var elasticFields = elasticProxy.getShemaFields(index);
         var content = "";
         for (var j = 0; j < elasticFields.length; j++) {
@@ -835,12 +848,12 @@ var elasticProxy = {
                 if (mongoQuery && mongoQuery._id) {
                     mongoQuery = util.prepareJsonForMongo(mongoQuery)
                 }
+
                 mongoProxy.pagedFind(currentIndex, serverParams.mongoFetchSize, mongoDB, mongoCollection, mongoQuery, mongoFields, function (err, result) {
                     if (err) {
                         callback(err);
                         return;
                     }
-
 
                     resultSize = result.length;
                     if (resultSize == 0) {
@@ -858,22 +871,29 @@ var elasticProxy = {
                         elasticPayload.push({index: {_index: elasticIndex, _type: elasticType, _id: "_" + (startId++)}})
                         var payload = {};
                         var content = "";
+                    //    console.log("----"+JSON.stringify(elasticFields,null,2))
                         for (var j = 0; j < elasticFields.length; j++) {
                             var key = elasticFields[j];
                             var value = result[i][key];
-                            if (!value)
-                                continue;
-
                             if (key == "mongoId") {
                                 value = result[i]["_id"].toString();
                             }
+
+                          //  console.log("----"+key+":"+value)
+                            if (!value)
+                                continue;
+
+
+
                             content += " " + value;
                             payload[key] = value;
+
 
                         }
                         payload["content"] = content;
                         elasticPayload.push(payload);
-
+                    //    resultSize = result.length;
+                     //   return  callback(null,payload);
                     }
 
 
@@ -1117,7 +1137,7 @@ var elasticProxy = {
             url: baseUrl + oldIndex + "/" + type + "/_search"
         };
 
-  //      console.log(JSON.stringify(payload, null, 2));
+        //      console.log(JSON.stringify(payload, null, 2));
         request(options, function (error, response, body) {
 
             if (error)
@@ -1211,7 +1231,7 @@ var elasticProxy = {
                             var message = "-----------Index " + index + " is ready to use-----------"
                             if (doClassifier.toLowerCase() == "y") {
 
-                                classifierManager.createIndexClassifier(index, 200,null,null, 10, ["BNF"], "fr", 1, function (err, result) {
+                                classifierManager.createIndexClassifier(index, 200, null, null, 10, ["BNF"], "fr", 1, function (err, result) {
                                     elasticProxy.sendMessage("classifier done");
 
                                     elasticProxy.sendMessage(message);
@@ -1279,7 +1299,7 @@ var elasticProxy = {
                             var message = "-----------Index " + index + " is ready to use-----------"
                             elasticProxy.sendMessage("delete temporary index " + indexTemp);
                             if (doClassifier.toLowerCase() == "y") {
-                                classifierManager.createIndexClassifier(index, 200,null,null, 10, ["BNF"], "fr", 1, function (err, result) {
+                                classifierManager.createIndexClassifier(index, 200, null, null, 10, ["BNF"], "fr", 1, function (err, result) {
 
                                     elasticProxy.sendMessage("classifier done");
                                     elasticProxy.sendMessage(message);

@@ -143,6 +143,26 @@
       "mongoId",
       "content"
     ],
+    "csvFields": [
+      "type",
+      "title",
+      "source",
+      "coteBoite",
+      "coteSerie",
+      "coteSousSerie",
+      "anneeDebut",
+      "anneeFin",
+      "auteur",
+      "commentaire",
+      "confidentiel",
+      "dateStr",
+      "format",
+      "genre",
+      "lieu",
+      "nbFeuilles",
+      "destinataire",
+      "mongoId"
+    ],
     "uiMappings": {
       "title": "titre",
       "content": "contenu"

@@ -37,7 +37,7 @@
                       var x=1
               }
               });*/
-            jsTreeController.addtionalMenuItems["addWord"] =
+            jsTreeController.addtionalMenuItems["addConcept"] =
 
                 {
                     "separator_before": false,
@@ -46,14 +46,29 @@
                     "action": function (obj, xx, zz) {
                         var parent = obj.reference[0].id;
                         parent = parent.substring(0, parent.indexOf("_anchor"))
+                        //   var childrens = $("#treeDiv1").jstree("get_children_dom",parent);
                         var word = $("#includeWordsSelect").val();
-                        var node = {text: word};
+                        var id=Math.round(Math.random() * 10000000);
+                        var node;
+                        if (parent.indexOf("synonyms_") != 0) {
+                             node = {id: "concept_" +id, text: word,type:"concept",children:[{id: "synonyms_" + id, text: "synonyms",type:"synonym"}]};
+
+                        }else{
+                            node = {id: "syn_" +id, text: word,type:"synonym"};
+                        }
+
                         $('#treeDiv1').jstree('create_node', parent, node, 'first');
                         $("#treeDiv1").jstree("open_node", parent);
+                      /*  if (parent.indexOf("synonyms_") != 0) {
+                            var synNode = {id: "synonyms_" + id, text: "synonyms",type:"synonym"};
+                            $('#treeDiv1').jstree('create_node', "concept_" +id, synNode, 'first');
+                            $("#treeDiv1").jstree("open_node", "concept_" +id);
+                        }*/
 
 
                     }
                 }
+
 
             var url = window.location.href;
             var p = url.indexOf('/search');
@@ -161,7 +176,7 @@
 
             else if (operation == "generateThesaurus") {
 
-             return  generateThesaurus();
+                return generateThesaurus();
 
 
             }
@@ -255,8 +270,8 @@
                 data: payload,
                 dataType: "json",
                 success: function (data, textStatus, jqXHR) {
-                    var ww=data;
-                    console.log(JSON.stringify(data,null,2))
+                    var ww = data;
+                    console.log(JSON.stringify(data, null, 2))
                 }, error: function (xhr, err, msg) {
                     console.log("ERROR :" + err)
                 }
