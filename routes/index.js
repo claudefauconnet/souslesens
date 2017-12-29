@@ -16,6 +16,7 @@ var restAPI = require("../bin/restAPI.js");
 var rdfProxy = require("../bin/rdf/rdfProxy.js");
 var classifierManager = require("../bin/rdf/classifierManager.js");
 var skos = require("../bin/rdf/skos.js");
+var googleAPIproxy = require("../bin/nlp/googleAPIproxy..js");
 var serverParams = require("../bin/serverParams.js")
 var socket = require('./socket.js');
 
@@ -97,9 +98,15 @@ router.post(serverParams.routesRootUrl + '/elastic', function (req, response) {
             processResponse(response, error, result)
         });
     else if (req.body && req.body.indexOneDoc)
-        elasticProxy.indexOneDoc(req.body.indexName, req.body.type, req.body.id,req.body.payload, function (error, result) {
+        elasticProxy.indexOneDoc(req.body.indexName, req.body.type, req.body.id, req.body.payload, function (error, result) {
             processResponse(response, error, result)
         });
+
+    else if (req.body && req.body.findTerms)
+        elasticProxy.findTerms(req.body.indexName, req.body.type, req.body.terms, function (error, result) {
+            processResponse(response, error, result)
+        });
+
     else if (req.body && req.body.findDocuments)
         elasticProxy.findDocuments(req.body.indexName, req.body.type, req.body.word, req.body.from, req.body.size, req.body.slop, req.body.fields, req.body.andWords, req.body.classifierSource, function (error, result) {
             processResponse(response, error, result)
@@ -122,7 +129,7 @@ router.post(serverParams.routesRootUrl + '/elastic', function (req, response) {
         });
 
     else if (req.body && req.body.createIndexClassifier)
-        classifierManager.createIndexClassifier(req.body.indexName, parseInt("" + req.body.nWords),  req.body.includedWords, req.body.excludedWords,parseInt("" + req.body.minFreq), req.body.ontologies, req.body.lang, parseInt("" + req.body.nSkosAncestors), function (error, result) {
+        classifierManager.createIndexClassifier(req.body.indexName, parseInt("" + req.body.nWords), req.body.includedWords, req.body.excludedWords, parseInt("" + req.body.minFreq), req.body.ontologies, req.body.lang, parseInt("" + req.body.nSkosAncestors), function (error, result) {
             processResponse(response, error, result)
         });
 
@@ -143,10 +150,14 @@ router.post(serverParams.routesRootUrl + '/elastic', function (req, response) {
             processResponse(response, error, result)
         });
     else if (req.body && req.body.deleteDoc)
-        elasticProxy.deleteDoc(req.body.index, req.body.type, req.body.elasticId,  function (error, result) {
+        elasticProxy.deleteDoc(req.body.index, req.body.type, req.body.elasticId, function (error, result) {
             processResponse(response, error, result)
         });
 
+    else if (req.body && req.body.indexJsonArray)
+        elasticProxy.indexJsonArray(req.body.index, req.body.type, req.body.array, function (error, result) {
+            processResponse(response, error, result)
+        });
 
 
 });
@@ -210,11 +221,16 @@ router.post(serverParams.routesRootUrl + '/rdf', function (req, response) {
     }
 
     if (req.body && req.body.findOntologySKOSterms) {
-        skos.findOntologySKOSterms( req.body.ontology,req.body.lang,req.body.words, function (error, result) {
+        skos.findOntologySKOSterms(req.body.ontology, req.body.lang, req.body.words, function (error, result) {
             processResponse(response, error, result)
         });
     }
 
+    if (req.body && req.body.getGoogleApiEntities) {
+        googleAPIproxy.getEntities(req.body.text, function (error, result) {
+            processResponse(response, error, result)
+        });
+    }
 
 
 });

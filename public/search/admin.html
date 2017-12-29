@@ -10,6 +10,7 @@
     <script src="../common/js/jsTree/jstree.min.js"></script>
     <script src="../common/js/jsTreeController.js"></script>
     <script src="../semanticWeb/skosTree.js"></script>
+    <script src="./js/admin.js"></script>
     <link rel="stylesheet" href="../common/js/jquery/jquery-ui.min.css"/>
     <link rel="stylesheet" href="../common/js/jsTree/themes/default/style.min.css"/>
 
@@ -20,8 +21,7 @@
 
     </style>
     <script>
-        var arrayExclude = []
-        var wordSelectMode = "include";
+
         $(function () {
 
             $("#wordsSelect").keypress(function (e) {
@@ -32,7 +32,7 @@
 
             })
             $("#tabs").tabs();
-            /*  $("#includeWordsSelect option").draggable({
+            /*  $("#entitiesSelect option").draggable({
                   start: function( event, ui ) {
                       var x=1
               }
@@ -47,23 +47,28 @@
                         var parent = obj.reference[0].id;
                         parent = parent.substring(0, parent.indexOf("_anchor"))
                         //   var childrens = $("#treeDiv1").jstree("get_children_dom",parent);
-                        var word = $("#includeWordsSelect").val();
-                        var id=Math.round(Math.random() * 10000000);
+                        var word = $("#entitiesSelect").val();
+                        var id = Math.round(Math.random() * 10000000);
                         var node;
                         if (parent.indexOf("synonyms_") != 0) {
-                             node = {id: "concept_" +id, text: word,type:"concept",children:[{id: "synonyms_" + id, text: "synonyms",type:"synonym"}]};
+                            node = {
+                                id: "concept_" + id,
+                                text: word,
+                                type: "concept",
+                                children: [{id: "synonyms_" + id, text: "synonyms", type: "synonym"}]
+                            };
 
-                        }else{
-                            node = {id: "syn_" +id, text: word,type:"synonym"};
+                        } else {
+                            node = {id: "syn_" + id, text: word, type: "synonym"};
                         }
 
                         $('#treeDiv1').jstree('create_node', parent, node, 'first');
                         $("#treeDiv1").jstree("open_node", parent);
-                      /*  if (parent.indexOf("synonyms_") != 0) {
-                            var synNode = {id: "synonyms_" + id, text: "synonyms",type:"synonym"};
-                            $('#treeDiv1').jstree('create_node', "concept_" +id, synNode, 'first');
-                            $("#treeDiv1").jstree("open_node", "concept_" +id);
-                        }*/
+                        /*  if (parent.indexOf("synonyms_") != 0) {
+                              var synNode = {id: "synonyms_" + id, text: "synonyms",type:"synonym"};
+                              $('#treeDiv1').jstree('create_node', "concept_" +id, synNode, 'first');
+                              $("#treeDiv1").jstree("open_node", "concept_" +id);
+                          }*/
 
 
                     }
@@ -94,216 +99,6 @@
 
         });
 
-        function elasticExec(operation) {
-            $("#message").html("");
-            var indexName = $("#indexName").val();
-            if (!indexName || indexName == "") {
-                return alert("enter index name")
-            }
-            var mappingsType = $("#mappingsType").val();
-            var rootDir = $("#rootDir").val();
-            //  var doClassifier=$("#doClassifier").val();
-            var indexName = $("#indexName").val();
-
-
-            var payload;
-            if (operation == "indexDocDirInNewIndex") {
-                payload = {
-                    indexDocDirInNewIndex: 1,
-                    indexName: indexName,
-                    rootDir: rootDir,
-                    doClassifier: "false",
-                    type: mappingsType
-
-
-                };
-
-
-            }
-            else if (operation == "indexDirInExistingIndex") {
-                payload = {
-                    indexDirInExistingIndex: 1,
-                    indexName: indexName,
-                    rootDir: rootDir,
-                    doClassifier: "false",
-                    type: mappingsType
-
-                };
-
-            }
-
-            else if (operation == "indexMongo") {
-                var mongoDB = $("#mongoDB").val();
-
-                var mongoCollection = $("#mongoCollection").val();
-                var mongoQuery = $("#mongoQuery").val();
-                //  mongoQuery=JSON.parse(mongoQuery)
-                var lang = $("#lang").val();
-                minFreq = parseInt(minFreq);
-                payload = {
-                    indexMongoCollection: 1,
-                    elasticIndex: indexName,
-                    elasticType: mappingsType,
-                    mongoDB: mongoDB,
-                    mongoCollection: mongoCollection,
-                    mongoQuery: mongoQuery,
-
-
-                };
-
-            }
-            else if (operation == "listAssociatedWords") {
-                var size = $("#associatedWordsSize").val();
-                var seedWord = $("#seedWord").val();
-                size = parseInt(size);
-                var minFreq = $("#minFreq").val();
-                var stopWords = [];
-                $("#stopWordsSelect option").each(function () {
-                    stopWords.push($(this).val());
-                });
-                var lang = $("#lang").val();
-                minFreq = parseInt(minFreq);
-                payload = {
-                    getAssociatedWords: 1,
-                    indexName: indexName,
-                    size: size,
-                    word: seedWord,
-                    stopWords: stopWords
-                };
-
-            }
-
-
-            else if (operation == "generateThesaurus") {
-
-                return generateThesaurus();
-
-
-            }
-            else if (operation == "createIndexClassifier") {
-                var nWords = $("#nWords").val();
-                nWords = parseInt(nWords);
-                var minFreq = $("#minFreq").val();
-                var lang = $("#lang").val();
-                minFreq = parseInt(minFreq);
-                var ontologies = JSON.parse($("#ontologies").val());
-
-                var includedWords = [];
-                $("#includeWordsSelect option").each(function () {
-                    includedWords.push($(this).val());
-                });
-
-                payload = {
-                    createIndexClassifier: 1,
-                    indexName: indexName,
-                    nWords: nWords,
-                    minFreq: minFreq,
-                    ontologies: ontologies,
-                    lang: lang,
-                    includedWords: includedWords
-
-
-                };
-
-            }
-
-
-            $.ajax({
-                type: "POST",
-                url: "/elastic",
-                data: payload,
-                dataType: "json",
-                success: function (data, textStatus, jqXHR) {
-                    var minWordLength = $("#minWordLength").val();
-                    if (operation == "listAssociatedWords") {
-                        var array = []
-
-                        for (var i = 0; i < data.buckets.length; i++) {
-                            var word = data.buckets[i].key;
-                            data.buckets[i].label = word + " (" + data.buckets[i].count + ")";
-                            if (word.match(/[a-zA-Z]+/) && word.length > minWordLength && word.indexOf("," < 0))
-                                array.push(data.buckets[i])
-                            else
-                                arrayExclude.push(data.buckets[i])
-
-                        }
-                        array.sort(function (a, b) {
-                            if (a.count > b.count)
-                                return -1;
-                            if (a.count < b.count)
-                                return 1;
-                            return 0;
-                        });
-                        common.fillSelectOptions(wordsSelect, array, "label", "key");
-                        common.fillSelectOptions(stopWordsSelect, arrayExclude, "label", "key")
-                    }
-
-                    console.log("done")
-                }
-                , error: function (xhr, err, msg) {
-                    console.log("ERROR :" + err)
-                }
-
-            });
-
-
-        }
-
-        function generateThesaurus() {
-            var ontology = JSON.parse($("#ontologies").val())[0];
-
-            var includedWords = [];
-            $("#includeWordsSelect option").each(function () {
-                includedWords.push($(this).val());
-            });
-            var lang = $("#lang").val();
-
-            payload = {
-                findOntologySKOSterms: 1,
-                words: includedWords,
-                ontology: ontology,
-                lang: lang,
-            };
-            $.ajax({
-                type: "POST",
-                url: "/rdf",
-                data: payload,
-                dataType: "json",
-                success: function (data, textStatus, jqXHR) {
-                    var ww = data;
-                    console.log(JSON.stringify(data, null, 2))
-                }, error: function (xhr, err, msg) {
-                    console.log("ERROR :" + err)
-                }
-            });
-        }
-
-        function onWordSelect(select) {
-            var word = $(select).val();
-            $('#wordsSelect option[value="' + word + '"]').remove();
-            if (wordSelectMode == "include") {
-
-                $('#includeWordsSelect').append($('<option>', {
-                    value: word,
-                    text: word
-                }));
-            } else {
-                $('#wordsSelect option[value="' + word + '"]').remove();
-                $('#stopWordsSelect').append($('<option>', {
-                    value: word,
-                    text: word
-                }));
-            }
-        }
-
-        function includeWord(select) {
-            var word = $(select).val();
-            $('#stopWordsSelect option[value="' + word + '"]').remove();
-            $('#wordsSelect').append($('<option>', {
-                value: word,
-                text: word
-            }));
-        }
 
     </script>
 </head>
@@ -354,10 +149,10 @@
 
             <tr>
                 <td>
-                    <button onclick="elasticExec('indexDocDirInNewIndex')">indexDocDirInNewIndex</button>
+                    <button onclick="admin.elasticExec('indexDocDirInNewIndex')">indexDocDirInNewIndex</button>
                 </td>
                 <td>
-                    <button onclick="elasticExec('indexDirInExistingIndex')">indexDirInExistingIndex</button>
+                    <button onclick="admin.elasticExec('indexDirInExistingIndex')">indexDirInExistingIndex</button>
                 </td>
             </tr>
 
@@ -389,7 +184,7 @@
                     &nbsp;
                 </td>
                 <td>
-                    <button onclick="elasticExec('createIndexClassifier')">createIndexClassifier</button>
+                    <button onclick="admin.elasticExec('createIndexClassifier')">createIndexClassifier</button>
                 </td>
             </tr>
 
@@ -426,7 +221,7 @@
 
             <tr>
                 <td>
-                    <button onclick="elasticExec('indexMongo')">index Mongo Collection</button>
+                    <button onclick="admin.elasticExec('indexMongo')">index Mongo Collection</button>
                 </td>
 
             </tr>
@@ -442,8 +237,9 @@
                 <td></td>
 
 
-                <td>asscoiated words</td>
-                <td>include</td>
+                <td>associated words</td>
+                <td></td>
+                <td>entities</td>
 
                 <td>thesaurus</td>
             <tr>
@@ -455,9 +251,9 @@
                 <br>
                 minWordLength<input id="minWordLength" size="5" value="3">
                 <br>
-                <button onclick="elasticExec('listAssociatedWords')">list Associated words</button>
+                <button onclick="admin.elasticExec('listAssociatedWords')">list Associated words</button>
                 <br>
-                exclude<br> <select id="stopWordsSelect" size="10" onclick="includeWord(this)">
+                exclude<br> <select id="stopWordsSelect" size="10" onclick="admin.includeWord(this)">
 
             </select>
 
@@ -465,16 +261,35 @@
 
 
             <td>
-                <select id="wordsSelect" size="20" onclick="onWordSelect(this)">
+                <select id="wordsSelect" size="20" onclick="admin.onWordSelect(this)">
 
                 </select>
             </td>
             <td>
-                <select id="includeWordsSelect" size="20" onclick="includeWord(this)">
+                <button onclick="admin.addAllWordsToEntitiesSelect()">select all</button>
+                <br>
+                <button onclick="admin.removeEntities()">remove entity</button>
+            </td>
+            <td>
+                <select id="entitiesSelect" multiple="multiple" size="20" onclick="admin.includeWord(this)">
 
                 </select>
             </td>
 
+
+            <td>
+
+                <button onclick="admin.generateThesaurus()">generate thesaurus</button>
+                <hr>
+                ontologies<input id="ontologies" value='["BNF"]'>
+
+                <br> lang<input id="lang" value='fr'>
+                <br>
+
+
+                <br>
+                <button onclick="admin.setWordNetSynonyms();">enrich synonyms</button>
+            </td>
             <td>
                 <div id="treeContainer1" class="jsTree">
                     <div id="treeDiv1">
@@ -484,15 +299,7 @@
             <td>
                 <table>
                     <tr>
-                        <td>
-                            ontologies<input id="ontologies" value='["BNF"]'>
 
-                            <br> lang<input id="lang" value='fr'>
-                            <br>
-                            <button onclick="elasticExec('generateThesaurus')">generate thesaurus</button>
-
-
-                        </td>
                     </tr>
                     <tr>
                         <td>

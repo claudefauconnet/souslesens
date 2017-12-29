@@ -262,7 +262,40 @@ var elasticProxy = {
         });
     },
 
+    findTerms: function (index, type, terms, callback) {
 
+        var payload = {
+            "query": {
+                "terms": {"content.synonyms": terms}
+            }
+        }
+        if(type)
+            type="/"+type;
+        var options = {
+            size:serverParams.elasticMaxFetch,
+            method: 'POST',
+            json: payload,
+            url: baseUrl + index + type + "/_search"
+        };
+
+        request(options, function (error, response, body) {
+            if( error)
+                return callback(error);
+            if(body.error)
+                return callback(body.error.type);
+
+            var hits=body.hits.hits;
+            var data=[];
+            for (var i=0;i<hits.length;i++){
+                data.push(hits[i]._source.content)
+
+            }
+            return callback(null,data)
+
+
+        });
+
+    },
     findDocuments: function (index, type, word, from, size, slop, fields, andWords, classifierSource, callback) {
         var match = {"content": word};
         if (!fields) {
@@ -344,7 +377,7 @@ var elasticProxy = {
             url: baseUrl + index + type + "/_search"
         };
 
-        console.log(JSON.stringify(options, null, 2));
+       // console.log(JSON.stringify(options, null, 2));
         request(options, function (error, response, body) {
             elasticProxy.processSearchResult(error, index, body, classifierSource, callback);
 
@@ -372,9 +405,9 @@ var elasticProxy = {
         }
         var mode = "read";
 
-        if (schema && schema[index] && schema[index].mode )
-             mode = schema[index].mode
-        var csvFields=[]
+        if (schema && schema[index] && schema[index].mode)
+            mode = schema[index].mode
+        var csvFields = []
         if (schema && schema[index] && schema[index].csvFields)
             csvFields = schema[index].csvFields;
 
@@ -416,7 +449,7 @@ var elasticProxy = {
             total: total,
             icons: icons,
             mode: mode,
-            csvFields:csvFields,
+            csvFields: csvFields,
 
         }
 
@@ -824,6 +857,32 @@ var elasticProxy = {
 
 
     },
+
+    indexJsonArray: function (index, type, array, callback) {
+        elasticPayload = [];
+        var startId = 10000
+        for (var i = 0; i < array.length; i++) {
+            elasticPayload.push({index: {_index: index, _type: type, _id: "_" + (startId++)}})
+            var payload = {"content": array[i]};
+            elasticPayload.push(payload);
+        }
+
+
+        getClient().bulk({
+            body: elasticPayload
+        }, function (err, resp) {
+            if (err) {
+                console.log("ERROR " + err)
+                console.log(JSON.stringify(elasticPayload, null, 2))
+
+            } else {
+                return callback(null, " done" + resp);
+            }
+        });
+    }
+
+
+    ,
     indexMongoCollection: function (mongoDB, mongoCollection, mongoQuery, elasticIndex, elasticType, callback) {
         if (typeof mongoQuery !== "object")
             mongoQuery = JSON.parse(mongoQuery);
@@ -871,7 +930,7 @@ var elasticProxy = {
                         elasticPayload.push({index: {_index: elasticIndex, _type: elasticType, _id: "_" + (startId++)}})
                         var payload = {};
                         var content = "";
-                    //    console.log("----"+JSON.stringify(elasticFields,null,2))
+                        //    console.log("----"+JSON.stringify(elasticFields,null,2))
                         for (var j = 0; j < elasticFields.length; j++) {
                             var key = elasticFields[j];
                             var value = result[i][key];
@@ -879,10 +938,9 @@ var elasticProxy = {
                                 value = result[i]["_id"].toString();
                             }
 
-                          //  console.log("----"+key+":"+value)
+                            //  console.log("----"+key+":"+value)
                             if (!value)
                                 continue;
-
 
 
                             content += " " + value;
@@ -892,8 +950,8 @@ var elasticProxy = {
                         }
                         payload["content"] = content;
                         elasticPayload.push(payload);
-                    //    resultSize = result.length;
-                     //   return  callback(null,payload);
+                        //    resultSize = result.length;
+                        //   return  callback(null,payload);
                     }
 
 
