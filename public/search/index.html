@@ -250,7 +250,7 @@
                 from: from,
                 size: size,
                 indexName: index,
-                classifierSource: classifierSourceStr,
+
                 word: word
             };
             if (currentType)
@@ -274,7 +274,7 @@
                     icons = data.icons;
                     showResults(data.docs);
 
-                    showClassifier(data.classifier);
+
                     showPageControls(data.total);
 
                 }
@@ -290,6 +290,7 @@
             /*----------------associated words********************************/
             var payload = {
                 getAssociatedWords: 1,
+                classifierSource: classifierSourceStr,
                 indexName: index,
                 word: word,
                 size: 100
@@ -313,6 +314,7 @@
                     var xxx = data;
                     showAssociatedWords(data.buckets);
                     showTypes(data.types);
+                    showClassifier(data.classifier);
 
                 }
                 , error: function (xhr, err, msg) {
@@ -845,6 +847,7 @@
         <br><br>
         classifierSource <select id="classifierSource" onchange="search()">
             <option></option>
+            <option>custom</option>
             <option>BNF</option>
             <option>unesco</option>
             <option>PLM</option>

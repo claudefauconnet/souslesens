@@ -116,6 +116,48 @@ var skos = {
         return xml;
 
 
+    },
+
+
+    skosToClassifier: function (thesaurus) {
+        var classifier = {
+            "broaderNodes": {},
+            "words": {}
+        }
+        var file = path.resolve(__dirname + "/thesaurii/" + thesaurus + ".rdf");
+
+        fs.readFile(file, function (err, data) {
+            if (err) {
+                if (callback)
+                    return callback(err);
+            }
+            var parser = new xml2js.Parser();
+            parser.parseString("" + data, function (err, result) {
+                if (err) {
+                    if (callback)
+                        return callback(err);
+
+                }
+
+                var concepts = result["rdf:RDF"]["skos:Concept"];
+                var conceptsMap = {}
+                for (var i = 0; i < concepts.length; i++) {
+                    var about = concepts[i]["$"]["rdf:about"];
+                    var id = about.substring(about.lastIndexOf("/") + 1)
+                    var prefLabel = concepts[i]["skos:prefLabel"][0]
+                    if (concepts[i]["skos:prefLabel"].length > 1)  // english for Unesco
+                        prefLabel = concepts[i]["skos:prefLabel"][2]._
+                    if(!classifier.broaderNodes[prefLabel])
+                        classifier.broaderNodes[prefLabel]=[];
+                   // classifier.broaderNodes[prefLabel]=[];
+
+
+
+                }
+            })
+        })
+
+
     }
 
 
@@ -148,23 +190,8 @@ var skos = {
                     var prefLabel = concepts[i]["skos:prefLabel"][0]
                     if (concepts[i]["skos:prefLabel"].length > 1)  // english for Unesco
                         prefLabel = concepts[i]["skos:prefLabel"][2]._
-                    /*   if (concepts[i]["skos:prefLabel"].length > 0)  //
-                     prefLabel = concepts[i]["skos:prefLabel"][0]._*/
 
 
-                    /*    conceptsMap[id] = {
-
-
-                     .prefLabel: concepts[i]["skos:prefLabel"][0]._,
-                     //    en: concepts[i]["skos:prefLabel"][1]._,
-                     //   sp: concepts[i]["skos:prefLabel"][0]._,
-                     //  .prefLabel: concepts[i]["skos:prefLabel"][2]._,
-                     narrower: concepts[i]["skos:narrower"],
-                     broader: concepts[i]["skos:broader"],
-                     about:about
-
-
-                     }*/
                     var node = {prefLabel: prefLabel}
 
 
@@ -201,7 +228,7 @@ var skos = {
 
                     }
                     else {
-                        node.parent ="_"+thesaurus;
+                        node.parent = "_" + thesaurus;
 
                     }
                     if (node.parent != "_" + thesaurus) {
@@ -212,7 +239,7 @@ var skos = {
                     treeData.push(node);
 
                 }
-                treeData.push({text: thesaurus, id: "_"+thesaurus,parent:"#"});//root
+                treeData.push({text: thesaurus, id: "_" + thesaurus, parent: "#"});//root
                 if (callback)
                     callback(null, treeData);
 
@@ -220,157 +247,153 @@ var skos = {
             });
         });
     }
-,   findOntologySKOSterms: function (ontology, lang, words, callback) {
+    , findOntologySKOSterms: function (ontology, lang, words, callback) {
 
 
-            function capitalizeFirstLetter(string) {
-                return string.charAt(0).toUpperCase() + string.slice(1);
-            }
+        function capitalizeFirstLetter(string) {
+            return string.charAt(0).toUpperCase() + string.slice(1);
+        }
 
 
-            var skos = {
-                broaderNodes: {},
-                words: {}
-            }
+        var skos = {
+            broaderNodes: {},
+            words: {}
+        }
 
-            async.eachSeries(words, function (word, callback) {
-
-
-                    word = capitalizeFirstLetter(word);
-                    console.log(word);
-
-                    var payload =
-                        [
-                            {name: "broader", optional: false},
-                            {name: "related", optional: true},
-                            {name: "narrower", optional: true}
-                        ]
+        async.eachSeries(words, function (word, callback) {
 
 
-                    rdfProxy.getOntologyTriples(ontology, word, payload, lang, false, 100, function (err, json) {
-                        if (err) {
-                            console.log(err)
-                            return callback(err);
-                        }
-                        if (!skos.words[word])
-                            skos.words[word] = {broaders: [], narrowers: [], relateds: [], count: 0};
+                word = capitalizeFirstLetter(word);
+                console.log(word);
+
+                var payload =
+                    [
+                        {name: "broader", optional: false},
+                        {name: "related", optional: true},
+                        {name: "narrower", optional: true}
+                    ]
 
 
-                        if(json.length==0){
-                            if (skos.words[word].broaders.indexOf("orphans") < 0)
-                                skos.words[word].broaders.push("orphans");
-                            if (!skos.broaderNodes["orphans"])
-                                skos.broaderNodes["orphans"] = []
-                            skos.broaderNodes["orphans"].push(word);
-                        }
-
-                        var relId = 1;
-                        var relTypes = ["narrower", "broader", "related"];
-                        for (var i = 0; i < json.length; i++) {
-                            var obj = json[i];
-                            for (var j = 0; j < relTypes.length; j++) {
-                                var relDoc = relTypes[j] + "Doc";
-                                var relLabel = relTypes[j] + "Label";
-                                if (obj[relDoc]) {
-                                    var docId = obj.doc.value;
-                                    docId = docId.substring(docId.lastIndexOf("/") + 1);
-                                    var relDocId = obj[relDoc].value;
-                                    relDocId = relDocId.substring(relDocId.lastIndexOf("/") + 1);
-                                    var label = obj.label.value;
-                                    var relLabelValue = obj[relLabel].value;
-                                    //   console.log("___________________" + word + "  : " + relLabelValue);
+                rdfProxy.getOntologyTriples(ontology, word, payload, lang, false, 100, function (err, json) {
+                    if (err) {
+                        return console.log(err)
+                        return callback(err);
+                    }
+                    if (!skos.words[word])
+                        skos.words[word] = {broaders: [], narrowers: [], relateds: [], count: 0};
 
 
+                    if (json.length == 0) {
+                        if (skos.words[word].broaders.indexOf("orphans") < 0)
+                            skos.words[word].broaders.push("orphans");
+                        if (!skos.broaderNodes["orphans"])
+                            skos.broaderNodes["orphans"] = []
+                        skos.broaderNodes["orphans"].push(word);
+                    }
 
-                                    if (relTypes[j] == "broader") {
-                                        if (!skos.broaderNodes[relLabelValue])
-                                            skos.broaderNodes[relLabelValue] = []
-                                        if (skos.broaderNodes[relLabelValue].indexOf(word) < 0)
-                                            skos.broaderNodes[relLabelValue].push(word);
+                    var relId = 1;
+                    var relTypes = ["narrower", "broader", "related"];
+                    for (var i = 0; i < json.length; i++) {
+                        var obj = json[i];
+                        for (var j = 0; j < relTypes.length; j++) {
+                            var relDoc = relTypes[j] + "Doc";
+                            var relLabel = relTypes[j] + "Label";
+                            if (obj[relDoc]) {
+                                var docId = obj.doc.value;
+                                docId = docId.substring(docId.lastIndexOf("/") + 1);
+                                var relDocId = obj[relDoc].value;
+                                relDocId = relDocId.substring(relDocId.lastIndexOf("/") + 1);
+                                var label = obj.label.value;
+                                var relLabelValue = obj[relLabel].value;
+                                //   console.log("___________________" + word + "  : " + relLabelValue);
 
-                                        if (skos.words[word].broaders.indexOf(relLabelValue) < 0)
-                                            skos.words[word].broaders.push(relLabelValue);
 
-                                    }
-                                    if (relTypes[j] == "narrower") {
-                                        if (skos.words[word].narrowers.indexOf(relLabelValue) < 0)
-                                            skos.words[word].narrowers.push(relLabelValue);
+                                if (relTypes[j] == "broader") {
+                                    if (!skos.broaderNodes[relLabelValue])
+                                        skos.broaderNodes[relLabelValue] = []
+                                    if (skos.broaderNodes[relLabelValue].indexOf(word) < 0)
+                                        skos.broaderNodes[relLabelValue].push(word);
 
-                                    }
-                                    if (relTypes[j] == "related") {
-                                        if (skos.words[word].relateds.indexOf(relLabelValue) < 0)
-                                            skos.words[word].relateds.push(relLabelValue);
+                                    if (skos.words[word].broaders.indexOf(relLabelValue) < 0)
+                                        skos.words[word].broaders.push(relLabelValue);
 
-                                    }
+                                }
+                                if (relTypes[j] == "narrower") {
+                                    if (skos.words[word].narrowers.indexOf(relLabelValue) < 0)
+                                        skos.words[word].narrowers.push(relLabelValue);
+
+                                }
+                                if (relTypes[j] == "related") {
+                                    if (skos.words[word].relateds.indexOf(relLabelValue) < 0)
+                                        skos.words[word].relateds.push(relLabelValue);
+
                                 }
                             }
                         }
-                        callback(null);
-
-
-                    })
-
-
-                }
-
-                , function (err, result) {
-                    if (err) {
-                        return callback(err);
                     }
-                    callback(null, skos);
-                    /* console.log("___________________" + JSON.stringify(broader, null, 2));
-                     console.log("___________________" + JSON.stringify(narrower, null, 2));
-                     console.log("___________________" + JSON.stringify(related, null, 2));*/
+                    callback(null);
 
+
+                })
+
+
+            }
+
+            , function (err, result) {
+                if (err) {
+                    return callback(err);
                 }
-            )
-        }
+                callback(null, skos);
+                /* console.log("___________________" + JSON.stringify(broader, null, 2));
+                 console.log("___________________" + JSON.stringify(narrower, null, 2));
+                 console.log("___________________" + JSON.stringify(related, null, 2));*/
+
+            }
+        )
+    }
     ,
     saveTreeToSkos: function (treeData, ontology, callback) {
         var thesaurusUri = "http://www.souslesens.org/" + ontology;
 
 
+        var concepts = [];
+        for (var key in treeData) {
 
-            var concepts = [];
-            for (var key in treeData) {
-
-                var node = treeData[key];
-                if (node.parent) {
-                    var concept = {
-                        name: "skos:Concept",
-                        attrs: {"rdf:about": "http://" + thesaurusUri + "/" + node.id}
-                        , children: [
-                            {
-                                name: "skos:prefLabel",
-                                text: node.text
-                            },
-
+            var node = treeData[key];
+            if (node.parent) {
+                var concept = {
+                    name: "skos:Concept",
+                    attrs: {"rdf:about": "http://" + thesaurusUri + "/" + node.id}
+                    , children: [
+                        {
+                            name: "skos:prefLabel",
+                            text: node.text
+                        },
 
 
-                        ]
+                    ]
 
 
-                    }
-                    if(node.parent!="#"){
-                        concept.children.push( {
-                            name: "skos:broader",
-                                attrs: {"rdf:resource": "http://" + thesaurusUri + "/" + node.parent}
-                        });
-                    }
-                    if(node.children) {
-                        for (var i = 0; i < node.children.length; i++) {
-                            concept.children.push({
-                                name: "skos:narrower",
-                                attrs: {"rdf:resource": "http://" + thesaurusUri + "/" + node.children[i]}
-                            })
-
-                        }
-                    }
-                    concepts.push(concept);
                 }
+                if (node.parent != "#") {
+                    concept.children.push({
+                        name: "skos:broader",
+                        attrs: {"rdf:resource": "http://" + thesaurusUri + "/" + node.parent}
+                    });
+                }
+                if (node.children) {
+                    for (var i = 0; i < node.children.length; i++) {
+                        concept.children.push({
+                            name: "skos:narrower",
+                            attrs: {"rdf:resource": "http://" + thesaurusUri + "/" + node.children[i]}
+                        })
 
+                    }
+                }
+                concepts.push(concept);
             }
 
+        }
 
 
         var thesaurus = {};
@@ -591,7 +614,7 @@ var skos = {
 
 
         }
-        skos.generateSkosThesauru.prefLabelomWords("BNF", words, function (err, result) {
+        skos.generateSkosThesaurus.prefLabelomWords("BNF", words, function (err, result) {
             if (err)
                 return console.log(err);
             var file = path.resolve(__dirname + "/thesaurii/PLM.rdf");

@@ -142,7 +142,7 @@ var elasticProxy = {
     },
 
 
-    findDocumentsById: function (index, ids, words, classifierSource, callback) {
+    findDocumentsById: function (index, ids, words, callback) {
 
         var payload =
             {
@@ -191,7 +191,7 @@ var elasticProxy = {
 
         console.log(JSON.stringify(payload, null, 2));
         request(options, function (error, response, body) {
-            elasticProxy.processSearchResult(error, index, body, classifierSource, callback);
+            elasticProxy.processSearchResult(error, index, body, callback);
 
         });
     },
@@ -262,41 +262,43 @@ var elasticProxy = {
         });
     },
 
-    findTerms: function (index, type, terms, callback) {
-
+    findTerms: function (index, type, field, terms, callback) {
+        var termObj = {};
+        termObj[field] = terms;
         var payload = {
+            "size": serverParams.elasticMaxFetch,
             "query": {
-                "terms": {"content.synonyms": terms}
+                "terms": termObj,
             }
         }
-        if(type)
-            type="/"+type;
+        if (type)
+            type = "/" + type;
         var options = {
-            size:serverParams.elasticMaxFetch,
+
             method: 'POST',
             json: payload,
             url: baseUrl + index + type + "/_search"
         };
 
         request(options, function (error, response, body) {
-            if( error)
+            if (error)
                 return callback(error);
-            if(body.error)
+            if (body.error)
                 return callback(body.error.type);
 
-            var hits=body.hits.hits;
-            var data=[];
-            for (var i=0;i<hits.length;i++){
+            var hits = body.hits.hits;
+            var data = [];
+            for (var i = 0; i < hits.length; i++) {
                 data.push(hits[i]._source.content)
 
             }
-            return callback(null,data)
+            return callback(null, data)
 
 
         });
 
     },
-    findDocuments: function (index, type, word, from, size, slop, fields, andWords, classifierSource, callback) {
+    findDocuments: function (index, type, word, from, size, slop, fields, andWords, callback) {
         var match = {"content": word};
         if (!fields) {
             fields = elasticProxy.getShemaFields(index);
@@ -377,13 +379,13 @@ var elasticProxy = {
             url: baseUrl + index + type + "/_search"
         };
 
-       // console.log(JSON.stringify(options, null, 2));
+        // console.log(JSON.stringify(options, null, 2));
         request(options, function (error, response, body) {
-            elasticProxy.processSearchResult(error, index, body, classifierSource, callback);
+            elasticProxy.processSearchResult(error, index, body,  callback);
 
         });
     },
-    processSearchResult: function (error, index, body, classifierSource, callback) {
+    processSearchResult: function (error, index, body, callback) {
 
         if (error)
             return callback(error);
@@ -439,13 +441,11 @@ var elasticProxy = {
 
             docs.push(obj);
         }
-        var classifier;
-        if (index && classifierSource && classifierSource.length > 0)
-            classifier = classifierManager.getClassifierOutput(index, classifierSource, docs);
+
 
         var result = {
             docs: docs,
-            classifier: classifier,
+
             total: total,
             icons: icons,
             mode: mode,
@@ -457,7 +457,7 @@ var elasticProxy = {
 
 
     }
-    , getAssociatedWords: function (index, word, size, slop, andWords, stopWords, callback) {
+    , getAssociatedWords: function (index, word, size, slop, andWords, stopWords,classifierSource, callback) {
 
         if (typeof word === "object" && word.ids) {
             query = {
@@ -522,7 +522,7 @@ var elasticProxy = {
 
         var payload = {
             "query": query,
-            "size": 10000,
+            "size": serverParams.elasticMaxFetch,
             _source: "",
             "aggs": {
                 "associatedWords": {
@@ -699,10 +699,16 @@ var elasticProxy = {
             }
 
 
+            var classifier;
+            if (index && classifierSource && classifierSource.length > 0)
+                classifier = classifierManager.getClassifierOutput(index, classifierSource, hits);
+
             var buckets = body.aggregations.associatedWords.buckets;
             var result = {
                 buckets: [],
-                types: types
+                types: types,
+                classifier: classifier,
+
             };
             for (var i = 0; i < buckets.length; i++) {
 
@@ -1289,7 +1295,7 @@ var elasticProxy = {
                             var message = "-----------Index " + index + " is ready to use-----------"
                             if (doClassifier.toLowerCase() == "y") {
 
-                                classifierManager.createIndexClassifier(index, 200, null, null, 10, ["BNF"], "fr", 1, function (err, result) {
+                                classifierManager.createIndexClassifierFromFrequentWordsAndOntology(index, 200, null, null, 10, ["BNF"], "fr", 1, function (err, result) {
                                     elasticProxy.sendMessage("classifier done");
 
                                     elasticProxy.sendMessage(message);
@@ -1357,7 +1363,7 @@ var elasticProxy = {
                             var message = "-----------Index " + index + " is ready to use-----------"
                             elasticProxy.sendMessage("delete temporary index " + indexTemp);
                             if (doClassifier.toLowerCase() == "y") {
-                                classifierManager.createIndexClassifier(index, 200, null, null, 10, ["BNF"], "fr", 1, function (err, result) {
+                                classifierManager.createIndexClassifierFromFrequentWordsAndOntology(index, 200, null, null, 10, ["BNF"], "fr", 1, function (err, result) {
 
                                     elasticProxy.sendMessage("classifier done");
                                     elasticProxy.sendMessage(message);

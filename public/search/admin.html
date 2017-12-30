@@ -167,6 +167,7 @@
                 <td>
                     <input id="nWords" value="200">
                 </td>
+
             </tr>
 
             <tr>
@@ -177,14 +178,38 @@
                     <input id="minFreq" value="10">
                 </td>
             </tr>
+            <tr>
+                <td>
+
+                    ontologies
+                </td>
+                <input id="ontologies" value='["BNF"]'>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    lang
+                </td>
+                <td>
+                    <input id="lang" value='fr'>
+                </td>
+
+
+            </tr>
+
 
             <tr>
 
                 <td>
+                    <button onclick="admin.elasticExec('thesaurusToClassifier')">
+                       Generate Classifier from Thesaurus
+                    </button>
                     &nbsp;
                 </td>
                 <td>
-                    <button onclick="admin.elasticExec('createIndexClassifier')">createIndexClassifier</button>
+                   <!-- <button onclick="admin.elasticExec('createIndexClassifierFromFrequentWordsAndOntology')">
+                        createIndexClassifierFromFrequentWordsAndOntology
+                    </button>-->
                 </td>
             </tr>
 
@@ -280,14 +305,8 @@
             <td>
 
                 <button onclick="admin.generateThesaurus()">generate thesaurus</button>
-                <hr>
-                ontologies<input id="ontologies" value='["BNF"]'>
-
-                <br> lang<input id="lang" value='fr'>
                 <br>
 
-
-                <br>
                 <button onclick="admin.setWordNetSynonyms();">enrich synonyms</button>
             </td>
             <td>
@@ -309,7 +328,7 @@
 
                     <tr>
                         <td>
-                            thesaurus<input id=" skosInput1 " value="" size="12">
+                            thesaurus<input id="skosInput1" value="testSyns" size="12">
                             <button onclick="skosTree.loadTree('treeDiv1','skosInput1')">load</button>
                             <br>
                             <button onclick="skosTree.createTree('treeDiv1')">create</button>
