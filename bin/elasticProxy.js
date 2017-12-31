@@ -95,7 +95,8 @@ var elasticProxy = {
         });
     }
 
-    , search: function (index, type, query, callback) {
+    ,
+    search: function (index, type, query, callback) {
 
         getClient().search({
             index: index,
@@ -271,8 +272,9 @@ var elasticProxy = {
                 "terms": termObj,
             }
         }
-        if (type)
+        if (type != null)
             type = "/" + type;
+        else type = "";
         var options = {
 
             method: 'POST',
@@ -381,7 +383,7 @@ var elasticProxy = {
 
         // console.log(JSON.stringify(options, null, 2));
         request(options, function (error, response, body) {
-            elasticProxy.processSearchResult(error, index, body,  callback);
+            elasticProxy.processSearchResult(error, index, body, callback);
 
         });
     },
@@ -457,7 +459,12 @@ var elasticProxy = {
 
 
     }
-    , getAssociatedWords: function (index, word, size, slop, andWords, stopWords,classifierSource, callback) {
+    ,
+    getAssociatedWords: function (index, word, size, slop, andWords, stopWords, classifierSource, iterations, callback) {
+        if (!iterations || iterations == "")
+            iterations = 0;
+        else
+            iterations = parseInt("" + iterations);
 
         if (typeof word === "object" && word.ids) {
             query = {
@@ -527,7 +534,7 @@ var elasticProxy = {
             "aggs": {
                 "associatedWords": {
                     "terms": {
-
+                        "order" : { "_count" : "desc" },
                         "field": "content",
                         "size": size,
                         "exclude": ["le", "la", "les", "un", "une", "des", "je", "tu", "il", "à", "a",
@@ -671,18 +678,29 @@ var elasticProxy = {
                 }
             }
         }
+
+
+        /*    payload.aggs={
+
+                    "significant_crime_types" : {
+                        "significant_terms" : { "field" : "content" }
+
+                }
+            }*/
         if (stopWords) {
             for (var i = 0; i < stopWords.length; i++) {
                 payload.aggs.associatedWords.terms.exclude.push(stopWords[i]);
             }
         }
+        else
+            stopWords = [];
         var options = {
             method: 'POST',
             json: payload,
             url: baseUrl + index + "/_search"
         };
 
-        //   console.log(JSON.stringify(payload,null,2))
+        console.log(JSON.stringify(payload, null, 2))
         request(options, function (error, response, body) {
             if (error)
                 return callback(error);
@@ -699,17 +717,10 @@ var elasticProxy = {
             }
 
 
-            var classifier;
-            if (index && classifierSource && classifierSource.length > 0)
-                classifier = classifierManager.getClassifierOutput(index, classifierSource, hits);
-
             var buckets = body.aggregations.associatedWords.buckets;
-            var result = {
-                buckets: [],
-                types: types,
-                classifier: classifier,
 
-            };
+            var iterationNstopWords = 0;
+            var words = [];
             for (var i = 0; i < buckets.length; i++) {
 
                 var obj = {};
@@ -717,11 +728,93 @@ var elasticProxy = {
                 obj.key = objElastic.key;
                 obj.count = objElastic.doc_count;
 
-                result.buckets.push(obj);
+                if (elasticProxy.acceptAssociatedWord(obj.key)) {
+
+                    words.push(obj)
+                }
+                else {
+
+                    stopWords.push(obj.key);
+                    iterationNstopWords += 1;
+
+                }
             }
-            return callback(null, result);
+
+           console.log(iterationNstopWords + "/" + words.length)
+            if (iterations > 0 && ((iterationNstopWords * 4) > words.length)) {// condition for re-extract associated words with more stopwords
+                iterations--;
+                elasticProxy.getAssociatedWords(index, word, size, slop, andWords, stopWords, classifierSource, iterations, callback);
+
+            }
+
+            elasticProxy.extractWordNetNouns(words, function (err, buckets) {
+                if (err) {
+                    return callback(err);
+                }
+                var classifier;
+                if (index && classifierSource && classifierSource.length > 0)
+                    classifier = classifierManager.getClassifierOutput(index, classifierSource, hits);
+
+                var result = {
+                    buckets: buckets,
+                    types: types,
+                    classifier: classifier,
+
+                };
+
+
+                return callback(null, result);
+
+
+            })
+
 
         });
+
+    }
+    ,
+    extractWordNetNouns: function (_buckets, callback) {
+        var buckets = _buckets;
+        var words = [];
+        for (var i = 0; i < buckets.length; i++) {
+            words.push(buckets[i].key)
+        }
+        var validBuckets = [];
+
+        elasticProxy.findTerms("wordnet_fr", null, "content.synonyms", words, function (err, data) {
+            if (err)
+                return callback(err);
+
+            var allwords = []
+            for (var i = 0; i < buckets.length; i++) {
+                var word = buckets[i].key
+
+                for (var j = 0; j < data.length; j++) {
+                    if (data[j].synonyms.indexOf(word) > -1) {
+                     //
+                     if (data[i].pos == "n" && allwords.indexOf(word) < 0) {
+                         console.log(word +" pos   "+data[i].pos)
+                      //  if( allwords.indexOf(word) < 0) {
+                            allwords.push(word)
+                            validBuckets.push({key: word, count: buckets[i].count});
+                        }
+                    }
+
+
+                }
+            }
+            return callback(null, validBuckets)
+        })
+
+    }
+    ,
+    acceptAssociatedWord: function (word) {
+        if (word.length < 3)
+            return false;
+        if (word.match(/[0-9']+/))
+            return false;
+
+        return true;
 
     }
 
@@ -1312,7 +1405,8 @@ var elasticProxy = {
             });
         })
     }
-    , indexDirInExistingIndex: function (index, type, rootDir, doClassifier, callback) {
+    ,
+    indexDirInExistingIndex: function (index, type, rootDir, doClassifier, callback) {
         if (!fs.existsSync(rootDir)) {
             var message = ("directory " + rootDir + " does not not exist on server")
             elasticProxy.sendMessage("ERROR" + message);
@@ -1391,7 +1485,7 @@ var elasticProxy = {
     }
     ,
     getShemaFields: function (index) {
-
+        var fields = null;
         schema = elasticProxy.getSchema();
         if (schema && schema[index])
             fields = schema[index].fields

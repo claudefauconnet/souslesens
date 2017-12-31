@@ -116,7 +116,7 @@ router.post(serverParams.routesRootUrl + '/elastic', function (req, response) {
             processResponse(response, error, result)
         });
     else if (req.body && req.body.getAssociatedWords)
-        elasticProxy.getAssociatedWords(req.body.indexName, req.body.word, req.body.size, req.body.slop, req.body.andWords, req.body.stopWords,req.body.classifierSource, function (error, result) {
+        elasticProxy.getAssociatedWords(req.body.indexName, req.body.word, req.body.size, req.body.slop, req.body.andWords, req.body.stopWords,req.body.classifierSource,req.body.iterations, function (error, result) {
             processResponse(response, error, result)
         });
     else if (req.body && req.body.indexDocDirInNewIndex)

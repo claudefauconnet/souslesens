@@ -293,6 +293,7 @@
                 classifierSource: classifierSourceStr,
                 indexName: index,
                 word: word,
+                iterations: 5,
                 size: 100
             };
             if (currentType)
@@ -383,6 +384,8 @@
 
 
         function showAssociatedWords(data) {
+            if(!data)
+                return;
             var html = "<ul>"
             data.sort(function (a, b) {
                 if (a.count > b.count)
@@ -641,6 +644,7 @@
 
                         //associatedTerms
                         var payload = {
+                            iterations:5,
                             getAssociatedWords: 1,
                             indexName: index,
                             word: {ids: ids},

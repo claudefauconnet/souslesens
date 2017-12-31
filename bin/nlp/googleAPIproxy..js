@@ -34,7 +34,9 @@ var googleAPIproxy = {
 
 
     }
+
 }
+
 
 //googleAPIproxy.getEntities("Camille TAROT et ses critiques de la théorie girardienne La théorie durkheimienne de l’effervescence : Durkheim avec sa thèse du sacré,");
 

@@ -374,6 +374,7 @@ var url="/elastic";
                 if (entity.synonyms.length > 0)
                     var xxx = 1;
                 for (var j = 0; j < entity.synonyms.length; j++) {
+                  //  console.log(JSON.stringify(entity.synonyms))
                     var synId = "s_" + id + "_" + j;
                     if (entity.synonyms[j] != entity.name) {
                         var syn = {parent: synNodeId, id: synId, text: entity.synonyms[j]};

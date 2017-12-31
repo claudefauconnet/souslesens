@@ -23,21 +23,21 @@
     "jade": "^1.11.0",
     "jsonfile": "^2.4.0",
     "jsontoxml": "^0.0.11",
+    "logger": "latest",
     "mongodb": "^2.2.31",
     "morgan": "^1.8.2",
     "multer": "^1.3.0",
     "neo4j": "^2.0.0-alpha5",
     "neo4j-driver": "^1.4.0",
     "node-exiftool": "^2.1.1",
+    "node-kmeans": "latest",
     "node-xml-stream": "^1.0.2",
     "pug": "^2.0.0-beta10",
     "serve-favicon": "^2.4.4",
     "socket.io": "^1.7.4",
     "xml2js": "^0.4.19",
     "xmlbuilder": "^9.0.4",
-    "logger":"latest",
-    "node-kmeans":"latest",
-    "xmldom":"latest"
+    "xmldom": "latest"
   },
   "devDependencies": {},
   "scripts": {
@@ -62,6 +62,5 @@
   "license": "MIT",
   "bugs": "https://github.com/claudefauconnet/souslesens/bugs",
   "url": "https://github.com/claudefauconnet/souslesens/issues",
-
   "homepage": "https://github.com/claudefauconnet/souslesens#readme"
 }

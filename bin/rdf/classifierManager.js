@@ -161,7 +161,7 @@ var classifierManager = {
             });
         }
         else {
-            elasticProxy.getAssociatedWords(index, "*", nWords, null, null, excludedWords,null, function (err, result) {
+            elasticProxy.getAssociatedWords(index, "*", nWords, null, null, excludedWords,null, 5,function (err, result) {
                 if (err) {
                     classifierManager.sendMessage("ERROR " + err);
                     return callback(err);
@@ -294,6 +294,8 @@ var classifierManager = {
             })
         })
     }
+    ,
+
 }
 
 
@@ -342,6 +344,7 @@ if (args.length > 2) {
 
         })
     }
+
 }
 
 //classifierManager.generateClassifierFromSkos("PLM.rdf", "jfm")

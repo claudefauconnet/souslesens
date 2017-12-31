@@ -4,56 +4,57 @@ var jsonxml = require('jsontoxml');
 var path = require('path');
 var rdfProxy = require('./rdfProxy');
 var async = require('async');
+var dom = require('xmldom').DOMParser
 
 var parser = new xml2js.Parser();
 
 
 var skos = {
 
-    storeTreeData: function (tree, fileName) {
-        var identifier, date, description, creator = "";
-        if (tree.identifier)
-            identifier = tree.identifier;
-        else
-            identifier = fileName;
+    /* storeTreeData: function (tree, fileName) {
+         var identifier, date, description, creator = "";
+         if (tree.identifier)
+             identifier = tree.identifier;
+         else
+             identifier = fileName;
 
-        if (tree.date)
-            date = tree.date;
-        else
-            date = new Date();
+         if (tree.date)
+             date = tree.date;
+         else
+             date = new Date();
 
-        if (tree.description)
-            description = tree.description;
-        else
-            description = "";
+         if (tree.description)
+             description = tree.description;
+         else
+             description = "";
 
-        if (tree.creator)
-            creator = tree.creator;
-        else
-            creator = "";
+         if (tree.creator)
+             creator = tree.creator;
+         else
+             creator = "";
 
-        skos.treeDataToSkos(tree, identifier, date, description, creator, function (skosObj) {
-            var xml = skos.toXml(skosObj)
-            var file = path.resolve(__dirname, "./thesaurii/" + fileName + ".json");
+         skos.treeDataToSkos(tree, identifier, date, description, creator, function (skosObj) {
+             var xml = skos.toXml(skosObj)
+             var file = path.resolve(__dirname, "./thesaurii/" + fileName + ".json");
 
-        })
+         })
 
-    }
-    ,
+     }
+     ,
 
-    treeDataToSkos: function (tree, identifier, date, description, creator, callback) {
-
-
-        var thesaurus = {concepts: {}}
-        thesaurus.identifier = identifier;
-        thesaurus.date = date;
-        thesaurus.description = description;
-        thesaurus.creator = creator;
+     treeDataToSkos: function (tree, identifier, date, description, creator, callback) {
 
 
-        callback(thesaurus);
+         var thesaurus = {concepts: {}}
+         thesaurus.identifier = identifier;
+         thesaurus.date = date;
+         thesaurus.description = description;
+         thesaurus.creator = creator;
 
-    },
+
+         callback(thesaurus);
+
+     },*/
 
 
     toXml: function (skosObj) {
@@ -147,10 +148,9 @@ var skos = {
                     var prefLabel = concepts[i]["skos:prefLabel"][0]
                     if (concepts[i]["skos:prefLabel"].length > 1)  // english for Unesco
                         prefLabel = concepts[i]["skos:prefLabel"][2]._
-                    if(!classifier.broaderNodes[prefLabel])
-                        classifier.broaderNodes[prefLabel]=[];
-                   // classifier.broaderNodes[prefLabel]=[];
-
+                    if (!classifier.broaderNodes[prefLabel])
+                        classifier.broaderNodes[prefLabel] = [];
+                    // classifier.broaderNodes[prefLabel]=[];
 
 
                 }
@@ -355,11 +355,23 @@ var skos = {
     saveTreeToSkos: function (treeData, ontology, callback) {
         var thesaurusUri = "http://www.souslesens.org/" + ontology;
 
-
+var synonyms={}
         var concepts = [];
         for (var key in treeData) {
 
             var node = treeData[key];
+
+            if (key.indexOf("s_") == 0) {//synonym
+                if(!synonyms[node.parent])
+                    synonyms[node.parent]=[]
+synonyms[node.parent].push(node);
+                continue;
+            }
+
+            if (key.indexOf("S_") == 0) {//synonym Group
+                continue;
+            }
+
             if (node.parent) {
                 var concept = {
                     name: "skos:Concept",
@@ -622,6 +634,22 @@ var skos = {
         });
 
     }
+
+
+    ,
+    skosToElasticSynonyms: function () {
+
+
+        var pathStr = path.resolve(__dirname + "/thesaurii/" + thesaurus + ".rdf")
+        var str = "" + fs.readFileSync(pathStr);
+
+        var doc = new dom().parseFromString(str);
+
+
+        var allElts = doc.documentElement.getElementsByTagName("*");
+
+    }
+
 }
 /*skos.generateSkosThesauru.prefLabelomWords("BNF", ["Bouddhisme"], function (err, result) {
  if (err)
