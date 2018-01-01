@@ -29,9 +29,9 @@ var request = require('request');
 
 
 var rdfProxy = {
-    queryOntologyDataToNeoResult: function (ontology,word, relations, lang, contains, limit, callback) {
-        word=word.substring(0,1).toUpperCase()+word.substring(1).toLowerCase();
-        rdfProxy.getOntologyTriples(ontology,word, relations, lang, contains, limit, function (err, result) {
+    queryOntologyDataToNeoResult: function (ontology, word, relations, lang, contains, limit, callback) {
+        word = word.substring(0, 1).toUpperCase() + word.substring(1).toLowerCase();
+        rdfProxy.getOntologyTriples(ontology, word, relations, lang, contains, limit, function (err, result) {
             if (err)
                 return callback(err);
             var neoArray = rdfProxy.sparqlResultToNeoResult(result);
@@ -41,7 +41,7 @@ var rdfProxy = {
     },
 
 
-    getOntologyTriples: function (ontology,word, relations, lang, contains, limit, callback) {
+    getOntologyTriples: function (ontology, word, relations, lang, contains, limit, callback) {
         var url = "";
         if (ontology == "BNF") {
             url = "http://data.bnf.fr/sparql?default-graph-uri=&query="
@@ -49,7 +49,7 @@ var rdfProxy = {
         else if (ontology == "DBPEDIA") {
 
             url = "https://dbpedia.org/sparql?default-graph-uri=http%3A%2F%2Fdbpedia.org&query="
-       url="http://fr.dbpedia.org/sparql?default-graph-uri=&query="
+            url = "http://fr.dbpedia.org/sparql?default-graph-uri=&query="
         }
 
 
@@ -70,22 +70,25 @@ var rdfProxy = {
 
         for (var i = 0; i < relations.length; i++) {
             var rel = relations[i];
+            if (rel.name == "altLabel") {
+                query += "\n OPTIONAL{ ?doc skos:altLabel ?altLabel.}";
+                continue;
+            }
 
-           if(rel.optional) {
-               var relation=rel.name;
-               query += "\n  OPTIONAL{ ?doc skos:" + relation + " ?" + relation + "Doc .  ?" + relation + "Doc skos:prefLabel ?" + relation + "Label.}";
-           }
-           else{
-               var relation=rel.name;
-               query += "\n   ?doc skos:" + relation + " ?" + relation + "Doc .  ?" + relation + "Doc skos:prefLabel ?" + relation + "Label.";
-           }
+            if (rel.optional) {
+                var relation = rel.name;
+                query += "\n  OPTIONAL{ ?doc skos:" + relation + " ?" + relation + "Doc .  ?" + relation + "Doc skos:prefLabel ?" + relation + "Label.}";
+            }
+            else {
+                var relation = rel.name;
+                query += "\n   ?doc skos:" + relation + " ?" + relation + "Doc .  ?" + relation + "Doc skos:prefLabel ?" + relation + "Label.";
+            }
         }
 
         query += "} limit " + limit;
 
 
-
-console.log(query);
+        console.log(query);
         rdfProxy.querySparql(url, query, function (err, result) {
             if (err)
                 return callback(err);
@@ -113,9 +116,6 @@ console.log(query);
                     var relLabelValue = obj[relLabel].value;
 
 
-
-
-
                     var obj2 = {
                         "rels": [
                             relTypes[j]
@@ -123,7 +123,7 @@ console.log(query);
                         "relProperties": [
                             {
                                 "_id": relId++,
-                                "type":  relTypes[j],
+                                "type": relTypes[j],
                                 "properties": {},
                                 "_fromId": docId,
                                 "_toId": relDocId
@@ -207,16 +207,16 @@ console.log(query);
         });
     },
 
-    rdfQueries: function (source,term,type){
-        var query="";
-        if(source=="BNF") {
+    rdfQueries: function (source, term, type) {
+        var query = "";
+        if (source == "BNF") {
             if (type == "ressourcesParTitre") {
                 query = "PREFIX dcterms: <http://purl.org/dc/terms/> SELECT  *  WHERE {  ?a dcterms:title " + term + ".} limit 100";
             }
             if (type == "ressourcesParAuteur") {// pas bon!!!!!!!!!
                 query = "PREFIX dcterms: <http://purl.org/dc/terms/>  PREFIX foaf: <http://xmlns.com/foaf/0.1/> PREFIX marcrel: <http://id.loc.gov/vocabulary/relators/> PREFIX skos: <http://www.w3.org/2004/02/skos/core#>"
 
-                   +" SELECT  *  WHERE { ?aut foaf:familyName "+term+".  ?aut foaf:name  ?name .  ?doc dcterms:creator ?aut .   optional{?doc skos:altLabel ?docName.}} limit 100"
+                    + " SELECT  *  WHERE { ?aut foaf:familyName " + term + ".  ?aut foaf:name  ?name .  ?doc dcterms:creator ?aut .   optional{?doc skos:altLabel ?docName.}} limit 100"
             }
         }
 
@@ -225,8 +225,6 @@ console.log(query);
 
 
 }
-
-
 
 
 /*dfProxy.getOntologyTriples("Vin", "fr", false, function (err, result) {

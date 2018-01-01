@@ -100,45 +100,48 @@ Util = {
 
     },
 
-     cleanFieldsForNeo:function(obj) {
-    var obj2 = {};
-    for (var key in obj) {
+    cleanFieldsForNeo: function (obj) {
+        var obj2 = {};
+        for (var key in obj) {
 
-        var key2 = key.replace(/-/g, "_");
+            var key2 = key.replace(/-/g, "_");
 
-        key2 = key2.replace(/ /g, "_");
-        if (key2 != "") {
-            var valueObj = obj[key];
+            key2 = key2.replace(/ /g, "_");
+            if (key2 != "") {
+                var valueObj = obj[key];
 
-            var value = "" + valueObj;
-            if (isNaN(valueObj)) {
-                value = value.replace(/[\n|\r|\t]+/g, " ");
-                value = value.replace(/&/g, " and ");
-                value = value.replace(/"/g, "'");
-                value = value.replace(/,/g, "\\,");
-                value = value.replace(/\//g, "%2F");
-                value = value.replace(/\\/g,"")
-                value = value.replace(/:/g,"")
+                var value = "" + valueObj;
+                if (isNaN(valueObj)) {
+                    value = value.replace(/[\n|\r|\t]+/g, " ");
+                    value = value.replace(/&/g, " and ");
+                    value = value.replace(/"/g, "'");
+                    value = value.replace(/,/g, "\\,");
+                    value = value.replace(/\//g, "%2F");
+                    value = value.replace(/\\/g, "")
+                    value = value.replace(/:/g, "")
+                }
+                else if (value.indexOf(".") > -1)
+                    value = parseFloat(value)
+                else
+                    value = parseInt(value)
+
+
+                obj2[key2] = value;
             }
-            else if (value.indexOf(".") > -1)
-                value = parseFloat(value)
-            else
-                value = parseInt(value)
-
-
-            obj2[key2] = value;
         }
+
+        return obj2;
+
+    },
+    capitalizeFirstLetter: function (string) {
+        return string.charAt(0).toUpperCase() + string.slice(1);
     }
 
-    return obj2;
+    }
+    /*var array=[128,1430,8324]
+    for(var i=0;i<array.length;i++){
+        var x=array[i]
+        console.log(x+"  "+Math.round(Math.log10(x)));
+    }*/
 
-}
-
-}
-/*var array=[128,1430,8324]
-for(var i=0;i<array.length;i++){
-    var x=array[i]
-    console.log(x+"  "+Math.round(Math.log10(x)));
-}*/
-
-module.exports = Util;
+    module.exports = Util;

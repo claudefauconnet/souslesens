@@ -103,12 +103,12 @@ router.post(serverParams.routesRootUrl + '/elastic', function (req, response) {
         });
 
     else if (req.body && req.body.findTerms)
-        elasticProxy.findTerms(req.body.indexName, req.body.type,  req.body.field,req.body.terms, function (error, result) {
+        elasticProxy.findTerms(req.body.indexName, req.body.type, req.body.field, req.body.terms, function (error, result) {
             processResponse(response, error, result)
         });
 
     else if (req.body && req.body.findDocuments)
-        elasticProxy.findDocuments(req.body.indexName, req.body.type, req.body.word, req.body.from, req.body.size, req.body.slop, req.body.fields, req.body.andWords,  function (error, result) {
+        elasticProxy.findDocuments(req.body.indexName, req.body.type, req.body.word, req.body.from, req.body.size, req.body.slop, req.body.fields, req.body.andWords, function (error, result) {
             processResponse(response, error, result)
         });
     else if (req.body && req.body.findDocumentsById)
@@ -116,7 +116,7 @@ router.post(serverParams.routesRootUrl + '/elastic', function (req, response) {
             processResponse(response, error, result)
         });
     else if (req.body && req.body.getAssociatedWords)
-        elasticProxy.getAssociatedWords(req.body.indexName, req.body.word, req.body.size, req.body.slop, req.body.andWords, req.body.stopWords,req.body.classifierSource,req.body.iterations, function (error, result) {
+        elasticProxy.getAssociatedWords(req.body.indexName, req.body.word, req.body.size, req.body.slop, req.body.andWords, req.body.stopWords, req.body.classifierSource, req.body.iterations, function (error, result) {
             processResponse(response, error, result)
         });
     else if (req.body && req.body.indexDocDirInNewIndex)
@@ -128,8 +128,13 @@ router.post(serverParams.routesRootUrl + '/elastic', function (req, response) {
             processResponse(response, error, result)
         });
 
-    else if (req.body && req.body.createIndexClassifierFromFrequentWordsAndOntology)
-        classifierManager.createIndexClassifierFromFrequentWordsAndOntology(req.body.indexName, parseInt("" + req.body.nWords), req.body.includedWords, req.body.excludedWords, parseInt("" + req.body.minFreq), req.body.ontologies, req.body.lang, parseInt("" + req.body.nSkosAncestors), function (error, result) {
+    else if (req.body && req.body.createIndexClassifierFromWordsListAndOntology)
+        classifierManager.createIndexClassifierFromWordsListAndOntology(req.body.indexName, req.body.words, req.body.ontologies, req.body.lang, parseInt("" + req.body.nSkosAncestors), function (error, result) {
+            processResponse(response, error, result)
+        });
+
+    else if (req.body && req.body.createIndexClassifierFromElasticFrequentWordsAndOntology)
+        classifierManager.createIndexClassifierFromElasticFrequentWordsAndOntology(req.body.indexName, parseInt("" + req.body.nWords), req.body.includedWords, req.body.excludedWords, parseInt("" + req.body.minFreq), req.body.ontologies, req.body.lang, parseInt("" + req.body.nSkosAncestors), function (error, result) {
             processResponse(response, error, result)
         });
 
@@ -231,13 +236,20 @@ router.post(serverParams.routesRootUrl + '/rdf', function (req, response) {
             processResponse(response, error, result);
         });
     }
-    if (req.body && req.body.thesaurusToClassifier) {
-        classifierManager.thesaurusToClassifier(req.body.thesaurus,req.body.indexName, function (error, result) {
+
+    if (req.body && req.body.generateSkosThesaurusFromWordsListAndOntology) {
+        skos.generateSkosThesaurusFromWordsListAndOntology(req.body.thesaurusName,req.body.ontologies,req.body.lang,req.body.words, function (error, result) {
             processResponse(response, error, result);
         });
     }
-    });
 
+
+    if (req.body && req.body.thesaurusToClassifier) {
+        classifierManager.thesaurusToClassifier(req.body.thesaurus, req.body.indexName, function (error, result) {
+            processResponse(response, error, result);
+        });
+    }
+});
 
 
 router.post(serverParams.routesRootUrl + '/storedParams', function (req, response) {
