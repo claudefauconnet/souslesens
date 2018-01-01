@@ -29,10 +29,10 @@ $RECYCLE.BIN/
 uploads/*.js
 uploads/*
 uploads/*.json
-schemas/*.json
-bin/rdf/classifiers/*.json
-bin/rdf/thesaurii/*.json
-bin/rdf/thesaurii/*.rdf
+config/schemas/*.json
+config/classifiers/*.json
+config/thesaurii/*.rdf
+config/search/*.json
 bin/sinequa/*
 logs/*.log
 bin/jfm/*
