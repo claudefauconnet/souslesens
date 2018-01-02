@@ -4,7 +4,7 @@ var path = require('path');
 var elasticProxy = require('../elasticProxy.js');
 
 
-var DEBVisDicToSkos = {
+var WordNetProcessor = {
 
 
     parseFile: function (filePath, callback) {
@@ -52,12 +52,12 @@ var DEBVisDicToSkos = {
 }
 
 var file = "D:\\NLP\\wonef-fscore-0.1.xml";
-
+var file = "D:\\NLP\\wonef-precision-0.1.xml";
 //var file = "D:\\NLP\\test.xml";
-DEBVisDicToSkos.parseFile(file, function (err, result) {
+WordNetProcessor.parseFile(file, function (err, result) {
     elasticProxy.indexJsonArray("wordnet_fr","wordnet",result,function (err, result){
 
     })
 })
 
-module.exports = DEBVisDicToSkos;
+module.exports = WordNetProcessor;
