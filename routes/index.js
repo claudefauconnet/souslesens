@@ -19,6 +19,7 @@ var skos = require("../bin/rdf/skos.js");
 var googleAPIproxy = require("../bin/nlp/googleAPIproxy..js");
 var serverParams = require("../bin/serverParams.js")
 var socket = require('./socket.js');
+var fileSystemProxy = require("../bin/fileSystemProxy..js")
 
 
 console.log("***********************serverParams.routesRootUrl " + serverParams.routesRootUrl + "*********")
@@ -116,7 +117,7 @@ router.post(serverParams.routesRootUrl + '/elastic', function (req, response) {
             processResponse(response, error, result)
         });
     else if (req.body && req.body.getAssociatedWords)
-        elasticProxy.getAssociatedWords(req.body.indexName, req.body.word, req.body.size, req.body.slop, req.body.andWords, req.body.stopWords, req.body.classifierSource, req.body.iterations, function (error, result) {
+        elasticProxy.getAssociatedWords(req.body.indexName, req.body.word, req.body.size, req.body.options, function (error, result) {
             processResponse(response, error, result)
         });
     else if (req.body && req.body.indexDocDirInNewIndex)
@@ -238,7 +239,7 @@ router.post(serverParams.routesRootUrl + '/rdf', function (req, response) {
     }
 
     if (req.body && req.body.generateSkosThesaurusFromWordsListAndOntology) {
-        skos.generateSkosThesaurusFromWordsListAndOntology(req.body.thesaurusName,req.body.ontologies,req.body.lang,req.body.words, function (error, result) {
+        skos.generateSkosThesaurusFromWordsListAndOntology(req.body.thesaurusName, req.body.ontologies, req.body.lang, req.body.words, function (error, result) {
             processResponse(response, error, result);
         });
     }
@@ -376,9 +377,21 @@ router.get(serverParams.routesRootUrl + '/rest', function (req, response) {
 
 });
 
+router.post(serverParams.routesRootUrl + '/fs', function (req, response) {
+    if (req.body.getFileContent) {
+        fileSystemProxy.getFileContent(req.body.path, function (error, result) {
+            processResponse(response, error, result)
+        });
+    }
+    if (req.body.saveFileContent) {
+        fileSystemProxy.saveFileContent(req.body.path,req.body.data, function (error, result) {
+            processResponse(response, error, result)
+        });
+    }
+})
 
 router.post(serverParams.routesRootUrl + '/jsonFileStorage', function (req, response) {
-    console.log("!!!!!!!!!!!!!!!!!!!!!!!!!!" + JSON.stringify(req.body));
+    //  console.log("!!!!!!!!!!!!!!!!!!!!!!!!!!" + JSON.stringify(req.body));
     if (req.body.store)
         jsonFileStorage.store(req.body.path, req.body.data, function (error, result) {
             processResponse(response, error, result)

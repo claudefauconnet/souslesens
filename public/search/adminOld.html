@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="../common/js/jquery/jquery.min.js"></script>
+    <script src="../common/js/jquery/jquery-ui.min.js"></script>
+    <script src="../common/js/common.js"></script>
+    <script src="../common/js/socket.io.js"></script>
+    <script src="../common/js/jsTree/jstree.min.js"></script>
+    <script src="../common/js/jsTreeController.js"></script>
+    <script src="../semanticWeb/skosTree.js"></script>
+    <script src="./js/admin.js"></script>
+    <link rel="stylesheet" href="../common/js/jquery/jquery-ui.min.css"/>
+    <link rel="stylesheet" href="../common/js/jsTree/themes/default/style.min.css"/>
+
+    <style>
+        td {
+            vertical-align: top;
+        }
+
+        .accordionDiv {
+            height: 500px;
+        }
+
+        button {
+            margin: 5px;
+            padding: 5px;
+        }
+
+    </style>
+    <script>
+
+        $(function () {
+
+            $("#entitiesSelect").keypress(function (e) {
+                if (e.ctrlKey)
+                    wordSelectMode = "exclude"
+                else
+                    wordSelectMode = "include"
+
+            })
+            $("#tabs").tabs({
+
+                activate: function (event, ui) {
+                    $(".accordionDiv").height(500);
+                    $("#vocabularyAccordion").accordion("option", "active", 0);
+                }
+            });
+
+            $("#vocabularyAccordion").accordion({
+                active: 1,
+
+            });
+
+            /*  $("#selectedEntitiesSelect option").draggable({
+                  start: function( event, ui ) {
+                      var x=1
+              }
+              });*/
+            jsTreeController.addtionalMenuItems["addConcept"] =
+
+                {
+                    "separator_before": false,
+                    "separator_after": false,
+                    "label": "addWord",
+                    "action": function (obj, xx, zz) {
+                        var parent = obj.reference[0].id;
+                        parent = parent.substring(0, parent.indexOf("_anchor"))
+                        //   var childrens = $("#treeDiv1").jstree("get_children_dom",parent);
+                        var word = $("#selectedEntitiesSelect").val();
+                        var id = Math.round(Math.random() * 10000000);
+                        var node;
+                        if (parent.indexOf("synonyms_") != 0) {
+                            node = {
+                                id: "concept_" + id,
+                                text: word,
+                                type: "concept",
+                                children: [{id: "synonyms_" + id, text: "synonyms", type: "synonym"}]
+                            };
+
+                        } else {
+                            node = {id: "syn_" + id, text: word, type: "synonym"};
+                        }
+
+                        $('#treeDiv1').jstree('create_node', parent, node, 'first');
+                        $("#treeDiv1").jstree("open_node", parent);
+                        /*  if (parent.indexOf("synonyms_") != 0) {
+                              var synNode = {id: "synonyms_" + id, text: "synonyms",type:"synonym"};
+                              $('#treeDiv1').jstree('create_node', "concept_" +id, synNode, 'first');
+                              $("#treeDiv1").jstree("open_node", "concept_" +id);
+                          }*/
+
+
+                    }
+                }
+
+
+            var url = window.location.href;
+            var p = url.indexOf('/search');
+            url = url.substring(0, p);
+            var socket = io.connect(url);
+            socket.on('connect', function (data) {
+                socket.emit('join', 'Hello World from client');
+            });
+            socket.on('messages', function (message) {
+                if (!message || message.length == 0)
+                    return;
+                if (typeof message == 'string') {
+                    color = "blue";
+                    if (message.toLowerCase().indexOf("error") > -1)
+                        color = "red";
+
+
+                    $("#message").css("color", color);
+                    $("#message").append(message + "<br>");
+                }
+            })
+
+
+        });
+
+
+    </script>
+</head>
+<body>
+<p align="center"><B>Souslesens Search admin</B></p>
+<table>
+    <tr>
+        <td>
+            index
+        </td>
+        <td>
+            <input id="indexName" value="jfm">
+        </td>
+    </tr>
+    <tr>
+        <td>
+            mappings type
+        </td>
+        <td>
+            <input id="mappingsType" value="general_document">
+        </td>
+    </tr>
+</table>
+
+<div id="tabs">
+
+    <ul>
+        <li><a href="#makeDocIndexTab">make Doc Index</span></a></li>
+        <li><a href="#makeMongoIndexTab">make Mongo Index</span></a></li>
+        <li><a href="#vocabularyTab">manage vocabulary</span></a></li>
+
+
+    </ul>
+
+
+    <div id="makeDocIndexTab">
+
+        <table>
+            <tr>
+                <td>
+                    rootDir
+                </td>
+                <td>
+                    <input id="rootDir">
+                </td>
+            </tr>
+
+            <tr>
+                <td>
+                    <button onclick="admin.elasticExec('indexDocDirInNewIndex')">indexDocDirInNewIndex</button>
+                </td>
+                <td>
+                    <button onclick="admin.elasticExec('indexDirInExistingIndex')">indexDirInExistingIndex</button>
+                </td>
+            </tr>
+
+        </table>
+    </div>
+
+    <div id="makeMongoIndexTab">
+        <table>
+            <tr>
+                <td>
+                    mongo DB
+                </td>
+                <td>
+                    <input id="mongoDB">
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    mongo Collection
+                </td>
+                <td>
+                    <input id="mongoCollection">
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    mongoQuery
+                </td>
+                <td>
+                    <input id="mongoQuery" value="{}">
+                </td>
+            </tr>
+
+            <tr>
+                <td>
+                    <button onclick="admin.elasticExec('indexMongo')">index Mongo Collection</button>
+                </td>
+
+            </tr>
+
+        </table>
+
+    </div>
+
+
+    <div id="vocabularyTab">
+
+        <div id="vocabularyAccordion">
+            <h3>Associated Words</h3>
+            <div class="accordionDiv">
+                <table>
+                    <tr>
+
+                        <td>
+                            size<input id="associatedWordsSize" size="5" value="100">
+                            <br>
+                            seed word<input id="seedWord" size="10" value="*">
+                            <br>
+                            minWordLength<input id="minWordLength" size="5" value="3">
+                            <br>
+                            <button onclick="admin.elasticExec('listEntities')">list Associated words</button>
+                            <br>
+                            exclude<br> <select id="stopWordsSelect" size="10" onclick="admin.includeWord(this)">
+
+                        </select>
+
+                        </td>
+
+
+                        <td>
+                            <select id="entitiesSelect" size="20" onclick="admin.onWordSelect(this)">
+
+                            </select>
+                        </td>
+                        <td>
+                            <button onclick="admin.addAllWordsToselectedEntitiesSelect()">select all</button>
+
+
+                        </td>
+                    </tr>
+                </table>
+            </div>
+
+
+            <h3>Entities</h3>
+            <div class="accordionDiv">
+                <table>
+                    <tr>
+                        <td>
+                            <button onclick="admin.removeEntities()">remove entities</button>
+
+                        </td>
+                        <td>
+                            <select id="selectedEntitiesSelect" multiple="multiple" size="20"
+                                    onclick="admin.includeWord(this)">
+
+                            </select>
+                        </td>
+
+
+                        <td>
+
+                            ontologies<select id="ontology" >
+                            <option>BNF</option>
+                            <option>DBPEDIA</option>
+                        </select>
+
+                            <br>lang<input id="lang" value='fr'>
+                            <br>
+                            <button onclick="admin.generateOntologyThesaurus()">generate Ontology thesaurus</button>
+                            <br>
+                            <br>
+                            <button onclick="admin.generateGoogleNLPthesaurus()">generate GoogleNLP thesaurus</button>
+                            <br>
+
+
+                            <button onclick="admin.setWordNetSynonyms();">enrich synonyms</button>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+
+            <h3>Theaurus</h3>
+            <div class="accordionDiv">
+                <table>
+                    <tr>
+                        <td>
+
+                            <div id="treeContainer1" class="jsTree">
+                                <div id="treeDiv1">
+                                </div>
+                            </div>
+
+                        </td>
+                        <td>
+                            thesaurus<input id="skosInput1" value="" size="12">
+                            <button onclick="skosTree.loadTree('treeDiv1','skosInput1')">load</button>
+                            <br>
+                            <button onclick="skosTree.createTree('treeDiv1')">create</button>
+                            <button onclick="skosTree.saveTree('treeDiv1','skosInput1')">save</button>
+                            <br>
+                            <input id="searchInput1">
+                            <button onclick="skosTree.searchTree('searchInput1')">search</button>
+                            <br>
+
+                        </td>
+                    </tr>
+                </table>
+
+            </div>
+            <h3>Synonyms</h3>
+            <div class="accordionDiv">
+                <table>
+
+
+                    <tr>
+
+                        <td>
+                            <textarea id="synonymsTA" rows="50" cols="100"
+                                      class="ui-widget ui-state-default ui-corner-all"></textarea>
+                        </td>
+                        <td>
+                            <button onclick="admin.loadSynonyms()">load</button>
+                            <br>
+                            <button onclick="admin.saveSynonyms()">save</button>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+
+            <h3>Classifier</h3>
+            <div class="accordionDiv">
+                <table>
+
+
+                    <tr>
+
+                        <td>
+                            <button onclick="admin.elasticExec('thesaurusToClassifier')">
+                                Generate Classifier from Thesaurus
+                            </button>
+                            &nbsp;
+                        </td>
+                        <td>
+                            <!-- <button onclick="admin.elasticExec('createIndexClassifierFromElasticFrequentWordsAndOntology')">
+                                 createIndexClassifierFromElasticFrequentWordsAndOntology
+                             </button>-->
+                        </td>
+                    </tr>
+
+
+                </table>
+            </div>
+        </div>
+    </div>
+
+</div>
+<div id="message"></div>
+
+</body>
+</html>

@@ -290,11 +290,14 @@
             /*----------------associated words********************************/
             var payload = {
                 getAssociatedWords: 1,
-                classifierSource: classifierSourceStr,
+
                 indexName: index,
                 word: word,
-                iterations: 5,
-                size: 100
+                size: 100,
+                options: {
+                    iterations: 5,
+                    classifierSource: classifierSourceStr
+                }
             };
             if (currentType)
                 payload.type = currentType;
@@ -853,6 +856,9 @@
             <option></option>
             <option>custom</option>
             <option>BNF</option>
+            <option>DBPEDIA</option>
+            <option>GoogleNLP</option>
+
             <option>unesco</option>
             <option>PLM</option>
         </select>
