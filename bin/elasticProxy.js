@@ -58,7 +58,7 @@ var elasticProxy = {
 
     getSchema: function () {
         if (!elasticSchema) {
-            var str = fs.readFileSync(__dirname + "/search/elasticSchema.json");
+            var str = fs.readFileSync(path.resolve(__dirname, "../config/search/elasticSchema.json"));
 
             try {
                 console.log("" + str)
@@ -460,11 +460,17 @@ var elasticProxy = {
 
     }
     ,
-    getAssociatedWords: function (index, word, size, slop, andWords, stopWords, classifierSource, iterations, callback) {
-        if (!iterations || iterations == "")
-            iterations = 0;
+    getAssociatedWords: function (index, word, size, options, callback) {
+        //   getAssociatedWords: function (index, word, size, slop, andWords, stopWords, classifierSource, iterations, callback) {
+
+        if (!options) {
+            options = {};
+        }
+        if (options.iterations && options.iterations != "")
+
+            options.iterations = parseInt("" + options.iterations);
         else
-            iterations = parseInt("" + iterations);
+            options.iterations = 0
 
         if (typeof word === "object" && word.ids) {
             query = {
@@ -480,7 +486,7 @@ var elasticProxy = {
                 }
             }
         }
-        else if (andWords && andWords.length > 0) {
+        else if (options.andWords && options.andWords.length > 0) {
             query =
                 {
                     "bool": {
@@ -491,8 +497,8 @@ var elasticProxy = {
                     }
                 }
 
-            for (var i = 0; i < andWords.length; i++) {
-                query.bool.must.push({"match": {"content": andWords[i]}})
+            for (var i = 0; i < options.andWords.length; i++) {
+                query.bool.must.push({"match": {"content": options.andWords[i]}})
             }
         }
         else {// word simple
@@ -510,7 +516,7 @@ var elasticProxy = {
 
 
             var query = "";
-            if (!slop || slop < 2) {
+            if (!options.slop || options.slop < 2) {
                 query = match;
             } else {
                 query = {
@@ -534,7 +540,7 @@ var elasticProxy = {
             "aggs": {
                 "associatedWords": {
                     "terms": {
-                        "order" : { "_count" : "desc" },
+                        "order": {"_count": "desc"},
                         "field": "content",
                         "size": size,
                         "exclude": ["le", "la", "les", "un", "une", "des", "je", "tu", "il", "à", "a",
@@ -687,21 +693,22 @@ var elasticProxy = {
 
                 }
             }*/
-        if (stopWords) {
+        if (false && options.stopWords) {
+
             for (var i = 0; i < stopWords.length; i++) {
-                payload.aggs.associatedWords.terms.exclude.push(stopWords[i]);
+                payload.aggs.associatedWords.terms.exclude.push(options.stopWords[i]);
             }
         }
         else
-            stopWords = [];
-        var options = {
+            options.stopWords = [];
+        var ajaxOptions = {
             method: 'POST',
             json: payload,
             url: baseUrl + index + "/_search"
         };
 
-        console.log(JSON.stringify(payload, null, 2))
-        request(options, function (error, response, body) {
+        //  console.log(JSON.stringify(payload, null, 2))
+        request(ajaxOptions, function (error, response, body) {
             if (error)
                 return callback(error);
             if (!body.hits) {
@@ -729,82 +736,79 @@ var elasticProxy = {
                 obj.count = objElastic.doc_count;
 
                 if (elasticProxy.acceptAssociatedWord(obj.key)) {
-
+                    console.log(obj.key)
                     words.push(obj)
                 }
                 else {
 
-                    stopWords.push(obj.key);
+                    options.stopWords.push(obj.key);
                     iterationNstopWords += 1;
 
                 }
             }
 
-           console.log(iterationNstopWords + "/" + words.length)
-            if (iterations > 0 && ((iterationNstopWords * 4) > words.length)) {// condition for re-extract associated words with more stopwords
-                iterations--;
-                elasticProxy.getAssociatedWords(index, word, size, slop, andWords, stopWords, classifierSource, iterations, callback);
+            //  console.log(iterationNstopWords + "/" + words.length)
+            if (options.iterations > 0 && ((iterationNstopWords * 4) > words.length)) {// condition for re-extract associated words with more stopwords
+
+                options.iterations--;
+                elasticProxy.getAssociatedWords(index, word, size, options, callback);
+                //  elasticProxy.getAssociatedWords(index, word, size, slop, andWords, stopWords, classifierSource, iterations, callback);
 
             }
 
-            elasticProxy.extractWordNetNouns(words, function (err, buckets) {
+
+            function finalProcessing(err, buckets) {
                 if (err) {
                     return callback(err);
                 }
-                var classifier;
-                if (index && classifierSource && classifierSource.length > 0)
-                    classifier = classifierManager.getClassifierOutput(index, classifierSource, hits);
+                for (var j = 0; j < buckets.length; j++) {
+                  if(!buckets[j].count)
+                      buckets[j].count=buckets[j].doc_count;
 
+
+                }
+                var classifier;
+                if (index && options.classifierSource && options.classifierSource.length > 0)
+                    classifier = classifierManager.getClassifierOutput(index, options.classifierSource, hits);
                 var result = {
                     buckets: buckets,
                     types: types,
                     classifier: classifier,
 
                 };
-
-
                 return callback(null, result);
 
+            }
 
-            })
+
+            if (options.lemmeFilter) {
+                elasticProxy.extractLemmes(buckets, words, function (err, lemmes) {
+                    if (options.wordNetEntitiesFilter) {
+                        elasticProxy.extractWordNetNouns(buckets, lemmes, function (err, buckets) {
+                            return finalProcessing(err, buckets);
+                        })
+                    } else {
+                        var validBuckets = [];
 
 
-        });
+                        for (var j = 0; j < lemmes.length; j++) {
+                            console.log(lemmes[j])
+                            validBuckets.push({key: lemmes[j], count: -1})
 
-    }
-    ,
-    extractWordNetNouns: function (_buckets, callback) {
-        var buckets = _buckets;
-        var words = [];
-        for (var i = 0; i < buckets.length; i++) {
-            words.push(buckets[i].key)
-        }
-        var validBuckets = [];
 
-        elasticProxy.findTerms("wordnet_fr", null, "content.synonyms", words, function (err, data) {
-            if (err)
-                return callback(err);
-
-            var allwords = []
-            for (var i = 0; i < buckets.length; i++) {
-                var word = buckets[i].key
-
-                for (var j = 0; j < data.length; j++) {
-                    if (data[j].synonyms.indexOf(word) > -1) {
-                     //
-                     if (data[i].pos == "n" && allwords.indexOf(word) < 0) {
-                         console.log(word +" pos   "+data[i].pos)
-                      //  if( allwords.indexOf(word) < 0) {
-                            allwords.push(word)
-                            validBuckets.push({key: word, count: buckets[i].count});
                         }
+                        return finalProcessing(err, validBuckets);
                     }
 
+                })
+            } else if (options.wordNetEntitiesFilter) {
+                elasticProxy.extractWordNetNouns(buckets, words, function (err, buckets) {
+                    return finalProcessing(err, buckets);
+                })
+            } else
+                return finalProcessing(null, buckets);
 
-                }
-            }
-            return callback(null, validBuckets)
-        })
+        });
 
     }
     ,
@@ -813,61 +817,112 @@ var elasticProxy = {
             return false;
         if (word.match(/[0-9']+/))
             return false;
-
+        if (word.match(/['|']/))
+            return false;
         return true;
 
     }
+    ,
+    extractLemmes: function (_buckets, words, callback) {
+        var buckets = _buckets;
+        var words = [];
+        for (var i = 0; i < buckets.length; i++) {
+            words.push(buckets[i].key)
+        }
+
+
+        elasticProxy.findTerms("lemmatization_fr", null, "content.word", words, function (err, data) {
+            if (err)
+                return callback(err);
+
+            var allLemmes = []
+            for (var i = 0; i < data.length; i++) {
+                if (allLemmes.indexOf(data[i].lemme) < 0)
+                    allLemmes.push(data[i].lemme)
+            }
+            return callback(null, allLemmes)
+        })
+    },
+
+    extractWordNetNouns: function (_buckets, words, callback) {
+        var buckets = _buckets;
+        var validBuckets = [];
+        elasticProxy.findTerms("wordnet_score_fr", null, "content.synonyms", words, function (err, data) {
+            if (err)
+                return callback(err);
+
+            var allwords = []
+            for (var i = 0; i < buckets.length; i++) {
+                var word = buckets[i].key
+                var wordNetExists = false;
+                for (var j = 0; j < data.length; j++) {
+                    if (data[j].synonyms.indexOf(word) > -1) {
+                        //
+                        if (data[i].pos == "n" && allwords.indexOf(word) < 0) {
+                            console.log(word + " pos   " + data[i].pos)
+                            //  if( allwords.indexOf(word) < 0) {
+                            allwords.push(word)
+                            wordNetExists = true;
+                            validBuckets.push({key: word, count: buckets[i].doc_count});
+                        }
+                    }
+
+
+                }
+
+            }
+            return callback(null, validBuckets)
+        })
+
+    }
 
 
 
 
 
 
-
-
-
-
-
-
-    //******************************************************************INDEXING**********************************************************
-    //******************************************************************INDEXING**********************************************************
-    //******************************************************************INDEXING**********************************************************
+//******************************************************************INDEXING**********************************************************
+//******************************************************************INDEXING**********************************************************
+//******************************************************************INDEXING**********************************************************
 
 
     ,
-    indexOneDoc: function (index, type, id, payload, callback) {
-        if (!id)
-            id = "_" + Math.round(Math.random() * 10000000);
-        var elasticFields = elasticProxy.getShemaFields(index);
-        var content = "";
-        for (var j = 0; j < elasticFields.length; j++) {
-            var key = elasticFields[j];
-            var value = payload[key];
-            if (!value)
-                continue;
+    indexOneDoc:
 
-            content += " " + value;
-            payload[key] = value;
+        function (index, type, id, payload, callback) {
+            if (!id)
+                id = "_" + Math.round(Math.random() * 10000000);
+            var elasticFields = elasticProxy.getShemaFields(index);
+            var content = "";
+            for (var j = 0; j < elasticFields.length; j++) {
+                var key = elasticFields[j];
+                var value = payload[key];
+                if (!value)
+                    continue;
 
-        }
-        payload["content"] = content;
+                content += " " + value;
+                payload[key] = value;
 
-        getClient().index({
-            index: index,
-            type: type,
-            id: id,
-            body: payload
-        }, function (err, response) {
-            if (err) {
-                console.log(err);
-                callback(err);
-                return;
-
-            } else {
-                callback(null, response);
             }
-        });
-    }
+            payload["content"] = content;
+
+            getClient().index({
+                index: index,
+                type: type,
+                id: id,
+                body: payload
+            }, function (err, response) {
+                if (err) {
+                    console.log(err);
+                    callback(err);
+                    return;
+
+                } else {
+                    callback(null, response);
+                }
+            });
+        }
+
     ,
     indexDocumentDir: function (dir, index, type, recursive, callback) {
 
@@ -955,29 +1010,56 @@ var elasticProxy = {
         );
 
 
-    },
+    }
+    ,
 
-    indexJsonArray: function (index, type, array, callback) {
+    indexJsonArray: function (indexName, type, _array, callback) {
+        var array = _array;
         elasticPayload = [];
         var startId = 10000
-        for (var i = 0; i < array.length; i++) {
-            elasticPayload.push({index: {_index: index, _type: type, _id: "_" + (startId++)}})
-            var payload = {"content": array[i]};
-            elasticPayload.push(payload);
-        }
+        var partitions = [];
+        var index = 0;
+        while (index < array.length) {
+            var subArray = []
+            for (var i = 0; (i < 2000 || index == array.length); i++) {
+                subArray.push(array[index]);
+                index += 1;
 
-
-        getClient().bulk({
-            body: elasticPayload
-        }, function (err, resp) {
-            if (err) {
-                console.log("ERROR " + err)
-                console.log(JSON.stringify(elasticPayload, null, 2))
-
-            } else {
-                return callback(null, " done" + resp);
             }
-        });
+            partitions.push(subArray)
+
+        }
+        var partitionIndex = 0
+        async.eachSeries(partitions, function (array, callbackSeries) {
+                for (var i = 0; i < array.length; i++) {
+                    elasticPayload.push({index: {_index: indexName, _type: type, _id: "_" + (startId++)}})
+                    var payload = {"content": array[i]};
+                    elasticPayload.push(payload);
+                }
+
+
+                getClient().bulk({
+                    body: elasticPayload
+                }, function (err, resp) {
+                    if (err) {
+                        console.log("ERROR " + err)
+                        console.log(JSON.stringify(elasticPayload, null, 2))
+                        return callbackSeries(err)
+
+                    } else {
+                        console.log("partition " + (partitionIndex++))
+                        return callbackSeries();
+
+                    }
+                });
+            },
+            function (err) {
+                if (err)
+                    return callback(err);
+                callback(null);
+
+            }
+        )
     }
 
 
@@ -1080,7 +1162,8 @@ var elasticProxy = {
                 }
 
             });
-    },
+    }
+    ,
 
     deleteDoc: function (index, type, elasticId, callback) {
 
@@ -1097,7 +1180,8 @@ var elasticProxy = {
         });
 
 
-    },
+    }
+    ,
 
     deleteIndex: function (index, force, callback) {
         var options = {
@@ -1219,7 +1303,8 @@ var elasticProxy = {
             });
         })
 
-    },
+    }
+    ,
     indexDocumentFile: function (_file, index, type, base64, callback) {
         var id = "R" + Math.round(Math.random() * 1000000000)
         //  var file = "./search/testDocx.doc";
@@ -1275,7 +1360,8 @@ var elasticProxy = {
 
         });
 
-    },
+    }
+    ,
 
 
     copyDocIndex: function (oldIndex, newIndex, type, callback) {
@@ -1337,7 +1423,31 @@ var elasticProxy = {
 
 
         });
+    }
+    ,
 
+    properNounsAssociatedWords: function () {
+        var payload = {
+            "query": {
+                "match": {
+                    "content": "louvre"
+                }
+            },
+            "size": 0,
+            "_source": "",
+            "aggs": {
+                "associatedWords": {
+                    "terms": {
+                        "order": {
+                            "_count": "desc"
+                        },
+                        "field": "content.sensitive",
+                        "size": "500",
+                        "include": "[A-Z].{5,}"
+                    }
+                }
+            }
+        }
     }
 
 
@@ -1388,7 +1498,7 @@ var elasticProxy = {
                             var message = "-----------Index " + index + " is ready to use-----------"
                             if (doClassifier.toLowerCase() == "y") {
 
-                                classifierManager.createIndexClassifierFromFrequentWordsAndOntology(index, 200, null, null, 10, ["BNF"], "fr", 1, function (err, result) {
+                                classifierManager.createIndexClassifierFromElasticFrequentWordsAndOntology(index, 200, null, null, 10, ["BNF"], "fr", 1, function (err, result) {
                                     elasticProxy.sendMessage("classifier done");
 
                                     elasticProxy.sendMessage(message);
@@ -1457,7 +1567,7 @@ var elasticProxy = {
                             var message = "-----------Index " + index + " is ready to use-----------"
                             elasticProxy.sendMessage("delete temporary index " + indexTemp);
                             if (doClassifier.toLowerCase() == "y") {
-                                classifierManager.createIndexClassifierFromFrequentWordsAndOntology(index, 200, null, null, 10, ["BNF"], "fr", 1, function (err, result) {
+                                classifierManager.createIndexClassifierFromElasticFrequentWordsAndOntology(index, 200, null, null, 10, ["BNF"], "fr", 1, function (err, result) {
 
                                     elasticProxy.sendMessage("classifier done");
                                     elasticProxy.sendMessage(message);
@@ -1505,7 +1615,7 @@ function getClient() {
         return client;
     return new elasticsearch.Client({
         host: serverParams.elasticUrl,
-        log: 'trace'
+        log: ['error', 'warning']
     });
 }
 

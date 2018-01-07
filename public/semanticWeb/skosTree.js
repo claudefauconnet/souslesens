@@ -61,10 +61,10 @@ var skosTree = (function () {
             data: payload,
             dataType: "json",
             success: function (data, textStatus, jqXHR) {
-                setMessage("thesaurus saved", "green")
+                admin.setMessage("thesaurus saved", "green")
             }
             , error: function (err) {
-                setMessage("Error", "red")
+                admin.setMessage("Error", "red")
             }
         })
     }
@@ -78,7 +78,9 @@ var skosTree = (function () {
 
     self.createTree = function (rootText, jsTreeDivId) {
 
-        if (!rootText)
+        if (!rootText) {
+            rootText = $('skosInput1').val();
+        }
             rootText = "XX";
         var root = {text: rootText, parent: "#"}
         jsTreeController.load(root, jsTreeDivId, function (err, result) {

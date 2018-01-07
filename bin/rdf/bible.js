@@ -45,7 +45,7 @@ var bible = {
 
 
     importBible: function () {
-        var str = "" + fs.readFileSync("./thesaurii/bibleOntologIndividuals.owl");
+        var str = "" + fs.readFileSync("../../config/thesaurii/bibleOntologIndividuals.owl");
 
         var doc = new dom().parseFromString(str);
 

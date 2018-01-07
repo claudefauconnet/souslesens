@@ -27,7 +27,7 @@ var rels = []
 var starwars = {
 
     importStarWarsJson: function () {
-        var str = "" + fs.readFileSync("./thesaurii/starwars.json");
+        var str = "" + fs.readFileSync("../../config/thesaurii/starwars.json");
         var json = JSON.parse(str);
 
 

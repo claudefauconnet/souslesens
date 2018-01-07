@@ -89,7 +89,7 @@ var classifierManager = {
 
 
     getClassifierOutput: function (index, source, data) {
-        var file = path.resolve(__dirname, "./classifiers/" + index + "_" + source + ".json")
+        var file = path.resolve(__dirname, "../../config/classifiers/" + index + "_" + source + ".json")
         var classifier;
         try {
             classifier = "" + fs.readFileSync(file);
@@ -103,20 +103,27 @@ var classifierManager = {
 
         classifier = JSON.parse(classifier);
         var words = classifier.words;
-        for (var i = 0; i < data.length; i++) {
+        for (var i = 0; i < data.length; i++) {// for each document of the result
             var docId = data[i]._id;
 
-            var words = classifier.docIds[docId];
+            var words = classifier.docIds[docId];// look for the words in the classifier
             if (!words)
                 continue;
-            for (var j = 0; j < words.length; j++) {
+            for (var j = 0; j < words.length; j++) {// for each word in the classifier that match the docs
                 classifier.words[words[j]].count += 1;
 
                 var wordChild = words[j];
                 var broaders = classifier.words[wordChild].broaders;
              //   console.log(wordChild);
-                if (!broaders)
+                if (!broaders){
+                    console.log(wordChild);
                     continue;
+
+                    /*  if (!output[wordChild])
+                       output[wordChild] = {text: wordChild, count: 0, children: []}
+                       output[wordChild]*/
+                }
+
                 for (var k = 0; k < broaders.length; k++) {
                     var broader = broaders[i];
 
@@ -151,7 +158,7 @@ var classifierManager = {
 
     }
     ,
-    createIndexClassifierFromFrequentWordsAndOntology: function (index, nWords, includedWords, excludedWords, minFreq, ontologies, lang, nSkosAncestors, callback) {
+    createIndexClassifierFromElasticFrequentWordsAndOntology: function (index, nWords, includedWords, excludedWords, minFreq, ontologies, lang, nSkosAncestors, callback) {
         classifierManager.sendMessage("searching most frequent words in index " + index);
         elasticProxy = require("../elasticProxy.js");
 
@@ -161,7 +168,7 @@ var classifierManager = {
             });
         }
         else {
-            elasticProxy.getAssociatedWords(index, "*", nWords, null, null, excludedWords,null, 5,function (err, result) {
+            elasticProxy.getAssociatedWords(index, "*", nWords, null,{stopwords: excludedWords,iterations: 5},function (err, result) {
                 if (err) {
                     classifierManager.sendMessage("ERROR " + err);
                     return callback(err);
@@ -197,7 +204,8 @@ var classifierManager = {
 
 
     },
-    createIndexClassifierFromWordsListAndOntology: function (index, words, ontologies, lang, nSkosAncestors, callback) {
+
+                createIndexClassifierFromWordsListAndOntology: function (index, words, ontologies, lang, nSkosAncestors, callback) {
         var classifier;
         async.eachSeries(ontologies, function (ontology, callbackOntology) {
             classifierManager.sendMessage("searching SKOS concepts in Ontology :" + ontology + "... ");
@@ -215,8 +223,9 @@ var classifierManager = {
                  */
 
                 classifierManager.sendMessage("put doc ids for each concepts ");
-                var fileName = "./classifiers/" + index + "_" + ontology + ".json";
-                classifierManager.applyClassifierToIndexAndStore(index, classifier, function (err, result) {
+              //  var fileName = "./classifiers/" + index + "_" + ontology + ".json";
+                var fileName = path.resolve(__dirname, "../../config/classifiers/" + index + "_" + ontology + ".json")
+                classifierManager.applyClassifierToIndexAndStore(index, classifier, fileName,function (err, result) {
                     if (err)
                         return callbackOntology(err);
                     callbackOntology();
@@ -266,9 +275,9 @@ var classifierManager = {
                 words.push(node.text);
                 if (!classifier.words[node.text]) {
                     classifier.words[node.text] = {
-                        broader: [],
-                        narrower: [],
-                        related: [],
+                        broaders: [],
+                        narrowers: [],
+                        relateds: [],
                         count: 0,
                         docIds: []
                     }
@@ -278,12 +287,14 @@ var classifierManager = {
                     if (!classifier.broaderNodes[node.data.parentText])
                         classifier.broaderNodes[node.data.parentText] = [];
                     classifier.broaderNodes[node.data.parentText].push(node.text)
-                    classifier.words[node.text].broader.push(node.data.parentText);
+                    classifier.words[node.text].broaders.push(node.data.parentText);
 
                 }
 
             }
-            var fileName = "./classifiers/" + index + "_" + "custom" + ".json";
+          //  var fileName = "./classifiers/" + index + "_" + "custom" + ".json";
+            var fileName = path.resolve(__dirname, "../../config/classifiers/" + index + "_" + "custom" + ".json");
+            var fileName = path.resolve(__dirname, "../../config/classifiers/" + thesaurus + ".json");
             classifierManager.applyClassifierToIndexAndStore(index, classifier, fileName, function (err, result) {
                 if (err) {
                     classifierManager.sendMessage("ERROR" + err);
@@ -305,7 +316,7 @@ module.exports = classifierManager;
 //**********************************************Command Line args***********************************
 const args = process.argv;
 if (args.length > 2) {
-    if (args[2] == "createIndexClassifierFromFrequentWordsAndOntology") {
+    if (args[2] == "createIndexClassifierFromElasticFrequentWordsAndOntology") {
         var index = args[3];
 
         var schema = {
@@ -334,7 +345,7 @@ if (args.length > 2) {
                 console.log(err);
             var index = result.index;
             if (result.confirm.toLowerCase() == "y") {
-                classifierManager.createIndexClassifierFromFrequentWordsAndOntology(index, 200, null, null, 10, ["BNF"], "fr", 1, function (err, result) {
+                classifierManager.createIndexClassifierFromElasticFrequentWordsAndOntology(index, 200, null, null, 10, ["BNF"], "fr", 1, function (err, result) {
 
 
                     console.log("done");
@@ -350,7 +361,7 @@ if (args.length > 2) {
 //classifierManager.generateClassifierFromSkos("PLM.rdf", "jfm")
 if (false) {
 
-    classifierManager.createIndexClassifierFromFrequentWordsAndOntology("jfm", 200, 10, ["BNF"], "fr", 1, function (err, result) {
+    classifierManager.createIndexClassifierFromElasticFrequentWordsAndOntology("jfm", 200, 10, ["BNF"], "fr", 1, function (err, result) {
 
 
         console.log("done");

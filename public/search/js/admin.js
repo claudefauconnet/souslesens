@@ -19,7 +19,7 @@ var admin = (function () {
         //  var doClassifier=$("#doClassifier").val();
         var indexName = $("#indexName").val();
 
-var url="/elastic";
+        var url = "/elastic";
         var payload;
         if (operation == "indexDocDirInNewIndex") {
             payload = {
@@ -66,13 +66,13 @@ var url="/elastic";
             };
 
         }
-        else if (operation == "listAssociatedWords") {
+        else if (operation == "listEntities") {
             var size = $("#associatedWordsSize").val();
             var seedWord = $("#seedWord").val();
             size = parseInt(size);
             var minFreq = $("#minFreq").val();
             var stopWords = [];
-            $("#wordsSelect option").each(function () {
+            $("#entitiesSelect option").each(function () {
                 var word = $(this).val();
                 $("#stopWordsSelect").append($('<option>', {
                     text: word,
@@ -90,58 +90,43 @@ var url="/elastic";
                 indexName: indexName,
                 size: size,
                 word: seedWord,
-                stopWords: stopWords
+                options: {
+                    stopWords: stopWords
+                }
             };
+            if($("#lemmeFilterCBX").prop("checked")){
+                payload.options.lemmeFilter=true;
+            }
+            if($("#WordNetEntitiesFilterCBX").prop("checked")){
+                payload.options.wordNetEntitiesFilter=true;
+            }
 
         }
 
-
-        else if (operation == "createIndexClassifierFromFrequentWordsAndOntology") {
-            var nWords = $("#nWords").val();
-            nWords = parseInt(nWords);
-            var minFreq = $("#minFreq").val();
-            var lang = $("#lang").val();
-            minFreq = parseInt(minFreq);
-            var ontologies = JSON.parse($("#ontologies").val());
-
-            var includedWords = [];
-            $("#entitiesSelect option").each(function () {
-                includedWords.push($(this).val());
-            });
-
-            payload = {
-                createIndexClassifierFromFrequentWordsAndOntology: 1,
-                indexName: indexName,
-                nWords: nWords,
-                minFreq: minFreq,
-                ontologies: ontologies,
-                lang: lang,
-                includedWords: includedWords
-            };
-        }
 
         else if (operation == "thesaurusToClassifier") {
-         url="/rdf";
+            url = "/rdf";
             var thesaurus = $("#skosInput1").val();
             payload = {
                 thesaurusToClassifier: 1,
                 indexName: indexName,
-                thesaurus:thesaurus,
+                thesaurus: thesaurus,
 
             };
 
         }
 
-
-
+        self.waitIcon(true);
+        $("#message").html("");
         $.ajax({
             type: "POST",
             url: url,
             data: payload,
             dataType: "json",
             success: function (data, textStatus, jqXHR) {
+                self.waitIcon(false);
                 var minWordLength = $("#minWordLength").val();
-                if (operation == "listAssociatedWords") {
+                if (operation == "listEntities") {
                     var array = []
 
                     for (var i = 0; i < data.buckets.length; i++) {
@@ -160,15 +145,21 @@ var url="/elastic";
                             return 1;
                         return 0;
                     });
-
-                    self.getGoogleApiEntities(array)
-                    // common.fillSelectOptions(wordsSelect, array, "label", "key");
-                    common.fillSelectOptions(stopWordsSelect, arrayExclude, "label", "key")
+                    if ($("#GoogleEntitiesFilterCBX").prop("checked")) {
+                        self.getGoogleApiEntities(array)
+                        // common.fillSelectOptions(entitiesSelect, array, "label", "key");
+                    //    common.fillSelectOptions(stopWordsSelect, arrayExclude, "label", "key")
+                    }
+                    else{
+                        common.fillSelectOptions(entitiesSelect, array, "label", "key")
+                    }
                 }
+
 
                 console.log("done")
             }
             , error: function (xhr, err, msg) {
+                self.waitIcon(false);
                 console.log("ERROR :" + err)
             }
 
@@ -191,13 +182,14 @@ var url="/elastic";
 
         };
 
-
+        self.waitIcon(true);
         $.ajax({
             type: "POST",
             url: "/rdf",
             data: payload,
             dataType: "json",
             success: function (data, textStatus, jqXHR) {
+                self.waitIcon(false);
                 entities = {}
                 var words = [];
                 var entityNames = []
@@ -220,11 +212,12 @@ var url="/elastic";
                 }
 
 
-                common.fillSelectOptions(wordsSelect, words, "label", "name");
+                common.fillSelectOptions(entitiesSelect, words, "label", "name");
 
 
             }
             , error: function (xhr, err, msg) {
+                self.waitIcon(false);
                 console.log("ERROR :" + err)
             }
 
@@ -236,7 +229,7 @@ var url="/elastic";
 
     self.setWordNetSynonyms = function () {
         var terms = [];
-        $("#entitiesSelect option").each(function () {
+        $("#selectedEntitiesSelect option").each(function () {
             terms.push($(this).val());
         });
 
@@ -250,111 +243,129 @@ var url="/elastic";
 
 
         }
-
+        self.waitIcon(true);
         $.ajax({
             type: "POST",
             url: "/elastic",
             data: payload,
             dataType: "json",
             success: function (data, textStatus, jqXHR) {
+                self.waitIcon(false);
                 var count = 0;
-                var allsyns=[]  // on met à plat tous les synonymes
+                var str = "";
+                var allsyns = []  // on met à plat tous les synonymes
                 for (var i = 0; i < data.length; i++) {
                     allsyns.push(data[i].synonyms);
+
                 }
 
                 for (var i = 0; i < terms.length; i++) {
-                    var synArray=[];
-                    var term=terms[i];
+                    var synArray = [];
+                    var term = terms[i];
                     for (var j = 0; j < allsyns.length; j++) {
-                        if(allsyns[j].indexOf(term)>-1){// on cherche chaque terme dans tous le synonymes
+                        if (allsyns[j].indexOf(term) > -1) {// on cherche chaque terme dans tous le synonymes
                             for (var k = 0; k < allsyns[j].length; k++) {
                                 var asyn = allsyns[j][k];
-                                if (asyn != term && synArray.indexOf(asyn) < 0) {// on affecte
-                                    synArray.push(asyn);
-                                    count += 1;
-                                }
-                            }
 
+                                if (asyn.indexOf(" ") < 0) {// we remove syns with " "
+
+                                    if (asyn != term && synArray.indexOf(asyn) < 0) {// on affecte
+                                        synArray.push(asyn);
+                                        count += 1;
+                                    }
+
+                                }
+
+                            }
                         }
 
 
                     }
-                    entities[term].synonyms=synArray;
+                   // entities[term].synonyms = synArray;
+                    str += term + ",";
+                    for (var j = 0; j < synArray.length; j++) {
+                        if(synArray[j]!="_EMPTY_")
+                        str += synArray[j] + ",";
+                    }
+                    str += "\n";
 
                 }
 
 
+                $("#synonymsTA").text(str);
+                //   $( "#vocabularyAccordion" ).accordion( "option", "active", 3);//synonyms
 
-              /*  console.log(JSON.stringify(data,null,2))
-                var count = 0;
-                var count2 = 0;
-                for (var i = 0; i < data.length; i++) {
-
-                    for (var j = 0; j < data[i].synonyms.length; j++) {
-                        var syn = data[i].synonyms[j];
-                        var entity = entities[syn];
-                        if (entity) {
-                            for (var k = 0; k < data[i].synonyms.length; k++) {
-                                var syn2 = data[i].synonyms[k];
-                                count2 += 1;
-                                if (entities[syn].synonyms.indexOf(syn2) < 0) {
-                                    entities[syn].synonyms.push(syn2);
-                                    count += 1;
-                                }
-
-                            }
-
-                        }
-                    }
-                }*/
-                $("#message").html(" Synonyms done : " +count)
+                $("#message").html(" Synonyms done : " + count)
             }
             , error: function (err) {
+                self.waitIcon(false);
                 console.log(err);
             }
         })
 
     }
 
-    self.enrichThesaurus = function () {
-        var ontology = JSON.parse($("#ontologies").val())[0];
 
-        var includedWords = [];
-        $("#entitiesSelect option").each(function () {
-            includedWords.push($(this).val());
-        });
+    self.generateOntologyThesaurus = function () {
+
+
         var lang = $("#lang").val();
+        var ontology = $("#ontology").val();
+        var words = []
+        $("#selectedEntitiesSelect option").each(function () {
+            words.push($(this).val());
+        });
+        var thesaurusName = $("#indexName").val();
 
-        payload = {
-            findOntologySKOSterms: 1,
-            words: includedWords,
-            ontology: ontology,
+
+        var payload = {
+            generateSkosThesaurusFromWordsListAndOntology: 1,
+            words: words,
+            ontologies: [ontology],
             lang: lang,
+            thesaurusName: thesaurusName
+
         };
+        self.waitIcon(true);
+        $("#message").html("");
         $.ajax({
             type: "POST",
             url: "/rdf",
             data: payload,
             dataType: "json",
             success: function (data, textStatus, jqXHR) {
-                var ww = data;
-                console.log(JSON.stringify(data, null, 2))
+                //  $( "#vocabularyAccordion" ).accordion( "option", "active", 2);
+                self.waitIcon(false);
+                var name = thesaurusName + "_" + ontology;
+                $("#skosInput1").val(name);
+                $("#treeDiv1").jstree("destroy");
+                skosTree.loadTree("treeDiv1", 'skosInput1')
+                $("#treeDiv1").jstree('open_all');
+
+                skosTree.createTree(name, 'treeDiv2')
+
+                //   var ww = data;
+                //  console.log(JSON.stringify(data, null, 2))
+
             }, error: function (xhr, err, msg) {
                 console.log("ERROR :" + err)
+                self.waitIcon(false);
             }
         });
     }
 
 
-    self.generateThesaurus = function () {
+    self.generateGoogleNLPthesaurus = function () {
+        var thesaurusName = $("#indexName").val();
         var selectedEntities = [];
-        $("#entitiesSelect option").each(function () {
+        $("#selectedEntitiesSelect option").each(function () {
             selectedEntities.push($(this).val());
+
         });
 
 
         var tree = []
+        $("#message").html("");
         for (var keyType in entityTypes) {
 
             var idParent = "t_" + Math.round(Math.random() * 10000000);
@@ -368,19 +379,19 @@ var url="/elastic";
                 var id = "c_" + Math.round(Math.random() * 10000000);
                 var concept = {parent: idParent, id: id, text: entity.name};
                 tree.push(concept);
-                var synNodeId = "S_" + id;
-                var syns = {parent: id, id: synNodeId, text: "synonyms"};
-                tree.push(syns);
-                if (entity.synonyms.length > 0)
-                    var xxx = 1;
-                for (var j = 0; j < entity.synonyms.length; j++) {
-                  //  console.log(JSON.stringify(entity.synonyms))
-                    var synId = "s_" + id + "_" + j;
-                    if (entity.synonyms[j] != entity.name) {
-                        var syn = {parent: synNodeId, id: synId, text: entity.synonyms[j]};
-                        tree.push(syn);
-                    }
-                }
+                /*    var synNodeId = "S_" + id;
+                    var syns = {parent: id, id: synNodeId, text: "synonyms"};
+                    tree.push(syns);
+                    if (entity.synonyms.length > 0)
+                        var xxx = 1;
+                    for (var j = 0; j < entity.synonyms.length; j++) {
+                        //  console.log(JSON.stringify(entity.synonyms))
+                        var synId = "s_" + id + "_" + j;
+                        if (entity.synonyms[j] != entity.name) {
+                            var syn = {parent: synNodeId, id: synId, text: entity.synonyms[j]};
+                            tree.push(syn);
+                        }
+                    }*/
 
 
             }
@@ -391,21 +402,24 @@ var url="/elastic";
         // console.log(JSON.stringify(tree,null,2))
         jsTreeController.load(tree, "treeDiv1")
         $("#treeDiv1").jstree('open_all');
+        $("#skosInput1").val(thesaurusName + "_" + "GoogleNLP");
+        skosTree.createTree(thesaurusName + "_" + "GoogleNLP", 'treeDiv2')
+        //  $( "#vocabularyAccordion" ).accordion( "option", "active", 2);
 
     }
 
 
     self.onWordSelect = function (select) {
         var word = $(select).val();
-        $('#wordsSelect option[value="' + word + '"]').remove();
+        $('#entitiesSelect option[value="' + word + '"]').remove();
         if (wordSelectMode == "include") {
 
-            $('#entitiesSelect').append($('<option>', {
+            $('#selectedEntitiesSelect').append($('<option>', {
                 value: word,
                 text: word
             }));
         } else {
-            $('#wordsSelect option[value="' + word + '"]').remove();
+            $('#entitiesSelect option[value="' + word + '"]').remove();
             $('#stopWordsSelect').append($('<option>', {
                 value: word,
                 text: word
@@ -413,20 +427,21 @@ var url="/elastic";
         }
     }
 
-    self.addAllWordsToEntitiesSelect = function () {
+    self.addAllWordsToselectedEntitiesSelect = function () {
         var entities = [];
-        $("#wordsSelect option").each(function () {
+        $("#entitiesSelect option").each(function () {
             entities.push($(this).val());
         });
-        common.fillSelectOptionsWithStringArray(entitiesSelect, entities)
+        common.fillSelectOptionsWithStringArray(selectedEntitiesSelect, entities)
+        //   $( "#vocabularyAccordion" ).accordion( "option", "active", 1);
     }
 
     self.removeEntities = function () {
-        var words = $('#entitiesSelect').val();
+        var words = $('#selectedEntitiesSelect').val();
         for (var i = 0; i < words.length; i++) {
             var word = words[i];
-            $('#entitiesSelect option[value="' + word + '"]').remove();
-            $('#wordsSelect').append($('<option>', {
+            $('#selectedEntitiesSelect option[value="' + word + '"]').remove();
+            $('#entitiesSelect').append($('<option>', {
                 value: word,
                 text: word
             }));
@@ -436,16 +451,80 @@ var url="/elastic";
     self.includeWord = function (select) {
         var word = $(select).val();
         $('#stopWordsSelect option[value="' + word + '"]').remove();
-        $('#wordsSelect').append($('<option>', {
+        $('#entitiesSelect').append($('<option>', {
             value: word,
             text: word
         }));
     }
 
 
+    self.duplicateThesaurus = function () {
+
+    }
+
+
     self.entitiesToTree = function () {
 
 
+    }
+    self.loadSynonyms = function () {
+        var ontology = $("#ontology").val();
+        var thesaurusName = $("#indexName").val();
+        var path="./config/thesaurii/"+thesaurusName + "_" + ontology + ".syn";
+        var payload = {
+            getFileContent: 1,
+            path: path
+        }
+        $.ajax({
+            type: "POST",
+            url: "/fs",
+            data: payload,
+            dataType: "json",
+            success: function (data, textStatus, jqXHR) {
+                $("#synonymsTA").val(data.result);
+
+            }, error: function (err) {
+                admin.setMessage(err, "red")
+            }
+        })
+
+    }
+
+    self.saveSynonyms = function () {
+       var data= $("#synonymsTA").val();
+        var ontology = $("#ontology").val();
+        var thesaurusName = $("#indexName").val();
+        var path="./config/thesaurii/"+thesaurusName + "_" + ontology + ".syn";
+        var payload = {
+            saveFileContent: 1,
+            data:data,
+            path: path
+        }
+        $.ajax({
+            type: "POST",
+            url: "/fs",
+            data: payload,
+            dataType: "json",
+            success: function (data, textStatus, jqXHR) {
+                admin.setMessage("synonyms saved", "blue")
+
+            }, error: function (err) {
+                admin.setMessage(err, "red")
+            }
+        })
+
+    }
+
+    self.waitIcon = function (on) {
+        var status = "hidden";
+        if (on)
+            status = "visible"
+
+        $("#waitImg").css("visibility", status);
+    }
+    self.setMessage = function (message, color) {
+        $("#message").css("color", color);
+        $("#message").append(message + "<br>");
     }
 
 

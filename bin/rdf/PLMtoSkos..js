@@ -2,7 +2,7 @@ var fs = require('fs');
 var path = require('path');
 var jsonxml = require('jsontoxml');
 
-var file = path.resolve(__dirname + "/thesaurii/PLM.txt");
+var file = path.resolve(__dirname , "../../config/thesaurii/PLM.txt");
 fs.readFile(file, function (err, data) {
     var thesaurusUri = "http://www.souslesens.org/PLM";
     var concepts = [];
@@ -35,7 +35,7 @@ fs.readFile(file, function (err, data) {
         '>'
 
     xml = xml.replace('<rdf:RDF>', header);
-    var file = path.resolve(__dirname + "/thesaurii/PLM.rdf");
+    var file = path.resolve(__dirname , "../../data/thesaurii/PLM.rdf");
     fs.writeFile(file, xml, {}, function (err, xml) {
         if (err)
             return callback(err);

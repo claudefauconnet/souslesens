@@ -24,8 +24,10 @@
  * SOFTWARE.
  *
  ******************************************************************************/
+
 var Schema = (function () {
-    var serverDir = "./schemas/";
+ var serverDir = "./config/schemas/";
+
     self = {};
     self.subGraph;
 

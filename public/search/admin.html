@@ -19,20 +19,53 @@
             vertical-align: top;
         }
 
+        .accordionDiv {
+            height: 400px;
+        }
+
+        button {
+            margin: 5px;
+            padding: 5px;
+        }
+
+        .jsTree {
+            width: 250px;
+            height: 450px;
+            background-color: ivory;
+            overflow: auto;
+        }
+
+        #message {
+            height: 200px;
+            overflow: auto;
+        }
+
     </style>
     <script>
 
         $(function () {
 
-            $("#wordsSelect").keypress(function (e) {
+            $("#entitiesSelect").keypress(function (e) {
                 if (e.ctrlKey)
                     wordSelectMode = "exclude"
                 else
                     wordSelectMode = "include"
 
             })
-            $("#tabs").tabs();
-            /*  $("#entitiesSelect option").draggable({
+            $("#tabs").tabs({
+
+                activate: function (event, ui) {
+                    $(".accordionDiv").height(500);
+                    $("#vocabularyAccordion").accordion("option", "active", 0);
+                }
+            });
+
+            $("#vocabularyAccordion").accordion({
+                active: 1,
+
+            });
+
+            /*  $("#selectedEntitiesSelect option").draggable({
                   start: function( event, ui ) {
                       var x=1
               }
@@ -47,16 +80,16 @@
                         var parent = obj.reference[0].id;
                         parent = parent.substring(0, parent.indexOf("_anchor"))
                         //   var childrens = $("#treeDiv1").jstree("get_children_dom",parent);
-                        var word = $("#entitiesSelect").val();
+                        var word = $("#selectedEntitiesSelect").val();
                         var id = Math.round(Math.random() * 10000000);
                         var node;
                         if (parent.indexOf("synonyms_") != 0) {
-                            node = {
-                                id: "concept_" + id,
-                                text: word,
-                                type: "concept",
-                                children: [{id: "synonyms_" + id, text: "synonyms", type: "synonym"}]
-                            };
+                            /*  node = {
+                                  id: "concept_" + id,
+                                  text: word,
+                                  type: "concept",
+                                  children: [{id: "synonyms_" + id, text: "synonyms", type: "synonym"}]
+                              };*/
 
                         } else {
                             node = {id: "syn_" + id, text: word, type: "synonym"};
@@ -89,10 +122,9 @@
                     color = "blue";
                     if (message.toLowerCase().indexOf("error") > -1)
                         color = "red";
+                    admin.setMessage(message, color)
 
 
-                    $("#message").css("color", color);
-                    $("#message").append(message + "<br>");
                 }
             })
 
@@ -108,28 +140,22 @@
     <tr>
         <td>
             index
-        </td>
-        <td>
             <input id="indexName" value="jfm">
+
+            type <input id="mappingsType" value="general_document">
         </td>
-    </tr>
-    <tr>
-        <td>
-            mappings type
-        </td>
-        <td>
-            <input id="mappingsType" value="general_document">
-        </td>
+        <td><img id="waitImg" src="icons/waitAnimated.gif" width="50px" style="visibility: hidden;"></td>
     </tr>
 </table>
 
 <div id="tabs">
 
     <ul>
-        <li><a href="#makeDocIndexTab">make Doc Index</span></a></li>
+        <li><a href="#makeDocIndexTab">make Office doc Index</span></a></li>
         <li><a href="#makeMongoIndexTab">make Mongo Index</span></a></li>
-        <li><a href="#thesaurusTab">Thesaurus</span></a></li>
-        <li><a href="#makeClassifierTab">make Classifier</span></a></li>
+        <li><a href="#makeWebSiteIndexTab">make Web site Index</span></a></li>
+        <li><a href="#makeJsonIndexTab">make Json doc Index</span></a></li>
+        <li><a href="#vocabularyTab">manage vocabulary</span></a></li>
 
 
     </ul>
@@ -158,65 +184,7 @@
 
         </table>
     </div>
-    <div id="makeClassifierTab">
-        <table>
-            <tr>
-                <td>
-                    nWords
-                </td>
-                <td>
-                    <input id="nWords" value="200">
-                </td>
 
-            </tr>
-
-            <tr>
-                <td>
-                    minFreq
-                </td>
-                <td>
-                    <input id="minFreq" value="10">
-                </td>
-            </tr>
-            <tr>
-                <td>
-
-                    ontologies
-                </td>
-                <input id="ontologies" value='["BNF"]'>
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    lang
-                </td>
-                <td>
-                    <input id="lang" value='fr'>
-                </td>
-
-
-            </tr>
-
-
-            <tr>
-
-                <td>
-                    <button onclick="admin.elasticExec('thesaurusToClassifier')">
-                       Generate Classifier from Thesaurus
-                    </button>
-                    &nbsp;
-                </td>
-                <td>
-                   <!-- <button onclick="admin.elasticExec('createIndexClassifierFromFrequentWordsAndOntology')">
-                        createIndexClassifierFromFrequentWordsAndOntology
-                    </button>-->
-                </td>
-            </tr>
-
-
-        </table>
-
-    </div>
     <div id="makeMongoIndexTab">
         <table>
             <tr>
@@ -255,84 +223,117 @@
 
     </div>
 
+    <div id="makeWebSiteIndexTab">
 
-    <div id="thesaurusTab">
-        <table>
-            <tr>
-                <td></td>
+    </div>
+    <div id="makeJsonIndexTab">
 
-
-                <td>associated words</td>
-                <td></td>
-                <td>entities</td>
-
-                <td>thesaurus</td>
-            <tr>
-            </tr>
-            <td>
-                size<input id="associatedWordsSize" size="5" value="100">
-                <br>
-                seed word<input id="seedWord" size="10" value="*">
-                <br>
-                minWordLength<input id="minWordLength" size="5" value="3">
-                <br>
-                <button onclick="admin.elasticExec('listAssociatedWords')">list Associated words</button>
-                <br>
-                exclude<br> <select id="stopWordsSelect" size="10" onclick="admin.includeWord(this)">
-
-            </select>
-
-            </td>
+    </div>
 
 
-            <td>
-                <select id="wordsSelect" size="20" onclick="admin.onWordSelect(this)">
+    <div id="vocabularyTab">
 
-                </select>
-            </td>
-            <td>
-                <button onclick="admin.addAllWordsToEntitiesSelect()">select all</button>
-                <br>
-                <button onclick="admin.removeEntities()">remove entity</button>
-            </td>
-            <td>
-                <select id="entitiesSelect" multiple="multiple" size="20" onclick="admin.includeWord(this)">
-
-                </select>
-            </td>
-
-
-            <td>
-
-                <button onclick="admin.generateThesaurus()">generate thesaurus</button>
-                <br>
-
-                <button onclick="admin.setWordNetSynonyms();">enrich synonyms</button>
-            </td>
-            <td>
-                <div id="treeContainer1" class="jsTree">
-                    <div id="treeDiv1">
-                    </div>
-                </div>
-            </td>
-            <td>
+        <div id="vocabularyAccordion">
+            <h3>Entities</h3>
+            <div class="accordionDiv">
                 <table>
                     <tr>
 
-                    </tr>
-                    <tr>
                         <td>
-                            <hr>
-                        </td>
-                    </tr>
-
-                    <tr>
-                        <td>
-                            thesaurus<input id="skosInput1" value="testSyns" size="12">
-                            <button onclick="skosTree.loadTree('treeDiv1','skosInput1')">load</button>
+                            size<input id="associatedWordsSize" size="5" value="300">
                             <br>
-                            <button onclick="skosTree.createTree('treeDiv1')">create</button>
-                            <button onclick="skosTree.saveTree('treeDiv1','skosInput1')">save</button>
+                            seed word<input id="seedWord" size="10" value="*">
+                            <br>
+                            minWordLength<input id="minWordLength" size="5" value="3">
+                            <br>
+                            <button onclick="admin.elasticExec('listEntities')">list entities</button>
+                            <br>
+                           filters<br>
+                            lemme <input type="checkbox" checked="checked" id="lemmeFilterCBX"><br>
+                            WordNetEntities <input type="checkbox"  checked="checked" id="WordNetEntitiesFilterCBX"><br>
+                            GoogleEntities <input type="checkbox"  checked="checked"   id="GoogleEntitiesFilterCBX"><br>
+
+                        <!--    exclude<br> <select id="stopWordsSelect" size="10" onclick="admin.includeWord(this)">-->
+
+                        </select>
+
+                        </td>
+
+
+                        <td>found entities<br>
+                            <select id="entitiesSelect" size="20" onclick="admin.onWordSelect(this)">
+
+                            </select>
+                        </td>
+                        <td>
+                            <button onclick="admin.addAllWordsToselectedEntitiesSelect()">select all</button>
+
+
+                            <br>
+                            <button onclick="admin.removeEntities()">remove entities</button>
+
+                        </td>
+                        <td>
+                            selected entities<br>
+                            <select id="selectedEntitiesSelect" multiple="multiple" size="20"
+                                    onchange="admin.removeEntities(this)">
+
+                            </select>
+                        </td>
+
+                    </tr>
+                </table>
+            </div>
+
+
+            <h3>Thesaurus</h3>
+            <div class="accordionDiv">
+                <table>
+                    <tr>
+
+
+                        <td>
+
+                            ontologies<select id="ontology">
+                            <option>BNF</option>
+                            <option>DBPEDIA</option>
+                        </select>
+
+                            <br>lang<input id="lang" value='fr'>
+                            <br>
+                            <button onclick="admin.generateOntologyThesaurus()">generate Ontology thesaurus</button>
+                            <br>
+                            <br>
+                            <button onclick="admin.generateGoogleNLPthesaurus()">generate GoogleNLP thesaurus</button>
+                            <br>
+
+
+                        </td>
+
+                        <td>
+                            Generated Thesaurus<br>
+                            <div id="treeContainer1" class="jsTree">
+                                <div id="treeDiv1">
+                                </div>
+                            </div>
+
+                        </td>
+                        <td>
+                            Your Thesaurus<br>
+                            <div id="treeContainer2" class="jsTree">
+                                <div id="treeDiv2">
+                                </div>
+                            </div>
+
+                        </td>
+                        <td>
+                            thesaurus<input id="skosInput1" value="" size="12">
+                            <button onclick="admin.duplicateThesaurus()">duplicate thesaurus</button>
+                            <br>
+                            <button onclick="skosTree.loadTree('treeDiv2','skosInput1')">load</button>
+                            <br>
+                            <button onclick="skosTree.createTree(null,'treeDiv2')">create</button>
+                            <button onclick="skosTree.saveTree('treeDiv2','skosInput1')">save</button>
                             <br>
                             <input id="searchInput1">
                             <button onclick="skosTree.searchTree('searchInput1')">search</button>
@@ -341,11 +342,44 @@
                         </td>
                     </tr>
                 </table>
-            </td>
 
-            </tr>
+            </div>
+            <h3>Synonyms</h3>
+            <div class="accordionDiv">
+                <button onclick="admin.setWordNetSynonyms();">enrich synonyms</button>
+                <button onclick="admin.loadSynonyms()">load</button>
 
-        </table>
+                <button onclick="admin.saveSynonyms()">save</button>
+                <br>
+                <textarea id="synonymsTA" rows="30" cols="100"
+                          class="ui-widget ui-state-default ui-corner-all"></textarea>
+
+            </div>
+
+            <h3>Classifier</h3>
+            <div class="accordionDiv">
+                <table>
+
+
+                    <tr>
+
+                        <td>
+                            <button onclick="admin.elasticExec('thesaurusToClassifier')">
+                                Generate Classifier from Thesaurus
+                            </button>
+                            &nbsp;
+                        </td>
+                        <td>
+                            <!-- <button onclick="admin.elasticExec('createIndexClassifierFromElasticFrequentWordsAndOntology')">
+                                 createIndexClassifierFromElasticFrequentWordsAndOntology
+                             </button>-->
+                        </td>
+                    </tr>
+
+
+                </table>
+            </div>
+        </div>
     </div>
 
 </div>

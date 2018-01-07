@@ -3,9 +3,10 @@ var xml2js = require('xml2js');
 var jsonxml = require('jsontoxml');
 var path = require('path');
 var rdfProxy = require('./rdfProxy');
+var util = require('../util');
 var async = require('async');
 var dom = require('xmldom').DOMParser
-
+var socket = require('../../routes/socket.js');
 var parser = new xml2js.Parser();
 
 
@@ -125,7 +126,7 @@ var skos = {
             "broaderNodes": {},
             "words": {}
         }
-        var file = path.resolve(__dirname + "/thesaurii/" + thesaurus + ".rdf");
+        var file = path.resolve(__dirname , "../../config/thesaurii/" + thesaurus + ".rdf");
 
         fs.readFile(file, function (err, data) {
             if (err) {
@@ -166,7 +167,7 @@ var skos = {
     loadSkosToTree: function (thesaurus, callback) {
 
 
-        var file = path.resolve(__dirname + "/thesaurii/" + thesaurus + ".rdf");
+        var file = path.resolve(__dirname , "../../config/thesaurii/" + thesaurus + ".rdf");
         fs.readFile(file, function (err, data) {
             if (err) {
                 if (callback)
@@ -188,8 +189,13 @@ var skos = {
 
 
                     var prefLabel = concepts[i]["skos:prefLabel"][0]
-                    if (concepts[i]["skos:prefLabel"].length > 1)  // english for Unesco
-                        prefLabel = concepts[i]["skos:prefLabel"][2]._
+                    if(typeof  prefLabel ==="object")
+                    prefLabel=prefLabel._
+                    if (concepts[i]["skos:prefLabel"].length > 1) { // english for Unesco
+                        prefLabel = concepts[i]["skos:prefLabel"][2]
+                        if(typeof  prefLabel === "object")
+                        prefLabel = prefLabel._
+                    }
 
 
                     var node = {prefLabel: prefLabel}
@@ -223,23 +229,21 @@ var skos = {
                         var parent = parent.substring(parent.lastIndexOf("/") + 1)
                         //    var parent = conceptsMap[parent];
                         node.data.parentText = conceptsMap[parent].prefLabel;
+                        if(typeof   node.data.parentText ==="object")
+                            node.data.parentText=node.data.parentText._
                         node.parent = parent;
 
 
                     }
                     else {
-                        node.parent = "_" + thesaurus;
+                        node.parent ="#";// "_" + thesaurus;
 
                     }
-                    if (node.parent != "_" + thesaurus) {
-                        if (!conceptsMap[node.parent])
 
-                            var yy = "";
-                    }
                     treeData.push(node);
 
                 }
-                treeData.push({text: thesaurus, id: "_" + thesaurus, parent: "#"});//root
+               // treeData.push({text: thesaurus, id: "_" + thesaurus, parent: "#"});//root
                 if (callback)
                     callback(null, treeData);
 
@@ -250,9 +254,7 @@ var skos = {
     , findOntologySKOSterms: function (ontology, lang, words, callback) {
 
 
-        function capitalizeFirstLetter(string) {
-            return string.charAt(0).toUpperCase() + string.slice(1);
-        }
+
 
 
         var skos = {
@@ -263,24 +265,25 @@ var skos = {
         async.eachSeries(words, function (word, callback) {
 
 
-                word = capitalizeFirstLetter(word);
+                word =util.capitalizeFirstLetter(word);
                 console.log(word);
 
                 var payload =
                     [
                         {name: "broader", optional: false},
-                        {name: "related", optional: true},
-                        {name: "narrower", optional: true}
+                       // {name: "related", optional: true},
+                        {name: "narrower", optional: true},
+                        {name: "altLabel"}
                     ]
 
 
-                rdfProxy.getOntologyTriples(ontology, word, payload, lang, false, 100, function (err, json) {
+                rdfProxy.getOntologyTriples(ontology, word, payload, lang, false, 500, function (err, json) {
                     if (err) {
                         return console.log(err)
                         return callback(err);
                     }
                     if (!skos.words[word])
-                        skos.words[word] = {broaders: [], narrowers: [], relateds: [], count: 0};
+                        skos.words[word] = {broaders: [], narrowers: [], relateds: [],synonyms:[], count: 0};
 
 
                     if (json.length == 0) {
@@ -308,7 +311,9 @@ var skos = {
                                 //   console.log("___________________" + word + "  : " + relLabelValue);
 
 
+
                                 if (relTypes[j] == "broader") {
+
                                     if (!skos.broaderNodes[relLabelValue])
                                         skos.broaderNodes[relLabelValue] = []
                                     if (skos.broaderNodes[relLabelValue].indexOf(word) < 0)
@@ -326,6 +331,11 @@ var skos = {
                                 if (relTypes[j] == "related") {
                                     if (skos.words[word].relateds.indexOf(relLabelValue) < 0)
                                         skos.words[word].relateds.push(relLabelValue);
+
+                                }
+                                if (relTypes[j] == "altLabels") {
+                                    if (skos.words[word].synonyms.indexOf(relLabelValue) < 0)
+                                        skos.words[word].synonyms.push(relLabelValue);
 
                                 }
                             }
@@ -362,15 +372,7 @@ var skos = {
 
             var node = treeData[key];
 
-            if (key.indexOf("s_") == 0) {//synonym
-                var conceptId = key.split("_")[2];
-                if (!synonyms[conceptId])
-                    synonyms[conceptId] = []
-                synonyms[conceptId].push(node);
-                continue;
-            }
-
-            if (key.indexOf("S_") == 0) {//synonym Group
+            if (node.id=="#") {
                 continue;
             }
 
@@ -448,7 +450,7 @@ var skos = {
             '>'
 
         xml = xml.replace('<rdf:RDF>', header);
-        var file = path.resolve(__dirname + "/thesaurii/" + ontology + ".rdf");
+        var file = path.resolve(__dirname , "../../config/thesaurii/" + ontology + ".rdf");
         fs.writeFile(file, xml, {}, function (err, xml) {
             if (err)
                 return callback(err);
@@ -459,7 +461,7 @@ var skos = {
 
 
     ,
-    generateSkosThesaurusFromWords: function (ontology, words, callback) {
+    generateSkosThesaurusFromWordsListAndOntology: function (thesaurusName,ontologies,lang, words, callbackGlobal) {
 
 
         function createConcept(doc, label) {
@@ -472,22 +474,43 @@ var skos = {
         }
 
         var concepts = {};
+        var orphans=[]
         var relTypes = ["narrower", "broader", "related"];
         var symetricReltypes = {
             "narrower": "broader",
             "broader": "narrower",
             "related": "related"
         }
+
+        async.eachSeries(ontologies, function (ontology, callbackOntology) {
+
         async.eachSeries(words, function (_word, callback) {
+            var word=_word;
+                word = util.capitalizeFirstLetter(word);
+
+
+                var payload =
+                    [
+                        {name: "broader", optional: false},
+                        // {name: "related", optional: true},
+                       // {name: "narrower", optional: true},
+                        {name: "altLabel"}
+                    ]
+
                 var word = _word.substring(0, 1).toUpperCase() + _word.substring(1).toLowerCase();
-                console.log(word);
-                rdfProxy.getBnfTriples(ontology, word, ["broader", "narrower"], "fr", false, 5000, function (err, json) {
+               // console.log(word);
+                socket.message("looking  for concepts related to "+word);
+                rdfProxy.getOntologyTriples(ontology, word, payload, lang, false, 500, function (err, json) {
                     if (err) {
+                        socket.message(err);
                         console.log(err)
+                      //  return callback();
+                    }
+
+                    if (!json || json.length==0) {
+                        orphans.push(word);
                         return callback();
                     }
-                    if (!json)
-                        return callback();
                     for (var i = 0; i < json.length; i++) {
 
 
@@ -519,6 +542,8 @@ var skos = {
                                     })
                                 }
 
+                            }else{
+
                             }
 
 
@@ -532,16 +557,54 @@ var skos = {
                 })
 
             },
-            function (err) {
+            function (err) {// at the end of each ontology
+            if(err){
+                console.log(err);
+                return callbackOntology(err);
+            }
+
+
+
+
+
                 var conceptsArray = [];
                 for (var key in concepts) {
                     conceptsArray.push(concepts[key]);
                 }
+
+
+
+             //  Add orphans
+                var orphansUri="http://souslesens.org/"+thesaurusName+"_"+ontology+"/orphans"
+                conceptsArray.push({
+                    name: "skos:Concept",
+                    attrs: {"rdf:about": orphansUri},
+                    children: [{name: "skos:prefLabel", attrs: {"xml:lang": "en"}, text:"ORPHANS"}],
+                })
+                for (var i=0;i<orphans.length;i++) {
+                    var id=Math.round(Math.random()*10000000);
+                    conceptsArray.push({
+                        name: "skos:Concept",
+                        attrs: {"rdf:about":id},
+                        children: [{name: "skos:prefLabel", attrs: {"xml:lang": "fr"}, text: orphans[i]},
+                            {name: "skos:broader", attrs: {"rdf:resource": orphansUri}}
+                        ]
+
+                    })
+                }
+
+
+
+
+
                 var targetJson = {
                     "rdf:RDF": conceptsArray,
 
 
                 };
+
+
+
 
                 var xml = jsonxml(targetJson, {indent: " ", prettyPrint: 1, xmlHeader: 1});
                 var header =
@@ -556,15 +619,29 @@ var skos = {
 
                 xml = xml.replace('<rdf:RDF>', header);
                 //  xml=header+"\n"+xml;
-                //   console.log(xml);
-                callback(null, xml);
+                var file=path.resolve(__dirname , "../../config/thesaurii/"+thesaurusName+"_"+ontology+".rdf");
+                 console.log(file);
+
+                fs.writeFileSync(file,xml);
+                callbackOntology();
 
             })
+        },
+            function (err) {// at the end of all ontologies
+            if( err) {
+                console.log(err);
+                return callbackGlobal(err);
+            }
+
+
+                return callbackGlobal(null, "done");
+            });
+
 
     }
     ,
     generatePLMskos: function () {
-        var data = "" + fs.readFileSync(path.resolve(__dirname + "/thesaurii/PLM.txt"));
+        var data = "" + fs.readFileSync(path.resolve(__dirname , "../../config/thesaurii/PLM.txt"));
         data = data.replace(/et/g, "/")
         var words = data.split(/[\n\/]/);
         for (var i = 0; i < words.length; i++) {
@@ -576,7 +653,7 @@ var skos = {
         skos.generateSkosThesaurus.prefLabelomWords("BNF", words, function (err, result) {
             if (err)
                 return console.log(err);
-            var file = path.resolve(__dirname + "/thesaurii/PLM.rdf");
+            var file = path.resolve(__dirname , "../../config/thesaurii/PLM.rdf");
             fs.writeFileSync(file, result);
         });
 
@@ -587,7 +664,7 @@ var skos = {
     skosToElasticSynonyms: function (thesaurus) {
 
 
-        var pathStr = path.resolve(__dirname + "/thesaurii/" + thesaurus + ".rdf")
+        var pathStr = path.resolve(__dirname ,"../../config/thesaurii/" + thesaurus + ".rdf")
         var str = "" + fs.readFileSync(pathStr);
 
         var doc = new dom().parseFromString(str);
@@ -615,11 +692,11 @@ var skos = {
 /*skos.generateSkosThesauru.prefLabelomWords("BNF", ["Bouddhisme"], function (err, result) {
  if (err)
  return console.log(err);
- var file = path.resolve(__dirname + "/thesaurii/boudisme.rdf");
+ var file = path.resolve(__dirname , "/thesaurii/boudisme.rdf");
  fs.writeFileSync(file, result);
  })*/
 
 //skos.generatePLMskos();
 
-skos.skosToElasticSynonyms("histoireantiquite")
+//skos.skosToElasticSynonyms("histoireantiquite")
 module.exports = skos;
