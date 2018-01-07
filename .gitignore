@@ -32,7 +32,6 @@ uploads/*.json
 config/schemas/*.json
 config/classifiers/*.json
 config/thesaurii/*.rdf
-config/search/*.json
 bin/sinequa/*
 logs/*.log
 bin/jfm/*
