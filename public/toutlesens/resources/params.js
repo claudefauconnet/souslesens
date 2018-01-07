@@ -54,7 +54,7 @@ var Gparams = {
     bulkGraphViewMaxNodesToDrawLinks:1000,
     bulkGraphDisplayLimit:5000,
     maxNodesForRelNamesOnGraph:100,
-    graphMaxDataLengthToDisplayGraphDirectly:8000,
+    graphMaxDataLengthToDisplayGraphDirectly:1000,
 
 
     //urls************************

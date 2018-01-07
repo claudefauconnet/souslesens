@@ -241,7 +241,7 @@ function onCollSelect() {
 
     callMongo("", {listFields: 1, dbName: dbName, collectionName: collectionName}, function (data) {
         data.sort();
-        fillSelectOptionsWithStringArray(fieldSelect, data);
+        common.fillSelectOptionsWithStringArray(fieldSelect, data);
 
         /*  for (var i = 0; i < data.length; i++) {
          var str = data[i];
@@ -528,7 +528,7 @@ function loadLabels(subGraphName) {
 
             }
             labels.splice(0, 0, "");
-            fillSelectOptionsWithStringArray(labelsSelect, labels)
+            common.fillSelectOptionsWithStringArray(labelsSelect, labels)
 
         }
     });
@@ -545,9 +545,9 @@ function loadSubgraphs(defaultSubGraph) {
                 subgraphs.push(value);
             }
             subgraphs.splice(0, 0, "");
-            fillSelectOptionsWithStringArray(subGraphSelect, subgraphs);
+            common.fillSelectOptionsWithStringArray(subGraphSelect, subgraphs);
             if (subGraphSelect)
-                fillSelectOptionsWithStringArray(subGraphExportSelect, subgraphs)
+                common.fillSelectOptionsWithStringArray(subGraphExportSelect, subgraphs)
         }
     });
 
@@ -812,7 +812,7 @@ function setRequestSubGraphFilterOptions() {
 
     }
     requestSubGraphs.splice(0, 0, "")
-    fillSelectOptionsWithStringArray(requestsFilter, requestSubGraphs);
+    common.fillSelectOptionsWithStringArray(requestsFilter, requestSubGraphs);
 }
 
 function filterRequests(select) {
@@ -1164,13 +1164,13 @@ function showHelp(fieldName) {
 function setCsvImportFields(json) {
     currentCsvObject = json;
 
-    fillSelectOptionsWithStringArray(fieldSelect, json.header);
-    fillSelectOptionsWithStringArray(collSelect,[json.name]);
+    common.fillSelectOptionsWithStringArray(fieldSelect, json.header);
+    common.fillSelectOptionsWithStringArray(collSelect,[json.name]);
     $("#collSelect").val(json.name);
     $("#mongoCollectionRel").val(json.name);
     $("#mongoCollectionNode").val(json.name);
 
-    fillSelectOptionsWithStringArray(dbSelect,  [json.name]);
+    common.fillSelectOptionsWithStringArray(dbSelect,  [json.name]);
 //  $("#dbSelect").val('CSV');
     loadRequests();
     onCollSelect();
