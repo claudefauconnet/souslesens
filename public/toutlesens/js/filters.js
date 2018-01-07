@@ -201,9 +201,9 @@ var filters = (function () {
                 if (filterMode == "relation") {
                     if (common.isNumber(value))
 
-                        toutlesensData.whereFilter += "r[0]." + property + operator + value + " ";
+                        toutlesensData.whereFilter += "r." + property + operator + value + " ";
                     else
-                        toutlesensData.whereFilter += "r[0]." + property + operator + "\"" + value + "\" ";
+                        toutlesensData.whereFilter += "r." + property + operator + "\"" + value + "\" ";
 
                 }
                 else if (filterMode == "startNode") {
