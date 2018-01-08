@@ -14,6 +14,13 @@ To run Souslesens you need to have  [Node.js](https://nodejs.org/en/) and  [Neo4
 - Neo4j
 - a browser that support D3.Js
 - an access to internet to install Node dependencies
+
+### Warning on subGraph property
+in order to facilitate navigation in different graphs , Souslesens introduces  the consept of "subGraph". subGraph defines a subset of a Neo4j database by adding a properties on all nodes of the subset of the graph (it is a kind ofa partition of the global graph)  . to add this attribute to your database (or a subset) you just need to run this cypher command in neo4j console :
+      Match (n)  [where <<xxx>>] set n.subGraph="<<mySubGraph>>"
+ and to work with this subGraph in souslesens you specify the subGraph name in the url 
+ http://localhost:3002/toutlesens/?subGraph=<<mySubGraph>>
+      
   
 ### Installing
 1. download Souslesesens, unzip it and rename it as you want.
