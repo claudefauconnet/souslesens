@@ -190,7 +190,7 @@ var elasticProxy = {
             url: baseUrl + index + "/_search"
         };
 
-        console.log(JSON.stringify(payload, null, 2));
+    //    console.log(JSON.stringify(payload, null, 2));
         request(options, function (error, response, body) {
             elasticProxy.processSearchResult(error, index, body, callback);
 
@@ -736,7 +736,7 @@ var elasticProxy = {
                 obj.count = objElastic.doc_count;
 
                 if (elasticProxy.acceptAssociatedWord(obj.key)) {
-                    console.log(obj.key)
+                 //   console.log(obj.key)
                     words.push(obj)
                 }
                 else {
@@ -782,7 +782,10 @@ var elasticProxy = {
 
 
             if (options.lemmeFilter) {
-                elasticProxy.extractLemmes(buckets, words, function (err, lemmes) {
+                var outputFormat="object";
+                if(options.wordNetEntitiesFilter)
+                    outputFormat="string";
+                elasticProxy.extractLemmes(buckets, words,outputFormat, function (err, lemmes) {
                     if (options.wordNetEntitiesFilter) {
                         elasticProxy.extractWordNetNouns(buckets, lemmes, function (err, buckets) {
                             return finalProcessing(err, buckets);
@@ -792,8 +795,8 @@ var elasticProxy = {
 
 
                         for (var j = 0; j < lemmes.length; j++) {
-                            console.log(lemmes[j])
-                            validBuckets.push({key: lemmes[j], count: -1})
+                          //  console.log(lemmes[j])
+                            validBuckets.push({key: lemmes[j].lemme, count:  lemmes[j].word})
 
 
                         }
@@ -823,24 +826,33 @@ var elasticProxy = {
 
     }
     ,
-    extractLemmes: function (_buckets, words, callback) {
+    extractLemmes: function (_buckets, words,outputFormat, callback) {
         var buckets = _buckets;
         var words = [];
-        for (var i = 0; i < buckets.length; i++) {
-            words.push(buckets[i].key)
+      for (var i = 0; i < buckets.length; i++) {
+           // for (var i = 0; i < 10; i++) {
+                words.push(buckets[i].key)
+
         }
 
-
+//console.log(JSON.stringify(words))
         elasticProxy.findTerms("lemmatization_fr", null, "content.word", words, function (err, data) {
             if (err)
                 return callback(err);
 
-            var allLemmes = []
+            var lemmes = [];
+            var uniqueLemmes = [];
             for (var i = 0; i < data.length; i++) {
-                if (allLemmes.indexOf(data[i].lemme) < 0)
-                    allLemmes.push(data[i].lemme)
+                if (uniqueLemmes.indexOf(data[i].lemme) < 0){
+                    uniqueLemmes.push(data[i].lemme);
+                    if(outputFormat=="object")
+                        lemmes.push({lemme:data[i].lemme,word:data[i].word});
+                    else
+                        lemmes.push(data[i].lemme);
+                }
             }
-            return callback(null, allLemmes)
+          //  console.log(JSON.stringify(allLemmes))
+            return callback(null, lemmes)
         })
     },
 

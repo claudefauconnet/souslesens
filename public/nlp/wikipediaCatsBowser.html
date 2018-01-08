@@ -79,9 +79,7 @@ function callMongo(query,callback){
             callback(data);
         },
         error: function (xhr, err, msg) {
-            console.log(xhr);
-            console.log(err);
-            console.log(msg);
+            toutlesensController.onErrorInfo(xhr)
         }
     });
 }

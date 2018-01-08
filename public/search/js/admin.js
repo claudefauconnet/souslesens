@@ -147,10 +147,12 @@ var admin = (function () {
                     });
                     if ($("#GoogleEntitiesFilterCBX").prop("checked")) {
                         self.getGoogleApiEntities(array)
+                        $("#countExtractedEntities").html(array.length);
                         // common.fillSelectOptions(entitiesSelect, array, "label", "key");
                     //    common.fillSelectOptions(stopWordsSelect, arrayExclude, "label", "key")
                     }
                     else{
+                        $("#countExtractedEntities").html(array.length);
                         common.fillSelectOptions(entitiesSelect, array, "label", "key")
                     }
                 }
@@ -211,7 +213,7 @@ var admin = (function () {
                     entityNames.push(name);
                 }
 
-
+                $("#countExtractedEntities").html(words.length);
                 common.fillSelectOptions(entitiesSelect, words, "label", "name");
 
 

@@ -536,6 +536,11 @@ table.dataTable thead th div.DataTables_sort_wrapper {
     font-weight: bold;
     font-size: 14px;
 }
+#graphMessageDetail{
+    color: #662211;
+   // font-weight: bold;
+    font-size: 20px;
+}
 .relationType{
     font-size: 14px;
 }

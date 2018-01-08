@@ -170,9 +170,9 @@ self.buildStatTree(queryName, query, function (jsonTree) {
 
         },
         error: function (xhr, err, msg) {
+            toutlesensController.onErrorInfo(xhr)
             console.log(xhr);
-            console.log(err);
-            console.log(msg);
+
         },
 
     })

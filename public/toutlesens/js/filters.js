@@ -130,9 +130,9 @@ var filters = (function () {
             $("#filtersDiv").css("visibility", "visible");
 
         $(".filterName").on("click", function (event) {
-            var mode = "only";
+            var mode = "add";
             if (event.ctrlKey) {
-                var mode = "add"
+                var mode = "only"
             }
             paint.closePaintDialog();
             var array = this.id.split(":");

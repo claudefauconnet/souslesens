@@ -124,6 +124,7 @@ var Schema = (function () {
                 // if schema does not exist we create one by analyzing Neo4j db content
                 console.log(error);
 
+
                 self.generateNeoImplicitSchema(subGraph, true, function (err, _schema) {
                     if (err)
                         return callback(err);
@@ -171,7 +172,7 @@ var Schema = (function () {
             dataType: "json",
             type: 'POST',
             error: function (error, ajaxOptions, thrownError) {
-                console.log(error);
+                toutlesensController.onErrorInfo(error)
                 if (callback)
                     return callback("error " + error)
 

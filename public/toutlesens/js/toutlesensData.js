@@ -110,9 +110,7 @@ var toutlesensData = (function () {
 
             },
             error: function (xhr, err, msg) {
-                console.log(xhr);
-                console.log(err);
-                console.log(msg);
+                toutlesensController.onErrorInfo(xhr)
             },
 
         });
@@ -273,6 +271,7 @@ var toutlesensData = (function () {
 
             },
             error: function (xhr, err, msg) {
+                toutlesensController.onErrorInfo(xhr)
                 return (err);
             }
 
@@ -347,9 +346,7 @@ var toutlesensData = (function () {
                 // self.processPathResults(data,callback);
             },
             error: function (xhr, err, msg) {
-                console.log(xhr);
-                console.log(err);
-                console.log(msg);
+                toutlesensController.onErrorInfo(xhr)
                 callback(err)
             },
 
@@ -1458,6 +1455,7 @@ var toutlesensData = (function () {
 
             },
             error: function (xhr, err, msg) {
+                toutlesensController.onErrorInfo(xhr) ;
                 if (callback) {
                     return callback(null);
                 }

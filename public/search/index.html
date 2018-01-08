@@ -229,7 +229,7 @@
             $("#conceptDiv").html("");
             $("#countDiv").html("");
             $("#resultDiv").html("");
-            $("#leftPanel").html("");
+            $("#associatedWordsDiv").html("");
 
 
             var index = $("#indexInput").val();
@@ -286,8 +286,20 @@
                 }
 
             });
-
+            getAssociatedWords();
             /*----------------associated words********************************/
+
+        }
+
+        function getAssociatedWords(){
+            var index = $("#indexInput").val();
+            var word = $("#searchInput").val().trim();
+            if (word != oldWord) {
+                associatedWords = []
+            }
+            oldWord = word;
+            var slop = $("#slopInput").val();
+            var classifierSourceStr = $("#classifierSource").val();
             var payload = {
                 getAssociatedWords: 1,
 
@@ -299,6 +311,26 @@
                     classifierSource: classifierSourceStr
                 }
             };
+            options: {
+                //  stopWords: stopWords
+            }
+
+            var associatedWordsFilter=$("#associatedWordsFilter").val()
+
+            if( associatedWordsFilter=="allwords"){
+                ;
+            }
+            else if( associatedWordsFilter=="lemmes"){
+                payload.options.lemmeFilter=true;
+            }
+            else if( associatedWordsFilter=="wordnetEntities"){
+                payload.options.wordNetEntitiesFilter=true;
+            }
+            else if( associatedWordsFilter=="googleEntities"){
+                ;//processed after result
+            }
+
+
             if (currentType)
                 payload.type = currentType;
 
@@ -402,7 +434,8 @@
                     html += "<li>" + "<a href='javascript:addAssociatedWord(\"" + data[i].key + "\")'>" + data[i].key + " (" + data[i].count + ")</a></li>"
             }
             html += "</ul>";
-            $("#leftPanel").html("<br><br><br><br><br><div id='associatedWordsDiv'>Mots associes<br>" + html + "</div>");
+            $("#leftPanel").css("visibility","visible");
+            $("#associatedWordsDiv").html( html);
 
         }
 
@@ -817,8 +850,16 @@
 <div id="panels">
 
 
-    <div id="leftPanel">
-
+    <div id="leftPanel" style="visibility: hidden">
+        Associated words<br>
+        filter
+        <select id="associatedWordsFilter" onchange="getAssociatedWords()">
+            <option value="allwords">low</option></optionvalue>
+            <option value="lemmes">medium</option>
+            <option value="wordnetEntities" selected="selected">high</option>
+          <!--  <option>googleEntities</option>-->
+        </select>
+        <div id="associatedWordsDiv"></div>
 
     </div>
     <div id="centerPanel">

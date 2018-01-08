@@ -209,9 +209,7 @@ var dataModel = (function () {
                             ,
                             error: function (xhr, err, msg) {
                                 callback(null);
-                                console.log(xhr);
-                                console.log(err);
-                                console.log(msg);
+                                toutlesensController.onErrorInfo(xhr)
                             }
                         })
 
@@ -221,18 +219,14 @@ var dataModel = (function () {
                     ,
                     error: function (xhr, err, msg) {
                         callback(null);
-                        console.log(xhr);
-                        console.log(err);
-                        console.log(msg);
+                        toutlesensController.onErrorInfo(xhr)
                     }
 
                 })
 
             },
             error: function (xhr, err, msg) {
-                console.log(xhr);
-                console.log(err);
-                console.log(msg);
+                toutlesensController.onErrorInfo(xhr)
             }
 
         });
@@ -260,9 +254,7 @@ var dataModel = (function () {
                 $("#dialog").dialog("close")
             },
             error: function (xhr, err, msg) {
-                console.log(xhr);
-                console.log(err);
-                console.log(msg);
+                toutlesensController.onErrorInfo(xhr)
             }
         })
 
@@ -284,9 +276,7 @@ var dataModel = (function () {
                 callback(data);
             },
             error: function (xhr, err, msg) {
-                console.log(xhr);
-                console.log(err);
-                console.log(msg);
+                toutlesensController.onErrorInfo(xhr)
             }
         });
     }
@@ -315,9 +305,7 @@ var dataModel = (function () {
             },
             error: function (xhr, err, msg) {
 
-                console.log(xhr);
-                console.log(err);
-                console.log(msg);
+                toutlesensController.onErrorInfo(xhr)
                 if (err.result) {
                     $("#message").html(err.result);
                     $("#message").css("color", "red");

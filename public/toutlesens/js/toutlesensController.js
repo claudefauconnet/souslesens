@@ -206,7 +206,7 @@ var toutlesensController = (function () {
             filters.setQueryFilters()
         }
         else {
-            self.setGraphMessage("To display a graph <b>select relations  and/or label types")
+            self.setGraphMessage("Too many relations to display the graph<br>filter by  relation or label types")
             output = "filtersDescription";
         }
 
@@ -279,9 +279,9 @@ var toutlesensController = (function () {
             if (data.length > Gparams.maxNodesForRelNamesOnGraph) {
                 Gparams.showRelationNames = false;
                 $("#showRelationTypesCbx").removeAttr("checked");
-            }else{
+            } else {
                 Gparams.showRelationNames = true;
-                $("#showRelationTypesCbx").prop("checked","checked");
+                $("#showRelationTypesCbx").prop("checked", "checked");
             }
             $("#visJsSearchGraphButton").css("visibility: visible");
             toutlesensData.prepareRawData(data, addToExistingTree, currentDisplayType, function (err, data, labels, relations) {
@@ -289,8 +289,8 @@ var toutlesensController = (function () {
 
                 toutlesensController.displayGraph(data, currentDisplayType, self.currentLabels);
                 $("#waitImg").css("visibility", "hidden")
-                if(self.addToHistory)
-                self.stackGraph(currentDisplayType, currentLabel, currentObject.id, filters.currentSelectdFilters);
+                if (self.addToHistory)
+                    self.stackGraph(currentDisplayType, currentLabel, currentObject.id, filters.currentSelectdFilters);
                 if (callback)
                     return callback(null, data);
 
@@ -384,6 +384,7 @@ var toutlesensController = (function () {
                 })
             },
             error: function (xhr, err, msg) {
+                toutlesensController.onErrorInfo(xhr)
                 return (err);
             }
         });
@@ -1470,14 +1471,15 @@ var toutlesensController = (function () {
                 }
                 callback(true);
             }
-            , error: function () {
+            , error: function (xhr) {
+                toutlesensController.onErrorInfo(xhr)
                 callback(false);
             }
         })
     }
     self.setGraphMessage = function (message, type) {
 
-        var str = "<br><br><p align='center'>"
+        var str = "<br><br><p align='center' >"
         var name = "";
         if (currentObject && currentObject.id)
             name = "Node " + currentObject[Schema.getNameProperty(currentObject.label)];
@@ -1489,7 +1491,7 @@ var toutlesensController = (function () {
             str += "<span class='objectName'>" + name + "</span><br>"
         if (type == "stop")
             str += "<img src='./icons/warning.png' width='50px'><br>"
-        str += "" + message + " <br>";
+        str += "<span id='graphMessageDetail'>" + message + "</span> <br>";
         str += "</p>";
 
         $("#graphDiv").html(str);
@@ -1510,6 +1512,14 @@ var toutlesensController = (function () {
         $("#graphLegendDiv").css("left", w)
         $("#graphDiv").width(w)
         $("#graphDiv").css("left", 0)
+    }
+
+    self.onErrorInfo = function (err) {
+        var errObj = JSON.parse(err.responseJSON.ERROR);
+        if (errObj.code == "ECONNREFUSED")
+            alert("No connexion to Neo4j database ");
+        console.log(err.responseText)
+
     }
 
 

@@ -172,18 +172,14 @@ var d3neo4jDataModel = (function(){
                     }
                     ,
                     error: function (xhr, err, msg) {
-                        console.log(xhr);
-                        console.log(err);
-                        console.log(msg);
+                        toutlesensController.onErrorInfo(xhr)
                     }
 
                 })
 
         },
         error: function (xhr, err, msg) {
-            console.log(xhr);
-            console.log(err);
-            console.log(msg);
+            toutlesensController.onErrorInfo(xhr)
         }
 
     });
@@ -206,9 +202,7 @@ var d3neo4jDataModel = (function(){
             callback(data);
         },
         error: function (xhr, err, msg) {
-            console.log(xhr);
-            console.log(err);
-            console.log(msg);
+            toutlesensController.onErrorInfo(xhr)
         }
     });
 }
@@ -229,9 +223,7 @@ var d3neo4jDataModel = (function(){
         },
         error: function (xhr, err, msg) {
 
-            console.log(xhr);
-            console.log(err);
-            console.log(msg);
+            toutlesensController.onErrorInfo(xhr)
             if (err.result) {
                 $("#message").html(err.result);
                 $("#message").css("color", "red");

@@ -62,9 +62,7 @@ var graphTraversalQueries = (function () {
                self.processPathResults(data,callback);
             },
             error: function (xhr, err, msg) {
-                console.log(xhr);
-                console.log(err);
-                console.log(msg);
+                toutlesensController.onErrorInfo(xhr)
                 callback(err)
             },
 
@@ -166,9 +164,8 @@ var rels={}
 
             },
             error: function (xhr, err, msg) {
-               // console.log(xhr);
-                console.log(err);
-              //  console.log(msg);
+                toutlesensController.onErrorInfo(xhr)
+
                 callback(err)
             },
 
