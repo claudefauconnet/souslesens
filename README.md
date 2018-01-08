@@ -18,10 +18,9 @@ To run Souslesens you need to have  [Node.js](https://nodejs.org/en/) and  [Neo4
 ### Installing
 1. download Souslesesens, unzip it and rename it as you want.
 2. install  Node.js dependencies:
-  1. open a command line and move to the root directory of toutlesens where the package.json file is located.
-  2. run command : **npm install --save**
-3. configure  url and login/password for neo4j 
-  -edit file ./bin/serverParams and modify neo4jUrl value
+ -open a command line and move to the root directory of toutlesens where the package.json file is located.
+ -run command : **npm install --save**
+3. configure  url and login/password for neo4j :edit file ./bin/serverParams and modify neo4jUrl value  neo4jUrl: 'http://neo4j:souslesens@127.0.0.1:7474' (here neo4j is le the login and souslesens is the password of your Neo4j database)
 4. click on **souslesens.bat** (Windows) : this command does **node ./bin/www**
 5. browse to http:/localhost:3002/toutlesens 
   - 3002 is the default port, you can change it in ./bin/www file
