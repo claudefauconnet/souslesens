@@ -545,19 +545,6 @@ var toutlesensController = (function () {
         return params;
     }
 
-    self.initLabels = function (selectId) {
-        var select = "#nodesLabelsSelect";
-        if (selectId)
-            select = "#" + selectId;
-
-
-        for (var label in Schema.schema.labels) {
-            $(select).append($('<option>', {
-                text: label,
-                value: label
-            }).css("color", nodeColors[label]));
-        }
-    }
 
 
     self.doLoadRelationshipTypes = function (labels) {
@@ -1535,6 +1522,19 @@ var toutlesensController = (function () {
         var labels = Schema.getAllLabelNames()
         common.fillSelectOptionsWithStringArray(select, labels);
     }
+    /*   self.initLabels = function (selectId) {
+            var select = "#nodesLabelsSelect";
+            if (selectId)
+                select = "#" + selectId;
+
+
+            for (var label in Schema.schema.labels) {
+                $(select).append($('<option>', {
+                    text: label,
+                    value: label
+                }).css("color", nodeColors[label]));
+            }
+        }*/
 
 
     self.setResponsiveDimensions=function(rightPanelWidth) {

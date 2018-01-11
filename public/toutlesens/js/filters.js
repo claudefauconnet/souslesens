@@ -90,7 +90,7 @@ var filters = (function () {
             str += " relation <b>" + relName + "</b></td>";
             str += "<td> <img  src='./images/filter.png'  width='15px' title='set filter' onclick='filters.showFilterDialog(null,\"" + relName + "\")'></td>"
             if (Gparams.graphAllowPaint)
-                str += "<td> <img  src='./images/paint.jpg'  width='15px' title='set filter' onclick='paint.showPaintDialog(null,\"" + relName + "\")'></td>"
+                str += "<td> <img  src='./images/paint.jpg'  class='paintIcontTop' width='15px' title='set filter' onclick='paint.showPaintDialog(null,\"" + relName + "\")'></td>"
 
             str += "</tr>";
         }
@@ -108,7 +108,7 @@ var filters = (function () {
                 str += "label <b>" + label + "</b></td>";
                 str += "<td><img  src='./images/filter.png'  width='15px'  title='set filter' onclick='filters.showFilterDialog(\"" + label + "\",\"" + relName + "\")'></td>"
                 if (Gparams.graphAllowPaint)
-                    str += "<td><img  src='./images/paint.jpg'  width='15px'  title='set filter' onclick='paint.showPaintDialog(\"" + label + "\",\"" + relName + "\")'></td>"
+                    str += "<td><img  src='./images/paint.jpg'  class='paintIcon_' width='15px'  title='set filter' onclick='paint.showPaintDialog(\"" + label + "\",\"" + relName + "\")'></td>"
 
                 str += "</tr>";
 
@@ -127,8 +127,8 @@ var filters = (function () {
         $("#filtersDiv").html(str);
 
 
-        if (!customizeUI.hideFilters == true)
-            $("#filtersDiv").css("visibility", "visible");
+      /*  if (!customizeUI.hideFilters == true)
+            $("#filtersDiv").css("visibility", "visible");*/
 
         $(".filterName").on("click", function (event) {
             var mode = "add";

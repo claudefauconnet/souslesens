@@ -27,6 +27,7 @@
 var customizeUI = (function () {
     self = {}
     self.hideFilters=false;
+
     var idsList;
  //   var legendDivWidth=Gparams.rightPanelWidth;
 
@@ -34,7 +35,7 @@ var customizeUI = (function () {
 
 
 
-        if (queryParams.sinequaCallbackUrl) {
+        if (queryParams.sinequaCallbackUrl && obj.labelNeo=="norme") {
 			
             var str = "";
 
@@ -42,9 +43,26 @@ var customizeUI = (function () {
 				
                 // str = "<a href='" + queryParams.sinequaCallbackUrl + "?~~ID~~=" + obj.neoAttrs.id_doc + "target='_parent'>search in Sinequa</a>";
 				str = '<a href="'+
-					decodeURIComponent(queryParams.sinequaCallbackUrl).replace('~~ID~~',obj.neoAttrs.id_doc)+
-					'" target="_parent">Search in Sinequa</a>';
+					//decodeURIComponent(queryParams.sinequaCallbackUrl).replace('~~ID~~',obj.neoAttrs.id_doc)+
+                  (queryParams.sinequaCallbackUrl).replace('~~ID~~',obj.neoAttrs.id_doc)+
+					'" target="_parent">Show in Sinequa</a>';
 			}
+
+            return str;
+
+        }
+        if (queryParams.entityFilterUrl && obj.labelNeo=="ref") {
+
+            var str = "";
+
+            if (obj.neoAttrs && obj.neoAttrs.ref){
+
+                // str = "<a href='" + queryParams.sinequaCallbackUrl + "?~~ID~~=" + obj.neoAttrs.id_doc + "target='_parent'>search in Sinequa</a>";
+                str = '<a href="'+
+                   // decodeURIComponent(queryParams.entityFilterUrl).replace('~~ID~~',obj.neoAttrs.ref)+
+                    (queryParams.entityFilterUrl).replace('~~Ref~~',obj.neoAttrs.ref)+
+                    '" target="_parent">Search in Sinequa</a>';
+            }
 
             return str;
 
@@ -70,6 +88,8 @@ var customizeUI = (function () {
         }
         var initialQuery = queryParams.initialQuery;
         if (initialQuery && initialQuery.length > 0) {
+
+
             var idsList=initialQuery.split(",");
             Gparams.startWithBulkGraphView = false;
             currentDisplayType="SIMPLE_FORCE_GRAPH";
@@ -96,104 +116,9 @@ var customizeUI = (function () {
 
 
     }
-    self.onDepthSelectChange=function(){
-        if(currentObject.id)
-            toutlesensController.generateGraph(currentObject.id,true,function(){
-              //  $("#depth").val("1");
-            });
-        else
-            toutlesensData.setSearchByIdsListStatement(idsList, function (err, result) {
-                currentDisplayType = "VISJS-NETWORK";
-                toutlesensController.generateGraph(null, true,function(){
-                  //  $("#depth").val("1");
-                });
-            })
-
-
-    }
-
-    self.customizeOld = function () {
-
-        if (queryParams.ui == "basic") {
-            customizeUI.noLeftDivDisplay();
-            customizeUI.setVisButton();
-        }
-        var initialQuery = queryParams.initialQuery;
-        if (initialQuery && initialQuery.length > 0) {
-            var normes = initialQuery.split(",");
-
-            advancedSearch.setSearchByIdsListStatement(normes, function (err, result) {
-
-                Gparams.startWithBulkGraphView = false;
-                var graphDisplay = queryParams.graphDisplay;
-                if (graphDisplay && graphDisplay.length > 0) {
-                    currentDisplayType = graphDisplay;
-                    //     $("#representationSelect").val(graphDisplay);
-                    toutlesensController.generateGraph(null,true)
-
-                    /*
-                     FLOWER
-                     SIMPLE_FORCE_GRAPH_BULK
-                     SIMPLE_FORCE_GRAPH
-                     TREE
-                     */
-
-                }
-
-            })
-
-        }
-        else{
-            if(Gparams.startWithBulkGraphView )
-                advancedSearch.showBulkGraph(subGraph);
-        }
-
-
-    }
 
 
 
-    self.noLeftDivDisplay = function () {
-
-
-        splitter.position("0%");
-        $("#tabs-mainPanel").width(totalWidth - 20);
-        customizeUI.hideFilters=true;
-        $("#filtersDiv").css("visibility", "hidden");
-
-
-      /*  legendDivWidth=30;
-        $("#graphDiv").width((totalWidth - 10)-legendDivWidth)
-        $("#dataDiv").width((totalWidth - 10)-legendDivWidth)
-        $("#textDivContainer").width((totalWidth - 10)-legendDivWidth)
-        $("#graphLegendDiv").css("left", (totalWidth - 10) -legendDivWidth)
-        $("#graphLegendDiv").width(legendDivWidth);*/
-    }
-
-
-    self.setVisButton = function () {
-
-        $("#treemapButton").css("visibility", "hidden");
-        $("#treeButton").css("visibility", "hidden")
-        $("#treeButton").css("visibility", "hidden")
-        $("#formButton").css("visibility", "hidden")
-
-        //  $("#verticalVisButtonsDiv").css("width",100)
-        $("#verticalVisButtonsDiv").css("height", 400)
-        $("#verticalVisButtonsDiv").css("left", (totalWidth-52) -legendDivWidth)
-        $("#verticalVisButtonsDiv").css("top", 60)
-        $("#verticalVisButtonsDiv").css("visibility", "visible")
-        $("#verticalVisButtonsDiv").css("z-index", 100);
-
-        $('#verticalVisButtonsTable').tableflip($('#visButtonTableDiv'));
-        $('#verticalVisButtonsTable td').css("align", "center");
-
-
-    }
-    self.setDepth = function (select) {
-        $("#depth").val($(select).val());
-        toutlesensController.generateGraph();
-    }
 
 
     return self;
