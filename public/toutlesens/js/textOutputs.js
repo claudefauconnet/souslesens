@@ -55,7 +55,7 @@ var textOutputs = (function () {
         html += '<div id="htmlListDiv" style="overflow: scroll;width:' + (totalWidth / 3 * 2) + 'px;height:' + (totalHeight - 100) + 'px;background-color:\'white\' ">' + str + '</div>'
 
         $("#textDiv").html(str);
-        // $("#tabs-radarRight").tabs("option", "active", 1);
+        // $("#tabs-mainPanel").tabs("option", "active", 1);
 
 
     }
@@ -340,9 +340,9 @@ var textOutputs = (function () {
         $("#textDiv").html(str);
 
 
-        var index = $('#tabs-radarRight a[href="#textTab"]').parent().index();
-        $("#tabs-radarRight").tabs("enable", index);
-        $("#tabs-radarRight").tabs("option", "active", index);
+        var index = $('#tabs-mainPanel a[href="#textTab"]').parent().index();
+        $("#tabs-mainPanel").tabs("enable", index);
+        $("#tabs-mainPanel").tabs("option", "active", index);
     }
 
     self.drawCSV_DataTable = function (json) {

@@ -16,6 +16,7 @@ var filters = (function () {
         self.postFilter = null;
 
         $("#innerLegendDiv").html("");
+       $("#tabs-controlPanel").tabs('option','active',1)
 
 
         var str = "";
@@ -35,7 +36,7 @@ var filters = (function () {
             if (!currentObject.neoAttrs)
                 currentObject.neoAttrs = {}
             str += "<tr><td style='color:" + nodeColors[currentObject.label] + "'>";
-            str += "Node <b>" + currentObject.neoAttrs[Schema.schema.defaultNodeNameProperty] + "</b></td>";
+            str += "Node <b>" + currentObject[Schema.schema.defaultNodeNameProperty] + "</b></td>";
             str += "<td><img  src='./images/filter.png'  width='15px'  title='set filter' onclick='filters.showFilterDialog(\"" + currentObject.label + "\",\"" + relName + "\")'></td>"
             if (Gparams.graphAllowPaint)
                 str += "<td><img  src='./images/paint.jpg'  width='15px'  title='set filter' onclick='paint.showPaintDialog(\"" + currentObject.label + "\",\"" + relName + "\")'></td>"

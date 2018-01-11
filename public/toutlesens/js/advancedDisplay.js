@@ -450,7 +450,7 @@ function saveStoredDecorationObjsDialog() {
         "<tr><td colspan=2'><span id='dialogMessage'></span></td></tr>"
     str += "</table><button onclick= saveDisplaySet()>OK</button>";
     $("#dialog").html(str);
-    $("#dialog").dialog("open")//;.parent().position({ my: 'center', at: 'center', of: '#tabs-radarRight' });
+    $("#dialog").dialog("open")//;.parent().position({ my: 'center', at: 'center', of: '#tabs-mainPanel' });
 }
 
 

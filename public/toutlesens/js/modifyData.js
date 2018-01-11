@@ -252,7 +252,7 @@ var modifyData = (function () {
         }
         toutlesensData.searchNodes(obj.subGraph, obj.label, obj.name);
 
-        // $("#radarFiltersTab").hide().fadeIn();
+        // $("#searchDiv").hide().fadeIn();
     }
 
     self.writeRelationInNeo4j = function (node1, relationType, node2) {

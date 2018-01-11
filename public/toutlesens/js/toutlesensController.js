@@ -62,13 +62,13 @@ var toutlesensController = (function () {
         currentSourceNode = currentObject;
 
         if (currentDisplayType != "SIMPLE_UI") {
-            //   $("#tabs-radarLeft").tabs("enable");
-            $("#tabs-radarRight").tabs("enable");
+            //   $("#tabs-controlPanel").tabs("enable");
+            $("#tabs-mainPanel").tabs("enable");
             $("#currentNodeSpan").html("Noeud central : " + text);
 
             if (Gparams.modifyMode == 'onList' && currentMode == "write") {
-                var index = $('#tabs-radarRight a[href="#dataTab"]').parent().index();
-                $("#tabs-radarRight").tabs("option", "active", index);
+                var index = $('#tabs-mainPanel a[href="#dataTab"]').parent().index();
+                $("#tabs-mainPanel").tabs("option", "active", index);
 
                 self.dispatchAction("modifyNode");
                 return;
@@ -135,6 +135,7 @@ var toutlesensController = (function () {
 
         d3.select("#graphDiv").selectAll("svg").remove();
         $("#graphDiv").html("");
+        $("#mainButtons").css("visibility","hidden");
         $("#graphMessage").html("");
         $("#relInfoDiv").html("");
 
@@ -288,6 +289,7 @@ var toutlesensController = (function () {
 
 
                 toutlesensController.displayGraph(data, currentDisplayType, self.currentLabels);
+                $("#mainButtons").css("visibility","visible");
                 $("#waitImg").css("visibility", "hidden")
                 if (self.addToHistory)
                     self.stackGraph(currentDisplayType, currentLabel, currentObject.id, filters.currentSelectdFilters);
@@ -397,7 +399,7 @@ var toutlesensController = (function () {
         Gparams.showRelationNames = $("#showRelationTypesCbx").prop("checked");
         d3NodesSelection = [];
         $("#textDiv").html("");
-        $("#tabs-radarRight").tabs("option", "active", 0);
+        $("#tabs-mainPanel").tabs("option", "active", 0);
 
         if (!json) {
             if (output == "SIMPLE_FORCE_GRAPH" || output == "SIMPLE_FORCE_GRAPH_BULK") {
@@ -415,14 +417,14 @@ var toutlesensController = (function () {
          } else
          $("#graphMessage").html("");*/
         help.setGraphActionsHelp();
-        /*     $("#tabs-radarLeft").tabs({
+        /*     $("#tabs-controlPanel").tabs({
          disabled: false
          });*/
-        $("#tabs-radarRight").tabs({
+        $("#tabs-mainPanel").tabs({
             disabled: false
         });
         if (!queryParams.mode == "write") {
-            $("#tabs-radarRight").tabs({
+            $("#tabs-mainPanel").tabs({
                 disabled: [3, 4]
             });
         }
@@ -594,16 +596,22 @@ var toutlesensController = (function () {
 
     }
     self.onLabelSelect = function (labelSelect) {
-        startSearchNodesTime = new Date() - 1000;
-        var mode = $("#representationSelect").val();
-        // var mode = $("#outputModeHome:checked").val();
-        if (mode == "CHRONOCHART") {
-            chronology.drawChronoChart();
-        } else {
-            currentPage = 0;
-            //  self.searchNodesUI();
-            self.searchNodesUI('matchStr', null, null, infoGenericDisplay.loadSearchResultIntree)
-        }
+
+
+            var label = $(labelSelect).val();
+
+            if (label.length > 0) {
+                currentObject.id = null;
+                currentLabel = label;
+                currentDisplayType = "SIMPLE_FORCE_GRAPH";
+                toutlesensController.addToHistory = true;
+
+                toutlesensController.generateGraph(null, false);
+            } else {
+                toutlesensController.clearGraphDiv();
+            }
+
+
     }
 
     self.onMatchGo = function () {
@@ -660,6 +668,8 @@ var toutlesensController = (function () {
                 return;
         }
         var word = "";
+        $("#nodesLabelsSelect").val("")
+        currentLabel=null;
         var label = $("#nodesLabelsSelect").val();
         word = $("#word").val();
         if (word && word.length < 3 && label && label.length == "") {
@@ -869,8 +879,8 @@ var toutlesensController = (function () {
 
     self.selectLeftTab = function (tabId) {
 
-        var index = $('#tabs-radarLeft a[href="' + tabId + '"]').parent().index();
-        $("#tabs-radarLeft").tabs("option", "active", index);
+        var index = $('#tabs-controlPanel a[href="' + tabId + '"]').parent().index();
+        $("#tabs-controlPanel").tabs("option", "active", index);
 
     }
 
@@ -1000,7 +1010,7 @@ var toutlesensController = (function () {
             $("#linkTargetNode").val(targetNode.name);
             $("#linkTargetNode").css("color", nodeColors[targetNode.label]);
             $("#linkTargetLabel").html(targetNode.label);
-            $("#tabs-radarRight").tabs("option", "active", 3);
+            $("#tabs-mainPanel").tabs("option", "active", 3);
             $("#accordionModifyPanel").accordion("option", "active", 1);
             currentRelationData.targetNode = targetNode;
             modifyData.setLinkTypes();
@@ -1013,14 +1023,14 @@ var toutlesensController = (function () {
             infoGenericDisplay.drawAttributes(attrObject, "nodeInfosDiv");
             if (queryParams.write)
                 $("#infosHeaderDiv").css("visibility", "visible");
-            $("#tabs-radarRight").tabs("enable", 2);
-            $("#tabs-radarRight").tabs("option", "active", 2);
+            $("#tabs-mainPanel").tabs("enable", 2);
+            $("#tabs-mainPanel").tabs("option", "active", 2);
 
             /*  $("#ModifyNodeActionDiv").css("visibility", "visible");
              $("#accordionModifyPanel").accordion("option", "active", 0);
-             // var index = $('#tabs-radarRight
+             // var index = $('#tabs-mainPanel
              // a[href="li_modify"]').parent().index();
-             $("#tabs-radarRight").tabs("option", "active", 3);
+             $("#tabs-mainPanel").tabs("option", "active", 3);
              if (id) {
              var query = "MATCH (n) WHERE ID(n) =" + id + " RETURN n";//,'m','r',labels(n),'x',ID(n) ";// limit 1 ";
 
@@ -1041,9 +1051,9 @@ var toutlesensController = (function () {
         } else if (action == "newNode") {
             $("#ModifyNodeActionDiv").css("visibility", "visible");
             $("#accordionModifyPanel").accordion("option", "active", 0);
-            // var index = $('#tabs-radarRight
+            // var index = $('#tabs-mainPanel
             // a[href="li_modify"]').parent().index();
-            $("#tabs-radarRight").tabs("option", "active", 3);
+            $("#tabs-mainPanel").tabs("option", "active", 3);
             modifyData.onCreateNodeButton();
         } else if (action == "switchNodesVisibilityFromLabel") {
             var action2 = "";
@@ -1161,8 +1171,8 @@ var toutlesensController = (function () {
                 self.setGraphMessage("A node must be selected for this graph type ", "stop");
                 return;
             }
-            $("#tabs-radarRight").tabs("enable", 2);
-            $("#tabs-radarRight").tabs("option", "active", 2);
+            $("#tabs-mainPanel").tabs("enable", 2);
+            $("#tabs-mainPanel").tabs("option", "active", 2);
             if (infoGenericDisplay && infoGenericDisplay.selectedNodeData && !infoGenericDisplay.isAddingRelation) {
                 //  var node = infoGenericDisplay.ids[infoGenericDisplay.selectedNodeData.jtreeId];
                 infoGenericDisplay.showNodeData(null, currentObject.id);
@@ -1172,15 +1182,15 @@ var toutlesensController = (function () {
         }
         else if (currentDisplayType == "CARDS") {
 
-            $("#tabs-radarRight").tabs("option", "active", 0);
+            $("#tabs-mainPanel").tabs("option", "active", 0);
             var label = $("#nodesLabelsSelect").val();
             var id = currentObject.id;
 
             if (label || id)
 
-                var legendWidth = $("#graphLegendDiv").width();
-            $("#graphLegendDiv").width(1);
-            $("#graphDiv").width($("#graphDiv").width() + legendWidth);
+         /*       var rightPanelWidth = $("#graphLegendDiv").width();
+            $("#graphLegendDiv").width(1);*/
+            $("#graphDiv").width($("#graphDiv").width() + rightPanelWidth);
             $("#graphDiv").css("overflow", "auto")
             $("#graphDiv").html("");
             $("#graphDiv").html("<div id=backgroundDiv></div>");
@@ -1303,7 +1313,7 @@ var toutlesensController = (function () {
 
     self.onLinkClick = function (id) {
         self.generateGraph(id, true, function () {
-            $("#tabs-radarRight").tabs("option", "active", 0);
+            $("#tabs-mainPanel").tabs("option", "active", 0);
         })
         /* toutlesensData.showInfos2(id, function (d) {
          currentObject = d[0].n.properties;
@@ -1312,7 +1322,7 @@ var toutlesensController = (function () {
          if (currentObject.path)
          self.showImage(Gparams.imagesRootPath + decodePath(currentObject.path));
          self.dispatchAction('nodeInfos');
-         // $("#tabs-radarRight").tabs("option", "active", 2);
+         // $("#tabs-mainPanel").tabs("option", "active", 2);
          toutlesensData.getNodeAllRelations(id, null, false, function (json, labels) {
 
          textOutputs.listTreeResultToHtml(toutlesensData.cachedResultTree, Gparams.htmlOutputWithAttrs)
@@ -1328,8 +1338,8 @@ var toutlesensController = (function () {
         // $("#nodeDetailsDiv").prop("src", url);
         var w = $("#nodeDetailsDiv").width();
         $("#nodeDetailsDiv").html('<img id="largeImage" src="' + url + '" border="0" height="real_height" width="real_width" onload="resizeImg(this, null, ' + w + ');">')
-        $("#tabs-radarRight").tabs("enable", 2);
-        $("#tabs-radarRight").tabs("option", "active", 2);
+        $("#tabs-mainPanel").tabs("enable", 2);
+        $("#tabs-mainPanel").tabs("option", "active", 2);
     }
     self.restorePopupMenuNodeInfo = function () {
         $("#popupMenuNodeInfo").html(popupMenuNodeInfoCache);
@@ -1411,26 +1421,23 @@ var toutlesensController = (function () {
         $("#nextMenuButton").css("visibility", "hidden")
         $("#previousMenuButton").css("visibility", "hidden")
 
-        $("#tabs-radarRight").tabs("option", "disabled", [2]);
+        $("#tabs-mainPanel").tabs("option", "disabled", [2]);
 
 
         if (Gparams.showRelationNames) {
             $("#showRelationTypesCbx").prop("checked", "checked");
         }
-        //   $("#tabs-radarRight").tabs("option", "disabled", [2]);
-        $("#tabs-radarLeft").tabs("option", "disabled", [2]);
+
 
         if (!queryParams.rdfMenu) {
-            $("#tabs-radarLeft").tabs("option", "disabled", [2, 3]);
+            $("#tabs-controlPanel").tabs("option", "disabled", [4]);
 
         }
         if (queryParams.write) {
             Gparams.readOnly = false
         }
-        //  $("#advancedQueriesDiv").tabs("option", "disabled", [2, 3, 4]);
 
-        if (Gparams.showBItab)
-            $("#tabs-radarLeft").tabs("enable", 2);
+
 
         if (Gparams.readOnly == false) {
             $("#infosHeaderDiv").css("visibility", "visible");
@@ -1466,7 +1473,7 @@ var toutlesensController = (function () {
                     // str += "enter criteria"
                     str += "<br><button onclick=' $(\"#dialog\").dialog(\"close\")')>close</button>"
                     $("#dialog").html(str);
-                    $("#dialog").dialog("open");//.position({my: 'center', at: 'center', of: '#tabs-radarLeft'});
+                    $("#dialog").dialog("open");//.position({my: 'center', at: 'center', of: '#tabs-controlPanel'});
                     callback(false);
                 }
                 callback(true);
@@ -1505,13 +1512,6 @@ var toutlesensController = (function () {
         $("#relInfoDiv").html("");
 
 
-    }
-    self.setSplitterPosition = function (offset) {
-        splitter.position(offset);
-        var w = totalWidth - (offset + Gparams.legendWidth);
-        $("#graphLegendDiv").css("left", w)
-        $("#graphDiv").width(w)
-        $("#graphDiv").css("left", 0)
     }
 
     self.onErrorInfo = function (err) {

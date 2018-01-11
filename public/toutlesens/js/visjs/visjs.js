@@ -10350,7 +10350,7 @@
             /**
              * Get legend width
              */
-            Graph3d.prototype._getLegendWidth = function () {
+            Graph3d.prototype._getrightPanelWidth = function () {
                 var width;
 
                 if (this.style === Graph3d.STYLE.DOTSIZE) {
@@ -10389,7 +10389,7 @@
 
                 var height = Math.max(this.frame.clientHeight * 0.25, 100);
                 var top = this.margin;
-                var width = this._getLegendWidth(); // px - overwritten by size legend
+                var width = this._getrightPanelWidth(); // px - overwritten by size legend
                 var right = this.frame.clientWidth - this.margin;
                 var left = right - width;
                 var bottom = top + height;

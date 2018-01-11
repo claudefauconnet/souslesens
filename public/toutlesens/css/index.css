@@ -65,7 +65,7 @@ input {
     visibility: hidden;
 }
 
-#tabs-radarLeft {
+#tabs-controlPanel {
     font-size: 12px;
     font-weight: bold;
     width: 100%;
@@ -73,7 +73,7 @@ input {
     background-color: #eee;
 }
 
-#tabs-radarRight {
+#tabs-mainPanel {
     overflow: hidden;
 }
 
@@ -201,9 +201,7 @@ input {
 #graphLegendDiv {
     top: 50px;
     left: 5px;
-    width: 200px;
     padding: 3px;
-    position: absolute;
     overflow-y: auto;
 }
 

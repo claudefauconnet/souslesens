@@ -54,7 +54,7 @@ var d3legend = (function () {
             if (w < 5)
                 return;
 
-            visLeg = d3.select("#graphLegendDiv").append("svg:svg").attr("width", w).attr(
+            visLeg = d3.select("#graphLegendDiv").append("svg:svg").attr("width", legendDiv.width()).attr(
                 "height", h).attr("class", "legendSVG");
 
 
@@ -232,7 +232,7 @@ var d3legend = (function () {
                 return "translate(" + 0 + "," + (yLeg) + ")"
             })
 // bounding retangle
-        var bBox = {x: 2, y: 10, height: totalHeight - 50, width: Gparams.legendWidth - 4};
+        var bBox = {x: 2, y: 10, height: totalHeight - 50, width: legendWidh - 4};
         decorationLegend.append("rect")
             .attr("x", bBox.x).attr("width", bBox.width).attr("height", bBox.height).attr("y", (bBox.y ))
             .style("stroke", null)

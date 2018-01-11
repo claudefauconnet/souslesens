@@ -28,7 +28,7 @@ var customizeUI = (function () {
     self = {}
     self.hideFilters=false;
     var idsList;
-    var legendDivWidth=Gparams.legendWidth;
+ //   var legendDivWidth=Gparams.rightPanelWidth;
 
     self.customInfo = function (obj) {
 
@@ -71,22 +71,22 @@ var customizeUI = (function () {
         var initialQuery = queryParams.initialQuery;
         if (initialQuery && initialQuery.length > 0) {
 
-            toutlesensController.setSplitterPosition(Gparams.splitterMin);
+         //   toutlesensController.setSplitterPosition(Gparams.splitterMin);
             Gparams.startWithBulkGraphView = false;
             currentDisplayType="SIMPLE_FORCE_GRAPH"
 
              idsList = initialQuery.split(",");
-          Gparams.legendWidth=50
+        //  Gparams.rightPanelWidth=50
 
-         $($("#tabs-radarRight").find("li")[2]).hide()
+   /*   $($("#tabs-mainPanel").find("li")[2]).hide()
 
             $("#dataMenuButton").css("visibility","hidden");
-            $("#graphLegendDiv").width( Gparams.legendWidth);
-         $("#graphLegendDiv").css("left", totalWidth- Gparams.legendWidth);
-            $("#tabs-radarRight").tabs("option", "disabled", [2]);
+            $("#graphLegendDiv").width( Gparams.rightPanelWidth);
+         $("#graphLegendDiv").css("left", totalWidth- Gparams.rightPanelWidth);
+            $("#tabs-mainPanel").tabs("option", "disabled", [2]);
             $("#graphLegendDiv").html( 'relations<br> depth<br><select onchange=" customizeUI.onDepthSelectChange();" align="right" id="depth" ><option>1</option><option>2</option><option>3</option></select>')
-            $("#graphDiv").width((totalWidth- Gparams.legendWidth ));
-            $("#center").width((totalWidth));
+            $("#graphDiv").width((totalWidth- Gparams.rightPanelWidth ));
+            $("#center").width((totalWidth)); */
             toutlesensData.setSearchByIdsListStatement(idsList, function (err, result) {
                     toutlesensController.generateGraph(null,true,function(){
 
@@ -101,7 +101,7 @@ var customizeUI = (function () {
 
         }
         else{
-            mainMenu.showDataMenu();
+         //   mainMenu.showDataMenu();
             if(Gparams.startWithBulkGraphView )
              advancedSearch.showBulkGraph(subGraph);
         }
@@ -169,17 +169,17 @@ var customizeUI = (function () {
 
 
         splitter.position("0%");
-        $("#tabs-radarRight").width(totalWidth - 20);
+        $("#tabs-mainPanel").width(totalWidth - 20);
         customizeUI.hideFilters=true;
         $("#filtersDiv").css("visibility", "hidden");
 
 
-        legendDivWidth=30;
+      /*  legendDivWidth=30;
         $("#graphDiv").width((totalWidth - 10)-legendDivWidth)
         $("#dataDiv").width((totalWidth - 10)-legendDivWidth)
         $("#textDivContainer").width((totalWidth - 10)-legendDivWidth)
         $("#graphLegendDiv").css("left", (totalWidth - 10) -legendDivWidth)
-        $("#graphLegendDiv").width(legendDivWidth);
+        $("#graphLegendDiv").width(legendDivWidth);*/
     }
 
 

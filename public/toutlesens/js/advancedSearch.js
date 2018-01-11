@@ -234,8 +234,8 @@ var advancedSearch = (function () {
     }
   /*  self.executeCypherAndDisplayGraph = function (query, _currentActionObj) {
         toutlesensDialogsController.hideAdvancedSearch();
-      //  $("#tabs-radarLeft").tabs("enable");
-        $("#tabs-radarRight").tabs("enable");
+      //  $("#tabs-controlPanel").tabs("enable");
+        $("#tabs-mainPanel").tabs("enable");
         currentActionObj = _currentActionObj;
 
 
@@ -284,7 +284,7 @@ var advancedSearch = (function () {
             $("#graphForceDistance").val(20);
         }
 
-       // $("#tabs-radarLeft").tabs("enable");
+       // $("#tabs-controlPanel").tabs("enable");
         toutlesensData.executeNeoQuery(QUERY_TYPE_MATCH, query, function (data) {
 
             data.currentActionObj = currentActionObj;

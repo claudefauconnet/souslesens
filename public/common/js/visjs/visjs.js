@@ -10350,7 +10350,7 @@
             /**
              * Get legend width
              */
-            Graph3d.prototype._getLegendWidth = function () {
+            Graph3d.prototype._getLegendWidth= function () {
                 var width;
 
                 if (this.style === Graph3d.STYLE.DOTSIZE) {

@@ -65,7 +65,7 @@ var toutlesensDialogsController = (function(){
     $("#dialog").dialog("option", "title", "valeur d'une propriete");
 self.getAllpropertiesDialogContent("setSearchNodeReturnFilterVal()");
     $("#dialog").html(str);
-    $("#dialog").dialog("open").position({my: 'center', at: 'center', of: '#tabs-radarLeft'});
+    $("#dialog").dialog("open").position({my: 'center', at: 'center', of: '#tabs-controlPanel'});
 }
 
 
@@ -75,7 +75,7 @@ self.getAllpropertiesDialogContent("setSearchNodeReturnFilterVal()");
         $("#advancedSearchIframe").prop("src", "./advancedSearchDialog.html?subGraph=" + subGraph);
     }
 
-    $("#dialogAdvancedSearch").dialog("open").position({my: 'center', at: 'center', of: '#tabs-radarLeft'});
+    $("#dialogAdvancedSearch").dialog("open").position({my: 'center', at: 'center', of: '#tabs-controlPanel'});
 }
 
    self.showGanttDialog=function() {
@@ -84,7 +84,7 @@ self.getAllpropertiesDialogContent("setSearchNodeReturnFilterVal()");
         $("#dialogGanttIframe").prop("src", "./ganttDialog.html?subGraph=" + subGraph);
     }
 
-    $("#dialogGantt").dialog("open").position({my: 'center', at: 'center', of: '#tabs-radarLeft'});
+    $("#dialogGantt").dialog("open").position({my: 'center', at: 'center', of: '#tabs-controlPanel'});
 }
 
 
@@ -97,7 +97,7 @@ self.getAllpropertiesDialogContent("setSearchNodeReturnFilterVal()");
     else {
         $("#advancedDisplayIframe").prop('contentWindow').advancedDisplay.initDecorationDiv();
     }
-    $("#dialogAdvancedDisplay").dialog("open").position({my: 'center', at: 'center', of: '#tabs-radarLeft'});
+    $("#dialogAdvancedDisplay").dialog("open").position({my: 'center', at: 'center', of: '#tabs-controlPanel'});
 
 
 }
@@ -125,7 +125,7 @@ self.getAllpropertiesDialogContent("setSearchNodeReturnFilterVal()");
         "<tr><td colspan=2'><span id='dialogMessage'></span></td></tr>"
     str += "</table><button onclick= saveDisplaySet()>OK</button>";
     $("#dialog").html(str);
-    $("#dialog").dialog("open")//;.parent().position({ my: 'center', at: 'center', of: '#tabs-radarRight' });
+    $("#dialog").dialog("open")//;.parent().position({ my: 'center', at: 'center', of: '#tabs-mainPanel' });
 }
 
 

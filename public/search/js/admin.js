@@ -18,6 +18,8 @@ var admin = (function () {
         var rootDir = $("#rootDir").val();
         //  var doClassifier=$("#doClassifier").val();
         var indexName = $("#indexName").val();
+        if(indexName.match(/[A-Z]/))
+            return alert ("index name cannot contain uppercase characters");
 
         var url = "/elastic";
         var payload;

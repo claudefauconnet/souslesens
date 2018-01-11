@@ -56,7 +56,7 @@ var visjsGraph = (function () {
                     }
                     nodeObj.initialColor=nodeObj.color;
                     if (nodeObj.labelNeo==currentLabel) {
-                        nodeObj.size=20;
+                        nodeObj.size=15;
 
                     }
                     if (nodeNeo.icon && nodeNeo.icon.length > 0) {
@@ -356,7 +356,8 @@ var visjsGraph = (function () {
         for (var key in self.edges._data) {
             if (show) {
                 self.edges._data[key].label = self.edges._data[key].type;
-                self.edges._data[key].font = {"font-style": 'italic', "font-size": "12px"}
+              //  self.edges._data[key].font = {background: "red","font-style": 'italic', "font-size": "8px",strokeWidth: 0}
+                self.edges._data[key].font ={size:8, color:'grey', face:'arial'}
             }
             else
                 delete self.edges._data[key].label;

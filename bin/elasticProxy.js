@@ -208,7 +208,7 @@ var elasticProxy = {
                         "like": [
                             {
                                 "_index": index,
-                                "_type": "type_document",
+                                "_type": "general_document",
                                 "_id": docId
                             }],
                         "min_word_length": 5
@@ -870,7 +870,7 @@ var elasticProxy = {
                 for (var j = 0; j < data.length; j++) {
                     if (data[j].synonyms.indexOf(word) > -1) {
                         //
-                        if (data[i].pos == "n" && allwords.indexOf(word) < 0) {
+                        if (data[j].pos == "n" && allwords.indexOf(word) < 0) {
                             console.log(word + " pos   " + data[i].pos)
                             //  if( allwords.indexOf(word) < 0) {
                             allwords.push(word)
@@ -938,7 +938,7 @@ var elasticProxy = {
     ,
     indexDocumentDir: function (dir, index, type, recursive, callback) {
 
-        var acceptedExtensions = ["doc", "docx", "xls", "xslx", "pdf", "ppt", "pptx", "html", "htm", "txt", "csv"];
+        var acceptedExtensions = ["doc", "docx", "xls", "xslx", "pdf","odt", "ppt", "pptx", "html", "htm", "txt", "csv"];
 
         var indexedFiles = [];
 
@@ -1265,7 +1265,7 @@ var elasticProxy = {
 
                     json: {
                         "mappings": {
-                            "type_document": {
+                            "general_document": {
 
                                 "properties": {
                                     "content": {
@@ -1293,7 +1293,7 @@ var elasticProxy = {
                     var options = {
                         method: 'PUT',
                         description: "init fielddata",
-                        url: baseUrl + index + "/_mapping/type_document",
+                        url: baseUrl + index + "/_mapping/general_document",
                         json: {
                             "properties": {
                                 "content": {

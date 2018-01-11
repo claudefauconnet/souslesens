@@ -34,7 +34,7 @@ var selection = (function () {
 
 
     self.addToSelection = function (node) {
-        $("#tabs-radarLeft").tabs("option", "active", 3)
+        $("#tabs-controlPanel").tabs("option", "active", 3)
         self.addNodeToSelection(node);
     }
     self.addNodeToSelection = function (node) {
@@ -154,7 +154,7 @@ var selection = (function () {
 
             }
         }
-        $("#tabs-radarLeft").tabs("option", "active", 3);
+        $("#tabs-controlPanel").tabs("option", "active", 3);
     }
 
 

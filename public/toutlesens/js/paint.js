@@ -216,7 +216,7 @@ var paint = (function () {
         jQuery("#dialog").dialog('option', 'position', {
             my: "left bottom",
             at: "left bottom",
-            of: "#tabs-radarRight"
+            of: "#tabs-mainPanel"
         });
 
 

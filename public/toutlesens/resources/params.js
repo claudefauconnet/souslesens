@@ -72,10 +72,8 @@ var Gparams = {
 
 
     //divs size*************************
-    splitterMin:0,
-    splitterNormal:300,
-    legendWidth: 250,
-    leftPanelRatio:3,
+        rightPanelTotalWidthRatio: .3,
+
 
 
     //durations************************************

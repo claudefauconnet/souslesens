@@ -9,7 +9,7 @@ var mainMenu = (function () {
 
     self.showDataMenu = function () {
 
-        toutlesensController.setSplitterPosition(Gparams.splitterMin);
+     //   toutlesensController.setSplitterPosition(Gparams.splitterMin);
         $("#dialog").load("htmlSnippets/mainMenu.html", function () {
             //  self.initLabelPropertySelection(label);
             $("#dialog").dialog("option", "title", "Toutlesens main menu");
@@ -45,7 +45,7 @@ var mainMenu = (function () {
             var label = $("#mainMenuLabelsSelect").val();
 
             if (label.length > 0) {
-
+                currentObject.id=null;
                 currentLabel = label;
                 currentDisplayType = "SIMPLE_FORCE_GRAPH";
                 toutlesensController.addToHistory=true;
@@ -59,18 +59,15 @@ var mainMenu = (function () {
 
         else if (option == "node") {
             currentLabel = null;
-            toutlesensController.setSplitterPosition(Gparams.splitterNormal);
+           // toutlesensController.setSplitterPosition(Gparams.splitterNormal);
 
-            /* $("#dialog").load("htmlSnippets/nodeDialog.html", function () {
-             //  self.initLabelPropertySelection(label);
-             $("#dialog").dialog("option", "title","Select  a specific node");
-             $("#dialog").dialog("open");
-             self.initLabels(nodeDialogLabelsSelect);
-             })*/
+            $("#graphLegendDiv").load("htmlSnippets/nodePanel.html", function () {
+
+             })
         }
         else if (option == "traversal") {
 
-            toutlesensController.setSplitterPosition(Gparams.splitterMin);
+           /// toutlesensController.setSplitterPosition(Gparams.splitterMin);
             //  self.traversal();
             $("#dialog").load("htmlSnippets/traversalDialog.html", function () {
                 $("#dialog").dialog({
@@ -84,7 +81,7 @@ var mainMenu = (function () {
 
         }
         else if (option == "customQueries") {
-            toutlesensController.setSplitterPosition(Gparams.splitterMin);
+           // toutlesensController.setSplitterPosition(Gparams.splitterMin);
             $("#dialog").load("htmlSnippets/currentQueries.html", function () {
                 //  self.initLabelPropertySelection(label);
                 $("#dialog").dialog("option", "title", "Current queries");

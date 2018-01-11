@@ -415,8 +415,8 @@ var infoGenericDisplay = (function () {
                 options.push(option)
             }
             common.fillSelectOptions(newRelationNodeSelect, options, "name", "neoId");
-            if ($("#tabs-radarRight").length)
-                $("#tabs-radarRight").tabs({active: 2});
+            if ($("#tabs-mainPanel").length)
+                $("#tabs-mainPanel").tabs({active: 2});
             $("#relInfosDivWrapper").css("visibility", "hidden");
             $("#info").css("visibility", "hidden");
             // self.clearNodePropertiesDiv()
@@ -682,7 +682,7 @@ var infoGenericDisplay = (function () {
 
         if(true) {
              node = ids[parentJstreeId];
-            $("#tabs-radarRight").tabs("enable", 2);
+            $("#tabs-mainPanel").tabs("enable", 2);
             self.showNodeData(node);
             toutlesensController.addToHistory=true;
             toutlesensController.generateGraph(parentId, toutlesensController.drawGraph);
