@@ -1452,7 +1452,16 @@ var toutlesensController = (function () {
             cards.userRole = "read";
         }
 
+        $("#pathesDiv").load("htmlSnippets/traversalDialog.html", function () {
+            self.initLabels(dialogNodesLabelsSelect);
+        });
+        $("#specialQueriesDiv").load("htmlSnippets/currentQueries.html", function () {
+            self.initLabels(currentQueriesDialogSourceLabelSelect);
+            self.initLabels(currentQueriesDialogTargetLabelSelect);
+        });
     }
+
+
 
 
     self.checkMaxNumberOfNodeRelations = function (nodeId, maxRels, callback) {
@@ -1519,6 +1528,31 @@ var toutlesensController = (function () {
         if (errObj.code == "ECONNREFUSED")
             alert("No connexion to Neo4j database ");
         console.log(err.responseText)
+
+    }
+
+    self.initLabels = function (select) {
+        var labels = Schema.getAllLabelNames()
+        common.fillSelectOptionsWithStringArray(select, labels);
+    }
+
+
+    self.setResponsiveDimensions=function(rightPanelWidth) {
+        $("#tabs-mainPanel").width(totalWidth - rightPanelWidth).height(totalHeight - 50)
+        $("#tabs-controlPanel").width(rightPanelWidth - 50).height(totalHeight - 60).css("position", "absolute").css("left", totalWidth - rightPanelWidth + 30).css("top", 10);
+
+
+        $("#graphDiv").width(totalWidth - rightPanelWidth).height(totalHeight - 50)
+        $("#dataDiv").width(totalWidth - -rightPanelWidth).height(totalHeight - 50);
+        $("#textDivContainer").width(totalWidth - rightPanelWidth).height(totalHeight - 50);
+
+
+        $("#treeContainer").width(rightPanelWidth - 100).height(totalHeight - 50);
+        $("#graphLegendDiv").width(rightPanelWidth - 50).height(totalHeight - 50)
+        //  $("#radarLeft").width(rightPanelWidth).height(totalHeight - 50).css("left", $("#graphDiv").width());
+
+        $("#mainButtons").width(rightPanelWidth).height(50).css("position", "absolute").css("left", $("#graphDiv").width() - 120).css("top", 50).css("visibility", "hidden");
+
 
     }
 

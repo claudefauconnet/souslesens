@@ -70,23 +70,11 @@ var customizeUI = (function () {
         }
         var initialQuery = queryParams.initialQuery;
         if (initialQuery && initialQuery.length > 0) {
-
-         //   toutlesensController.setSplitterPosition(Gparams.splitterMin);
+            var idsList=initialQuery.split(",");
             Gparams.startWithBulkGraphView = false;
-            currentDisplayType="SIMPLE_FORCE_GRAPH"
+            currentDisplayType="SIMPLE_FORCE_GRAPH";
 
-             idsList = initialQuery.split(",");
-        //  Gparams.rightPanelWidth=50
-
-   /*   $($("#tabs-mainPanel").find("li")[2]).hide()
-
-            $("#dataMenuButton").css("visibility","hidden");
-            $("#graphLegendDiv").width( Gparams.rightPanelWidth);
-         $("#graphLegendDiv").css("left", totalWidth- Gparams.rightPanelWidth);
-            $("#tabs-mainPanel").tabs("option", "disabled", [2]);
-            $("#graphLegendDiv").html( 'relations<br> depth<br><select onchange=" customizeUI.onDepthSelectChange();" align="right" id="depth" ><option>1</option><option>2</option><option>3</option></select>')
-            $("#graphDiv").width((totalWidth- Gparams.rightPanelWidth ));
-            $("#center").width((totalWidth)); */
+            toutlesensController.setResponsiveDimensions(0);
             toutlesensData.setSearchByIdsListStatement(idsList, function (err, result) {
                     toutlesensController.generateGraph(null,true,function(){
 
@@ -101,7 +89,7 @@ var customizeUI = (function () {
 
         }
         else{
-         //   mainMenu.showDataMenu();
+            toutlesensController.setResponsiveDimensions(rightPanelWidth);
             if(Gparams.startWithBulkGraphView )
              advancedSearch.showBulkGraph(subGraph);
         }

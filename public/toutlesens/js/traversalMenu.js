@@ -86,7 +86,7 @@ var traversalMenu = (function () {
              visjsGraph.draw("graphDiv", data);
              filters.initGraphFilters (data);
              setTimeout(function(){
-                 visjsGraph.paintNodes([self.context.source.id, self.context.target.id],"blue",null,15)
+                 visjsGraph.paintNodes([self.context.source.id, self.context.target.id],"blue",null,10)
 
              },2000)
              //  toutlesensController.displayGraph(data, currentDisplayType, null);
