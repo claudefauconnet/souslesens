@@ -48,7 +48,8 @@ var advancedSearch = (function () {
             });
 
         }else {
-            toutlesensData.searchNodes(subGraph, searchObj.label, searchObj.value, "matchStr", Gparams.jsTreeMaxChildNodes, 0, infoGenericDisplay.loadSearchResultIntree);
+            var value= searchObj.property +":~ "+searchObj.value;
+            toutlesensData.searchNodes(subGraph, searchObj.label, value, "matchStr", Gparams.jsTreeMaxChildNodes, 0, infoGenericDisplay.loadSearchResultIntree);
         }
         $("#dialog").dialog("close");
 
