@@ -654,7 +654,7 @@ var toutlesensController = (function () {
             return;
         } else {
             now = new Date();
-            if (now - startSearchNodesTime < 500)
+            if (now - startSearchNodesTime< Gparams.searchInputKeyDelay)
                 return;
         }
         var word = "";
@@ -662,7 +662,7 @@ var toutlesensController = (function () {
         currentLabel=null;
         var label = $("#nodesLabelsSelect").val();
         word = $("#word").val();
-        if (word && word.length < 3 && label && label.length == "") {
+        if (word && word.length <  Gparams.searchInputMinLength && label && label.length == "") {
             return;
         }
         toutlesensData.searchNodes(subGraph, label, word, resultType, limit, from, callback);

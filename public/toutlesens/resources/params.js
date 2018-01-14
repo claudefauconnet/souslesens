@@ -42,6 +42,9 @@ var Gparams = {
     useVisjsNetworkgraph:true,
     graphAllowPaint:true,
 
+    searchInputKeyDelay:500,
+    searchInputMinLength:2,
+
 
 
 

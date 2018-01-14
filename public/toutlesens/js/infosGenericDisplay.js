@@ -687,6 +687,7 @@ var infoGenericDisplay = (function () {
 
         if(true) {
              node = ids[parentJstreeId];
+             currentLabel=null;
             $("#tabs-mainPanel").tabs("enable", 2);
             self.showNodeData(node);
             toutlesensController.addToHistory=true;
