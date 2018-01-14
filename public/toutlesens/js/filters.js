@@ -354,7 +354,7 @@ var filters = (function () {
             self.currentSelectdFilters = [];
         }
         else{
-            $("$paintIcon:"+type).css("visibility","visible")
+            $("paintIcon:"+type).css("visibility","visible")
         }
         self.synchronizeRelsAndlabels(filterMode, type);
 
