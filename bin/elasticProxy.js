@@ -303,7 +303,7 @@ var elasticProxy = {
     findDocuments: function (index, type, word, from, size, slop, fields, andWords, callback) {
         var match = {"content": word};
         if (!fields) {
-            fields = elasticProxy.getShemaFields(index);
+            fields = elasticProxy.getShemaFields(index,type);
 
         }
         if (size)
@@ -904,7 +904,7 @@ var elasticProxy = {
         function (index, type, id, payload, callback) {
             if (!id)
                 id = "_" + Math.round(Math.random() * 10000000);
-            var elasticFields = elasticProxy.getShemaFields(index);
+            var elasticFields = elasticProxy.getShemaFields(index,type);
             var content = "";
             for (var j = 0; j < elasticFields.length; j++) {
                 var key = elasticFields[j];
@@ -1082,7 +1082,7 @@ var elasticProxy = {
 
         var currentIndex = 0;
         var resultSize = 1;
-        var elasticFields = elasticProxy.getShemaFields(elasticIndex);
+        var elasticFields = elasticProxy.getShemaFields(elasticIndex,elasticType);
         var mongoFields = {};
         for (var i = 0; i < elasticFields.length; i++) {
             var field = elasticFields[i];
@@ -1606,13 +1606,31 @@ var elasticProxy = {
         console.log(message);
     }
     ,
-    getShemaFields: function (index) {
-        var fields = null;
+    getShemaFields: function (index,type) {
+
         schema = elasticProxy.getSchema();
-        if (schema && schema[index])
-            fields = schema[index].fields
-        if (!fields || fields.length == 0)
-            fields = ["title", "date", "type", "path"];
+        if (!schema || !schema[index] || !schema[index].mappings)
+            return null;
+
+        var fields = [];
+        var types=[];
+        if( type){// only fields of this type
+            types.push(schema[index].mappings[type]);
+        }
+        else {// all fields of all types
+            for (var key in schema[index].mappings) {
+                types.push(schema[index].mappings[key]);
+            }
+        }
+            for( var i=0;i<types.length;i++){
+
+                    for (var key in types[i].properties){
+                    fields.push(key)
+
+            }
+
+        }
+
         return fields;
 
     }

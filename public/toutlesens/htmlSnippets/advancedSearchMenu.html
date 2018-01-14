@@ -1,36 +1,36 @@
 
 
 
+<select id="advancedSearchDialog_operatorSelect">
+    <option>=</option>
+    <option>!=</option>
+    <option>&lt;</option>
+    <option>&gt;</option>
+    <option selected="selected">contains</option>
+
+</select>
+
+<input id="propertiesSelectionDialog_valueInput">
 
 
 <div id="advancedSearchDialog_Div" style="visibility: visible;">
-    Node label
-    <select id="advancedSearchDialog__LabelSelect">
+    label label
+    <select id="advancedSearchDialog_LabelSelect" onchange="filters.initLabelPropertySelection($(this).val(),advancedSearchDialog__propsSelect)">
 
     </select>
-
-    Relation type
-    <select id="advancedSearchDialog__RelSelect">
-
-    </select>
-Property
-
-
+ <!--  <br> Relation type
+    <select id="advancedSearchDialog__RelSelect" onchange="filters.initLabelPropertySelection($(this).val(),advancedSearchDialog__propsSelect)">
+      </select>-->
+    <br>
+    Property
 <select id="advancedSearchDialog__propsSelect">
 
 </select>
 <br>
 
 
-<select id="advancedSearchDialog_operatorSelect">
-    <option>=</option>
-    <option>!=</option>
-    <option>&lt;</option>
-    <option>&gt;</option>
-    <option>contains</option>
 
-</select>
-<input id="propertiesSelectionDialog_valueInput">
+    <button onclick="advancedSearch.searchNodes()">Search</button>
 <input type="hidden" id="propertiesSelectionDialog_filterModeInput">
 <input type="hidden" id="propertiesSelectionDialog_typeInput">
 
@@ -42,7 +42,7 @@ Property
 </div>
 
 <script>
-toutlesensController.initLabels(advancedSearchDialog__LabelSelect);
+toutlesensController.initLabels(advancedSearchDialog_LabelSelect);
 
 </script>
 

@@ -204,11 +204,13 @@ var toutlesensController = (function () {
         var output = currentDisplayType;
 
         if (applyFilters) {
-            filters.setQueryFilters()
+            filters.setQueryFilters();
+           // $(".paintIcon").css("visibility","visible")
         }
         else {
             self.setGraphMessage("Too many relations to display the graph<br>filter by  relation or label types")
             output = "filtersDescription";
+            $(".paintIcon").css("visibility","hidden")
         }
 
 
@@ -238,6 +240,7 @@ var toutlesensController = (function () {
 
                 if (nRels <= Gparams.graphMaxDataLengthToDisplayGraphDirectly) {
                     //   filters.applyAllRelationsFilter();
+                    $(".paintIcon").css("visibility","visible");
                     self.generateGraph(currentObject.id, true);
 
                     return;
@@ -331,7 +334,7 @@ var toutlesensController = (function () {
         var relationsCBXs = $("[name=relationCBX]");
         for (var i = 0; i < relationsCBXs.length; i++) {
             if (relationsCBXs[i].checked) {
-                relations.push(relationsCBXs[i].value);
+                relations.push({name:relationsCBXs[i].value,optional:true});
             }
         }
         if (relations.length == 0) {
@@ -355,7 +358,7 @@ var toutlesensController = (function () {
         Gparams.showRelationNames = $("#showRelationTypesCbx").prop("checked");
 
         var payload = {
-            rdf: 1,
+            queryOntologyDataToNeoResult: 1,
             store: store,
             lang: lang,
             word: word,
@@ -372,18 +375,18 @@ var toutlesensController = (function () {
 
 
                 totalNodesToDraw = data.length;
-                toutlesensData.prepareRawData(data, false, currentDisplayType, function (err, data, labels, relations) {
+            /*    toutlesensData.prepareRawData(data, false, currentDisplayType, function (err, data, labels, relations) {
                     if (callback)
                         return callback(null, data);
                     nodeColors["BNF"] = "green";
                     linkColors["narrower"] = "blue";
                     linkColors["broader"] = "orange";
-                    linkColors["related"] = "red";
+                    linkColors["related"] = "red";*/
 
                     //  if (!applyFilters)
-                    filters.initGraphFilters(labels, relations);
-                    toutlesensController.displayGraph(data, currentDisplayType, self.currentLabels);
-                })
+                  //  filters.initGraphFilters(labels, relations);
+                    toutlesensController.displayGraph(data, "VISJS-NETWORK", self.currentLabels);
+               // })
             },
             error: function (xhr, err, msg) {
                 toutlesensController.onErrorInfo(xhr)
@@ -1538,20 +1541,22 @@ var toutlesensController = (function () {
 
 
     self.setResponsiveDimensions=function(rightPanelWidth) {
-        $("#tabs-mainPanel").width(totalWidth - rightPanelWidth).height(totalHeight - 50)
-        $("#tabs-controlPanel").width(rightPanelWidth - 50).height(totalHeight - 60).css("position", "absolute").css("left", totalWidth - rightPanelWidth + 30).css("top", 10);
+        $("#tabs-mainPanel").width(totalWidth - rightPanelWidth).height(totalHeight - 60)
+        $("#tabs-controlPanel").width(rightPanelWidth - 50).height(totalHeight - 60).css("position", "absolute").css("left", totalWidth - rightPanelWidth -30).css("top", 10);
 
 
-        $("#graphDiv").width(totalWidth - rightPanelWidth).height(totalHeight - 50)
-        $("#dataDiv").width(totalWidth - -rightPanelWidth).height(totalHeight - 50);
-        $("#textDivContainer").width(totalWidth - rightPanelWidth).height(totalHeight - 50);
+        $("#graphDiv").width(totalWidth - rightPanelWidth).height(totalHeight - 100)
+        $("#dataDiv").width(totalWidth - -rightPanelWidth).height(totalHeight - 100);
+        $("#textDivContainer").width(totalWidth - rightPanelWidth).height(totalHeight - 100);
 
 
-        $("#treeContainer").width(rightPanelWidth - 100).height(totalHeight - 50);
-        $("#graphLegendDiv").width(rightPanelWidth - 50).height(totalHeight - 50)
+        $("#treeContainer").width(rightPanelWidth - 100).height(totalHeight - 300);
+        $("#graphLegendDiv").width(rightPanelWidth - 50).height(totalHeight - 100)
+        $("#searchDiv").width(rightPanelWidth - 50).height(totalHeight - 100)
+
         //  $("#radarLeft").width(rightPanelWidth).height(totalHeight - 50).css("left", $("#graphDiv").width());
 
-        $("#mainButtons").width(rightPanelWidth).height(50).css("position", "absolute").css("left", $("#graphDiv").width() - 120).css("top", 50).css("visibility", "hidden");
+        $("#mainButtons").width(rightPanelWidth).height(50).css("position", "absolute").css("left", $("#graphDiv").width() - 200).css("top", 50).css("visibility", "hidden");
 
 
     }

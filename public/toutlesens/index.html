@@ -108,11 +108,13 @@
     <script type="text/javascript" src="js//gant-chart-d3v2.js"></script>
     <script type="text/javascript" src="js//d3.gantt.js"></script>
 
-    <script src="../admin/js//graphD3.js"></script>-->
+    <script src="../admin/js//graphD3.js"></script>
+     <script src="js/advancedDisplay.js"></script>
+    -->
     <script src="js/textOutputs.js"></script>
 
-    <script src="js/advancedDisplay.js"></script>
-    <script src="js/advancedSearch.js"></script>
+
+    <script src="js/.js"></script>
     <script src="js/selection.js"></script>
     <script src="js/statistics.js"></script>
     <script src="js/graphTraversalQueries.js"></script>
@@ -125,7 +127,7 @@
     <script src="./js/neoToMongo.js"></script>
     <script src="../common/js/devisuProxy.js"></script>
 
-
+    <script src="js/advancedSearch.js"></script>
     <script src="../common/js/others/tableFlip.js"></script>
     <!--<script src="js//jit-yc.js"></script>
     <link rel="stylesheet" type="text/css"
@@ -391,8 +393,8 @@
                 customizeUI.customize,
                 toutlesensController.afterGraphInit,
                 statistics.initLabelsCurrentQueries,
-                advancedSearch.patternInitLabels,
-                advancedSearch.patternInitRelTypes,
+              //  advancedSearch.patternInitLabels,
+               // advancedSearch.patternInitRelTypes,
                 // advancedDisplay.initDecorationDiv,
                 functionalities.initFunctionalities
 
@@ -457,7 +459,7 @@
                 //  dbName = $("#dbName").val();
 
                 if (value != "")
-                    infoGenericDisplay.loadTree(value);
+                    infoGenericDisplay.loadTreeFromNeoMatchQuery(value);
             }
 
             else if (actionType == "displayGraphForLabel") {
@@ -501,18 +503,7 @@
                 <div id="popupMenuNodeInfo">//onblur="hidePopupMenu()" >
                 </div>
             </div>
-            <div id="verticalVisButtonsDiv" class="popupmenuDiv">
-                <table id="verticalVisButtonsTable" class="vertVisButtonTable">
-                    <tbody>
-                    </tbody>
-                </table>
-                <br>
-                Levels<br><select onchange="customizeUI.setDepth(this)">
-                <option>1</option>
-                <option>2</option>
-                <option>3</option>
-            </select>
-            </div>
+
 
 
         </div>
@@ -590,6 +581,8 @@
            src="images/previous.png"/>
     <input type="image" title="Next display" height="30px" onclick="toutlesensController.replayGraph('next')"
            id="nextMenuButton" src="images/next.png"/>
+    <img id="waitImg" src="images/waitAnimated.gif" width="30px"
+         style="visibility: hidden;">
 </div>
 
 
@@ -634,7 +627,7 @@
                                onkeyup="toutlesensController.searchNodesUI('matchStr',null,null, infoGenericDisplay.loadSearchResultIntree);"
                                size="10"> <input type="image"
                                                  alt="<span id='lang_XX'>search</span>" height="20px"
-                                                 onclick="toutlesensDialogsController.showSimpleSearchDialog()"
+                                                 onclick="advancedSearch.showDialog()"
                                                  id="searchButton"
                                                  src="images/search.png"/>
 
@@ -674,8 +667,7 @@
         <div id="filtersDiv"></div>
 
         <div id="innerLegendDiv"></div>
-        <div id="graphMessage" class="message"><br><img id="waitImg" src="images/waitAnimated.gif" width="50px"
-                                                        style="visibility: hidden;"></div>
+        <div id="graphMessage" class="message"><br></div>
         <div id="relInfoDiv"></div>
     </div>
 
@@ -726,6 +718,7 @@
                 <td>
                     <select id="rdfStoreSelect">
                         <option>BNF</option>
+                        <option>DBPEDIA</option>
                     </select>
                 </td>
             </tr>

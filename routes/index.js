@@ -203,7 +203,7 @@ router.post(serverParams.routesRootUrl + '/http', function (req, response) {
 });
 
 router.post(serverParams.routesRootUrl + '/rdf', function (req, response) {
-    if (req.body && req.body.store) {
+    if (req.body && req.body.queryOntologyDataToNeoResult) {
         rdfProxy.queryOntologyDataToNeoResult(req.body.store, req.body.word, req.body.relations, req.body.lang, req.body.contains, req.body.limit, function (error, result) {
             processResponse(response, error, result)
         });

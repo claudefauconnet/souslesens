@@ -90,7 +90,7 @@ var filters = (function () {
             str += " relation <b>" + relName + "</b></td>";
             str += "<td> <img  src='./images/filter.png'  width='15px' title='set filter' onclick='filters.showFilterDialog(null,\"" + relName + "\")'></td>"
             if (Gparams.graphAllowPaint)
-                str += "<td> <img  src='./images/paint.jpg'  class='paintIcontTop' width='15px' title='set filter' onclick='paint.showPaintDialog(null,\"" + relName + "\")'></td>"
+                str += "<td> <img  src='./images/paint.jpg' class='paintIcon' id='paintIcon:"+ relName + "' width='15px' title='set filter' onclick='paint.showPaintDialog(null,\"" + relName + "\")'></td>"
 
             str += "</tr>";
         }
@@ -108,7 +108,7 @@ var filters = (function () {
                 str += "label <b>" + label + "</b></td>";
                 str += "<td><img  src='./images/filter.png'  width='15px'  title='set filter' onclick='filters.showFilterDialog(\"" + label + "\",\"" + relName + "\")'></td>"
                 if (Gparams.graphAllowPaint)
-                    str += "<td><img  src='./images/paint.jpg'  class='paintIcon_' width='15px'  title='set filter' onclick='paint.showPaintDialog(\"" + label + "\",\"" + relName + "\")'></td>"
+                    str += "<td><img  src='./images/paint.jpg'  class='paintIcon' id='paintIcon:"+ label + "' width='15px'  title='set filter' onclick='paint.showPaintDialog(\"" + label + "\",\"" + relName + "\")'></td>"
 
                 str += "</tr>";
 
@@ -268,7 +268,7 @@ var filters = (function () {
     self.initRelationPropertySelection = function (type, selectId) {
         self.postFilter = null;
         var relations = Schema.getRelationsByType(type);
-        var propertiesArray = ["ALL"];
+        var propertiesArray = [""];
         for (var i = 0; i < relations.length; i++) {
             if (relations[i].properties) {
                 for (var j = 0; j < relations[i].properties.length; j++) {
@@ -291,10 +291,21 @@ var filters = (function () {
     self.initLabelPropertySelection = function (type, selectId) {
 
         self.postFilter = null;
-        var properties = Schema.schema.properties[type];
-        var propertiesArray = ["ALL"];
-        for (var key in properties) {
-            propertiesArray.push(key);
+        var properties=[];
+        if(type==""){
+        var allLabels=Schema.getAllLabelNames();
+        for(var i=0;i<allLabels.length;i++){
+            properties.push( Schema.schema.properties[allLabels[i]])
+        }
+
+        }else
+         properties = [Schema.schema.properties[type]];
+        var propertiesArray = [""];
+        for(var i=0;i<properties.length;i++) {
+            for (var key in properties[i]) {
+                if(propertiesArray.indexOf(key)<0)
+                propertiesArray.push(key);
+            }
         }
         propertiesArray.sort();
 
@@ -325,17 +336,30 @@ var filters = (function () {
 
 
         if (booleanOption == "only") {
+            $(".paintIcon").each(function (index, value) {
+                if (this.id != "paintIcon:" + type)
+                    $(this).css("visibility","hidden")
+                else
+                    $(this).css("visibility","visible")
+            });
+
+
             $(".displayIcon-selected").each(function (index, value) {
                 if (this.id != filterMode + ":" + type)
                     $(this).removeClass("displayIcon-selected");
+
+
             });
 
             self.currentSelectdFilters = [];
         }
+        else{
+            $("$paintIcon:"+type).css("visibility","visible")
+        }
         self.synchronizeRelsAndlabels(filterMode, type);
 
         var newFilter = null;
-        if (property == "ALL" || option == "all") {
+        if (property == "" || option == "all") {
             newFilter = {
                 property: "all",
                 filterMode: filterMode,

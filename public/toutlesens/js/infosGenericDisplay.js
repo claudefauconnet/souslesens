@@ -102,7 +102,7 @@ var infoGenericDisplay = (function () {
     }
 
 
-    self.loadTree = function (label, parentId, _matchStr) {
+    self.loadTreeFromNeoMatchQuery = function (label, parentId, _matchStr) {
 
         var matchStr = "";
         ids = {};
@@ -125,92 +125,9 @@ var infoGenericDisplay = (function () {
             currentDisplayType = "VISJS-NETWORK";
             if (error)
                 return;
+            self.loadTreeFromNeoResult(parentId,data)
 
 
-            $("#treeContainer").css("visibility", "visible");
-            var treeJson = self.formatResultToJtreeData(data, parentId);
-
-            var plugins = [];
-            //   plugins.push("search");
-            plugins.push("sort");
-            plugins.push("types");
-            plugins.push("contextmenu");
-            plugins.push("dnd");
-
-            self.selectedNodeDatas = {};
-            var types = {};
-
-            var types = {};
-            var labels = Schema.schema.labels;
-            for (var label in labels) {
-
-                types[label] = {icon: "/toutlesens/icons/" + labels[label].icon}
-            }
-
-            $('#' + jsTreeDivId).jstree("destroy").empty();
-            var jsTree = $('#' + jsTreeDivId)
-                .on("select_node.jstree",
-                    function (evt, obj) {
-
-                        $(".jstree-themeicon").css("background-size", self.iconSize);
-                        self.onSelect(obj.node);
-                    })
-
-                .on("loaded.jstree", function (evt, obj) {
-                    $(".jstree-themeicon").css("background-size", self.iconSize);
-                })
-                .on('rename_node.jstree', function (xx, obj, old) {
-                    $(".jstree-themeicon").css("background-size", self.iconSize);
-                })
-                .on('after_open.jstree', function (e, data) {
-                    $(".jstree-themeicon").css("background-size", self.iconSize);
-                })
-                .on('changed.jstree', function (e, data) {
-                    $(".jstree-themeicon").css("background-size", self.iconSize);
-                })
-                .on('delete_node.jstree', function (e, data) {
-                    $(".jstree-themeicon").css("background-size", self.iconSize);
-                })
-                .on('refresh_node.jstree', function (e, data) {
-                    $(".jstree-themeicon").css("background-size", self.iconSize);
-                })
-
-
-                .jstree({
-                        'core': {
-                            data: treeJson,
-
-                            // so that create works
-                            'check_callback': function (operation, node, node_parent, node_position, more) {
-                                // operation can be 'create_node', 'rename_node', 'delete_node', 'move_node' or 'copy_node'
-                                // in case of 'rename_node' node_position is filled with the new node name
-                                if (operation === "move_node") {
-                                    var sourceNode = node.data;
-                                    if (!more.ref)
-                                        return true;
-                                    var targetNode = more.ref.data;
-                                    return self.canDrop(sourceNode, targetNode);
-                                }
-                                return true;  //allow all other operations
-                            }
-                        },
-                        'contextmenu': {
-                            'items': customMenu
-                        },
-                        "dnd": {
-                            // check_while_dragging: true
-                        },
-
-
-                        "types": types,
-                        "plugins": plugins,
-
-                    }
-                ).bind("move_node.jstree", function (e, data) {
-                    return self.ondDropEnd(data);
-
-
-                });
             /*
              $(document).bind("dnd_move.vakata", function (data, element, helper, event) {
              self.ondDropEnd(data);
@@ -221,6 +138,94 @@ var infoGenericDisplay = (function () {
         })
 
 
+    }
+
+    self.loadTreeFromNeoResult=function(parentId,data){
+        $("#waitImg").css("visibility", "hidden")
+        $("#treeContainer").css("visibility", "visible");
+        var treeJson = self.formatResultToJtreeData(data, parentId);
+
+        var plugins = [];
+        //   plugins.push("search");
+        plugins.push("sort");
+        plugins.push("types");
+        plugins.push("contextmenu");
+        plugins.push("dnd");
+
+        self.selectedNodeDatas = {};
+        var types = {};
+
+        var types = {};
+        var labels = Schema.schema.labels;
+        for (var label in labels) {
+
+            types[label] = {icon: "/toutlesens/icons/" + labels[label].icon}
+        }
+
+        $('#' + jsTreeDivId).jstree("destroy").empty();
+        var jsTree = $('#' + jsTreeDivId)
+            .on("select_node.jstree",
+                function (evt, obj) {
+
+                    $(".jstree-themeicon").css("background-size", self.iconSize);
+                    self.onSelect(obj.node);
+                })
+
+            .on("loaded.jstree", function (evt, obj) {
+                $(".jstree-themeicon").css("background-size", self.iconSize);
+            })
+            .on('rename_node.jstree', function (xx, obj, old) {
+                $(".jstree-themeicon").css("background-size", self.iconSize);
+            })
+            .on('after_open.jstree', function (e, data) {
+                $(".jstree-themeicon").css("background-size", self.iconSize);
+            })
+            .on('changed.jstree', function (e, data) {
+                $(".jstree-themeicon").css("background-size", self.iconSize);
+            })
+            .on('delete_node.jstree', function (e, data) {
+                $(".jstree-themeicon").css("background-size", self.iconSize);
+            })
+            .on('refresh_node.jstree', function (e, data) {
+                $(".jstree-themeicon").css("background-size", self.iconSize);
+            })
+
+
+            .jstree({
+                    'core': {
+                        data: treeJson,
+
+                        // so that create works
+                        'check_callback': function (operation, node, node_parent, node_position, more) {
+                            // operation can be 'create_node', 'rename_node', 'delete_node', 'move_node' or 'copy_node'
+                            // in case of 'rename_node' node_position is filled with the new node name
+                            if (operation === "move_node") {
+                                var sourceNode = node.data;
+                                if (!more.ref)
+                                    return true;
+                                var targetNode = more.ref.data;
+                                return self.canDrop(sourceNode, targetNode);
+                            }
+                            return true;  //allow all other operations
+                        }
+                    },
+                    'contextmenu': {
+                        'items': customMenu
+                    },
+                    "dnd": {
+                        // check_while_dragging: true
+                    },
+
+
+                    "types": types,
+                    "plugins": plugins,
+
+                }
+            ).bind("move_node.jstree", function (e, data) {
+                return self.ondDropEnd(data);
+
+
+            });
     }
     function customMenu(node) {
 
@@ -1112,7 +1117,8 @@ var infoGenericDisplay = (function () {
 
 
     self.loadSearchResultIntree = (function (err, matchStr) {
-        self.loadTree(null, null, matchStr);
+        self.loadTreeFromNeoMatchQuery(null, null, matchStr);
+        $("#waitImg").css("visibility", "hidden")
     });
 
     self.cancelAddRelation = function () {
@@ -1123,7 +1129,7 @@ var infoGenericDisplay = (function () {
         }
         else {
             self.clearNodePropertiesDiv();
-            s
+
         }
     }
 

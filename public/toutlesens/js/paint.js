@@ -87,7 +87,7 @@ var paint = (function () {
         var nClasses = parseInt($("#paintDialog_NclassesInput").val());
         var radius = $("#paintDialog_circleRadiusInput").val();
         var property = $("#paintDialog_propsSelect").val();
-        if (property == "ALL")
+        if (property == "")
             return toutlesensController.setMessage("choose a property", "red");
 
 
@@ -255,7 +255,7 @@ var paint = (function () {
                 var ids = [];
                 for (var key in visjsGraph.nodesMap) {
                     var nodeData = visjsGraph.nodesMap[key];
-                    if (property == "ALL" && nodeData.labelNeo == self.currentLabel) {
+                    if (property == "" && nodeData.labelNeo == self.currentLabel) {
                         ids.push(key);
                         legendStr=" All "+self.currentLabel;
                     }
@@ -276,7 +276,7 @@ var paint = (function () {
 
                 for (var i=0;i<relations.length;i++) {
                     var relData = relations[i];
-                    if (property == "ALL" && relData.type == self.currentRelType) {
+                    if (property == "" && relData.type == self.currentRelType) {
                         ids.push(relData.neoId);
                         legendStr=" All "+self.currentRelType;
                     }
@@ -371,7 +371,7 @@ var paint = (function () {
 
         if (action == "classes") {//classes
             var visibility="visible";
-            if($("#paintDialog_propsSelect").val()=="ALL")
+            if($("#paintDialog_propsSelect").val()=="")
                 visibility="hidden";
           $("#paintDialog_classesDiv").css("visibility",visibility);
             $("#paintDialog_operatorSelect").css("visibility", "hidden");
@@ -396,7 +396,7 @@ var paint = (function () {
 
         }
         if(currentAction=="outline" ) {
-            if(prop=="ALL") {
+            if(prop=="") {
                 $("#paintDialogPropQueryDiv").css("visibility", "hidden");
             }
             else{
@@ -404,7 +404,7 @@ var paint = (function () {
             }
         }
         if(currentAction=="classes" ) {
-            if(prop=="ALL") {
+            if(prop=="") {
                 $("#paintDialog_classesDiv").css("visibility", "hidden");
             }
             else{

@@ -1408,7 +1408,7 @@ var toutlesensData = (function () {
         //    console.log(str);
         var payload = {match: str};
 
-        //   console.log(str)
+        console.log(str)
         $.ajax({
             type: "POST",
             url: Gparams.neo4jProxyUrl,
