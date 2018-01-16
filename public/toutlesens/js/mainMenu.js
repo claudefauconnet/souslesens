@@ -48,7 +48,6 @@ var mainMenu = (function () {
                 currentObject.id=null;
                 currentLabel = label;
                 currentDisplayType = "SIMPLE_FORCE_GRAPH";
-                toutlesensController.addToHistory=true;
 
                 toutlesensController.generateGraph(null, false);
             } else {

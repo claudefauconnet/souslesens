@@ -82,7 +82,6 @@ var traversalMenu = (function () {
              }
 
              currentDisplayType = "VISJS-NETWORK";
-             toutlesensController.addToHistory=true;
              visjsGraph.draw("graphDiv", data);
              filters.initGraphFilters (data);
              setTimeout(function(){

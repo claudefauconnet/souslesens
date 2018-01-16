@@ -35,9 +35,7 @@ var toutlesensController = (function () {
     self.currentSource = "NEO4J";
     self.appInitEnded = false;
     self.graphHistoryArray = [];
-    self.graphHistoryArray.index = 0;
-
-    self.addToHistory = true;
+    self.graphHistoryArray.index = -1;
 
 
 // http://graphaware.com/neo4j/2015/01/16/neo4j-graph-model-design-labels-versus-indexed-properties.html
@@ -93,37 +91,41 @@ var toutlesensController = (function () {
             currentObjectId: currentObjectId,
             filters: filters
         }
-        self.graphHistoryArray.splice(0, 0, state);
+        //  self.graphHistoryArray.splice(0, 0, state);
+
+        self.graphHistoryArray.push(state);
+        self.graphHistoryArray.index += 1;
         if (self.graphHistoryArray.length > 1)
             $("#previousMenuButton").css("visibility", "visible")
 
     }
 
     self.replayGraph = function (direction) {
-        self.addToHistory = false;
         var state = null;
 
         if (direction == "previous") {
             if (self.graphHistoryArray.length > 1) {
-                self.graphHistoryArray.index += 1
-
-                state = self.graphHistoryArray[self.graphHistoryArray.index]
-
-                //   $("#nextMenuButton").css("visibility", "visible")
+                self.graphHistoryArray.index -= 1
+                $("#nextMenuButton").css("visibility", "visible")
             }
         }
-        /* else if (direction == "next") {
-         if (self.graphHistoryArray.index>0) {
-         self.graphHistoryArray.index -= 1
-         } else
-         $("#nextMenuButton").css("visibility", "hidden")
-         }*/
+        else if (direction == "next") {
+            if (self.graphHistoryArray.index > 0) {
+                self.graphHistoryArray.index += 1;
+
+            } else {
+                $("#nextMenuButton").css("visibility", "hidden");
+            }
+        }
+        state = self.graphHistoryArray[self.graphHistoryArray.index]
         if (state) {
             currentObject.id = state.currentObjectId;
             currentLabel = state.currentLabel;
             currentDisplayType = state.displayType;
             filters.currentSelectdFilters = state.filters;
-            filters.setQueryFilters(true);
+         //   filters.setQueryFilters(false);
+            self.generateGraph (currentObject.id, false);
+
         }
 
 
@@ -135,7 +137,7 @@ var toutlesensController = (function () {
 
         d3.select("#graphDiv").selectAll("svg").remove();
         $("#graphDiv").html("");
-        $("#mainButtons").css("visibility","hidden");
+        $("#mainButtons").css("visibility", "hidden");
         $("#graphMessage").html("");
         $("#relInfoDiv").html("");
 
@@ -205,12 +207,12 @@ var toutlesensController = (function () {
 
         if (applyFilters) {
             filters.setQueryFilters();
-           // $(".paintIcon").css("visibility","visible")
+            // $(".paintIcon").css("visibility","visible")
         }
         else {
             self.setGraphMessage("Too many relations to display the graph<br>filter by  relation or label types")
             output = "filtersDescription";
-            $(".paintIcon").css("visibility","hidden")
+            $(".paintIcon").css("visibility", "hidden")
         }
 
 
@@ -240,7 +242,7 @@ var toutlesensController = (function () {
 
                 if (nRels <= Gparams.graphMaxDataLengthToDisplayGraphDirectly) {
                     //   filters.applyAllRelationsFilter();
-                    $(".paintIcon").css("visibility","visible");
+                    $(".paintIcon").css("visibility", "visible");
                     self.generateGraph(currentObject.id, true);
 
                     return;
@@ -292,10 +294,10 @@ var toutlesensController = (function () {
 
 
                 toutlesensController.displayGraph(data, currentDisplayType, self.currentLabels);
-                $("#mainButtons").css("visibility","visible");
+                $("#mainButtons").css("visibility", "visible");
                 $("#waitImg").css("visibility", "hidden")
-                if (self.addToHistory)
-                    self.stackGraph(currentDisplayType, currentLabel, currentObject.id, filters.currentSelectdFilters);
+
+                self.stackGraph(currentDisplayType, currentLabel, currentObject.id, filters.currentSelectdFilters);
                 if (callback)
                     return callback(null, data);
 
@@ -334,7 +336,7 @@ var toutlesensController = (function () {
         var relationsCBXs = $("[name=relationCBX]");
         for (var i = 0; i < relationsCBXs.length; i++) {
             if (relationsCBXs[i].checked) {
-                relations.push({name:relationsCBXs[i].value,optional:true});
+                relations.push({name: relationsCBXs[i].value, optional: true});
             }
         }
         if (relations.length == 0) {
@@ -375,18 +377,18 @@ var toutlesensController = (function () {
 
 
                 totalNodesToDraw = data.length;
-            /*    toutlesensData.prepareRawData(data, false, currentDisplayType, function (err, data, labels, relations) {
-                    if (callback)
-                        return callback(null, data);
-                    nodeColors["BNF"] = "green";
-                    linkColors["narrower"] = "blue";
-                    linkColors["broader"] = "orange";
-                    linkColors["related"] = "red";*/
+                /*    toutlesensData.prepareRawData(data, false, currentDisplayType, function (err, data, labels, relations) {
+                        if (callback)
+                            return callback(null, data);
+                        nodeColors["BNF"] = "green";
+                        linkColors["narrower"] = "blue";
+                        linkColors["broader"] = "orange";
+                        linkColors["related"] = "red";*/
 
-                    //  if (!applyFilters)
-                  //  filters.initGraphFilters(labels, relations);
-                    toutlesensController.displayGraph(data, "VISJS-NETWORK", self.currentLabels);
-               // })
+                //  if (!applyFilters)
+                //  filters.initGraphFilters(labels, relations);
+                toutlesensController.displayGraph(data, "VISJS-NETWORK", self.currentLabels);
+                // })
             },
             error: function (xhr, err, msg) {
                 toutlesensController.onErrorInfo(xhr)
@@ -549,7 +551,6 @@ var toutlesensController = (function () {
     }
 
 
-
     self.doLoadRelationshipTypes = function (labels) {
         for (var i = 0; i < labels.length; i++) {
             var str = labels[i];
@@ -588,18 +589,18 @@ var toutlesensController = (function () {
     self.onLabelSelect = function (labelSelect) {
 
 
-            var label = $(labelSelect).val();
+        var label = $(labelSelect).val();
 
-            if (label.length > 0) {
-                currentObject.id = null;
-                currentLabel = label;
-                currentDisplayType = "SIMPLE_FORCE_GRAPH";
-                toutlesensController.addToHistory = true;
+        if (label.length > 0) {
+            currentObject.id = null;
+            currentLabel = label;
+            currentDisplayType = "SIMPLE_FORCE_GRAPH";
 
-                toutlesensController.generateGraph(null, false);
-            } else {
-                toutlesensController.clearGraphDiv();
-            }
+
+            toutlesensController.generateGraph(null, false);
+        } else {
+            toutlesensController.clearGraphDiv();
+        }
 
 
     }
@@ -654,15 +655,15 @@ var toutlesensController = (function () {
             return;
         } else {
             now = new Date();
-            if (now - startSearchNodesTime< Gparams.searchInputKeyDelay)
+            if (now - startSearchNodesTime < Gparams.searchInputKeyDelay)
                 return;
         }
         var word = "";
         $("#nodesLabelsSelect").val("")
-        currentLabel=null;
+        currentLabel = null;
         var label = $("#nodesLabelsSelect").val();
         word = $("#word").val();
-        if (word && word.length <  Gparams.searchInputMinLength && label && label.length == "") {
+        if (word && word.length < Gparams.searchInputMinLength && label && label.length == "") {
             return;
         }
         toutlesensData.searchNodes(subGraph, label, word, resultType, limit, from, callback);
@@ -1178,9 +1179,9 @@ var toutlesensController = (function () {
 
             if (label || id)
 
-         /*       var rightPanelWidth = $("#graphLegendDiv").width();
-            $("#graphLegendDiv").width(1);*/
-            $("#graphDiv").width($("#graphDiv").width() + rightPanelWidth);
+            /*       var rightPanelWidth = $("#graphLegendDiv").width();
+               $("#graphLegendDiv").width(1);*/
+                $("#graphDiv").width($("#graphDiv").width() + rightPanelWidth);
             $("#graphDiv").css("overflow", "auto")
             $("#graphDiv").html("");
             $("#graphDiv").html("<div id=backgroundDiv></div>");
@@ -1428,7 +1429,6 @@ var toutlesensController = (function () {
         }
 
 
-
         if (Gparams.readOnly == false) {
             $("#infosHeaderDiv").css("visibility", "visible");
             infoGenericDisplay.userRole = "write";
@@ -1450,8 +1450,6 @@ var toutlesensController = (function () {
             self.initLabels(currentQueriesDialogTargetLabelSelect);
         });
     }
-
-
 
 
     self.checkMaxNumberOfNodeRelations = function (nodeId, maxRels, callback) {
@@ -1540,8 +1538,8 @@ var toutlesensController = (function () {
         }*/
 
 
-    self.setResponsiveDimensions=function(rightPanelWidth) {
-        if(rightPanelWidth==0) {
+    self.setResponsiveDimensions = function (rightPanelWidth) {
+        if (rightPanelWidth == 0) {
             $("#tabs-controlPanel").css("visibility", "hidden");
 
         }
@@ -1549,21 +1547,20 @@ var toutlesensController = (function () {
             $("#tabs-controlPanel").css("visibility", "visible");
 
         $("#tabs-mainPanel").width(totalWidth - (rightPanelWidth)).height(totalHeight)
-        $("#tabs-controlPanel").width(rightPanelWidth - 50).height(totalHeight ).css("position", "absolute").css("left", totalWidth - rightPanelWidth +30).css("top", 10);
+        $("#tabs-controlPanel").width(rightPanelWidth - 50).height(totalHeight).css("position", "absolute").css("left", totalWidth - rightPanelWidth + 30).css("top", 10);
 
 
-        $("#graphDiv").width(totalWidth - rightPanelWidth).height(totalHeight-0)
-        $("#dataDiv").width(totalWidth - -rightPanelWidth).height(totalHeight -0);
-        $("#textDivContainer").width(totalWidth - rightPanelWidth).height(totalHeight -0);
+        $("#graphDiv").width(totalWidth - rightPanelWidth).height(totalHeight - 0)
+        $("#dataDiv").width(totalWidth - -rightPanelWidth).height(totalHeight - 0);
+        $("#textDivContainer").width(totalWidth - rightPanelWidth).height(totalHeight - 0);
 
 
         $("#treeContainer").width(rightPanelWidth - 100).height(totalHeight - 200);
-        $("#graphLegendDiv").width(rightPanelWidth - 50).height(totalHeight )
-        $("#searchDiv").width(rightPanelWidth - 50).height(totalHeight )
+        $("#graphLegendDiv").width(rightPanelWidth - 50).height(totalHeight)
+        $("#searchDiv").width(rightPanelWidth - 50).height(totalHeight)
 
 
-
-     //   $("#mainButtons").width(rightPanelWidth).height(50).css("position", "absolute").css("left", $("#graphDiv").width() - 200).css("top", 50).css("visibility", "hidden");
+        //   $("#mainButtons").width(rightPanelWidth).height(50).css("position", "absolute").css("left", $("#graphDiv").width() - 200).css("top", 50).css("visibility", "hidden");
         $("#mainButtons").width(200).height(50).css("position", "absolute").css("left", 20).css("top", 50).css("visibility", "hidden");
 
 

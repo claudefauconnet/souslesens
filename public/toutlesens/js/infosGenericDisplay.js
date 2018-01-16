@@ -709,7 +709,6 @@ var infoGenericDisplay = (function () {
              currentLabel=null;
             $("#tabs-mainPanel").tabs("enable", 2);
             self.showNodeData(node);
-            toutlesensController.addToHistory=true;
             toutlesensController.generateGraph(parentId, toutlesensController.drawGraph);
         }
 

@@ -15,6 +15,7 @@ var advancedSearch = (function () {
         })
     }
     self.searchNodes = function () {
+        currentObject.id=null;
         $("#waitImg").css("visibility", "visible")
         var searchObj = {};
         searchObj.label = $("#advancedSearchDialog_LabelSelect").val();

@@ -233,7 +233,6 @@ var filters = (function () {
             toutlesensData.queryRelTypeFilters = ":" + allRelTypesStr;
 
         if (generateGraph) {
-            toutlesensController.addToHistory = true;
             toutlesensController.generateGraph(null, true);
         }
 

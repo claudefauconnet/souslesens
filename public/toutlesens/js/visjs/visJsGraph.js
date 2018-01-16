@@ -11,7 +11,9 @@ var visjsGraph = (function () {
     self.visjsData = {nodes: [], edges: []};
     var dataLabels = [];
     var colors = [];
-    var stopPhysicsTimeout = 5000
+    var stopPhysicsTimeout = 5000;
+    var lastClick=new Date();
+    var dblClickDuration=500;
 
     var formatData = function (resultArray, relationNames) {
 
@@ -210,9 +212,17 @@ var visjsGraph = (function () {
             div.style["height"] = div.getBoundingClientRect().height + "px";
         });
 
-
+        network.on("doubleClick", function (params) {
+            var nodeId = params.nodes[0];
+            currentObject = self.nodesMap[nodeId];
+            toutlesensController.generateGraph(nodeId, false);//NO !!! minus sign to search on m (see toutlesensData 148)
+        })
         //stop animation
         network.on("click", function (params) {
+             lastClick=new Date();
+
+            if((lastClick-params.event.timeStamp)<dblClickDuration)
+             ;// return false;
             if (params.edges.length == 0 && params.nodes.length == 0) {
                 self.physicsOn = !self.physicsOn;
                 network.setOptions({
@@ -229,11 +239,7 @@ var visjsGraph = (function () {
             }
         });
 
-        network.on("doubleClick", function (params) {
-            var nodeId = params.nodes[0];
-            currentObject = self.nodesMap[nodeId];
-            toutlesensController.generateGraph(nodeId, false);//NO !!! minus sign to search on m (see toutlesensData 148)
-        })
+
 
         network.on("hoverNode", function (params) {
 
