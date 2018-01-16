@@ -1,6 +1,6 @@
 
-<?xml version="1.0"?>
-<rdf:RDF
+<?xml versRDFion="1.0"?>
+<rdf:
         xmlns:rss="http://purl.org/rss/1.0/"
         xmlns:ntind="http://www.semanticbible.org/2005/09/NTN-individuals.owl#"
         xmlns:ntnames="http://semanticbible.org/ns/2006/NTNames.owl#"

@@ -264,10 +264,10 @@
 
 
 
-            totalWidth = $(window).width();
-            totalHeight = $(window).height();
+            totalWidth = $(window).width()-20;
+            totalHeight = $(window).height()-20;
 
-            $("body").height(totalHeight - 20);
+            $("body").height(totalHeight );
 
            rightPanelWidth=Math.round(totalWidth* Gparams.rightPanelTotalWidthRatio)
       //  toutlesensController.setResponsiveDimensions(rightPanelWidth); see customizeUI
@@ -581,7 +581,7 @@
            src="images/previous.png"/>
     <input type="image" title="Next display" height="30px" onclick="toutlesensController.replayGraph('next')"
            id="nextMenuButton" src="images/next.png"/>
-    <img id="waitImg" src="images/waitAnimated.gif" width="30px"
+    <img id="waitImg" src="images/waitAnimated.gif" width="50px"
          style="visibility: hidden;">
 </div>
 

@@ -1541,18 +1541,25 @@ var toutlesensController = (function () {
 
 
     self.setResponsiveDimensions=function(rightPanelWidth) {
-        $("#tabs-mainPanel").width(totalWidth - rightPanelWidth).height(totalHeight - 60)
-        $("#tabs-controlPanel").width(rightPanelWidth - 50).height(totalHeight - 60).css("position", "absolute").css("left", totalWidth - rightPanelWidth -30).css("top", 10);
+        if(rightPanelWidth==0) {
+            $("#tabs-controlPanel").css("visibility", "hidden");
+
+        }
+        else
+            $("#tabs-controlPanel").css("visibility", "visible");
+
+        $("#tabs-mainPanel").width(totalWidth - (rightPanelWidth)).height(totalHeight)
+        $("#tabs-controlPanel").width(rightPanelWidth - 50).height(totalHeight ).css("position", "absolute").css("left", totalWidth - rightPanelWidth +30).css("top", 10);
 
 
-        $("#graphDiv").width(totalWidth - rightPanelWidth).height(totalHeight - 100)
-        $("#dataDiv").width(totalWidth - -rightPanelWidth).height(totalHeight - 100);
-        $("#textDivContainer").width(totalWidth - rightPanelWidth).height(totalHeight - 100);
+        $("#graphDiv").width(totalWidth - rightPanelWidth).height(totalHeight-0)
+        $("#dataDiv").width(totalWidth - -rightPanelWidth).height(totalHeight -0);
+        $("#textDivContainer").width(totalWidth - rightPanelWidth).height(totalHeight -0);
 
 
-        $("#treeContainer").width(rightPanelWidth - 100).height(totalHeight - 300);
-        $("#graphLegendDiv").width(rightPanelWidth - 50).height(totalHeight - 100)
-        $("#searchDiv").width(rightPanelWidth - 50).height(totalHeight - 100)
+        $("#treeContainer").width(rightPanelWidth - 100).height(totalHeight - 200);
+        $("#graphLegendDiv").width(rightPanelWidth - 50).height(totalHeight )
+        $("#searchDiv").width(rightPanelWidth - 50).height(totalHeight )
 
         //  $("#radarLeft").width(rightPanelWidth).height(totalHeight - 50).css("left", $("#graphDiv").width());
 
