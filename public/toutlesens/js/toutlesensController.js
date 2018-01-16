@@ -1561,9 +1561,10 @@ var toutlesensController = (function () {
         $("#graphLegendDiv").width(rightPanelWidth - 50).height(totalHeight )
         $("#searchDiv").width(rightPanelWidth - 50).height(totalHeight )
 
-        //  $("#radarLeft").width(rightPanelWidth).height(totalHeight - 50).css("left", $("#graphDiv").width());
 
-        $("#mainButtons").width(rightPanelWidth).height(50).css("position", "absolute").css("left", $("#graphDiv").width() - 200).css("top", 50).css("visibility", "hidden");
+
+     //   $("#mainButtons").width(rightPanelWidth).height(50).css("position", "absolute").css("left", $("#graphDiv").width() - 200).css("top", 50).css("visibility", "hidden");
+        $("#mainButtons").width(200).height(50).css("position", "absolute").css("left", 20).css("top", 50).css("visibility", "hidden");
 
 
     }
