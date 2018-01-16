@@ -160,11 +160,13 @@ self.getAllpropertiesDialogContent("setSearchNodeReturnFilterVal()");
      //       "<td><input type='image' height='20px'  alt='set as rootNode' onclick='toutlesensController.dispatchAction(\"linkTarget\")' src='images/targetLink.png'/></td>"+
      //   "<td><input type='image' height='20px'  alt='set as rootNode' onclick='toutlesensController.dispatchAction(\"newNode\")' src='images/new.jpg'/></td>"
     }
-    str+="</tr></table>";
+
+ //   str+="</td><td>"
 
     str+=   "<B><span style='color:" + nodeColors[label] + "'> [" + label + "]<span>" +"</B>"+name+"<br>";
     var customInfo=customizeUI.customInfo(currentObject);
 
+       str+="</td></tr><tr><td>"
     if(customInfo && customInfo.length>0)
        str +=customizeUI.customInfo(currentObject)+"<br>";
 
@@ -179,7 +181,11 @@ self.getAllpropertiesDialogContent("setSearchNodeReturnFilterVal()");
            });
 
        }
-
+       str+="</td>"
+       if(currentObject.neoAttrs.image ){
+           str+="<td> <img src='"+currentObject.neoAttrs.image+"' width='100px'></td>"
+       }
+       str+="<td>"
     if (currentObject.hiddenChildren) {
         str += "<ul>";
         currentHiddenChildren = {};
@@ -203,7 +209,8 @@ textOutputs.formatNode(child).name;
         }
         str += "</ul>"
     }
-
+       str += "</td>";
+       str += "</tr>";
     str += "</table>";
     $("#popupMenuNodeInfo").html(str);
 
