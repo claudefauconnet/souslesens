@@ -31,7 +31,7 @@ var advancedSearch = (function () {
 
     self.traversalCurrentInput=null;
 
-    self.setSearchByIdsListStatement = function (idsList, callback) {
+    self.setSearchByPropertyListStatement = function (idsList, callback) {
         var ids;
 
         if (typeof list == "string")

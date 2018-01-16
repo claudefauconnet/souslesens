@@ -125,7 +125,26 @@ var infoGenericDisplay = (function () {
             currentDisplayType = "VISJS-NETWORK";
             if (error)
                 return;
-            self.loadTreeFromNeoResult(parentId,data)
+            self.loadTreeFromNeoResult(parentId,data);
+
+
+            var idsList=[];
+            for( var i=0;i<data.length;i++){
+                idsList.push(data[i].n._id)
+            }
+
+            toutlesensData.setSearchByPropertyListStatement("_id",idsList, function (err, result) {
+
+                toutlesensController.generateGraph(null,true,function(){
+
+                    $("#filtersDiv").html("");
+                    $("#graphMessage").html("");
+
+
+
+                });
+
+            })
 
 
             /*

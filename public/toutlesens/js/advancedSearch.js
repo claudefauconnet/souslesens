@@ -49,7 +49,11 @@ var advancedSearch = (function () {
 
         }else {
             var value= searchObj.property +":~ "+searchObj.value;
-            toutlesensData.searchNodes(subGraph, searchObj.label, value, "matchStr", Gparams.jsTreeMaxChildNodes, 0, infoGenericDisplay.loadSearchResultIntree);
+            toutlesensData.searchNodes(subGraph, searchObj.label, value, "matchStr", Gparams.jsTreeMaxChildNodes, 0,function(err,result){
+                infoGenericDisplay.loadSearchResultIntree(err,result);
+
+
+            })
         }
         $("#dialog").dialog("close");
 

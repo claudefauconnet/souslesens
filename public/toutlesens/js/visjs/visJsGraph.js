@@ -63,7 +63,7 @@ var visjsGraph = (function () {
                     if (nodeNeo.image && nodeNeo.image.length > 0) {
                         nodeObj.shape = 'circularImage';
                         nodeObj.image = nodeNeo.image.replace(/File:/,"File&#58;");
-                        nodeObj.brokenImage="http://www.bnf.fr/bnf_dev/icono/bnf.png";
+                        nodeObj.brokenImage="images/questionmark.png";
                         //   nodeObj.image=encodeURIComponent(nodeNeo.icon)
                         nodeObj. borderWidth=4
                         nodeObj.size=30;

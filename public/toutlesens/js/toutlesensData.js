@@ -278,14 +278,18 @@ var toutlesensData = (function () {
         });
 
     }
-    self.setSearchByIdsListStatement = function (idsList, callback) {
+    self.setSearchByPropertyListStatement = function (property,idsList, callback) {
         var ids;
 
         if (typeof idsList == "string")
             ids = idsList.split(",");
         else
             ids = idsList;
-        var query = "node1.id in ["
+
+        var query = "node1."+property+" in ["
+        if(property="_id")
+            query = "ID(node1) in ["
+
         for (var i = 0; i < ids.length; i++) {
             if (i > 0 && i<ids.length)
                 query += ","
