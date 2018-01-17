@@ -90,7 +90,7 @@ var filters = (function () {
             str += " relation <b>" + relName + "</b></td>";
             str += "<td> <img  src='./images/filter.png'  width='15px' title='set filter' onclick='filters.showFilterDialog(null,\"" + relName + "\")'></td>"
             if (Gparams.graphAllowPaint)
-                str += "<td> <img  src='./images/paint.jpg' class='paintIcon' id='paintIcon:"+ relName + "' width='15px' title='set filter' onclick='paint.showPaintDialog(null,\"" + relName + "\")'></td>"
+                str += "<td> <img  src='./images/paint.jpg' class='paintIcon' id='paintIcon_"+ relName + "' width='15px' title='set filter' onclick='paint.showPaintDialog(null,\"" + relName + "\")'></td>"
 
             str += "</tr>";
         }
@@ -108,7 +108,7 @@ var filters = (function () {
                 str += "label <b>" + label + "</b></td>";
                 str += "<td><img  src='./images/filter.png'  width='15px'  title='set filter' onclick='filters.showFilterDialog(\"" + label + "\",\"" + relName + "\")'></td>"
                 if (Gparams.graphAllowPaint)
-                    str += "<td><img  src='./images/paint.jpg'  class='paintIcon' id='paintIcon:"+ label + "' width='15px'  title='set filter' onclick='paint.showPaintDialog(\"" + label + "\",\"" + relName + "\")'></td>"
+                    str += "<td><img  src='./images/paint.jpg'  class='paintIcon' id='paintIcon_"+ label + "' width='15px'  title='set filter' onclick='paint.showPaintDialog(\"" + label + "\",\"" + relName + "\")'></td>"
 
                 str += "</tr>";
 
@@ -149,6 +149,17 @@ var filters = (function () {
         })
 
         // generateGraph(currentObject.id,drawGraph);
+    }
+
+
+
+
+    self.removeDisplaySelected=function (id){
+        if(!id) {
+            $(".filterName").each(function (index, value) {
+                $(this).removeClass("displayIcon-selected");
+            })
+        }
     }
 
 
@@ -336,7 +347,7 @@ var filters = (function () {
 
         if (booleanOption == "only") {
             $(".paintIcon").each(function (index, value) {
-                if (this.id != "paintIcon:" + type)
+                if (this.id != "paintIcon_" + type)
                     $(this).css("visibility","hidden")
                 else
                     $(this).css("visibility","visible")
@@ -354,7 +365,7 @@ var filters = (function () {
         }
         else{
 
-            $("paintIcon:"+type).css("visibility","visible")
+            $(".paintIcon_"+type).css("visibility","visible")
         }
         self.synchronizeRelsAndlabels(filterMode, type);
 

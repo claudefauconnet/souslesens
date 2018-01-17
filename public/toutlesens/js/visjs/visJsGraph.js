@@ -219,10 +219,7 @@ var visjsGraph = (function () {
         })
         //stop animation
         network.on("click", function (params) {
-             lastClick=new Date();
 
-            if((lastClick-params.event.timeStamp)<dblClickDuration)
-             ;// return false;
             if (params.edges.length == 0 && params.nodes.length == 0) {
                 self.physicsOn = !self.physicsOn;
                 network.setOptions({
@@ -232,6 +229,18 @@ var visjsGraph = (function () {
 
             }
             else if (params.nodes.length == 1) {
+                /*   var now=new Date().getTime();
+                 //  console.log(params.event.timeStamp+" "+now.getTime())
+                   var delay=Math.abs(now-lastClick)
+                   lastClick=now;
+                   console.log(delay);
+                   if(delay<dblClickDuration) {//dbleclick*/
+                if (params.event.srcEvent.ctrlKey) {
+                    var nodeId = params.nodes[0];
+                    currentObject = self.nodesMap[nodeId];
+                    toutlesensController.generateGraph(nodeId, false);
+                }
+
                 var nodeId = params.nodes[0];
                 var point = params.pointer.DOM;
                 currentObject = self.nodesMap[nodeId];

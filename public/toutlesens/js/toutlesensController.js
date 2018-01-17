@@ -34,8 +34,9 @@ var toutlesensController = (function () {
     self.currentActionObj = null;
     self.currentSource = "NEO4J";
     self.appInitEnded = false;
-    self.graphHistoryArray = [];
-    self.graphHistoryArray.index = -1;
+    self.graphHistoryObj = {};
+    self.graphHistoryObj.index = -1;
+    self.graphHistoryObj.sequence = [];
 
 
 // http://graphaware.com/neo4j/2015/01/16/neo4j-graph-model-design-labels-versus-indexed-properties.html
@@ -84,47 +85,53 @@ var toutlesensController = (function () {
 
 
     self.stackGraph = function (displayType, currentLabel, currentObjectId, filters) {
+        filters= JSON.stringify(filters)
+        var key = displayType + "_" + currentLabel + "_" + currentObjectId + "_" +filters;
 
-        var state = {
-            displayType: displayType,
-            currentLabel: currentLabel,
-            currentObjectId: currentObjectId,
-            filters: filters
+        if (!self.graphHistoryObj[key]) {
+            var state = {
+                displayType: displayType,
+                currentLabel: currentLabel,
+                currentObjectId: currentObjectId,
+                filters: filters
+            }
+
+            self.graphHistoryObj[key] = state;
+            self.graphHistoryObj.index += 1
+            self.graphHistoryObj.sequence.push(key);
         }
-        //  self.graphHistoryArray.splice(0, 0, state);
 
-        self.graphHistoryArray.push(state);
-        self.graphHistoryArray.index += 1;
-        if (self.graphHistoryArray.length > 1)
+
+        if (self.graphHistoryObj.index > 0 )
             $("#previousMenuButton").css("visibility", "visible")
+        else
+            $("#previousMenuButton").css("visibility", "hidden")
+
+        if (self.graphHistoryObj.index <self.graphHistoryObj.sequence.length-1)
+            $("#nextMenuButton").css("visibility", "visible")
+        else
+            $("#nextMenuButton").css("visibility", "hidden")
 
     }
 
     self.replayGraph = function (direction) {
         var state = null;
+        if (direction == "previous")
+                self.graphHistoryObj.index -= 1
 
-        if (direction == "previous") {
-            if (self.graphHistoryArray.length > 1) {
-                self.graphHistoryArray.index -= 1
-                $("#nextMenuButton").css("visibility", "visible")
-            }
-        }
-        else if (direction == "next") {
-            if (self.graphHistoryArray.index > 0) {
-                self.graphHistoryArray.index += 1;
+        else if (direction == "next")
+                self.graphHistoryObj.index += 1;
 
-            } else {
-                $("#nextMenuButton").css("visibility", "hidden");
-            }
-        }
-        state = self.graphHistoryArray[self.graphHistoryArray.index]
+
+        state = self.graphHistoryObj[ self.graphHistoryObj.sequence[self.graphHistoryObj.index]];
         if (state) {
             currentObject.id = state.currentObjectId;
             currentLabel = state.currentLabel;
             currentDisplayType = state.displayType;
-            filters.currentSelectdFilters = state.filters;
-         //   filters.setQueryFilters(false);
-            self.generateGraph (currentObject.id, false);
+            filters.removeDisplaySelected();
+            filters.currentSelectdFilters = JSON.parse(state.filters);
+           // filters.setQueryFilters(true);
+           self.generateGraph(currentObject.id, true);
 
         }
 

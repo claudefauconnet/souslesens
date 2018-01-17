@@ -287,7 +287,7 @@ var toutlesensData = (function () {
             ids = idsList;
 
         var query = "node1."+property+" in ["
-        if(property="_id")
+        if(property=="_id")
             query = "ID(node1) in ["
 
         for (var i = 0; i < ids.length; i++) {
