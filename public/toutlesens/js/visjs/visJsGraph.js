@@ -107,7 +107,7 @@ var visjsGraph = (function () {
                     neoId: relProperties[j]._id,
                     neoAttrs: relProperties[j].properties,
                     color: color,
-                    font:{background:color},
+                   // font:{background:color},
                 }
                 if (Gparams.showRelationNames === true)
                     relObj.label = relObj.type;
