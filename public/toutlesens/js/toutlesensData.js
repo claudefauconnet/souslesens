@@ -120,7 +120,7 @@ var toutlesensData = (function () {
     }
 
     self.getNodeAllRelations = function (id, output, addToExistingTree, callback) {
-
+      var   hasMclause=true;
             if (!self.matchStatement) {
                 excludedLabels = [];
                 //    id = parseInt("" + id);
@@ -150,9 +150,12 @@ var toutlesensData = (function () {
                 var whereStatement = "";
                 if (id) {
                   /*  whereStatement = " WHERE ((ID(node1)=" + id + "))";// OR (ID(m)=" + (id)+"))"*/
-                    if(id>0)
-                     whereStatement = " WHERE (ID(node1)=" + id+")" ;//+" OR  ID(m)="+id+")"
+                    if(id>0) {
+                        whereStatement = " WHERE (ID(node1)=" + id + ")";//+" OR  ID(m)="+id+")"
+                        hasMclause=false;
+                    }
                      else {
+                         hasMclause=true;
                         whereStatement = " WHERE (ID(m)=" + (-id) + ")";
 
                     }
@@ -211,7 +214,7 @@ var toutlesensData = (function () {
         }
            statement += returnStatement;
 
-            if(Gparams.allowOrphanNodesInGraphQuery)
+            if(Gparams.allowOrphanNodesInGraphQuery && hasMclause==false)
             graphQueryUnionStatement=" MATCH path=(node1"+  node1Label +") "// for nodes without relations
                 + whereStatement
                 + graphQueryTargetFilter
