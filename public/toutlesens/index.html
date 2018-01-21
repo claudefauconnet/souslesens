@@ -146,6 +146,7 @@
     <!-- test visjs------------------------------------------>
     <script src="js/visjs/visjs.js"></script>
     <script src="js/visjs/visJsGraph.js"></script>
+    <script src="../common/js/connectors.js"></script>
     <link rel="stylesheet" type="text/css" href="js/visjs/vis-network.min.css.js"/>
     <!-- test visjs---------------------------------------->
     <style>
@@ -374,6 +375,14 @@
 
             $("#dialog").dialog({
                 autoOpen: false,
+                height: Gparams.smallDialogSize.h,
+                width: Gparams.smallDialogSize.w,
+                modal: true
+
+            });
+
+            $("#dialogLarge").dialog({
+                autoOpen: false,
                 height: Gparams.bigDialogSize.h,
                 width: Gparams.bigDialogSize.w,
                 modal: true
@@ -550,7 +559,11 @@
             <div id="infosHeaderDiv">
                 &nbsp;&nbsp;<button onclick="infoGenericDisplay.saveNode()">Save</button>
                 &nbsp;&nbsp;<button onclick="infoGenericDisplay.deleteNode()">Delete</button>
+
+
+                </tr>
             </div>
+            <div id="message"></div>
             <div id="relInfosDivWrapper">
                 Relation&nbsp;
                 <span cclass="infoTitle" id="relationType"></span>
@@ -632,8 +645,9 @@
                                                  src="images/search.png"/>
 
 
-                       <br> <button id="createNodeButton" onclick="infoGenericDisplay.createNewRootNode()">
+                       <br> <button id="createNodeButton" onclick="toutlesensController.dispatchAction('newNode')">
                             New node
+                        <button   id="editSchemaButton" onclick="toutlesensController.showGraphSchema()">Edit Schema</button>
                         </button>
                         <!-- <button  onclick="showAdvancedSearchDialog()">+</button>-->
 
@@ -772,7 +786,7 @@
 
 
 <div id="dialog" title="dialog"></div>
-
+<div id="dialogLarge" ></div>
 
 </body>
 </html>

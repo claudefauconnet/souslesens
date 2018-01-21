@@ -36,9 +36,9 @@
 
 
 <style>
-    #graphDiv {
-        width: 500px;
-        height: 500px;
+    #schemaGraphDiv {
+        width: 800px;
+        height: 600px;
 
     }
     .editingObj{
@@ -103,6 +103,11 @@
         $("#tabs").tabs({
             active: 0
         });
+if(Gparams && Gparams.bigDialogSize) {
+    $("#schemaGraphDiv").height(Gparams.bigDialogSize.h - 200)
+    $("#schemaGraphDiv").width(Gparams.bigDialogSize.w - 100)
+}
+
 
         $('select').attr('size', 5)
 
@@ -378,11 +383,9 @@
     }
 
     function draw() {
-        var totalWidth = $(window).width();
-        var totalHeight = $(window).height();
 
-        $("#graphDiv").height(totalHeight - 200)
-        $("#graphDiv").width(totalWidth - 100)
+
+
         var schemaOnly =true;// $("#schemaCBX").is(':checked');
 
         var subGraph = $("#subGraph").val();
@@ -441,7 +444,7 @@
                     <textarea id="jsonTextArea" cols="20" , rows="20"></textarea>
                 </td>
                 <td>
-                    <div id="graphDiv"></div>
+                    <div id="schemaGraphDiv"></div>
 
                 </td>
             </tr>

@@ -49,6 +49,7 @@ var graphTraversalQueries = (function () {
             success: function (data, textStatus, jqXHR) {
                 if (!data || data.length == 0) {
                     return  callback("No result")
+                    $("#waitImg").css("visibility", "hidden");
                 }
                 if (data.length > Gparams.graphDisplayLimitMax) {
 

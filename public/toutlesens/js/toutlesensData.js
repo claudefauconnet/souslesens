@@ -67,7 +67,7 @@ var toutlesensData = (function () {
                 toutlesensData.cachedResultArray = data;
                 if (!data || data.length == 0) {
                     toutlesensController.setMessage("No results", "green");
-                    return;
+                    $("#waitImg").css("visibility", "hidden"); return;
                 }
                 var errors = data.errors;
 
@@ -104,7 +104,9 @@ var toutlesensData = (function () {
                 } else {
 
                     toutlesensController.setMessage("No results", blue);
+                    $("#waitImg").css("visibility", "hidden");
                     toutlesensController.cleanTabDivs();
+
                     return -1;
                 }
 
@@ -205,10 +207,21 @@ var toutlesensData = (function () {
                     + toutlesensData.queryNodeLabelFilters
                     + toutlesensData.queryExcludeNodeFilters
                     + toutlesensData.queryExcludeRelFilters
+
         }
            statement += returnStatement;
+
+            if(Gparams.allowOrphanNodesInGraphQuery)
+            graphQueryUnionStatement=" MATCH path=(node1"+  node1Label +") "// for nodes without relations
+                + whereStatement
+                + graphQueryTargetFilter
+                + toutlesensData.queryNodeLabelFilters
+                + toutlesensData.queryExcludeNodeFilters
+                + toutlesensData.queryExcludeRelFilters;
+
+
         if (graphQueryUnionStatement)
-            statement += " UNION " + graphQueryUnionStatement + returnStatement;
+            statement += " UNION " + graphQueryUnionStatement + returnStatement.replace("count(r)" ,0 );
 
         statement += " limit " + Gparams.neoQueryLimit;
         if (Gparams.logLevel > 0)
@@ -323,6 +336,7 @@ var toutlesensData = (function () {
             dataType: "json",
             success: function (data, textStatus, jqXHR) {
                 if (!data || data.length == 0) {
+                    $("#waitImg").css("visibility", "hidden");
                     return  callback("No result")
                 }
                 if (data.length > Gparams.graphDisplayLimitMax) {
@@ -1425,6 +1439,8 @@ var toutlesensData = (function () {
                 if (!resultType == "count")
                     startSearchNodesTime = null;
                 if (!data || data.length == 0) {
+
+                    $("#waitImg").css("visibility", "hidden");
                     toutlesensController.setMessage("No results", blue);
                     return;
                 }

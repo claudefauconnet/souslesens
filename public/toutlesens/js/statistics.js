@@ -122,9 +122,11 @@ self.buildStatTree(queryName, query, function (jsonTree) {
         data: payload,
         dataType: "json",
         success: function (data, textStatus, jqXHR) {
+            $("#waitImg").css("visibility", "hidden");
             $("#message").html("")
             if (!data || data.length == 0) {
                  common.setMessage("No results", blue);
+                $("#waitImg").css("visibility", "hidden");
                 return;
             }
             var errors = data.errors;

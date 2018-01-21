@@ -37,6 +37,7 @@ var toutlesensController = (function () {
     self.graphHistoryObj = {};
     self.graphHistoryObj.index = -1;
     self.graphHistoryObj.sequence = [];
+    self.currentRelationData={};
 
 
 // http://graphaware.com/neo4j/2015/01/16/neo4j-graph-model-design-labels-versus-indexed-properties.html
@@ -85,8 +86,8 @@ var toutlesensController = (function () {
 
 
     self.stackGraph = function (displayType, currentLabel, currentObjectId, filters) {
-        filters= JSON.stringify(filters)
-        var key = displayType + "_" + currentLabel + "_" + currentObjectId + "_" +filters;
+        filters = JSON.stringify(filters)
+        var key = displayType + "_" + currentLabel + "_" + currentObjectId + "_" + filters;
 
         if (!self.graphHistoryObj[key]) {
             var state = {
@@ -102,12 +103,12 @@ var toutlesensController = (function () {
         }
 
 
-        if (self.graphHistoryObj.index > 0 )
+        if (self.graphHistoryObj.index > 0)
             $("#previousMenuButton").css("visibility", "visible")
         else
             $("#previousMenuButton").css("visibility", "hidden")
 
-        if (self.graphHistoryObj.index <self.graphHistoryObj.sequence.length-1)
+        if (self.graphHistoryObj.index < self.graphHistoryObj.sequence.length - 1)
             $("#nextMenuButton").css("visibility", "visible")
         else
             $("#nextMenuButton").css("visibility", "hidden")
@@ -117,21 +118,26 @@ var toutlesensController = (function () {
     self.replayGraph = function (direction) {
         var state = null;
         if (direction == "previous")
-                self.graphHistoryObj.index -= 1
+            self.graphHistoryObj.index -= 1
 
         else if (direction == "next")
-                self.graphHistoryObj.index += 1;
+            self.graphHistoryObj.index += 1;
+        else if (direction == "same") {
+            if(self.graphHistoryObj.index==-1)
+                self.generateGraph();
+            self.graphHistoryObj.index += 0;
+            $("#dialog").dialog("close");
+        }
 
-
-        state = self.graphHistoryObj[ self.graphHistoryObj.sequence[self.graphHistoryObj.index]];
+        state = self.graphHistoryObj[self.graphHistoryObj.sequence[self.graphHistoryObj.index]];
         if (state) {
             currentObject.id = state.currentObjectId;
             currentLabel = state.currentLabel;
             currentDisplayType = state.displayType;
             filters.removeDisplaySelected();
             filters.currentSelectdFilters = JSON.parse(state.filters);
-           // filters.setQueryFilters(true);
-           self.generateGraph(currentObject.id, true);
+            // filters.setQueryFilters(true);
+            self.generateGraph(currentObject.id, true);
 
         }
 
@@ -394,7 +400,9 @@ var toutlesensController = (function () {
 
                 //  if (!applyFilters)
                 //  filters.initGraphFilters(labels, relations);
-                toutlesensController.displayGraph(data, "VISJS-NETWORK", self.currentLabels);
+
+                visjsGraph.draw("graphDiv", connectors.neoResultsToVisjs(data));
+                //  toutlesensController.displayGraph(data, "VISJS-NETWORK", self.currentLabels);
                 // })
             },
             error: function (xhr, err, msg) {
@@ -439,6 +447,7 @@ var toutlesensController = (function () {
             $("#tabs-mainPanel").tabs({
                 disabled: [3, 4]
             });
+            Gparams.readOnly=false;
         }
 
         if (!output)
@@ -456,7 +465,7 @@ var toutlesensController = (function () {
         }
 
         else if (currentDisplayType == "VISJS-NETWORK") {
-            visjsGraph.draw("graphDiv", toutlesensData.cachedResultArray);
+            visjsGraph.draw("graphDiv", connectors.neoResultsToVisjs(toutlesensData.cachedResultArray));
 
         }
 
@@ -495,8 +504,7 @@ var toutlesensController = (function () {
                 toutlesensData.jsonToHierarchyTree(json, "label");
             // setValues(jsonTreeMap)
             d3treemap.draw(jsonTreeMap);
-            //  drawTreeMap2(jsonTreeMap);
-            // drawTreeMap(jsonTest);
+
 
         } else if (output == "SIMPLE_FORCE_GRAPH") {
             var forceJson = json;
@@ -504,9 +512,7 @@ var toutlesensController = (function () {
             var forceJson = toutlesensData.buildForceNodesAndLinks(toutlesensData.cachedResultArray);
             d3simpleForceLight.drawSimpleForce(forceJson.nodes, forceJson.links, forceJson.linksMap)
 
-            //    d3simpleForce.drawSimpleForce(forceJson);
-            // visjsGraph.draw("graphDiv",forceJson);
-            //  }
+
         }
         else if (output == "SIMPLE_FORCE_GRAPH_BULK") {
             var forceJson = toutlesensData.cachedResultArray;
@@ -673,6 +679,8 @@ var toutlesensController = (function () {
         if (word && word.length < Gparams.searchInputMinLength && label && label.length == "") {
             return;
         }
+        if( label=="" && word=="")
+            return;
         toutlesensData.searchNodes(subGraph, label, word, resultType, limit, from, callback);
     }
 
@@ -994,28 +1002,32 @@ var toutlesensController = (function () {
         else if (action == "linkSource") {
 
             $("#linkActionDiv").css("visibility", "visible");
-            var sourceNode = currentObject;
+            var sourceNode = JSON.parse(JSON.stringify(currentObject));
             $("#linkSourceNode").val(sourceNode.name);
             $("#linkSourceNode").css("color", nodeColors[sourceNode.label]);
             $("#linkSourceLabel").html(sourceNode.label);
-            currentRelationData = {
+            self.currentRelationData = {
                 sourceNode: sourceNode,
             }
         } else if (action == "linkTarget") {
             //	selectLeftTab('#dataTab');
             $("#linkActionDiv").css("visibility", "visible");
-            var targetNode = currentObject;
+            var targetNode =  JSON.parse(JSON.stringify(currentObject));
             $("#linkTargetNode").val(targetNode.name);
             $("#linkTargetNode").css("color", nodeColors[targetNode.label]);
             $("#linkTargetLabel").html(targetNode.label);
             $("#tabs-mainPanel").tabs("option", "active", 3);
             $("#accordionModifyPanel").accordion("option", "active", 1);
-            currentRelationData.targetNode = targetNode;
-            modifyData.setLinkTypes();
+            self.currentRelationData.targetNode = targetNode;
+            mainMenu.showCreateRelationDialog(self.currentRelationData)
+
+
         } else if (action == "modifyNode") {
 
             var label = currentObject.labelNeo;
             var attrObject = Schema.schema.properties[label];
+            infoGenericDisplay.selectedNodeData = currentObject;
+            infoGenericDisplay.selectedNodeData.neoId=currentObject.id
             $("#nodeLabel").html(label);
             infoGenericDisplay.setAttributesValue(label, attrObject, currentObject.neoAttrs);
             infoGenericDisplay.drawAttributes(attrObject, "nodeInfosDiv");
@@ -1024,35 +1036,23 @@ var toutlesensController = (function () {
             $("#tabs-mainPanel").tabs("enable", 2);
             $("#tabs-mainPanel").tabs("option", "active", 2);
 
-            /*  $("#ModifyNodeActionDiv").css("visibility", "visible");
-             $("#accordionModifyPanel").accordion("option", "active", 0);
-             // var index = $('#tabs-mainPanel
-             // a[href="li_modify"]').parent().index();
-             $("#tabs-mainPanel").tabs("option", "active", 3);
-             if (id) {
-             var query = "MATCH (n) WHERE ID(n) =" + id + " RETURN n";//,'m','r',labels(n),'x',ID(n) ";// limit 1 ";
-
-             toutlesensData.executeNeoQuery(QUERY_TYPE_MATCH, query, function (data) {
-             if (data.length == 0)
-             return;
-             var obj = data[0].n.properties;
-             obj.id = data[0].n._id;
-             obj.label = data[0].n.labels[0];
-             modifyData.drawFieldInputs(obj);
-             $("#accordionModifyPanel").accordion({active: 1});
-             $("#accordionModifyPanel").accordion({active: 0});
-             //$( "#accordionModifyPanel" ).accordion( "option", "animate", 200 );
-
-             });
-             }*/
 
         } else if (action == "newNode") {
-            $("#ModifyNodeActionDiv").css("visibility", "visible");
-            $("#accordionModifyPanel").accordion("option", "active", 0);
-            // var index = $('#tabs-mainPanel
-            // a[href="li_modify"]').parent().index();
-            $("#tabs-mainPanel").tabs("option", "active", 3);
-            modifyData.onCreateNodeButton();
+            currentObject = {}
+            var label = $("#nodesLabelsSelect").val();
+            if (!label || label == "") {
+                return alert("select a label for the new node");
+            }
+            var attrObject = Schema.schema.properties[label];
+            $("#nodeLabel").html(label);
+            infoGenericDisplay.selectedNodeData = null;
+            infoGenericDisplay.setAttributesValue(label, attrObject, {});
+            infoGenericDisplay.drawAttributes(attrObject, "nodeInfosDiv");
+            if (queryParams.write)
+                $("#infosHeaderDiv").css("visibility", "visible");
+            $("#tabs-mainPanel").tabs("enable", 2);
+            $("#tabs-mainPanel").tabs("option", "active", 2);
+
         } else if (action == "switchNodesVisibilityFromLabel") {
             var action2 = "";
             if (currentObject.children && currentObject.children.length > 0)
@@ -1444,6 +1444,9 @@ var toutlesensController = (function () {
         else {
             $("#createNodeButton").prop('disabled', true);
             $("#createNodeButton").css("visibility", "hidden");
+            $("#editSchemaButton").prop('disabled', true);
+            $("#editSchemaButton").css("visibility", "hidden");
+
             $("#infosHeaderDiv").css("visibility", "hidden");
             infoGenericDisplay.userRole = "read"
             cards.userRole = "read";
@@ -1572,6 +1575,30 @@ var toutlesensController = (function () {
 
 
     }
+
+    self.showGraphSchema = function () {
+
+
+       /* $("#nodeInfosDiv").load("schema.html", function () {
+            $("#subGraph").val(subGraph);//  self.initLabelPropertySelection(label);
+
+        })*/
+       $("#dialogLarge").dialog({modal: true});
+        $("#dialogLarge").dialog("option", "title", "Toutlesens Schema");
+
+        var page = "schema.html";
+
+        $("#dialogLarge").load(page, function () {
+
+
+
+            $("#subGraph").val(subGraph);//  self.initLabelPropertySelection(label);
+
+
+        })
+        $("#dialogLarge").dialog("open");
+    }
+
 
 
     return self;

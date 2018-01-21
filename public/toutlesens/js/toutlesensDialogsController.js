@@ -155,10 +155,10 @@ self.getAllpropertiesDialogContent("setSearchNodeReturnFilterVal()");
     str+= "<input type='image' height='15px'  alt='set as rootNode' onclick='toutlesensController.dispatchAction(\"addNodeToGraph\",null," + currentObject.id + ")' src='images/add.jpg'/>" + "&nbsp;";
     str+=   "<td><input type='image' height='15px'  alt='set as rootNode' onclick='toutlesensController.dispatchAction(\"setAsRootNode\")' src='images/squareRoot.png'/></td>"
     if(Gparams.readOnly ==false){
-        str+="<td> <input type='image' height='20px' alt='infos'  onclick='toutlesensController.dispatchAction(\"modifyNode\")' src='images/modify.png'/></td>"
-     //   "<td><input type='image' height='20px'  alt='set as rootNode' onclick='toutlesensController.dispatchAction(\"linkSource\")' src='images/sourceLink.png'/></td>"+
-     //       "<td><input type='image' height='20px'  alt='set as rootNode' onclick='toutlesensController.dispatchAction(\"linkTarget\")' src='images/targetLink.png'/></td>"+
-     //   "<td><input type='image' height='20px'  alt='set as rootNode' onclick='toutlesensController.dispatchAction(\"newNode\")' src='images/new.jpg'/></td>"
+        str+="<td> <input type='image' height='20px' alt='infos'  onclick='toutlesensController.dispatchAction(\"modifyNode\")' src='images/modify.png'/></td>"+
+      "<td><input type='image' height='20px'  alt='set as rootNode' onclick='toutlesensController.dispatchAction(\"linkSource\")' src='images/sourceLink.png'/></td>"+
+            "<td><input type='image' height='20px'  alt='set as rootNode' onclick='toutlesensController.dispatchAction(\"linkTarget\")' src='images/targetLink.png'/></td>"+
+       "<td><input type='image' height='20px'  alt='set as rootNode' onclick='toutlesensController.dispatchAction(\"newNode\")' src='images/new.jpg'/></td>"
     }
 
  //   str+="</td><td>"

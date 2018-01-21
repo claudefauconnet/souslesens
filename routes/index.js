@@ -29,6 +29,13 @@ console.log("***********************serverParams.routesRootUrl " + serverParams.
  app.use(cors()); // use CORS for all requests and all routes*/
 
 
+router.get('/:url', function(req, res) {
+    url = req.params.url;
+    console.log(url);
+
+});
+
+
 router.get(serverParams.routesRootUrl + '/', function (req, res) {
     res.render('index', {title: 'Express'});
 });
@@ -109,7 +116,7 @@ router.post(serverParams.routesRootUrl + '/elastic', function (req, response) {
         });
 
     else if (req.body && req.body.findDocuments)
-        elasticProxy.findDocuments(req.body.indexName, req.body.type, req.body.word, req.body.from, req.body.size, req.body.slop, req.body.fields, req.body.andWords, function (error, result) {
+        elasticProxy.findDocuments(req.body.indexName, req.body.type, req.body.word, req.body.queryField, req.body.from, req.body.size, req.body.slop, req.body.resultFields, req.body.andWords, function (error, result) {
             processResponse(response, error, result)
         });
     else if (req.body && req.body.findDocumentsById)
@@ -164,6 +171,11 @@ router.post(serverParams.routesRootUrl + '/elastic', function (req, response) {
         elasticProxy.indexJsonArray(req.body.index, req.body.type, req.body.array, function (error, result) {
             processResponse(response, error, result)
         });
+    else if (req.body && req.body.getMappingsFields)
+        elasticProxy.getMappingsFields(req.body.index,  function (error, result) {
+            processResponse(response, error, result)
+        });
+
 
 
 });

@@ -281,7 +281,7 @@ var Schema = (function () {
         relTypes = [];
         var relations = self.schema.relations;
         for (var key in relations) {
-            var relations = relations[key];
+            var relation = relations[key];
 
             if (relation.startLabel == startLabel && relation.endLabel == endLabel)
                 relTypes.push(key);

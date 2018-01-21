@@ -48,7 +48,7 @@ logger.setLevel('info');
 
 
 var baseUrl = "http://vps254642.ovh.net:9200/"
-var baseUrl = "http://localhost:9200/"
+var baseUrl = serverParams.elasticUrl
 var maxContentLength = 150;
 var elasticSchema = null;
 
@@ -190,7 +190,7 @@ var elasticProxy = {
             url: baseUrl + index + "/_search"
         };
 
-    //    console.log(JSON.stringify(payload, null, 2));
+        //    console.log(JSON.stringify(payload, null, 2));
         request(options, function (error, response, body) {
             elasticProxy.processSearchResult(error, index, body, callback);
 
@@ -263,47 +263,17 @@ var elasticProxy = {
         });
     },
 
-    findTerms: function (index, type, field, terms, callback) {
-        var termObj = {};
-        termObj[field] = terms;
-        var payload = {
-            "size": serverParams.elasticMaxFetch,
-            "query": {
-                "terms": termObj,
-            }
-        }
-        if (type != null)
-            type = "/" + type;
-        else type = "";
-        var options = {
 
-            method: 'POST',
-            json: payload,
-            url: baseUrl + index + type + "/_search"
-        };
-
-        request(options, function (error, response, body) {
-            if (error)
-                return callback(error);
-            if (body.error)
-                return callback(body.error.type);
-
-            var hits = body.hits.hits;
-            var data = [];
-            for (var i = 0; i < hits.length; i++) {
-                data.push(hits[i]._source.content)
-
-            }
-            return callback(null, data)
-
-
-        });
-
-    },
-    findDocuments: function (index, type, word, from, size, slop, fields, andWords, callback) {
+    findDocuments: function (index, type, word, queryField, from, size, slop, resultFields, andWords, callback) {
         var match = {"content": word};
-        if (!fields) {
-            fields = elasticProxy.getShemaFields(index,type);
+        if (!queryField)
+            queryField = "content"
+        else
+            queryField = "content."+queryField
+
+
+         if (!resultFields) {
+            resultFields = elasticProxy.getShemaFields(index, type);
 
         }
         if (size)
@@ -316,12 +286,11 @@ var elasticProxy = {
         } else {
             query = {
 
-                "match_phrase": {
-                    "content": {
-                        "query": word,
-                        "slop": util.convertNumStringToNumber(slop)
-                    }
-                }
+                "match_phrase": {}
+            }
+            query.match_phrase[queryField] = {
+                "query": word,
+                "slop": util.convertNumStringToNumber(slop)
             }
         }
 
@@ -331,8 +300,9 @@ var elasticProxy = {
 
         if (word.indexOf("*") > -1) {
             query = {
-                "wildcard": {"content": word}
+                "wildcard": {}
             }
+            query.wildcard[queryField] = word;
         }
 
 
@@ -350,7 +320,10 @@ var elasticProxy = {
                 }
 
             for (var i = 0; i < andWords.length; i++) {
-                query.bool.must.push({"match": {"content": andWords[i]}})
+                var match = ({"match": {}});
+                match[queryField] = andWords[i]
+                query.bool.must.push(match);
+
             }
 
         }
@@ -359,16 +332,18 @@ var elasticProxy = {
         var payload = {
             "from": from,
             "size": size,
-            "_source": fields,
+
             "query": query,
             "highlight": {
                 "fields": {
-                    "content": {}
+                    "queryField": {}
                     //  "content":{"fragment_size" : 50, "number_of_fragments" : 10}
                 }
             }
 
         }
+        if (resultFields)
+            payload._source = resultFields;
 
         if (!type)
             type = "";
@@ -381,7 +356,7 @@ var elasticProxy = {
             url: baseUrl + index + type + "/_search"
         };
 
-        // console.log(JSON.stringify(options, null, 2));
+       console.log(JSON.stringify(options, null, 2));
         request(options, function (error, response, body) {
             elasticProxy.processSearchResult(error, index, body, callback);
 
@@ -736,7 +711,7 @@ var elasticProxy = {
                 obj.count = objElastic.doc_count;
 
                 if (elasticProxy.acceptAssociatedWord(obj.key)) {
-                 //   console.log(obj.key)
+                    //   console.log(obj.key)
                     words.push(obj)
                 }
                 else {
@@ -762,8 +737,8 @@ var elasticProxy = {
                     return callback(err);
                 }
                 for (var j = 0; j < buckets.length; j++) {
-                  if(!buckets[j].count)
-                      buckets[j].count=buckets[j].doc_count;
+                    if (!buckets[j].count)
+                        buckets[j].count = buckets[j].doc_count;
 
 
                 }
@@ -782,10 +757,10 @@ var elasticProxy = {
 
 
             if (options.lemmeFilter) {
-                var outputFormat="object";
-                if(options.wordNetEntitiesFilter)
-                    outputFormat="string";
-                elasticProxy.extractLemmes(buckets, words,outputFormat, function (err, lemmes) {
+                var outputFormat = "object";
+                if (options.wordNetEntitiesFilter)
+                    outputFormat = "string";
+                elasticProxy.extractLemmes(buckets, words, outputFormat, function (err, lemmes) {
                     if (options.wordNetEntitiesFilter) {
                         elasticProxy.extractWordNetNouns(buckets, lemmes, function (err, buckets) {
                             return finalProcessing(err, buckets);
@@ -795,8 +770,8 @@ var elasticProxy = {
 
 
                         for (var j = 0; j < lemmes.length; j++) {
-                          //  console.log(lemmes[j])
-                            validBuckets.push({key: lemmes[j].lemme, count:  lemmes[j].word})
+                            //  console.log(lemmes[j])
+                            validBuckets.push({key: lemmes[j].lemme, count: lemmes[j].word})
 
 
                         }
@@ -818,20 +793,20 @@ var elasticProxy = {
     acceptAssociatedWord: function (word) {
         if (word.length < 3)
             return false;
-        if (word.match(/[0-9']+/))
+        if (word.match(/[0-9]+/))
             return false;
-        if (word.match(/['|']/))
+        if (word.match(/['|`]/))
             return false;
         return true;
 
     }
     ,
-    extractLemmes: function (_buckets, words,outputFormat, callback) {
+    extractLemmes: function (_buckets, words, outputFormat, callback) {
         var buckets = _buckets;
         var words = [];
-      for (var i = 0; i < buckets.length; i++) {
-           // for (var i = 0; i < 10; i++) {
-                words.push(buckets[i].key)
+        for (var i = 0; i < buckets.length; i++) {
+            // for (var i = 0; i < 10; i++) {
+            words.push(buckets[i].key)
 
         }
 
@@ -843,15 +818,15 @@ var elasticProxy = {
             var lemmes = [];
             var uniqueLemmes = [];
             for (var i = 0; i < data.length; i++) {
-                if (uniqueLemmes.indexOf(data[i].lemme) < 0){
+                if (uniqueLemmes.indexOf(data[i].lemme) < 0) {
                     uniqueLemmes.push(data[i].lemme);
-                    if(outputFormat=="object")
-                        lemmes.push({lemme:data[i].lemme,word:data[i].word});
+                    if (outputFormat == "object")
+                        lemmes.push({lemme: data[i].lemme, word: data[i].word});
                     else
                         lemmes.push(data[i].lemme);
                 }
             }
-          //  console.log(JSON.stringify(allLemmes))
+            //  console.log(JSON.stringify(allLemmes))
             return callback(null, lemmes)
         })
     },
@@ -886,11 +861,91 @@ var elasticProxy = {
             return callback(null, validBuckets)
         })
 
-    }
+    },
+    //******************************************************************JSON OBJECTs**********************************************************
+//****************************************************************************************************************************
+//****************************************************************************************************************************
+
+    findTerms: function (index, type, field, terms, callback) {
+        var termObj = {};
+        termObj[field] = terms;
+        var payload = {
+            "size": serverParams.elasticMaxFetch,
+            "query": {
+                "terms": termObj,
+            }
+        }
+        if (type != null)
+            type = "/" + type;
+        else type = "";
+        var options = {
+
+            method: 'POST',
+            json: payload,
+            url: baseUrl + index + type + "/_search"
+        };
+
+        request(options, function (error, response, body) {
+            if (error)
+                return callback(error);
+            if (body.error)
+                return callback(body.error.type);
+
+            var hits = body.hits.hits;
+            var data = [];
+            for (var i = 0; i < hits.length; i++) {
+                data.push(hits[i]._source.content)
+
+            }
+            return callback(null, data)
 
 
+        });
+
+    },
+    /**
+     * only two levels objects by now !!!!!!!!!!!!!!!!!!!
 
 
+     */
+    getMappingsFields: function (index, callback) {
+
+        var options = {
+
+            method: 'GET',
+            json: {},
+            url: baseUrl + index + "/_mappings"
+        };
+
+        request(options, function (error, response, body) {
+                if (error)
+                    return callback(error);
+                if (body.error)
+                    return callback(body.error.type);
+                var fields = []
+                var obj = body[index].mappings;
+                for (var type in obj) {
+                    var props = obj[type].properties.content.properties;
+                    for (var field in props) {
+                        if (props[field].properties) {
+                            for (var prop in props[field].properties) {
+                                fields.push(field + "." + prop);
+                            }
+                        }
+
+
+                        else
+                            fields.push(field);
+                    }
+                }
+
+                return callback(null, fields)
+
+
+            }
+        );
+
+    },
 
 
 //******************************************************************INDEXING**********************************************************
@@ -898,13 +953,12 @@ var elasticProxy = {
 //******************************************************************INDEXING**********************************************************
 
 
-    ,
     indexOneDoc:
 
         function (index, type, id, payload, callback) {
             if (!id)
                 id = "_" + Math.round(Math.random() * 10000000);
-            var elasticFields = elasticProxy.getShemaFields(index,type);
+            var elasticFields = elasticProxy.getShemaFields(index, type);
             var content = "";
             for (var j = 0; j < elasticFields.length; j++) {
                 var key = elasticFields[j];
@@ -938,7 +992,7 @@ var elasticProxy = {
     ,
     indexDocumentDir: function (dir, index, type, recursive, callback) {
 
-        var acceptedExtensions = ["doc", "docx", "xls", "xslx", "pdf","odt", "ppt", "pptx", "html", "htm", "txt", "csv"];
+        var acceptedExtensions = ["doc", "docx", "xls", "xslx", "pdf", "odt", "ppt", "pptx", "html", "htm", "txt", "csv"];
 
         var indexedFiles = [];
 
@@ -1082,7 +1136,7 @@ var elasticProxy = {
 
         var currentIndex = 0;
         var resultSize = 1;
-        var elasticFields = elasticProxy.getShemaFields(elasticIndex,elasticType);
+        var elasticFields = elasticProxy.getShemaFields(elasticIndex, elasticType);
         var mongoFields = {};
         for (var i = 0; i < elasticFields.length; i++) {
             var field = elasticFields[i];
@@ -1606,15 +1660,15 @@ var elasticProxy = {
         console.log(message);
     }
     ,
-    getShemaFields: function (index,type) {
+    getShemaFields: function (index, type) {
 
         schema = elasticProxy.getSchema();
         if (!schema || !schema[index] || !schema[index].mappings)
             return null;
 
         var fields = [];
-        var types=[];
-        if( type){// only fields of this type
+        var types = [];
+        if (type) {// only fields of this type
             types.push(schema[index].mappings[type]);
         }
         else {// all fields of all types
@@ -1622,10 +1676,10 @@ var elasticProxy = {
                 types.push(schema[index].mappings[key]);
             }
         }
-            for( var i=0;i<types.length;i++){
+        for (var i = 0; i < types.length; i++) {
 
-                    for (var key in types[i].properties){
-                    fields.push(key)
+            for (var key in types[i].properties) {
+                fields.push(key)
 
             }
 
@@ -1633,7 +1687,11 @@ var elasticProxy = {
 
         return fields;
 
-    }
+    },
+
+
+
+
 
 
 }
@@ -1664,6 +1722,10 @@ function indexJsonFile(filePath, ealasticUrl) {
         });
 
 }
+
+
+
+
 
 module.exports = elasticProxy;
 elasticProxy.getSchema();

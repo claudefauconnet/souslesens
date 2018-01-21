@@ -54,7 +54,7 @@ var classifierManager = {
         elasticProxy = require('../elasticProxy.js');
         async.eachSeries(words, function (word, callbackInner) {
 
-                elasticProxy.findDocuments(index, null, word, 0, serverParams.elasticMaxFetch, null, ["id"], null, function (err, result) {
+                elasticProxy.findDocuments(index, null, word,null, 0, serverParams.elasticMaxFetch, null, ["id"], null, function (err, result) {
                     if (err)
                         return callbackInner(err);
                     if (!result.docs || result.docs.length == 0)

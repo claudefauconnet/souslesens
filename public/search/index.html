@@ -130,7 +130,11 @@
             overflow: auto;
             background-color: #eaeaea;
         }
-
+#graphDiv{
+    width:800px;
+    height: 500px;
+   // background-color: #93aeca;
+}
         .currentPageLink {
             font-weight: bold;
         }
@@ -147,6 +151,12 @@
     <script src="../../common/js/jsTree/jstree.min.js"></script>
     <script src="../../common/js/common.js"></script>
     <script src="../../common/js/jsTreeController.js"></script>
+    <script src="../../common/js/connectors.js"></script>
+
+    <script src="../toutlesens/js/visjs/visjs.js"></script>
+    <script src="../toutlesens/js/visjs/visJsGraph.js"></script>
+
+
     <link rel="stylesheet" href="../../common/js/jsTree/themes/default/style.min.css"/>
     <script>
         var associatedWords = [];
@@ -177,6 +187,23 @@
             if (queryParams.index) {
                 $("#indexInput").val(queryParams.index);
 
+                var payload = {
+                    getMappingsFields: 1,
+                    index: queryParams.index,
+                };
+
+                $.ajax({
+                    type: "POST",
+                    url: "/elastic",
+                    data: payload,
+                    dataType: "json",
+                    success: function (data, textStatus, jqXHR) {
+
+                        data.splice(0, 0, "");
+                        common.fillSelectOptionsWithStringArray(queryFieldSelect, data);
+
+                    }
+                })
             }
             if (queryParams.index == "archivesatd") {
                 $("#showMongoFormInput").css("visibility", "visible");
@@ -242,7 +269,7 @@
             var classifierSourceStr = $("#classifierSource").val();
 
             var size = fetchSize;
-            if (callback) {
+            if (callback || isFieldQuery()) {
                 size = maxCsvSize;
             }
             var payload = {
@@ -260,6 +287,10 @@
             if (associatedWords.length > 0)
                 payload.andWords = associatedWords;
 
+            var queryField = $("#queryFieldSelect").val();
+            if (queryField != "") {
+                payload.queryField = queryField;
+            }
 
             $.ajax({
                 type: "POST",
@@ -272,10 +303,14 @@
                         return callback(null, data)
                     }
                     icons = data.icons;
-                    showResults(data.docs);
 
-
-                    showPageControls(data.total);
+                   if(isFieldQuery()){
+                       var visData=connectors.elasticSkosToVisjs(data.docs);
+                        visjsGraph.draw("graphDiv",  visData);
+                    }else {
+                       showResults(data.docs);
+                       showPageControls(data.total);
+                   }
 
                 }
                 , error: function (xhr, err, msg) {
@@ -291,7 +326,7 @@
 
         }
 
-        function getAssociatedWords(){
+        function getAssociatedWords() {
             var index = $("#indexInput").val();
             var word = $("#searchInput").val().trim();
             if (word != oldWord) {
@@ -315,18 +350,18 @@
                 //  stopWords: stopWords
             }
 
-            var associatedWordsFilter=$("#associatedWordsFilter").val()
+            var associatedWordsFilter = $("#associatedWordsFilter").val()
 
-            if( associatedWordsFilter=="allwords"){
+            if (associatedWordsFilter == "allwords") {
                 ;
             }
-            else if( associatedWordsFilter=="lemmes"){
-                payload.options.lemmeFilter=true;
+            else if (associatedWordsFilter == "lemmes") {
+                payload.options.lemmeFilter = true;
             }
-            else if( associatedWordsFilter=="wordnetEntities"){
-                payload.options.wordNetEntitiesFilter=true;
+            else if (associatedWordsFilter == "wordnetEntities") {
+                payload.options.wordNetEntitiesFilter = true;
             }
-            else if( associatedWordsFilter=="googleEntities"){
+            else if (associatedWordsFilter == "googleEntities") {
                 ;//processed after result
             }
 
@@ -419,7 +454,7 @@
 
 
         function showAssociatedWords(data) {
-            if(!data)
+            if (!data)
                 return;
             var html = "<ul>"
             data.sort(function (a, b) {
@@ -434,12 +469,16 @@
                     html += "<li>" + "<a href='javascript:addAssociatedWord(\"" + data[i].key + "\")'>" + data[i].key + " (" + data[i].count + ")</a></li>"
             }
             html += "</ul>";
-            $("#leftPanel").css("visibility","visible");
-            $("#associatedWordsDiv").html( html);
+            $("#leftPanel").css("visibility", "visible");
+            $("#associatedWordsDiv").html(html);
 
         }
 
         function getListDisplayHtml(obj) {
+
+
+
+
             var str = "";
             if (icons["docTypes"] && icons["docTypes"][obj.type])
                 str += "<img  src='./icons/" + icons["docTypes"][obj.type] + "'>";
@@ -680,7 +719,7 @@
 
                         //associatedTerms
                         var payload = {
-                            iterations:5,
+                            iterations: 5,
                             getAssociatedWords: 1,
                             indexName: index,
                             word: {ids: ids},
@@ -839,6 +878,16 @@
 
             })
         }
+        function isFieldQuery() {
+            var field = $("#queryFieldSelect").val();
+            if (field == "")
+                return false;
+            return true;
+        }
+
+
+
+
 
 
     </script>
@@ -854,16 +903,20 @@
         Associated words<br>
         filter
         <select id="associatedWordsFilter" onchange="getAssociatedWords()">
-            <option value="allwords">low</option></optionvalue>
+            <option value="allwords">low</option>
+            </optionvalue>
             <option value="lemmes">medium</option>
             <option value="wordnetEntities" selected="selected">high</option>
-          <!--  <option>googleEntities</option>-->
+            <!--  <option>googleEntities</option>-->
         </select>
         <div id="associatedWordsDiv"></div>
 
     </div>
     <div id="centerPanel">
         <div id="top">
+            <select id="queryFieldSelect">
+
+            </select>
             <input type="hidden" id="indexInput" value="jfm" size="6">&nbsp;
             <input id="searchInput" fetchSize="40" onkeydown="if (event.keyCode == 13)
                         document.getElementById('searchButton').click()">
@@ -882,7 +935,7 @@
         <hr>
 
         <div id="resultDiv"></div>
-
+        <div id="graphDiv"></div>
 
     </div>
 

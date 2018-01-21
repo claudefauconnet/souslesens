@@ -30,7 +30,6 @@ var infoGenericDisplay = (function () {
     self.Neo4jStorage = true;
     self.MongoStorage = false;
     self.synchronizeNeoToMongo = false;
-    self.currentLabel = null;
 
 
     var limit = Gparams.jsTreeMaxChildNodes;
@@ -103,8 +102,102 @@ var infoGenericDisplay = (function () {
     }
 
 
-    self.loadTree = function (label, parentId, _matchStr) {
 
+    self.initTree=function(data){
+        var plugins = [];
+        //   plugins.push("search");
+        plugins.push("sort");
+        plugins.push("types");
+        plugins.push("contextmenu");
+        plugins.push("dnd");
+
+        self.selectedNodeDatas = {};
+        var types = {};
+
+        var types = {};
+        var labels = Schema.schema.labels;
+        for (var label in labels) {
+
+            types[label] = {icon: "/toutlesens/icons/" + labels[label].icon}
+        }
+
+        $('#' + jsTreeDivId).jstree("destroy").empty();
+        var jsTree = $('#' + jsTreeDivId)
+            .on("select_node.jstree",
+                function (evt, obj) {
+
+                    $(".jstree-themeicon").css("background-size", self.iconSize);
+                    self.onSelect(obj.node);
+                })
+
+            .on("loaded.jstree", function (evt, obj) {
+                $(".jstree-themeicon").css("background-size", self.iconSize);
+            })
+            .on('rename_node.jstree', function (xx, obj, old) {
+                $(".jstree-themeicon").css("background-size", self.iconSize);
+            })
+            .on('after_open.jstree', function (e, data) {
+                $(".jstree-themeicon").css("background-size", self.iconSize);
+            })
+            .on('changed.jstree', function (e, data) {
+                $(".jstree-themeicon").css("background-size", self.iconSize);
+            })
+            .on('delete_node.jstree', function (e, data) {
+                $(".jstree-themeicon").css("background-size", self.iconSize);
+            })
+            .on('refresh_node.jstree', function (e, data) {
+                $(".jstree-themeicon").css("background-size", self.iconSize);
+            })
+
+
+            .jstree({
+                    'core': {
+                        data: {
+
+                        },
+
+                        // so that create works
+                        'check_callback': function (operation, node, node_parent, node_position, more) {
+                            // operation can be 'create_node', 'rename_node', 'delete_node', 'move_node' or 'copy_node'
+                            // in case of 'rename_node' node_position is filled with the new node name
+                            if (operation === "move_node") {
+                                var sourceNode = node.data;
+                                if (!more.ref)
+                                    return true;
+                                var targetNode = more.ref.data;
+                                return self.canDrop(sourceNode, targetNode);
+                            }
+                            return true;  //allow all other operations
+                        }
+                    },
+                    'contextmenu': {
+                        'items': customMenu
+                    },
+                    "dnd": {
+                        // check_while_dragging: true
+                    },
+
+
+                    "types": types,
+                    "plugins": plugins,
+
+                }
+            ).bind("move_node.jstree", function (e, data) {
+                return self.ondDropEnd(data);
+
+
+            });
+    }
+
+    self.loadTreeFromNeoResult=function(parentId,data){
+        $("#waitImg").css("visibility", "hidden")
+        $("#treeContainer").css("visibility", "visible");
+        var treeJson = self.formatResultToJtreeData(data, parentId);
+        self.initTree(treeJson);
+
+
+    }
+    self.loadTreeFromNeoMatchQuery = function (label, parentId, _matchStr) {
         var matchStr = "";
         ids = {};
         if (_matchStr)
@@ -118,111 +211,27 @@ var infoGenericDisplay = (function () {
             var rootId = "";
             matchStr = "MATCH (n:" + label + ") where n.subGraph='" + self.subGraph + "' return n limit " + limit;
         }
-
         var payload = {match: matchStr, nodeLabel: label, query: {}, limit: limit};
-
         self.callAPIproxy(payload, "retrieve", function (error, data) {
-            currentDisplayType = "FLOWER";
+         //   currentDisplayType = "FLOWER";
             currentDisplayType = "VISJS-NETWORK";
             if (error)
                 return;
-
-
-            $("#treeContainer").css("visibility", "visible");
-            var treeJson = self.formatResultToJtreeData(data, parentId);
-
-            var plugins = [];
-            //   plugins.push("search");
-            plugins.push("sort");
-            plugins.push("types");
-            plugins.push("contextmenu");
-            plugins.push("dnd");
-
-            self.selectedNodeDatas = {};
-            var types = {};
-
-            var types = {};
-            var labels = Schema.schema.labels;
-            for (var label in labels) {
-
-                types[label] = {icon: "/toutlesens/icons/" + labels[label].icon}
+            self.loadTreeFromNeoResult(parentId,data);
+            var idsList=[];
+            for( var i=0;i<data.length;i++){
+                idsList.push(data[i].n._id)
             }
-
-            $('#' + jsTreeDivId).jstree("destroy").empty();
-            var jsTree = $('#' + jsTreeDivId)
-                .on("select_node.jstree",
-                    function (evt, obj) {
-
-                        $(".jstree-themeicon").css("background-size", self.iconSize);
-                        self.onSelect(obj.node);
-                    })
-
-                .on("loaded.jstree", function (evt, obj) {
-                    $(".jstree-themeicon").css("background-size", self.iconSize);
-                })
-                .on('rename_node.jstree', function (xx, obj, old) {
-                    $(".jstree-themeicon").css("background-size", self.iconSize);
-                })
-                .on('after_open.jstree', function (e, data) {
-                    $(".jstree-themeicon").css("background-size", self.iconSize);
-                })
-                .on('changed.jstree', function (e, data) {
-                    $(".jstree-themeicon").css("background-size", self.iconSize);
-                })
-                .on('delete_node.jstree', function (e, data) {
-                    $(".jstree-themeicon").css("background-size", self.iconSize);
-                })
-                .on('refresh_node.jstree', function (e, data) {
-                    $(".jstree-themeicon").css("background-size", self.iconSize);
-                })
-
-
-                .jstree({
-                        'core': {
-                            data: treeJson,
-
-                            // so that create works
-                            'check_callback': function (operation, node, node_parent, node_position, more) {
-                                // operation can be 'create_node', 'rename_node', 'delete_node', 'move_node' or 'copy_node'
-                                // in case of 'rename_node' node_position is filled with the new node name
-                                if (operation === "move_node") {
-                                    var sourceNode = node.data;
-                                    if (!more.ref)
-                                        return true;
-                                    var targetNode = more.ref.data;
-                                    return self.canDrop(sourceNode, targetNode);
-                                }
-                                return true;  //allow all other operations
-                            }
-                        },
-                        'contextmenu': {
-                            'items': customMenu
-                        },
-                        "dnd": {
-                            // check_while_dragging: true
-                        },
-
-
-                        "types": types,
-                        "plugins": plugins,
-
-                    }
-                ).bind("move_node.jstree", function (e, data) {
-                    return self.ondDropEnd(data);
-
+            toutlesensData.setSearchByPropertyListStatement("_id",idsList, function (err, result) {
+                toutlesensController.generateGraph(null,true,function(){
+                    $("#filtersDiv").html("");
+                    $("#graphMessage").html("");
 
                 });
-            /*
-             $(document).bind("dnd_move.vakata", function (data, element, helper, event) {
-             self.ondDropEnd(data);
-
-             });*/
-
-
+            })
         })
-
-
     }
+
 
     function customMenu(node) {
 
@@ -417,8 +426,8 @@ var infoGenericDisplay = (function () {
                 options.push(option)
             }
             common.fillSelectOptions(newRelationNodeSelect, options, "name", "neoId");
-            if ($("#tabs-radarRight").length)
-                $("#tabs-radarRight").tabs({active: 2});
+            if ($("#tabs-mainPanel").length)
+                $("#tabs-mainPanel").tabs({active: 2});
             $("#relInfosDivWrapper").css("visibility", "hidden");
             $("#info").css("visibility", "hidden");
             // self.clearNodePropertiesDiv()
@@ -514,7 +523,10 @@ var infoGenericDisplay = (function () {
         var name = prompt("new item name");
         if (!name || name.length == 0)
             return;
-        var nameObj = {}
+        var nameObj = {};
+        if(currentNameProperty){
+            currentNameProperty=Schema.getNameProperty()
+        }
         nameObj[currentNameProperty] = name;
         var payload = {
             setNodePrivateId: 1,
@@ -527,18 +539,22 @@ var infoGenericDisplay = (function () {
                 $("#message").html(err);
                 return;
             }
+
+            var data = result[0].n.properties;
+            data.label = result[0].n.labels[0];
+            data.neoId = result[0].n._id;
             if (self.synchronizeNeoToMongo == true) {
-                var data = result[0].n.properties;
-                data.label = result[0].n.labels[0];
-                data.neoId = result[0].n._id;
+
 
                 neoToMongo.syncObjNeoToMongo("create", data, null);
             }
             var data = result[0];
+
+
             if (currentMenuData)
                 self.addNodeToJstree(data, currentMenuData.jtreeId, [], true);
             else
-                self.addNodeToJstree(data, null, [], true);
+                self.initTree({text:data.label,id:data.neoId ,parent:"#"})
 
         })
 
@@ -603,10 +619,10 @@ var infoGenericDisplay = (function () {
 
         var label = obj.label;
         var labelStr = "";
-        if (false && !parentJtreeId) {//first level
+        if (!parentJtreeId) {//first level
             parentJtreeId = "#";
         }
-        if (true || parentJtreeId != "#") {
+        if (parentJtreeId != "#") {
             jtreeId = jtreeId + "_" + parentJtreeId
             labelStr = "[" + label + "]"
         }
@@ -653,7 +669,7 @@ var infoGenericDisplay = (function () {
 
 
     self.onSelect = function (node) {
-        var node = node;
+        var node=node;
         self.selectedNodeData = node.data;
         self.selectedNodeData.parent = parent;
         var label = node.label
@@ -667,45 +683,47 @@ var infoGenericDisplay = (function () {
         var parentId = node.data.neoId;
 
 
-        toutlesensController.checkMaxNumberOfNodeRelations(parentId, Gparams.jsTreeMaxChildNodes, function () {
-            currentObject = node.data;
-            currentObject.id = parentId;
-            /*  if (toutlesensController && currentDisplayType && currentDisplayType == "CARDS") {
 
-                  toutlesensController.onVisButton("CARDS");
 
-              }
-              if (toutlesensController && currentDisplayType && currentDisplayType != "FORM") {
-                  toutlesensController.generateGraph(parentId, toutlesensController.drawGraph);
+        toutlesensController.checkMaxNumberOfNodeRelations (parentId,Gparams.jsTreeMaxChildNodes,function(){
+            currentObject= node.data;
+        currentObject.id = parentId;
+      /*  if (toutlesensController && currentDisplayType && currentDisplayType == "CARDS") {
 
-              }*/
+            toutlesensController.onVisButton("CARDS");
 
-            if (true) {
-                node = ids[parentJstreeId];
-                $("#tabs-radarRight").tabs("enable", 2);
-                self.showNodeData(node);
-                toutlesensController.addToHistory = true;
-                toutlesensController.generateGraph(parentId, toutlesensController.drawGraph);
+        }
+        if (toutlesensController && currentDisplayType && currentDisplayType != "FORM") {
+            toutlesensController.generateGraph(parentId, toutlesensController.drawGraph);
+
+        }*/
+
+        if(true) {
+             node = ids[parentJstreeId];
+             currentLabel=null;
+            $("#tabs-mainPanel").tabs("enable", 2);
+            self.showNodeData(node);
+            toutlesensController.generateGraph(parentId, toutlesensController.drawGraph);
+        }
+
+        /*   if (node.data.label)
+         var label = node.data.label;*/
+
+        var matchStr = "match (n)-[r]-(m) where ID(m)=" + parentId + " and m.subGraph=\"" + self.subGraph + "\" return n,r limit " + Gparams.jsTreeMaxChildNodes;
+        var payload = {match: matchStr, parentLabel: label, parentId: parentId, limit: limit};
+        self.callAPIproxy(payload, "retrieve", function (error, data) {
+            var jsonData = self.formatResultToJtreeData(data, parentJstreeId, node.parents);
+
+            for (var i = 0; i < jsonData.length; i++) {
+
+                $('#' + jsTreeDivId).jstree().create_node(parentJstreeId, jsonData[i], "first", function (www) {
+                    if (i >= jsonData.length - 1)
+                        $('#' + jsTreeDivId).jstree('open_node', "#" + parentJstreeId);
+                });
+
             }
 
-            /*   if (node.data.label)
-             var label = node.data.label;*/
-
-            var matchStr = "match (n)-[r]-(m) where ID(m)=" + parentId + " and m.subGraph=\"" + self.subGraph + "\" return n,r limit " + Gparams.jsTreeMaxChildNodes;
-            var payload = {match: matchStr, parentLabel: label, parentId: parentId, limit: limit};
-            self.callAPIproxy(payload, "retrieve", function (error, data) {
-                var jsonData = self.formatResultToJtreeData(data, parentJstreeId, node.parents);
-
-                for (var i = 0; i < jsonData.length; i++) {
-
-                    $('#' + jsTreeDivId).jstree().create_node(parentJstreeId, jsonData[i], "first", function (www) {
-                        if (i >= jsonData.length - 1)
-                            $('#' + jsTreeDivId).jstree('open_node', "#" + parentJstreeId);
-                    });
-
-                }
-
-            })
+        })
         })
 
     }
@@ -798,74 +816,48 @@ var infoGenericDisplay = (function () {
 
 
         }
-
-        if (self.selectedNodeData && self.selectedNodeData.neoId) {//update
-            var payload = {
-                nodeAttrs: {_id: self.selectedNodeData.neoId},
-                nodeSet: setObj,
-              //  label: self.selectedNodeData.label
-            }
-
-
-            self.callAPIproxy(payload, "updateNode", function (err, result) {
-                if (err) {
-                    $("#message").html(err);
-                    return;
-                }
-                $("#message").html("node saved");
-                toutlesensController.replayGraph("same");
-
-                var node = result[0]
-                //  var node = self.addNodeToJstree(result[0], null, false);
-
-                if (node.n) {
-                    var _id = node.n._id;
-                    var label = node.n.labels[0];
-                    node = node.n.properties;
-                    node.label = label;
-                    if (self.synchronizeNeoToMongo == true)
-                        neoToMongo.syncObjNeoToMongo("update", self.selectedNodeData, setObj);
-
-                    node.parent = self.selectedNodeData.parent;
-                    node.neoId = self.selectedNodeData.neoId;
-                    node.jtreeId = self.selectedNodeData.jtreeId;
-                }
-
-                ids[self.selectedNodeData.jtreeId] = node;
-
-                if (self.selectedNodeData[currentNameProperty] != node[currentNameProperty]) {
-                    var text = node[currentNameProperty];
-                  //  if (self.selectedNodeData.parent != "#")
-                        text = "[" + node.label + "]" + node[currentNameProperty];
-                    $('#' + jsTreeDivId).jstree().rename_node(self.selectedNodeData.jtreeId, text);
-
-                }
-
-
-            })
+        var payload = {
+            nodeAttrs: {_id: self.selectedNodeData.neoId},
+            nodeSet: setObj,
+            label: self.selectedNodeData.label
         }
-        else {//new Node
-            for (var key in setObj) {
-                if (!setObj[key] || setObj[key] == "")
-                    delete setObj[key];
+
+        self.callAPIproxy(payload, "updateNode", function (err, result) {
+            if (err) {
+                $("#message").html(err);
+                return;
             }
-            var payload = {
-                nodeAttrs: setObj,
-                nodeSubGraph: subGraph,
-                nodeLabel: self.currentLabel
+            $("#message").html("node saved");
+
+            var node = result[0]
+            //  var node = self.addNodeToJstree(result[0], null, false);
+
+            if (node.n) {
+                var _id = node.n._id;
+                var label = node.n.labels[0];
+                node = node.n.properties;
+                node.label = label;
+                if (self.synchronizeNeoToMongo == true)
+                    neoToMongo.syncObjNeoToMongo("update", self.selectedNodeData, setObj);
+
+                node.parent = self.selectedNodeData.parent;
+                node.neoId = self.selectedNodeData.neoId;
+                node.jtreeId = self.selectedNodeData.jtreeId;
+            }
+
+            ids[self.selectedNodeData.jtreeId] = node;
+
+            if (self.selectedNodeData[currentNameProperty] != node[currentNameProperty]) {
+                var text = node[currentNameProperty];
+                if (self.selectedNodeData.parent != "#")
+                    text = "[" + node.label + "]" + node[currentNameProperty];
+
+
+                $('#' + jsTreeDivId).jstree().rename_node(self.selectedNodeData.jtreeId, text);
             }
 
 
-            self.callAPIproxy(payload, "createNode", function (err, result) {
-                if (err) {
-                    $("#message").html(err);
-                    return;
-                }
-                $("#message").html("node saved");
-                toutlesensController.replayGraph("same");
-
-            })
-        }
+        })
 
 
     }
@@ -875,7 +867,7 @@ var infoGenericDisplay = (function () {
         if (confirm("delete editing node ?")) {
             var payload = {
                 nodeAttrs: {_id: self.selectedNodeData.neoId},
-              //  nodeLabel: self.selectedNodeData.label
+                nodeLabel: self.selectedNodeData.label
             }
 
 
@@ -886,10 +878,8 @@ var infoGenericDisplay = (function () {
                 }
                 if (self.synchronizeNeoToMongo == true)
                     neoToMongo.syncObjNeoToMongo("delete", self.selectedNodeData, null);
-                if ($('#' + jsTreeDivId).jstree())
-                    $('#' + jsTreeDivId).jstree().delete_node("#" + self.selectedNodeData.jtreeId);
+                $('#' + jsTreeDivId).jstree().delete_node("#" + self.selectedNodeData.jtreeId);
                 self.clearNodePropertiesDiv()
-                toutlesensController.replayGraph("same");
             });
 
         }
@@ -924,7 +914,6 @@ var infoGenericDisplay = (function () {
                 return;
             }
             $("#message").html("relation saved");
-            toutlesensController.replayGraph("same");
 
 
         })
@@ -947,7 +936,7 @@ var infoGenericDisplay = (function () {
     /********************************************************************************/
     self.callAPIproxy = function (payload, operation, callback) {
         if (self.Neo4jStorage) {
-            $.ajax(Gparams.restProxyUrl + '/?' + operation + '=1', {
+            $.ajax(Gparams.restProxyUrl+'/?' + operation + '=1', {
                 data: payload,
                 dataType: "json",
                 type: 'POST',
@@ -1007,8 +996,8 @@ var infoGenericDisplay = (function () {
 
     }
     self.setAttributesValue = function (label, attrObject, obj, changeType) {
-        self.currentNodeChanges = []
-        self.currentLabel = label;
+        if(!self.currentLabel)
+            self.currentLabel=label;
         if (!changeType)
             changeType = "node";
         for (var key in attrObject) {
@@ -1143,7 +1132,8 @@ var infoGenericDisplay = (function () {
 
 
     self.loadSearchResultIntree = (function (err, matchStr) {
-        self.loadTree(null, null, matchStr);
+        self.loadTreeFromNeoMatchQuery(null, null, matchStr);
+        $("#waitImg").css("visibility", "hidden")
     });
 
     self.cancelAddRelation = function () {

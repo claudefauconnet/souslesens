@@ -142,7 +142,7 @@ var currentExternalUri=null;
 //*************lang.js
 var langResources={};
 //*************modifyData.js
-var currentRelationData=null;
+//var currentRelationData=null;
 var currentLabel=null;
 var isNewNode=false;
 //*************selection.js

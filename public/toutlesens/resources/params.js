@@ -41,6 +41,7 @@ var Gparams = {
     modifyMode: 'onList',//''onList',
     useVisjsNetworkgraph:true,
     graphAllowPaint:true,
+    allowOrphanNodesInGraphQuery:true,
 
     searchInputKeyDelay:500,
     searchInputMinLength:2,
@@ -121,7 +122,8 @@ var Gparams = {
     showRelationNames: false,
     isInframe: false,
     treeGraphVertSpacing: 35,
-    bigDialogSize: {w: 300, h: 400},
+    smallDialogSize: {w: 300, h: 400},
+    bigDialogSize: {w: 1000, h: 800},
     showBItab:false,
     gantt: {
         name: "nom",

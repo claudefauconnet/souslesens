@@ -228,6 +228,25 @@
       }
     }
   },
+"jsonIndex":{
+  "mappings": {
+    "json": {
+      "properties": {
+        "content": {
+          "type": "text",
+          "index_options": "offsets",
+          "fields": {
+            "contentKeyWords": {
+              "type": "keyword",
+              "ignore_above": 256
+            }
+          },
+          "fielddata": true
+        }
+      }
+    }
+  }
+},
   "fields": [
     "anneeDebut",
     "anneeFin",

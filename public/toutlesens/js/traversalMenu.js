@@ -82,7 +82,7 @@ var traversalMenu = (function () {
              }
 
              currentDisplayType = "VISJS-NETWORK";
-             visjsGraph.draw("graphDiv", data);
+             visjsGraph.draw("graphDiv",   connectors.neoResultsToVisjs(data));
              filters.initGraphFilters (data);
              setTimeout(function(){
                  visjsGraph.paintNodes([self.context.source.id, self.context.target.id],"blue",null,10)

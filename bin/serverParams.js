@@ -30,7 +30,7 @@ var serverParams={
    neo4jUrl: 'http://neo4j:souslesens@127.0.0.1:7474',
      mongoUrl : "mongodb://127.0.0.1:27017/",
     mongoFetchSize:500,
-    elasticUrl:'localhost:9200',
+    elasticUrl:'http://localhost:9200/',
     uploadMaxSize:100*1000*1000, //100M
     elasticsaerchMaxDocSizeForIndexing:10*1000*1000 ,//1Mo
     elasticMaxFetch:10*1000

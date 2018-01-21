@@ -40,7 +40,7 @@ var d3schema = (function () {
 
     var minOpacity = .8;
 
-    self.graphDiv = "#graphDiv";
+  //  var schemaGraphDiv =$("#schemaGraphDiv");
     self.currentNodeData;
     self.currentRelationData;
     self.inCreatingRelation = false;
@@ -59,7 +59,7 @@ var d3schema = (function () {
             initD3Nodes(fromSchema);
             setLabelsCoordinates();
             initD3rels(fromSchema);
-            draw(self.graphDiv);
+            draw(schemaGraphDiv);
         }
 
         if (update)
@@ -130,8 +130,8 @@ var d3schema = (function () {
         }
     }
     var setLabelsCoordinates = function () {// randomize position
-        var w = $(graphDiv).width() / 2;
-        var h = $(graphDiv).height() / 2;
+        var w = $(schemaGraphDiv).width() / 2;
+        var h = $(schemaGraphDiv).height() / 2;
 
 
         for (var i = 0; i < dataLabels.length; i++) {
@@ -210,14 +210,14 @@ var d3schema = (function () {
     }
 
 
-    var draw = function (graphDiv) {
-        $(graphDiv).html("");
-        var w = $(graphDiv).width();
-        var h = $(graphDiv).height();
-        var svgX = $(graphDiv).position().x ;
-        var svgY = $(graphDiv).position().y ;
+    var draw = function (schemaGraphDiv) {
+        $(schemaGraphDiv).html("");
+        var w = $(schemaGraphDiv).width();
+        var h = $(schemaGraphDiv).height();
+        var svgX = $(schemaGraphDiv).position().x ;
+        var svgY = $(schemaGraphDiv).position().y ;
         d3.select("svg").selectAll("*").remove();
-        svgGraph = d3.select(graphDiv).append("svg").attr("width", w).attr(
+        svgGraph = d3.select(schemaGraphDiv).append("svg").attr("width", w).attr(
             "height", h);
 
         links = svgGraph.selectAll(".link").data(dataRels).enter().append("svg:g", "link").attr("id", function (d) {
@@ -560,7 +560,7 @@ var d3schema = (function () {
                     savelabelCoordinates(d);
 
 
-                    $(graphDiv).css('cursor', 'default');
+                    $(schemaGraphDiv).css('cursor', 'default');
                     isDragging = false;
                     isResizing = false;
                     d3.select(".dragRect").style("visibility", "hidden");
@@ -676,12 +676,12 @@ var d3schema = (function () {
                 d3.select(".dragRect").attr("x", zone.x).attr("y", zone.y);
                 if (evtX > (oldX2 - resizeSquare) && evtY > (oldY2 - resizeSquare)) {
                     isResizing = true;
-                    $(graphDiv).css('cursor', 'default');
+                    $(schemaGraphDiv).css('cursor', 'default');
                     d3.select(".dragRect").style("visibility", "visible");
 
                 } else {
                     isResizing = false;
-                    $(graphDiv).css('cursor', 'default');
+                    $(schemaGraphDiv).css('cursor', 'default');
                     d3.select(".dragRect").style("visibility", "hidden");
                 }
             }
@@ -976,11 +976,11 @@ var old = function () {
             .interpolate("linear");
 
         if (true || !svgGraph) {
-            $(graphDiv).html("");
-            var w = $(graphDiv).width();
-            var h = $(graphDiv).height();
+            $(schemaGraphDiv).html("");
+            var w = $(schemaGraphDiv).width();
+            var h = $(schemaGraphDiv).height();
             d3.select("svg").selectAll("*").remove();
-            svgGraph = d3.select(graphDiv).append("svg").attr("width", w).attr(
+            svgGraph = d3.select(schemaGraphDiv).append("svg").attr("width", w).attr(
                 "height", h);
         }
 
@@ -1388,7 +1388,7 @@ var old = function () {
                     savelabelCoordinates(d);
 
 
-                    $(graphDiv).css('cursor', 'default');
+                    $(schemaGraphDiv).css('cursor', 'default');
                     isDragging = false;
                     isResizing = false;
                     d3.select(".dragRect").style("visibility", "hidden");
@@ -1860,12 +1860,12 @@ var old = function () {
             d3.select(".dragRect").attr("x", zone.x).attr("y", zone.y);
             if (evtX > (oldX2 - resizeSquare) && evtY > (oldY2 - resizeSquare)) {
                 isResizing = true;
-                $(graphDiv).css('cursor', 'default');
+                $(schemaGraphDiv).css('cursor', 'default');
                 d3.select(".dragRect").style("visibility", "visible");
 
             } else {
                 isResizing = false;
-                $(graphDiv).css('cursor', 'default');
+                $(schemaGraphDiv).css('cursor', 'default');
                 d3.select(".dragRect").style("visibility", "hidden");
             }
         }
@@ -1877,7 +1877,7 @@ var old = function () {
     }
 
     function getSVG(collectionName, id) {
-        var svg = $("#graphDiv").html();
+        var svg = $("#schemaGraphDiv").html();
 // var svg1=d3.select("svg").html();
 // var svg2=d3.selectAll(svgGraph).html();
 // svg='<svg xmlns="http://www.w3.org/2000/svg" width="860"
