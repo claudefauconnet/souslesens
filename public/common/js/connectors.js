@@ -11,6 +11,7 @@ var connectors = (function () {
         var colors = [];
         if (!resultArray)
             return;
+        var uniqueRels = [];
         for (var i = 0; i < resultArray.length; i++) {
             var rels = resultArray[i].rels;
             var nodes = resultArray[i].nodes;
@@ -94,6 +95,13 @@ var connectors = (function () {
                     color: color,
                     // font:{background:color},
                 }
+                var relUniqueId = relObj.from + "-" + relObj.to + "-" + relObj.type;
+                var relUniqueIdInv = relObj.to + "-" + relObj.from + "-" + relObj.type;
+                if (uniqueRels.indexOf(relUniqueId) > -1 || uniqueRels.indexOf(relUniqueIdInv) > -1)
+                    continue;
+                else
+                    uniqueRels.push(relUniqueId);
+
                 if (Gparams.showRelationNames === true)
                     relObj.label = relObj.type;
 

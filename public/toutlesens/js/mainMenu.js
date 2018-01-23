@@ -100,7 +100,7 @@ var mainMenu = (function () {
             return alert("relation not permitted)");
         }
 
-        allowedRelTypes.splice(0, 0, "");
+      //  allowedRelTypes.splice(0, 0, "");
         $("#dialog").load("htmlSnippets/relationsController.html", function () {
             common.fillSelectOptionsWithStringArray(relations_relTypeSelect, allowedRelTypes)
             $("#dialog").dialog("option", "title", "Relation");

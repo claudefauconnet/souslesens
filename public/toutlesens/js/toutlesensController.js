@@ -1039,19 +1039,13 @@ var toutlesensController = (function () {
 
         } else if (action == "newNode") {
             currentObject = {}
-            var label = $("#nodesLabelsSelect").val();
-            if (!label || label == "") {
-                return alert("select a label for the new node");
-            }
-            var attrObject = Schema.schema.properties[label];
-            $("#nodeLabel").html(label);
-            infoGenericDisplay.selectedNodeData = null;
-            infoGenericDisplay.setAttributesValue(label, attrObject, {});
-            infoGenericDisplay.drawAttributes(attrObject, "nodeInfosDiv");
-            if (queryParams.write)
+
+            if (Gparams.readOnly==false) {
+                self.initLabels(edit_nodeLabelSelect);
                 $("#infosHeaderDiv").css("visibility", "visible");
-            $("#tabs-mainPanel").tabs("enable", 2);
-            $("#tabs-mainPanel").tabs("option", "active", 2);
+                $("#tabs-mainPanel").tabs("enable", 2);
+                $("#tabs-mainPanel").tabs("option", "active", 2);
+            }
 
         } else if (action == "switchNodesVisibilityFromLabel") {
             var action2 = "";
@@ -1597,6 +1591,13 @@ var toutlesensController = (function () {
 
         })
         $("#dialogLarge").dialog("open");
+    }
+
+    self.showAll = function () {
+     currentObject.id=null;
+     currentLabel=null;
+        currentDisplayType="SIMPLE_FORCE_GRAPH"
+     self.generateGraph(null,true);
     }
 
 

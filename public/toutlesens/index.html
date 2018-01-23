@@ -114,7 +114,7 @@
     <script src="js/textOutputs.js"></script>
 
 
-    <script src="js/.js"></script>
+
     <script src="js/selection.js"></script>
     <script src="js/statistics.js"></script>
     <script src="js/graphTraversalQueries.js"></script>
@@ -559,7 +559,7 @@
             <div id="infosHeaderDiv">
                 &nbsp;&nbsp;<button onclick="infoGenericDisplay.saveNode()">Save</button>
                 &nbsp;&nbsp;<button onclick="infoGenericDisplay.deleteNode()">Delete</button>
-
+NodeLabel<select id="edit_nodeLabelSelect" onchange="infoGenericDisplay.setNewNodeProperties(this)"></select>
 
                 </tr>
             </div>
@@ -648,7 +648,7 @@
                        <br> <button id="createNodeButton" onclick="toutlesensController.dispatchAction('newNode')">
                             New node
                         <button   id="editSchemaButton" onclick="toutlesensController.showGraphSchema()">Edit Schema</button>
-                        </button>
+                        <button   id="showAll" onclick="toutlesensController.showAll()">Show All</button>
                         <!-- <button  onclick="showAdvancedSearchDialog()">+</button>-->
 
 

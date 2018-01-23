@@ -130,11 +130,13 @@
             overflow: auto;
             background-color: #eaeaea;
         }
-#graphDiv{
-    width:800px;
-    height: 500px;
-   // background-color: #93aeca;
-}
+
+        #graphDiv {
+            width: 800px;
+            height: 500px;
+        / / background-color: #93aeca;
+        }
+
         .currentPageLink {
             font-weight: bold;
         }
@@ -304,13 +306,14 @@
                     }
                     icons = data.icons;
 
-                   if(isFieldQuery()){
-                       var visData=connectors.elasticSkosToVisjs(data.docs);
-                        visjsGraph.draw("graphDiv",  visData);
-                    }else {
-                       showResults(data.docs);
-                       showPageControls(data.total);
-                   }
+                    if (isFieldQuery()) {
+                        var visData = connectors.elasticSkosToVisjs(data.docs);
+                        visjsGraph.draw("graphDiv", visData);
+                        showResults(data.docs);
+                    } else {
+
+                        showPageControls(data.total);
+                    }
 
                 }
                 , error: function (xhr, err, msg) {
@@ -477,7 +480,9 @@
         function getListDisplayHtml(obj) {
 
 
-
+            if (isFieldQuery()) {
+                return JSON.stringify(obj);
+            }
 
             var str = "";
             if (icons["docTypes"] && icons["docTypes"][obj.type])
@@ -878,16 +883,13 @@
 
             })
         }
+
         function isFieldQuery() {
             var field = $("#queryFieldSelect").val();
             if (field == "")
                 return false;
             return true;
         }
-
-
-
-
 
 
     </script>

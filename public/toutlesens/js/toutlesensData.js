@@ -120,7 +120,7 @@ var toutlesensData = (function () {
     }
 
     self.getNodeAllRelations = function (id, output, addToExistingTree, callback) {
-      var   hasMclause=true;
+      var   hasMclause=false;
             if (!self.matchStatement) {
                 excludedLabels = [];
                 //    id = parseInt("" + id);

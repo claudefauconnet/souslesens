@@ -1158,6 +1158,23 @@ var infoGenericDisplay = (function () {
         }
     }
 
+    self.setNewNodeProperties=function(labelSelect){
+        var label = $(labelSelect).val();
+        if (!label || label == "") {
+            return alert("select a label for the new node");
+        }
+        var attrObject = Schema.schema.properties[label];
+        self.selectedNodeData = null;
+        self.setAttributesValue(label, attrObject, {});
+        self.drawAttributes(attrObject, "nodeInfosDiv");
+
+    }
+
+
+
+
+
+
     return self;
 
 
