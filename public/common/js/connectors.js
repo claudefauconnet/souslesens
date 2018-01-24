@@ -46,6 +46,12 @@ var connectors = (function () {
 
 
                     }
+                    if (nodes[j].outline) {
+                        nodeObj.font = {size: 18, color:Gparams.outlineTextColor, strokeWidth: 3, strokeColor: '#ffffff'}
+                        nodeObj.size = 25;
+                    }
+
+
                     nodeObj.initialColor = nodeObj.color;
                     if (nodeObj.labelNeo == currentLabel) {
                         nodeObj.size = 15;
@@ -93,8 +99,20 @@ var connectors = (function () {
                     neoId: relProperties[j]._id,
                     neoAttrs: relProperties[j].properties,
                     color: color,
+                    width:2
                     // font:{background:color},
                 }
+
+                if(toutlesensData.queriesIds.indexOf(relObj.to)>-1) {
+                    relObj.width = Gparams.outlineEdgeWidth;
+                    relObj.color=Gparams.outlineColor;
+                }
+
+                if (resultArray[i].outlineRel) {
+                    relObj.width= 3;
+                    relObj.font = {size: 18, color: 'red', strokeWidth: 3, strokeColor: '#ffffff'}
+                }
+
                 var relUniqueId = relObj.from + "-" + relObj.to + "-" + relObj.type;
                 var relUniqueIdInv = relObj.to + "-" + relObj.from + "-" + relObj.type;
                 if (uniqueRels.indexOf(relUniqueId) > -1 || uniqueRels.indexOf(relUniqueIdInv) > -1)

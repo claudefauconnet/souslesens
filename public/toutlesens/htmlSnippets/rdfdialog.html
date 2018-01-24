@@ -1,0 +1,82 @@
+<table>
+    <tr>
+        <td>
+            Word
+        </td>
+
+        <td>
+            <input id="rdfWordInput">
+        </td>
+    </tr>
+    <tr>
+        <td>
+            Relation
+        </td>
+
+        <td>
+            narrower <input type="checkbox" checked="checked" value="narrower"
+                            name="relationCBX"><br>
+            broader<input type="checkbox" value="broader" name="relationCBX"><br>
+            related <input type="checkbox" value="related" name="relationCBX"><br>
+            <!--  <select id="rdfRelationSelect">
+                   <option>narrower</option>
+                   <option>broader</option>
+                   <option>related</option>
+
+               </select>-->
+        </td>
+    </tr>
+    <tr>
+        <td>
+            Store
+        </td>
+
+        <td>
+            <select id="rdfStoreSelect">
+                <option>BNF</option>
+                <option>DBPEDIA</option>
+            </select>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            Langage
+        </td>
+
+        <td>
+            <select id="rdfLangageSelect">
+                <option>fr</option>
+                <option>en</option>
+            </select>
+        </td>
+    </tr>
+    <td>
+        Contains
+    </td>
+
+    <td>
+        <select id="rdfContainsSelect">
+            <option>false</option>
+            <option>true</option>
+        </select>
+    </td>
+    </tr>
+    <td>
+        <select id="rdfDisplaySelect">
+            <option>FLOWER</option>
+            <option>SIMPLE_FORCE_GRAPH</option>
+            <option>TREE</option>
+            <option>CARDS</option>
+        </select>
+    </td>
+    </tr>
+    <tr align="center">
+
+        <td colspan="2" valign="center">
+            <button onclick="toutlesensController.searchRDF()"><span
+                    id='lang_61'> Search RDF</span></button>
+
+    </tr>
+
+
+</table>

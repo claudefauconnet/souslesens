@@ -16,7 +16,7 @@ var filters = (function () {
         self.postFilter = null;
 
         $("#innerLegendDiv").html("");
-       $("#tabs-controlPanel").tabs('option','active',1)
+    //   $("#tabs-controlPanel").tabs('option','active',1)
 
 
         var str = "";
@@ -148,7 +148,7 @@ var filters = (function () {
 
         })
 
-        // generateGraph(currentObject.id,drawGraph);
+
     }
 
 
@@ -244,7 +244,7 @@ var filters = (function () {
             toutlesensData.queryRelTypeFilters = ":" + allRelTypesStr;
 
         if (generateGraph) {
-            toutlesensController.generateGraph(null, true);
+            toutlesensController.generateGraph(null, {applyFilters:true});
         }
 
 

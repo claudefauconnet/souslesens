@@ -96,7 +96,7 @@ var customizeUI = (function () {
 
             toutlesensController.setResponsiveDimensions(0);
             toutlesensData.setSearchByPropertyListStatement("id",idsList, function (err, result) {
-                    toutlesensController.generateGraph(null,true,function(){
+                    toutlesensController.generateGraph(null,{applyFilters:true},function(){
 
                         $("#filtersDiv").html("");
                         $("#graphMessage").html("");

@@ -116,6 +116,12 @@ var Gparams = {
     curveOffset: 40,
     relStrokeWidth: 4,
 
+
+
+    outlineColor:"grey",
+    outlineEdgeWidth:10,
+    outlineTextColor:"red",
+
     minOpacity: .3,
     d3ForceParams: {distance: 200, charge: -500, gravity: .25},
     htmlOutputWithAttrs: true,

@@ -49,7 +49,7 @@ var mainMenu = (function () {
                 currentLabel = label;
                 currentDisplayType = "SIMPLE_FORCE_GRAPH";
 
-                toutlesensController.generateGraph(null, false);
+                toutlesensController.generateGraph(null, {applyFilters:false});
             } else {
                 toutlesensController.clearGraphDiv();
             }

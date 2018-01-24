@@ -37,7 +37,9 @@ var toutlesensData = (function () {
     self.queryRelTypeFilters = "";
     self.queryExcludeNodeFilters = "";
     self.whereFilter = "";
-    self.matchStatement=null;
+    self.matchStatement = null;
+
+    self.queriesIds = [];
 
 
     self.executeNeoQuery = function (queryType, str, successFunction) {
@@ -64,10 +66,11 @@ var toutlesensData = (function () {
             dataType: "json",
             success: function (data, textStatus, jqXHR) {
                 currentDataStructure = "flat";
-                toutlesensData.cachedResultArray = data;
+                //  toutlesensData.cachedResultArray = data;
                 if (!data || data.length == 0) {
                     toutlesensController.setMessage("No results", "green");
-                    $("#waitImg").css("visibility", "hidden"); return;
+                    $("#waitImg").css("visibility", "hidden");
+                    return;
                 }
                 var errors = data.errors;
 
@@ -119,103 +122,105 @@ var toutlesensData = (function () {
 
     }
 
-    self.getNodeAllRelations = function (id, output, addToExistingTree, callback) {
-      var   hasMclause=false;
-            if (!self.matchStatement) {
-                excludedLabels = [];
-                //    id = parseInt("" + id);
-                if (addToExistingTree)
-                    navigationPath.push(id);
+    self.getNodeAllRelations = function (id, output, addToPreviousQuery, callback) {
+        if (!addToPreviousQuery) {
+            self.queriesIds = [];
+            self.cachedResultArray=[];
+        }
+        self.queriesIds.push(id)
+
+        var hasMclause = false;
+        if (!self.matchStatement) {
+            excludedLabels = [];
+
+            currentRootId = Math.abs(id);
+            legendNodeLabels = {}
+            legendRelTypes = {};
+
+            var subGraphWhere;
+            if (subGraph)
+                subGraphWhere = "  node1.subGraph=\"" + subGraph + "\" "
+            // http://graphaware.com/graphaware/2015/05/19/neo4j-cypher-variable-length-relationships-by-example.html
+
+
+            var numberOfLevelsVal = $("#depth").val();
+            if (numberOfLevelsVal === undefined)
+                numberOfLevelsVal = Gparams.defaultQueryDepth;
+            else
+                numberOfLevelsVal = parseInt(numberOfLevelsVal);
+            var relCardinalityStr = "";
+            if (numberOfLevelsVal > 1)
+                relCardinalityStr = "*.." + numberOfLevelsVal;
+
+            var whereStatement = "";
+            if (id) {
+                /*  whereStatement = " WHERE ((ID(node1)=" + id + "))";// OR (ID(m)=" + (id)+"))"*/
+                if (id > 0) {
+                    whereStatement = " WHERE (ID(node1)=" + id + ")";//+" OR  ID(m)="+id+")"
+                    hasMclause = false;
+                }
+                else {
+                    hasMclause = true;
+                    whereStatement = " WHERE (ID(m)=" + (-id) + ")";
+
+                }
+            }
+            if (subGraphWhere) {
+                if (id)
+                    whereStatement += " AND ";
                 else
-                    navigationPath = [id];
-                currentRootId = Math.abs(id);
-                legendNodeLabels = {}
-                legendRelTypes = {};
+                    whereStatement += "WHERE ";
+                whereStatement += subGraphWhere;
 
-                var subGraphWhere;
-                if (subGraph)
-                    subGraphWhere = "  node1.subGraph=\"" + subGraph + "\" "
-                // http://graphaware.com/graphaware/2015/05/19/neo4j-cypher-variable-length-relationships-by-example.html
-
-
-                var numberOfLevelsVal = $("#depth").val();
-                if (numberOfLevelsVal === undefined)
-                    numberOfLevelsVal = Gparams.defaultQueryDepth;
+            }
+            if (self.whereFilter != "") {
+                if (whereStatement == "")
+                    whereStatement += " WHERE ";
                 else
-                    numberOfLevelsVal = parseInt(numberOfLevelsVal);
-                var relCardinalityStr="";
-                if(numberOfLevelsVal>1)
-                    relCardinalityStr=  "*.." + numberOfLevelsVal;
-
-                var whereStatement = "";
-                if (id) {
-                  /*  whereStatement = " WHERE ((ID(node1)=" + id + "))";// OR (ID(m)=" + (id)+"))"*/
-                    if(id>0) {
-                        whereStatement = " WHERE (ID(node1)=" + id + ")";//+" OR  ID(m)="+id+")"
-                        hasMclause=false;
-                    }
-                     else {
-                         hasMclause=true;
-                        whereStatement = " WHERE (ID(m)=" + (-id) + ")";
-
-                    }
-                }
-                if (subGraphWhere) {
-                    if (id)
-                        whereStatement += " AND ";
-                    else
-                        whereStatement += "WHERE ";
-                    whereStatement += subGraphWhere;
-
-                }
-                if (self.whereFilter != "") {
-                    if (whereStatement == "")
-                        whereStatement += " WHERE ";
-                    else
-                        whereStatement += "AND ";
-                    whereStatement += self.whereFilter + " ";
-                }
+                    whereStatement += "AND ";
+                whereStatement += self.whereFilter + " ";
             }
+        }
 
 
-            var returnStatement;
-            if (output == "filtersDescription") {
-                returnStatement = " RETURN count(r) as nRels, COLLECT( distinct EXTRACT( rel IN relationships(path) |  type(rel))) as rels,EXTRACT( node IN nodes(path) | labels(node)) as labels"
-            }
-            else {
-                returnStatement = " RETURN EXTRACT(rel IN relationships(path) | type(rel)) as rels," +
-                    "EXTRACT(rel IN relationships(path) | rel)  as relProperties," +
-                    "nodes(path) as nodes," +//   !!!!!!!!!!!!!!!!!!!!! a voir pour alléger les données transmises
-                    //   "EXTRACT(node IN nodes(path) | node.subGraph) as nodes,"+   !!!!!!!!!!!!!!!!!!!!! a voir pour alléger les données transmises
-                    " EXTRACT(node IN nodes(path) | ID(node)) as ids," +
-                    " EXTRACT(node IN nodes(path) | labels(node)) as labels "
-                    + ", EXTRACT(rel IN relationships(path) | labels(startNode(rel))) as startLabels";
-            }
+        var returnStatement;
+        if (output == "filtersDescription") {
+            returnStatement = " RETURN count(r) as nRels, COLLECT( distinct EXTRACT( rel IN relationships(path) |  type(rel))) as rels,EXTRACT( node IN nodes(path) | labels(node)) as labels"
+        }
+        else {
+            returnStatement = " RETURN EXTRACT(rel IN relationships(path) | type(rel)) as rels," +
+                "EXTRACT(rel IN relationships(path) | rel)  as relProperties," +
+                "nodes(path) as nodes," +//   !!!!!!!!!!!!!!!!!!!!! a voir pour alléger les données transmises
+                //   "EXTRACT(node IN nodes(path) | node.subGraph) as nodes,"+   !!!!!!!!!!!!!!!!!!!!! a voir pour alléger les données transmises
+                " EXTRACT(node IN nodes(path) | ID(node)) as ids," +
+                " EXTRACT(node IN nodes(path) | labels(node)) as labels "
+                + ", EXTRACT(rel IN relationships(path) | labels(startNode(rel))) as startLabels";
+        }
 
-            var node1Label = "";
-            if (currentLabel)
-                node1Label = ":" + currentLabel;
+        var node1Label = "";
+        if (currentLabel)
+            node1Label = ":" + currentLabel;
 
-            var statement;
-            if (self.matchStatement)
-                statement = self.matchStatement;
-            else{
-                statement = "MATCH path=(node1" + node1Label
-                    + ")-[r"
-                    + toutlesensData.queryRelTypeFilters
-                        +relCardinalityStr
-                    + "]-(m) "
-                    + whereStatement
-                    + graphQueryTargetFilter
-                    + toutlesensData.queryNodeLabelFilters
-                    + toutlesensData.queryExcludeNodeFilters
-                    + toutlesensData.queryExcludeRelFilters
+        var statement;
+        if (self.matchStatement)
+            statement = self.matchStatement;
+        else {
+            statement = "MATCH path=(node1" + node1Label
+                + ")-[r"
+                + toutlesensData.queryRelTypeFilters
+                + relCardinalityStr
+                + "]-(m) "
+                + whereStatement
+                + graphQueryTargetFilter
+                + toutlesensData.queryNodeLabelFilters
+                + toutlesensData.queryExcludeNodeFilters
+                + toutlesensData.queryExcludeRelFilters
 
         }
-           statement += returnStatement;
+        statement += returnStatement;
 
-            if(Gparams.allowOrphanNodesInGraphQuery && hasMclause==false)
-            graphQueryUnionStatement=" MATCH path=(node1"+  node1Label +") "// for nodes without relations
+        if (Gparams.allowOrphanNodesInGraphQuery && hasMclause == false)
+            graphQueryUnionStatement = " MATCH path=(node1" + node1Label + ") "// for nodes without relations
                 + whereStatement
                 + graphQueryTargetFilter
                 + toutlesensData.queryNodeLabelFilters
@@ -224,7 +229,8 @@ var toutlesensData = (function () {
 
 
         if (graphQueryUnionStatement)
-            statement += " UNION " + graphQueryUnionStatement + returnStatement.replace("count(r)" ,0 );
+            statement += " UNION " + graphQueryUnionStatement + returnStatement.replace("count(r)", 0);
+
 
         statement += " limit " + Gparams.neoQueryLimit;
         if (Gparams.logLevel > 0)
@@ -249,15 +255,15 @@ var toutlesensData = (function () {
 
 
                 if (data.length == 0) {
-                    if(id==null){
+                    if (id == null) {
                         return callback(null, []);
                     }
-                   if(id>-1)// we retry with inverse relation
-                       self.getNodeAllRelations (-id, output, addToExistingTree, callback);
-                   else {
-                       id=-id;
-                       return callback(null, []);
-                   }
+                    if (id > -1)// we retry with inverse relation
+                        self.getNodeAllRelations(-id, output, addToPreviousQuery, callback);
+                    else {
+                        id = -id;
+                        return callback(null, []);
+                    }
 
                 }
 
@@ -271,11 +277,21 @@ var toutlesensData = (function () {
                 currentDataStructure = "flat";
                 var resultArray = data;
                 // data.log(JSON.stringify(resultArray))
-                if (addToExistingTree && toutlesensData.cachedResultArray) {
+                if ( true || addToPreviousQuery && self.cachedResultArray) {
                     for (var i = 0; i < resultArray.length; i++) {
                         for (var j = 0; j < resultArray[i].nodes.length; j++) {
-                            resultArray[i].nodes[j].show = true;
+                            var id=resultArray[i].nodes[j]._id;
+                            if( self.queriesIds.indexOf(id)>-1)
+                                resultArray[i].nodes[j].outline = true;
+
+                          /* var relTargetId=resultArray[i].ids[resultArray[i].rels.length-1];
+                            var relSourceId=resultArray[i].ids[0];
+                            if( self.queriesIds.indexOf(relSourceId)>-1){
+                                resultArray[i].outlineRel = true;
+                            }*/
+
                         }
+
                     }
 
                     resultArray = $.merge(resultArray, toutlesensData.cachedResultArray);
@@ -294,7 +310,7 @@ var toutlesensData = (function () {
         });
 
     }
-    self.setSearchByPropertyListStatement = function (property,idsList, callback) {
+    self.setSearchByPropertyListStatement = function (property, idsList, callback) {
         var ids;
 
         if (typeof idsList == "string")
@@ -302,34 +318,34 @@ var toutlesensData = (function () {
         else
             ids = idsList;
 
-        var query = "node1."+property+" in ["
-        if(property=="_id")
+        var query = "node1." + property + " in ["
+        if (property == "_id")
             query = "ID(node1) in ["
 
         for (var i = 0; i < ids.length; i++) {
-            if (i > 0 && i<ids.length)
+            if (i > 0 && i < ids.length)
                 query += ","
-            query +=  ids[i];
+            query += ids[i];
         }
-        query += "] " ;
-        toutlesensData.whereFilter=query;
+        query += "] ";
+        toutlesensData.whereFilter = query;
         callback(null, []);
 
     }
 
-    self.getAllSimplePaths = function (startId, endId, depth, algo,callback) {
+    self.getAllSimplePaths = function (startId, endId, depth, algo, callback) {
 
 
         var body = '{ "to":"' + endId + '","max_depth":' + depth + ',"algorithm":"'
             + algo + '"}';
         var urlSuffix = "/db/data/node/" + startId + "/paths";
         var paramsObj = {
-            cypher:1,
+            cypher: 1,
             mode: "POST",
             urlSuffix: urlSuffix,
             payload: body,
         }
-        console.log(JSON.stringify(paramsObj),"null",2);
+        console.log(JSON.stringify(paramsObj), "null", 2);
 
         console.log(urlSuffix);
         $.ajax({
@@ -340,7 +356,7 @@ var toutlesensData = (function () {
             success: function (data, textStatus, jqXHR) {
                 if (!data || data.length == 0) {
                     $("#waitImg").css("visibility", "hidden");
-                    return  callback("No result")
+                    return callback("No result")
                 }
                 if (data.length > Gparams.graphDisplayLimitMax) {
 
@@ -362,7 +378,7 @@ var toutlesensData = (function () {
 
                     }
                 }
-                callback(null,RelIds);
+                callback(null, RelIds);
 
                 // self.processPathResults(data,callback);
             },
@@ -425,17 +441,17 @@ var toutlesensData = (function () {
         else
             return resultArray;
     }
-    self.prepareRawData = function (resultArray, addToExistingTree, output, callback) {
+    self.prepareRawData = function (resultArray, addToPreviousQuery, output, callback) {
         totalNodesToDraw = resultArray.length;
-        if (currentDisplayType != "SIMPLE_FORCE_GRAPH_BULK" && totalNodesToDraw >= Gparams.graphDisplayLimitMax ) {
+        if (currentDisplayType != "SIMPLE_FORCE_GRAPH_BULK" && totalNodesToDraw >= Gparams.graphDisplayLimitMax) {
             toutlesensController.setGraphMessage("trop de resultats pour dessiner le graphe.Modifiez les parametres : > maximum "
-                + Gparams.graphDisplayLimitMax,"stop");
+                + Gparams.graphDisplayLimitMax, "stop");
             return;
 
         }
-        if ( currentDisplayType == "SIMPLE_FORCE_GRAPH_BULK" && totalNodesToDraw >= Gparams.bulkGraphDisplayLimit) {
+        if (currentDisplayType == "SIMPLE_FORCE_GRAPH_BULK" && totalNodesToDraw >= Gparams.bulkGraphDisplayLimit) {
             toutlesensController.setGraphMessage("trop de resultats pour dessiner le graphe.Modifiez les parametres : > maximum "
-                + Gparams.bulkGraphDisplayLimit,"stop");
+                + Gparams.bulkGraphDisplayLimit, "stop");
             return;
 
         }
@@ -444,23 +460,23 @@ var toutlesensData = (function () {
         var relations = [];
 
         for (var i = 0; i < resultArray.length; i++) {
-            if (!resultArray[i].nodes ) // !!!!bug à trouver
+            if (!resultArray[i].nodes) // !!!!bug à trouver
                 continue;
             for (var j = 0; j < resultArray[i].nodes.length; j++) {
-             /*   if(!resultArray[i].nodes[j].properties)
-                    resultArray[i].nodes[j]["properties"]={a:1};*/
+                /*   if(!resultArray[i].nodes[j].properties)
+                       resultArray[i].nodes[j]["properties"]={a:1};*/
                 if (resultArray[i].nodes[j].properties.nom && !resultArray[i].nodes[j].properties.name)
                     resultArray[i].nodes[j].properties.name = resultArray[i].nodes[j].properties.nom;
             }
 
-            if (!resultArray[i].labels ) // !!!!bug à trouver
+            if (!resultArray[i].labels) // !!!!bug à trouver
                 continue;
             for (var j = 0; j < resultArray[i].labels.length; j++) {
                 var label = resultArray[i].labels[j][0];
                 if (labels.indexOf(label) < 0)
                     labels.push(label)
             }
-            if (!resultArray[i].rels ) // !!!!bug à trouver
+            if (!resultArray[i].rels) // !!!!bug à trouver
                 continue;
             for (var j = 0; j < resultArray[i].rels.length; j++) {
                 var relation = resultArray[i].rels[j];
@@ -478,7 +494,7 @@ var toutlesensData = (function () {
             json = resultArray;
         }
         else//tree structure
-            json = self.toFlareJson(resultArray, addToExistingTree);
+            json = self.toFlareJson(resultArray, addToPreviousQuery);
 
         if (navigationPath.length > 0)
             exploredTree = json;
@@ -490,8 +506,8 @@ var toutlesensData = (function () {
 
     }
     self.buildForceNodesAndLinks = function (resultArray) {
-      //  console.log("----------------------");
-    //    console.log(JSON.stringify(resultArray[0], null, 2))
+        //  console.log("----------------------");
+        //    console.log(JSON.stringify(resultArray[0], null, 2))
 
 
         currentDataStructure = "flat";
@@ -499,7 +515,7 @@ var toutlesensData = (function () {
             currentActionObj = resultArray.currentActionObj;
         var nodesMap = {};
         var links = [];
-        var linksMap={}
+        var linksMap = {}
         var linkId = 1000;
         legendRelTypes = {};
         legendNodeLabels = {}
@@ -530,7 +546,7 @@ var toutlesensData = (function () {
                     children: [],
                     neoAttrs: nodeNeo,
                     rels: [],
-                    invRels:[],
+                    invRels: [],
                     nLinks: 0
 
 
@@ -587,27 +603,27 @@ var toutlesensData = (function () {
                     var rel = {source: indexSource, target: indexTarget, id: linkId++};
                     //nodesMap[nodeObj.id].links.push(rel);
                     links.push(rel)
-                    linksMap[linkId]= {source: indexSource, target: indexTarget};
+                    linksMap[linkId] = {source: indexSource, target: indexTarget};
                     nodesMap[ids[j]].rels.push(rel.id);
-                    nodesMap[ids[j-1]].invRels.push(rel.id);
+                    nodesMap[ids[j - 1]].invRels.push(rel.id);
                     nodesMap[ids[j]].nLinks++;
                     nodesMap[ids[j - 1]].nLinks++;
 
 
                     nodeObj.parent = ids[j - 1];
 
-                 /*   if (labels[j - 1] && dataModel.relations[labels[j - 1]]) {
-                        var modelRels = dataModel.relations[labels[j - 1][0]];
-                        if (modelRels && modelRels.length) {
-                            for (var k = 0; k < modelRels.length; k++) {
-                                if (modelRels[k].label2 == nodeObj.label) {
-                                    nodeObj.relDir = modelRels[k].direction;
+                    /*   if (labels[j - 1] && dataModel.relations[labels[j - 1]]) {
+                           var modelRels = dataModel.relations[labels[j - 1][0]];
+                           if (modelRels && modelRels.length) {
+                               for (var k = 0; k < modelRels.length; k++) {
+                                   if (modelRels[k].label2 == nodeObj.label) {
+                                       nodeObj.relDir = modelRels[k].direction;
 
-                                    break;
-                                }
-                            }
-                        }
-                    }*/
+                                       break;
+                                   }
+                               }
+                           }
+                       }*/
                 }
                 else {
                     //nodeObj.isRoot=true;
@@ -656,7 +672,7 @@ var toutlesensData = (function () {
          console.log(JSON.stringify(nodes[0],null,2))
          console.log("----------------------");
          console.log(JSON.stringify(links[0],null,2))*/
-        return {nodes: nodes, links: links,linksMap:linksMap}
+        return {nodes: nodes, links: links, linksMap: linksMap}
 
 
     }
@@ -673,7 +689,7 @@ var toutlesensData = (function () {
     }
 
 
-    self.toFlareJson = function (resultArray, addToExistingTree) {
+    self.toFlareJson = function (resultArray, addToPreviousQuery) {
         currentDataStructure = "tree";
         currentThumbnails = [];
         currentThumbnails.ids = [];
@@ -681,7 +697,7 @@ var toutlesensData = (function () {
         var distinctNodeName = {};
 
         var rootId;
-        if (!addToExistingTree)
+        if (!addToPreviousQuery)
             linksToSkip = [];
         if (!resultArray) {
             resultArray = toutlesensData.cachedResultArray;
@@ -745,7 +761,7 @@ var toutlesensData = (function () {
 
 
                 /*
-                 * if (addToExistingTree && foldedTreeChildren.indexOf(nodeObj.myId) >
+                 * if (addToPreviousQuery && foldedTreeChildren.indexOf(nodeObj.myId) >
                  * -1) {// noeud // repliés continue; }
                  */
 
@@ -758,15 +774,15 @@ var toutlesensData = (function () {
                 }
 
                 else {
-                    if (addToExistingTree && nodeObj.id == currentRootId)
+                    if (addToPreviousQuery && nodeObj.id == currentRootId)
                         nodeObj.isNewRoot = true;
 
                     nodeObj.parent = ids[j - 1];
                     nodeObj.relType = rels[j - 1];
-                    if(relProperties && relProperties[j - 1])
-                    nodeObj.relProperties = relProperties[j - 1].properties;
+                    if (relProperties && relProperties[j - 1])
+                        nodeObj.relProperties = relProperties[j - 1].properties;
                     else
-                        nodeObj.relProperties={};
+                        nodeObj.relProperties = {};
                     var modelRels = dataModel.relations[labels[j - 1][0]];
                     if (modelRels && modelRels.length) {
                         for (var k = 0; k < modelRels.length; k++) {
@@ -1459,7 +1475,7 @@ var toutlesensData = (function () {
                     console.log(str);
                     return;
                 }
-                if(data.length>Gparams.listDisplayLimitMax) {
+                if (data.length > Gparams.listDisplayLimitMax) {
                     alert("too many result : " + data.length + "> Max :" + Gparams.listDisplayLimitMax)
                     return;
                 }
@@ -1478,7 +1494,7 @@ var toutlesensData = (function () {
 
             },
             error: function (xhr, err, msg) {
-                toutlesensController.onErrorInfo(xhr) ;
+                toutlesensController.onErrorInfo(xhr);
                 if (callback) {
                     return callback(null);
                 }

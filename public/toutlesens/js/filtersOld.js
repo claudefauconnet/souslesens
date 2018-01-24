@@ -168,7 +168,7 @@ var filters = (function () {
 
         if (status) {//on  all checked action
             self.setQueryFilters();
-            toutlesensController.generateGraph(currentObject.id, true);
+            toutlesensController.generateGraph(currentObject.id, {applyFilters:true});
         }
     }
 
@@ -205,7 +205,7 @@ var filters = (function () {
 
         if (status) {//on  all checked action
             self.setQueryFilters();
-            toutlesensController.generateGraph(currentObject.id, true);
+            toutlesensController.generateGraph(currentObject.id, {applyFilters:true});
         }
     }
 

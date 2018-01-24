@@ -685,7 +685,7 @@ var infoGenericDisplay = (function () {
                 $("#tabs-radarRight").tabs("enable", 2);
                 self.showNodeData(node);
                 toutlesensController.addToHistory = true;
-                toutlesensController.generateGraph(parentId, toutlesensController.drawGraph);
+                toutlesensController.generateGraph(parentId, {applyFilters:toutlesensController.drawGraph});
             }
 
             /*   if (node.data.label)
@@ -862,7 +862,9 @@ var infoGenericDisplay = (function () {
                     return;
                 }
                 $("#message").html("node saved");
-                toutlesensController.replayGraph("same");
+                d3graphCreation.addNode(self.currentLabel, setObj)
+              //  toutlesensController.replayGraph("same");
+
 
             })
         }

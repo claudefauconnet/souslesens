@@ -223,7 +223,7 @@ var infoGenericDisplay = (function () {
                 idsList.push(data[i].n._id)
             }
             toutlesensData.setSearchByPropertyListStatement("_id",idsList, function (err, result) {
-                toutlesensController.generateGraph(null,true,function(){
+                toutlesensController.generateGraph(null,{applyFilters:true},function(){
                     $("#filtersDiv").html("");
                     $("#graphMessage").html("");
 
@@ -703,7 +703,7 @@ var infoGenericDisplay = (function () {
              currentLabel=null;
             $("#tabs-mainPanel").tabs("enable", 2);
             self.showNodeData(node);
-            toutlesensController.generateGraph(parentId, toutlesensController.drawGraph);
+            toutlesensController.generateGraph(parentId,{applyFilters: toutlesensController.drawGraph});
         }
 
         /*   if (node.data.label)

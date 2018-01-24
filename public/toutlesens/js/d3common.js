@@ -117,6 +117,7 @@ var d3common = (function () {
     };
 
     self.d3CommonMouseout = function (d) {
+
         if (d.neoAttrs && d.neoAttrs.path) {
             return;
         }

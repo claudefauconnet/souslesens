@@ -144,7 +144,7 @@
         value: 1,
         slide: function (event, ui) {
             $("#depth").val(ui.value);
-            toutlesensController.generateGraph(null, true);
+            toutlesensController.generateGraph({applyFilters:true}, true);
         }
     });
 

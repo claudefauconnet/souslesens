@@ -292,7 +292,7 @@ var colors=paint.getDataColorDomain(nodes,"id",5)
                         currentObject.id = d.id
                     currentLabel=null;
                         currentDisplayType = "FLOWER";
-                        toutlesensController.generateGraph(d.id,true)
+                        toutlesensController.generateGraph(d.id,{applyFilters:true})
 
                     })
                 anode.on("mouseover", function (d) {

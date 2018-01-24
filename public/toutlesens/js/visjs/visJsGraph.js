@@ -113,7 +113,7 @@ var visjsGraph = (function () {
         network.on("doubleClick", function (params) {
             var nodeId = params.nodes[0];
             currentObject = self.nodesMap[nodeId];
-            toutlesensController.generateGraph(nodeId, false);//NO !!! minus sign to search on m (see toutlesensData 148)
+            toutlesensController.generateGraph(nodeId, {applyFilters:false});//NO !!! minus sign to search on m (see toutlesensData 148)
         })
         //stop animation
         network.on("click", function (params) {
@@ -136,7 +136,8 @@ var visjsGraph = (function () {
                 if (params.event.srcEvent.ctrlKey) {
                     var nodeId = params.nodes[0];
                     currentObject = self.nodes._data[nodeId];
-                    toutlesensController.generateGraph(nodeId, false);
+                    toutlesensController.generateGraph(nodeId, {applyFilters:false,addToPreviousQuery:true});
+                   // toutlesensController.expandGraphNode(nodeId);
                 }
 
                 var nodeId = params.nodes[0];

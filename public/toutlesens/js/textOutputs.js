@@ -342,7 +342,7 @@ var textOutputs = (function () {
 
         var index = $('#tabs-mainPanel a[href="#textTab"]').parent().index();
         $("#tabs-mainPanel").tabs("enable", index);
-        $("#tabs-mainPanel").tabs("option", "active", index);
+      //  $("#tabs-mainPanel").tabs("option", "active", index);
     }
 
     self.drawCSV_DataTable = function (json) {
