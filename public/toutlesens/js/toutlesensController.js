@@ -1049,8 +1049,8 @@ var toutlesensController = (function () {
             if (Gparams.readOnly == false) {
                 self.initLabels(edit_nodeLabelSelect);
                 $("#infosHeaderDiv").css("visibility", "visible");
-                $("#tabs-mainPanel").tabs("enable", 2);
-                $("#tabs-mainPanel").tabs("option", "active", 2);
+             /*   $("#tabs-mainPanel").tabs("enable", 2);
+                $("#tabs-mainPanel").tabs("option", "active", 2);*/
             }
 
         } else if (action == "switchNodesVisibilityFromLabel") {
@@ -1573,7 +1573,7 @@ var toutlesensController = (function () {
         $("#editDiv").width(rightPanelWidth - 50).height((totalHeight))
         $("#highlightDiv").width(rightPanelWidth - 50).height((totalHeight))
         $("#filterDiv").width(rightPanelWidth - 50).height((totalHeight))
-
+        $("#infosDiv").width(rightPanelWidth - 50).height((totalHeight))
 
         $("#controlPanel").width(rightPanelWidth - 10).height(totalHeight).css("position", "absolute").css("left", (totalWidth - rightPanelWidth) + 30).css("top", 10);
         //  $("#tabs-controlPanel").width(rightPanelWidth - 100).height(totalHeight/2).css("position", "absolute").css("left",(totalWidth-rightPanelWidth) + 30).css("top", 10);
@@ -1586,6 +1586,8 @@ var toutlesensController = (function () {
         //   $("#mainButtons").width(rightPanelWidth).height(50).css("position", "absolute").css("left", $("#graphDiv").width() - 200).css("top", 50).css("visibility", "hidden");
         $("#mainButtons").width(200).height(50).css("position", "absolute").css("left", 20).css("top", 50).css("visibility", "hidden");
 
+
+        $(".objAttrInput").width(rightPanelWidth-100);
 
     }
 

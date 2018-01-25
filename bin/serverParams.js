@@ -31,6 +31,7 @@ var serverParams={
      mongoUrl : "mongodb://127.0.0.1:27017/",
     mongoFetchSize:500,
     elasticUrl:'http://localhost:9200/',
+    elasticPort:9200,
     uploadMaxSize:100*1000*1000, //100M
     elasticsaerchMaxDocSizeForIndexing:10*1000*1000 ,//1Mo
     elasticMaxFetch:10*1000

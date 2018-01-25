@@ -47,7 +47,7 @@ logger.setLevel('info');
  }*/
 
 
-var baseUrl = "http://vps254642.ovh.net:9200/"
+//var baseUrl = "http://vps254642.ovh.net:9200/"
 var baseUrl = serverParams.elasticUrl
 var maxContentLength = 150;
 var elasticSchema = null;
@@ -269,10 +269,10 @@ var elasticProxy = {
         if (!queryField)
             queryField = "content"
         else
-            queryField = "content."+queryField
+            queryField = "content." + queryField
 
 
-         if (!resultFields) {
+        if (!resultFields) {
             resultFields = elasticProxy.getShemaFields(index, type);
 
         }
@@ -356,7 +356,7 @@ var elasticProxy = {
             url: baseUrl + index + type + "/_search"
         };
 
-       console.log(JSON.stringify(options, null, 2));
+        console.log(JSON.stringify(options, null, 2));
         request(options, function (error, response, body) {
             elasticProxy.processSearchResult(error, index, body, callback);
 
@@ -1594,7 +1594,10 @@ var elasticProxy = {
             url: baseUrl + index + "/"
         }
         request(options, function (error, response, body) {
-
+            if (error) {
+                console.log(error)
+                return callback(error);
+            }
             var status = response.statusCode;
             if (!status) {
                 elasticProxy.sendMessage("ERROR :elastic server did not respond, is the service on?")
@@ -1690,10 +1693,6 @@ var elasticProxy = {
     },
 
 
-
-
-
-
 }
 
 
@@ -1703,6 +1702,7 @@ function getClient() {
         return client;
     return new elasticsearch.Client({
         host: serverParams.elasticUrl,
+
         log: ['error', 'warning']
     });
 }
@@ -1722,9 +1722,6 @@ function indexJsonFile(filePath, ealasticUrl) {
         });
 
 }
-
-
-
 
 
 module.exports = elasticProxy;

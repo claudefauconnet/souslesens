@@ -277,7 +277,7 @@ var Schema = (function () {
 
 
 
-    self.getPermittedRelTypes = function (startLabel, endLabel) {
+    self.getPermittedRelTypes = function (startLabel, endLabel,inverseRelAlso) {
         relTypes = [];
         var relations = self.schema.relations;
         for (var key in relations) {
@@ -285,6 +285,9 @@ var Schema = (function () {
 
             if (relation.startLabel == startLabel && relation.endLabel == endLabel)
                 relTypes.push(key);
+
+            if(inverseRelAlso && relation.startLabel == endLabel && relation.endLabel == startLabel)
+                relTypes.push("-"+key);
         }
         return relTypes;
     }
@@ -361,7 +364,7 @@ var Schema = (function () {
                     delete relation.direction;
                     var name = key;
                     if (i > 0)
-                        var name = key + "#" + (i);
+                        var name = key + "--" + (i);
                     relation.properties.subGraph
                     relation.type = key;
                     relation.properties=[]

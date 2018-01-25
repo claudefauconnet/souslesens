@@ -95,7 +95,7 @@ var mainMenu = (function () {
 
     self.showCreateRelationDialog = function () {
         var links = [];
-        var allowedRelTypes = Schema.getPermittedRelTypes(toutlesensController.currentRelationData.sourceNode.labelNeo, toutlesensController.currentRelationData.targetNode.labelNeo);
+        var allowedRelTypes = Schema.getPermittedRelTypes(toutlesensController.currentRelationData.sourceNode.labelNeo, toutlesensController.currentRelationData.targetNode.labelNeo,true);
         if (allowedRelTypes.length == 0) {
             return alert("relation not permitted)");
         }
@@ -113,15 +113,31 @@ var mainMenu = (function () {
     self.saveRelation = function () {
         var relType = $("#relations_relTypeSelect").val();
         if (!relType || relType == "") {
-           return  alert("select a relation type before saving relation")
+            return alert("select a relation type before saving relation")
+        }
+        var direction;
+        var payload;
+        if (relType.indexOf("-") == 0) {//inverse
+            relType = relType.substring(1);
+            direction = "inverse"
+            var payload = {
+                sourceNodeQuery: {_id: toutlesensController.currentRelationData.targetNode.id},
+                targetNodeQuery: {_id: toutlesensController.currentRelationData.sourceNode.id},
+                relType: relType
+            }
+
+        }
+        else {//normal
+
+            direction = "normal"
+            var payload = {
+                sourceNodeQuery: {_id: toutlesensController.currentRelationData.sourceNode.id},
+                targetNodeQuery: {_id: toutlesensController.currentRelationData.targetNode.id},
+                relType: relType
+            }
+
         }
 
-       
-var payload={
-    sourceNodeQuery:  {_id: toutlesensController.currentRelationData.sourceNode.id  },
-    targetNodeQuery:  {_id: toutlesensController.currentRelationData.targetNode.id  },
-    relType:relType
-}
 
         infoGenericDisplay.callAPIproxy(payload, "createRelation", function (err, result) {
             if (err) {
@@ -130,11 +146,23 @@ var payload={
             }
             $("#message").html("relation saved");
             $("#dialog").dialog("close");
-            toutlesensController.currentRelationData={};
+            toutlesensController.currentRelationData = {};
             toutlesensController.replayGraph("same");
+
+            if (true || inEditMenu) {
+                var relation = {
+                    source: toutlesensController.currentRelationData.sourceNode.id,
+                    target: toutlesensController.currentRelationData.targetNode.id,
+                    type: relType,
+                    direction: direction,
+                    properties: {}
+                }
+                d3graphCreation.addRelation(relation)
+            }
 
 
         })
+
 
      
     }
