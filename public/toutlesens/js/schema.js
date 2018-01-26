@@ -282,12 +282,13 @@ var Schema = (function () {
         var relations = self.schema.relations;
         for (var key in relations) {
             var relation = relations[key];
+            var type=relations[key].type;
 
             if (relation.startLabel == startLabel && relation.endLabel == endLabel)
-                relTypes.push(key);
+                relTypes.push(type);
 
             if(inverseRelAlso && relation.startLabel == endLabel && relation.endLabel == startLabel)
-                relTypes.push("-"+key);
+                relTypes.push("-"+type);
         }
         return relTypes;
     }

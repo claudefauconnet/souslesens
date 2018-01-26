@@ -122,8 +122,8 @@ var d3common = (function () {
             return;
         }
         var popupSize = {
-            w: $("#popupMenuNodeInfoDiv").width(),
-            h: $("#popupMenuNodeInfoDiv").height(),
+            w: $("#nodeInfoDiv").width(),
+            h: $("#nodeInfoDiv").height(),
 
         }
         var e = d3.event;
@@ -136,12 +136,12 @@ var d3common = (function () {
 
         }
         if (x < currentMouseOverCoords.x - 10)
-            $("#popupMenuNodeInfoDiv").css('display', 'none');
+            $("#nodeInfoDiv").css('display', 'none');
         if (y < currentMouseOverCoords.y - 10)
-            $("#popupMenuNodeInfoDiv").css('display', 'none');
+            $("#nodeInfoDiv").css('display', 'none');
 
 
-        //  $("#popupMenuNodeInfoDiv").style('display', 'none');
+        //  $("#nodeInfoDiv").style('display', 'none');
 
 
     }

@@ -14,6 +14,31 @@ var paint = (function () {
     var currentAction="";
 
 
+
+
+
+    self.init=function(data){
+        var labels=[]
+        for (var i = 0; i < data.length; i++) {
+            var filterObj = data[i];
+            for (var k = 0; k < filterObj.labels.length; k++) {
+                var label = filterObj.labels[k][0];
+
+                if (labels.indexOf(label) < 0)
+                    labels.push(label);
+
+            }
+
+        }
+        labels.splice(0,0,"");
+        common.fillSelectOptionsWithStringArray(paintDialog_labelSelect,labels);
+        filters.initLabelPropertySelection("",paintDialog_propsSelect);
+        $("#paintDialog_propsSelect").val(Schema.getNameProperty())
+        self.initColorsPalette(10, "paintDialogPalette");
+        self.onActionTypeSelect("outline")
+    }
+
+
     self.showPaintDialog = function (label, relType) {
         self.currentLabel = label;
         self.currentRelType = relType;
@@ -30,9 +55,9 @@ var paint = (function () {
         $("#dialog").load("htmlSnippets/paintDialog.html", function () {
             // $("#paintDiv").load("htmlSnippets/paintDialog.html", function () {
             //   $("#filtersDiv").css("visibility", "hidden")
-            if (label) {
+            if (true || label) {
 
-                filters.initLabelPropertySelection(label, paintDialog_propsSelect);
+              //  filters.initLabelPropertySelection(label, paintDialog_propsSelect);
                 $("#paintDialog_clusterNodesButton").css("visibility","visible");
                 $("#paintDialogTypeSpan").html("Node label :"+label)
             }
@@ -246,15 +271,16 @@ var paint = (function () {
             var filterMode = $("#paintDialog_filterModeInput").val();
             var operator = $("#paintDialog_operatorSelect").val();
             var type = $("#paintDialog_typeInput").val();
+        self.currentLabel=$("#paintDialog_labelSelect").val();
 
 
             var legendStr="";
         if (Gparams.useVisjsNetworkgraph) {
-        if (self.currentLabel) {
+        if (true || self.currentLabel) {
 
                 var ids = [];
-                for (var key in visjsGraph.nodesMap) {
-                    var nodeData = visjsGraph.nodesMap[key];
+                for (var key in visjsGraph.nodes._data) {
+                    var nodeData = visjsGraph.nodes._data[key];
                     if (property == "" && nodeData.labelNeo == self.currentLabel) {
                         ids.push(key);
                         legendStr=" All "+self.currentLabel;

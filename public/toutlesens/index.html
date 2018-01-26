@@ -145,7 +145,6 @@
     <script src="js/d3graphCreation.js"></script>
 
 
-
     <!-- test visjs------------------------------------------>
     <script src="js/visjs/visjs.js"></script>
     <script src="js/visjs/visJsGraph.js"></script>
@@ -159,10 +158,13 @@
 
         }
 
-        #nodeInfosDiv {
+        #nodeInfosDiv{
         / / display: flex;
             justify-content: center;
             align-items: center;
+           border-width: 1px;
+            border-color: #5f3f3f;
+            border-style: groove;
         }
 
         #word, #nodesLabelsSelect {
@@ -382,15 +384,16 @@
             });
 
 
-         /*   $("#popupMenuNodeInfoDiv").mouseleave(function () {
-                $(this).hide();
-            });*/
+            /*   $("#nodeInfoDiv").mouseleave(function () {
+                   $(this).hide();
+               });*/
 
 
             //  advancedSearch.init();
 
             var afterLoadModelTasks = [
                 infoGenericDisplay.initLabels,
+                toutlesensController.intiRelationTypes,
                 customizeUI.customize,
                 toutlesensController.afterGraphInit,
                 statistics.initLabelsCurrentQueries,
@@ -430,7 +433,7 @@
                 currentLabel = $("#nodeLabelSelect").val();
                 currentObject = {};
                 if (currentLabel != "")
-                    toutlesensController.generateGraph(null, {applyFilters:false});
+                    toutlesensController.generateGraph(null, {applyFilters: false});
 
             }
 
@@ -466,7 +469,7 @@
             else if (actionType == "displayGraphForLabel") {
                 currentLabel = value;
                 currentDisplayType = "SIMPLE_FORCE_GRAPH";
-                toutlesensController.generateGraph(null, {applyFilters:false});
+                toutlesensController.generateGraph(null, {applyFilters: false});
 
             }
         }
@@ -592,56 +595,66 @@
                         <li><a href="#requestDiv"><span id='lang_60'>Request </span></a></li>
 
 
-
                     </ul>
 
 
                     <div id="nodeDiv">
-                        <input type="hidden" value="500" id="limitResult">
-                        <table border="0">
-                            <tr>
+<input type="hidden" value="500" id="limitResult">
+<table border="0">
+    <tr>
+        <td>
+            <table>
+                <tr align="center">
+                    <td><span id='lang_1'>Node</span></td>
+                    <td><input id="word"
+                               onkeyup="toutlesensController.searchNodesUI('matchStr',null,null, infoGenericDisplay.loadSearchResultIntree);"
+                               size="10"></td>
+                    <td><input type="image" height="20px" src="images/erase.png"
+                               onclick="$('#word').val('')"></td>
+                    <td><input type="image" alt="<span id='lang_XX'>search</span>" height="20px"
+                               onclick="advancedSearch.showDialog()"
+                               id="searchButton"
+                               src="images/advancedSearch2.png"/></td>
 
-                                <span id='lang_1'>Node</span>
-                                <input id="word"
-                                       onkeyup="toutlesensController.searchNodesUI('matchStr',null,null, infoGenericDisplay.loadSearchResultIntree);"
-                                       size="10"> <input type="image"
-                                                         alt="<span id='lang_XX'>search</span>" height="20px"
-                                                         onclick="advancedSearch.showDialog()"
-                                                         id="searchButton"
-                                                         src="images/search.png"/>
+                    <td><input type="image" alt="search all nodes" height="20px"
+                               onclick="toutlesensController.showAll()"
+                               id="searchAllButton"
+                               src="images/all.png"/></td>
 
+                </tr>
 
-                                <br>
-
-                                <button id="showAll" onclick="toutlesensController.showAll()">Show All</button>
-                                <!-- <button  onclick="showAdvancedSearchDialog()">+</button>-->
-
-
-                                </td>
-
-                            </tr>
-
-
-                            <tr>
-                                <td colspan="2">
+            </table>
 
 
-                                    <div id="treeContainer">
-                                        <div id="genericTree"></div>
-                                    </div>
+        </td>
 
-                                </td>
+    </tr>
 
 
-                            </tr>
+    <tr>
+        <td colspan="2">
 
 
-                        </table>
+            <div id="treeContainer">
+                <div id="genericTree"></div>
+            </div>
+
+        </td>
+
+
+    </tr>
+
+
+</table>
+
 
                     </div>
 
 
                     <div id="relationDiv">
+                        type <select id="findRelationsSelect" onchange="toutlesensController.findRelationGraph()">
+
+                    </select>
 
                     </div>
 
@@ -653,78 +666,75 @@
 
                     </div>
                 </div>
-                    <div id="infos-controlPanel">
-                        <div id="popupMenuNodeInfoDiv" class="popupmenuDiv">
-                            <div id="popupMenuNodeInfo">//onblur="hidePopupMenu()" >
-                            </div>
-                        </div>
+                <div id="infos-controlPanel">
+                    <!--  <div id="nodeInfoDiv" class="popupmenuDiv">-->
+                    <div id="nodeInfoMenuDiv">
                     </div>
+                    <!--  </div>-->
                 </div>
             </div>
+        </div>
 
 
-            <div id="filterDiv">
-                <div id="graphLegendDiv">
-                    <div id="paintDiv"></div>
-                    <!-- <div> Outline nodes<input id="visJsSearchGraphButton" style="visibility: hidden"></div>-->
-                    <div id="filtersDiv"></div>
+        <div id="filterDiv">
+            <div id="graphLegendDiv">
+                <div id="paintDiv"></div>
+                <!-- <div> Outline nodes<input id="visJsSearchGraphButton" style="visibility: hidden"></div>-->
+                <div id="filtersDiv"></div>
 
-                    <div id="innerLegendDiv"></div>
-                    <div id="graphMessage" class="message"><br></div>
-                    <div id="relInfoDiv"></div>
-                </div>
-
-            </div>
-
-            <div id="highlightDiv">
-
-            </div>
-            <div id="editDiv">
-                <button id="createNodeButton" onclick="toutlesensController.dispatchAction('newNode')">
-                    New node
-                </button>
-                <button id="editSchemaButton" onclick="toutlesensController.showGraphSchema()">Edit
-                    Schema
-                </button>
-
-
-                <div id="infosDiv">
-                    <div id="infosHeaderDiv">
-                        &nbsp;&nbsp;<button onclick="infoGenericDisplay.saveNode()">Save</button>
-                        &nbsp;&nbsp;<button onclick="infoGenericDisplay.deleteNode()">Delete</button>
-                        NodeLabel<select id="edit_nodeLabelSelect"
-                                         onchange="infoGenericDisplay.setNewNodeProperties(this)"></select>
-
-                        </tr>
-                    </div>
-                    <div id="message"></div>
-                    <div id="relInfosDivWrapper">
-                        Relation&nbsp;
-                        <span cclass="infoTitle" id="relationType"></span>
-                        <div id="relInfosDiv"></div>
-                    </div>
-
-                    <div id="nodeInfosDivWrapper">
-                        Node &nbsp;
-                        <span id="nodeLabel" class="infoTitle"></span>
-                    </div>
-                    <div id="nodeInfosDiv"></div>
-                </div>
-
-
+                <div id="innerLegendDiv"></div>
+                <div id="graphMessage" class="message"><br></div>
+                <div id="relInfoDiv"></div>
             </div>
 
         </div>
 
+        <div id="highlightDiv">
 
-        <!-- /*******************************************************RDF************************************************************/
-         /*******************************************************RDF************************************************************/
-         /*******************************************************RDF************************************************************/-->
+        </div>
+        <div id="editDiv">
+            <button id="createNodeButton" onclick="toutlesensController.dispatchAction('newNode')">
+                New node
+            </button>
+            <button id="editSchemaButton" onclick="toutlesensController.showGraphSchema()">Edit
+                Schema
+            </button>
 
-        <div id="rdfDiv">
+
+            <div id="infosDiv">
+                <div id="infosHeaderDiv">
+                    &nbsp;&nbsp;<button onclick="infoGenericDisplay.saveNode()">Save</button>
+                    &nbsp;&nbsp;<button onclick="infoGenericDisplay.deleteNode()">Delete</button>
+                    NodeLabel<select id="edit_nodeLabelSelect"
+                                     onchange="infoGenericDisplay.setNewNodeProperties(this)"></select>
+
+                    </tr>
+                </div>
+                <div id="message"></div>
+                <div id="relInfosDivWrapper">
+                    Relation&nbsp;
+                    <span cclass="infoTitle" id="relationType"></span>
+                    <div id="relInfosDiv"></div>
+                </div>
+
+                <div id="nodeInfosDivWrapper">
+                    Node &nbsp;
+                    <span id="nodeLabel" class="infoTitle"></span>
+                </div>
+                <div id="nodeInfosDiv"></div>
+            </div>
 
 
         </div>
+
+    </div>
+
+
+    <!-- /*******************************************************RDF************************************************************/
+     /*******************************************************RDF************************************************************/
+     /*******************************************************RDF************************************************************/-->
+
+    <div id="rdfDiv">
 
 
     </div>
@@ -732,6 +742,21 @@
 
 </div>
 
+
+</div>
+
+<div id="graphPopup" style="visibility: hidden;position: absolute;background-color: white;margin: 2px;padding: 2px">
+    <table>
+        <tr>
+            <td><input type="image" height="20" src="images/expand.png"
+                       onclick='toutlesensController.dispatchAction("expandNode")'></td>
+            <td><input type="image" height="20" src="images/center.png"
+                       onclick='toutlesensController.dispatchAction("setAsRootNode")'></td>
+         <!--   <td><input type="image" height="20" src="images/erase.png"
+                       onclick='toutlesensController.dispatchAction("closeNode")'></td>-->
+        </tr>
+    </table>
+</div>
 
 <div id="dialog" title="dialog"></div>
 <div id="dialogLarge"></div>

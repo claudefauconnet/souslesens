@@ -107,17 +107,14 @@ var d3graphCreation = (function () {
 
             var obj = {
                 id: id,
-                source: nodesMap[relation.startNode.id],
-                target: nodesMap[relation.endNode.id],
+                source: nodesMap[relation.sourceNode.id],
+                target: nodesMap[relation.targetNode.id],
                 type: relation.type,
                 direction: relation.direction,
                 properties: relation.properties,
 
             }
-            if (nodesMap[relation.startLabel])
-                nodesMap[relation.startLabel].relsOut.push(obj);
-            if (nodesMap[relation.endLabel])
-                nodesMap[relation.endLabel].relsIn.push(obj);
+
 
 
             relationsMap[id] = obj;
@@ -149,7 +146,7 @@ var d3graphCreation = (function () {
         }
 
 
-        self.processRelCreation = function (startNode, x, y) {
+        self.processRelCreation = function (sourceNode, x, y) {
             var xxx = data
             svgGraph.selectAll(".node").each(function (d) {
                 var node = this;
@@ -160,10 +157,10 @@ var d3graphCreation = (function () {
                 var aY1 = d.y;
                 var aX2 = aX1 + d.w;
                 var aY2 = aY1 + d.h;
-                startNode.labelNeo = startNode.label;
+                sourceNode.labelNeo = sourceNode.label;
                 d.labelNeo = d.label;
                 if (x > aX1 && x < aX2 && y > aY1 && y < aY2) {
-                    toutlesensController.currentRelationData = {sourceNode: startNode, targetNode: d}
+                    toutlesensController.currentRelationData = {sourceNode: sourceNode, targetNode: d,context:"graphicRelCreation"}
                     mainMenu.showCreateRelationDialog();
 
                 }

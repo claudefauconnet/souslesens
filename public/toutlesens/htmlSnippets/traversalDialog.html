@@ -15,12 +15,19 @@
 </style>
 <script>
     var zIndex = 1
+
     function bringToFront(divId) {
         $(".back").css("visibility", "hidden");
         $("#" + divId).css("z-index", ++zIndex);
 
         $("#" + divId).css("visibility", "visible");
 
+
+    }
+
+    function searchNode(selectId) {
+
+     //   toutlesensController.searchNodesUI("", null, null, function(err,result,}){
 
     }
 
@@ -32,30 +39,28 @@
     <div id="traversalDialogMain" class=".back">
         <table>
             <tr>
-                <td><span id="lang_109">noeud source</span></td>
-                <td><input id="traversalSourceNode" value=" ?"
-                           onclick="bringToFront('traversalDialogLabel');traversalMenu.context.currentNode='source'" >
-                    <button onclick="$('#traversalSourceNode').val('?');advancedSearch.setTargetNodeVisibility(true)">
-
-                        X
-                    </button>
+                <td><span id="lang_109">source node</span></td>
+                <td>
+                    <input id="traversalSourceNode" value=" ?"
+                           onclick="searchNode();traversalMenu.context.currentNode='source'">
                 </td>
+                <td><input type="image" height="20px" src="images/erase.png"
+                           onclick="$('#traversalSourceNode').val('?');"></td>
 
             </tr>
             <tr>
 
-                <td><span id="lang_133" class="targetNode">noeud cible</span></td>
+                <td><span id="lang_133" class="targetNode">target node</span></td>
 
                 <td><span class="targetNode"><input
-                        onclick="bringToFront('traversalDialogLabel');traversalMenu.context.currentNode='target'"
-                        id="traversalTargetNode" value=" ?">
-                        <button onclick="$('#traversalTargetNode').val('?'); ">X</button>
-                                        </span></td>
-            </tr>
-            <tr>
-            </tr>
-            <tr>
+                        onclick="toutlesensController.searchNodesUI();traversalMenu.context.currentNode='target'" id="traversalTargetNode"
+                        value=" ?"></span></td>
+                <td><input type="image" height="20px" src="images/erase.png"
+                           onclick="$('#traversalTargetNode').val('?');"></td>
 
+            </tr>
+
+            <tr>
                 <td><span id="lang_134" class="targetNode">&gt;distance maximum entre les noeuds</span>
                 </td>
                 <td><span class="targetNode"><input id="traversalNodeshMaxDistance" value="3"></span></td>
@@ -63,15 +68,15 @@
 
 
         </table>
-
+        <div id="traversalTreeContainer"></div>
         <div class="executeDiv">
             <button onclick="traversalMenu.executeTraversalSearch()"><span id="lang_152">Draw Graph</span></button>
 
-            <span id="lang_108">Limite</span>
-            <input id="cypherQueryLimitInput" size="5" value="2000">&nbsp;
-            <button onclick="traversalMenu.cancelMenu()">
-                <span id="lang_153">Annuler</span></button>
-            <div id="message" class="message"></div>
+            <!--    <span id="lang_108">Limite</span>
+                <input id="cypherQueryLimitInput" size="5" value="2000">&nbsp;
+                <button onclick="traversalMenu.cancelMenu()">
+                    <span id="lang_153">Annuler</span></button>
+                <div id="message" class="message"></div>-->
         </div>
     </div>
 
@@ -98,11 +103,10 @@
                     <td>
 
 
+                        <select size="15" id="traversalDialogNodeSelect"
+                                onchange="traversalMenu.traversalSetNode(this)">
 
-                            <select size="15" id="traversalDialogNodeSelect" onchange="traversalMenu.traversalSetNode(this)">
-
-                            </select>
-
+                        </select>
 
 
                         <button onclick=" bringToFront('traversalDialogMain')">

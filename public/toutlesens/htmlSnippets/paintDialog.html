@@ -6,9 +6,9 @@
 
 
 
-<button onclick='paint.onActionTypeSelect("outline")'>Outline</button>
+<!--<button onclick='paint.onActionTypeSelect("outline")'>Outline</button>
 <button id="paintDialogClusterButton" onclick='paint.onActionTypeSelect("cluster")'>Cluster</button>
-<button id="paintDialogClassesButton" onclick='paint.onActionTypeSelect("classes")'>Classes</button>
+<button id="paintDialogClassesButton" onclick='paint.onActionTypeSelect("classes")'>Classes</button>-->
 
 <div id="paintDialogAction"   class="paintDialogDiv"  style="visibility: hidden">
 
@@ -16,9 +16,12 @@
 
 
 
-
 <div id="paintDialogPropDiv" class="paintDialogDiv" style="visibility: hidden">
-    Properties
+    Label<select id="paintDialog_labelSelect" onchange="filters.initLabelPropertySelection($(this).val(),paintDialog_propsSelect)">
+
+</select>
+<br>
+    Property
     <select id="paintDialog_propsSelect" onchange='paint.onPropertySelect(this)'>
 
     </select>

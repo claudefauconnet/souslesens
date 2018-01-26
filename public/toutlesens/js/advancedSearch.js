@@ -11,6 +11,7 @@ var advancedSearch = (function () {
             $("#dialog").dialog("open");
             toutlesensController.initLabels(advancedSearchDialog_LabelSelect);
             filters.initLabelPropertySelection("",advancedSearchDialog__propsSelect)
+            $("#advancedSearchDialog__propsSelect").val(Schema.getNameProperty())
             //  self.initLabels(currentQueriesDialogTargetLabelSelect);
         })
     }
@@ -52,11 +53,14 @@ var advancedSearch = (function () {
             var value= searchObj.property +":~ "+searchObj.value;
             toutlesensData.searchNodes(subGraph, searchObj.label, value, "matchStr", Gparams.jsTreeMaxChildNodes, 0,function(err,result){
                 infoGenericDisplay.loadSearchResultIntree(err,result);
-
+                setTimeout(function(){
+                    infoGenericDisplay.expandAll("treeContainer");
+                },500)
 
             })
         }
         $("#dialog").dialog("close");
+
 
 
     }

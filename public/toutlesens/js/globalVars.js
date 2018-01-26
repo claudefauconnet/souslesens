@@ -191,7 +191,6 @@ var currentRelation=null;
 var currentMode=null;
 var currentSourceNode=null;
 
-var currentHiddenChildren=null;
 var currentRelationActionTargetNode=null;
 
 var startSearchNodesTime=null;
@@ -221,7 +220,7 @@ var red="red";
 var labelsPositions=null;
 var initialQuery="";
 var currentVariable="";
-var currentDisplayType="FLOWER";
+var currentDisplayType="SIMPLE_FORCE_GRAPH";
 var selectedObject=null;
 var subGraph=null;
 var d3tree=null;

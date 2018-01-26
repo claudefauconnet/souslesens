@@ -36,7 +36,9 @@ var visjsGraph = (function () {
         self.nodes = new vis.DataSet(visjsData.nodes);
         self.edges = new vis.DataSet(visjsData.edges);
 
-        var x = Math.log10(self.edges.length * 2) + 1;
+     //   var x = Math.log10(self.edges.length * 2) + 1;
+        var x =( Math.log(self.edges.length * 2)*Math.LOG10E )+ 1;
+
         stopPhysicsTimeout = Math.pow(10, x);
         console.log("x" + x + " stopPhysicsTimeout: " + self.edges.length + " time " + stopPhysicsTimeout)
         data = {
@@ -117,7 +119,7 @@ var visjsGraph = (function () {
         })
         //stop animation
         network.on("click", function (params) {
-
+            $("#graphPopup").css("visibility","hidden");
             if (params.edges.length == 0 && params.nodes.length == 0) {
                 self.physicsOn = !self.physicsOn;
                 network.setOptions({
@@ -127,6 +129,8 @@ var visjsGraph = (function () {
 
             }
             else if (params.nodes.length == 1) {
+                var nodeId = params.nodes[0];
+                currentObject = self.nodes._data[nodeId];
                 /*   var now=new Date().getTime();
                  //  console.log(params.event.timeStamp+" "+now.getTime())
                    var delay=Math.abs(now-lastClick)
@@ -134,15 +138,13 @@ var visjsGraph = (function () {
                    console.log(delay);
                    if(delay<dblClickDuration) {//dbleclick*/
                 if (params.event.srcEvent.ctrlKey) {
-                    var nodeId = params.nodes[0];
-                    currentObject = self.nodes._data[nodeId];
-                    toutlesensController.generateGraph(nodeId, {applyFilters:false,addToPreviousQuery:true});
-                   // toutlesensController.expandGraphNode(nodeId);
+                    toutlesensController.dispatchAction ("expandNode", nodeId)
+
                 }
 
-                var nodeId = params.nodes[0];
                 var point = params.pointer.DOM;
-                currentObject = self.nodes._data[nodeId];
+                toutlesensController.dispatchAction ("nodeInfos", nodeId);
+               // toutlesensController.dispatchAction ("showPopup", nodeId);
                 toutlesensController.showPopupMenu(point.x, point.y, "nodeInfo");
             }
         });
@@ -219,11 +221,14 @@ var visjsGraph = (function () {
             var node = self.nodes._data[key];
             if (nodeIds.indexOf(key) > -1) {
                 node.color = {background: color};
+               // node.color = {color: color};
+               // node.size =Math.min(node.size*1.5,radius*2);
                 node.size = 2 * radius;
             }
             else {
                 if (otherNodesColor)
                     node.color = {background: otherNodesColor};
+             //   node.size=radius;
             }
             nodes.push(node);
         }

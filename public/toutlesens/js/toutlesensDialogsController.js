@@ -151,17 +151,16 @@ self.getAllpropertiesDialogContent("setSearchNodeReturnFilterVal()");
 
   var str="<table> <tr>" ;//+
       //  "<td> <input type='image' height='20px' alt='infos'  onclick='toutlesensController.dispatchAction(\"nodeInfosPopup\")' src='images/infos.png'/></td>";
-  if(currentDisplayType=="SIMPLE_FORCE_GRAPH")
-    str+= "<input type='image' height='15px'  alt='set as rootNode' onclick='toutlesensController.dispatchAction(\"addNodeToGraph\",null," + currentObject.id + ")' src='images/add.jpg'/>" + "&nbsp;";
-    str+=   "<td><input type='image' height='15px'  alt='set as rootNode' onclick='toutlesensController.dispatchAction(\"setAsRootNode\")' src='images/squareRoot.png'/></td>"
+ // if(currentDisplayType=="SIMPLE_FORCE_GRAPH")
+     str+=   "<td><input type='image' height='20px'  alt='set as rootNode' onclick='toutlesensController.dispatchAction(\"setAsRootNode\")' src='images/center.png'/></td>"
     if(Gparams.readOnly ==false){
         str+="<td> <input type='image' height='20px' alt='infos'  onclick='toutlesensController.dispatchAction(\"modifyNode\")' src='images/modify.png'/></td>"+
       "<td><input type='image' height='20px'  alt='set as rootNode' onclick='toutlesensController.dispatchAction(\"linkSource\")' src='images/sourceLink.png'/></td>"+
-            "<td><input type='image' height='20px'  alt='set as rootNode' onclick='toutlesensController.dispatchAction(\"linkTarget\")' src='images/targetLink.png'/></td>"+
-       "<td><input type='image' height='20px'  alt='set as rootNode' onclick='toutlesensController.dispatchAction(\"newNode\")' src='images/new.jpg'/></td>"
+            "<td><input type='image' height='20px'  alt='set as rootNode' onclick='toutlesensController.dispatchAction(\"linkTarget\")' src='images/targetLink.png'/></td>"
+     //  +"<td><input type='image' height='20px'  alt='set as rootNode' onclick='toutlesensController.dispatchAction(\"newNode\")' src='images/new.jpg'/></td>"
     }
 
- //   str+="</td><td>"
+  str+="</td></tr><tr><td>"
 
     str+=   "<B><span style='color:" + nodeColors[label] + "'> [" + label + "]<span>" +"</B>"+name+"<br>";
     var customInfo=customizeUI.customInfo(currentObject);
@@ -176,7 +175,7 @@ self.getAllpropertiesDialogContent("setSearchNodeReturnFilterVal()");
 
                str += textOutputs.formatNodeInfo(obj[0].n.properties);
                str += "<br>" + customizeUI.customInfo(obj);
-               $("#popupMenuNodeInfo").html(str);
+               $("#nodeInfoMenuDiv").html(str);
                return;
            });
 
@@ -186,33 +185,11 @@ self.getAllpropertiesDialogContent("setSearchNodeReturnFilterVal()");
            str+="<td> <img src='"+currentObject.neoAttrs.image+"' width='100px'></td>"
        }
        str+="<td>"
-    if (currentObject.hiddenChildren) {
-        str += "<ul>";
-        currentHiddenChildren = {};
-        var child = currentObject.hiddenChildren[i];
 
-        for (var i = 0; i < currentObject.hiddenChildren.length; i++) {
-            var child=currentObject.hiddenChildren[i];
-            currentHiddenChildren[child.id]=child;
-textOutputs.formatNode(child).name;
-
-            var child = currentObject.hiddenChildren[i];
-
-
-            str +="<li><input type='image' height='15px' alt='infos'  onclick='dispatchAction(\"nodeInfosPopup\"," + child.id + ")' src='images/infos.png'/>" +
-
-
-                "<input type='image' height='15px'  alt='set as rootNode' onclick='dispatchAction(\"setAsRootNode\"," + child.id + ")' src='images/squareRoot.png'/>" + "&nbsp;" +
-                "<span style='color:" + nodeColors[child.label] + "'> [" + child.label + "]</span>" + name + "&nbsp;</li>";
-
-
-        }
-        str += "</ul>"
-    }
        str += "</td>";
        str += "</tr>";
     str += "</table>";
-    $("#popupMenuNodeInfo").html(str);
+    $("#nodeInfoMenuDiv").html(str);
 
 }
 

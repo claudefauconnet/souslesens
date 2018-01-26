@@ -1,16 +1,6 @@
 
 
 
-<select id="advancedSearchDialog_operatorSelect">
-    <option>=</option>
-    <option>!=</option>
-    <option>&lt;</option>
-    <option>&gt;</option>
-    <option selected="selected">contains</option>
-
-</select>
-
-<input id="propertiesSelectionDialog_valueInput">
 
 
 <div id="advancedSearchDialog_Div" style="visibility: visible;">
@@ -26,11 +16,24 @@
 <select id="advancedSearchDialog__propsSelect">
 
 </select>
+
 <br>
 
 
+    <select id="advancedSearchDialog_operatorSelect">
+        <option>=</option>
+        <option>!=</option>
+        <option>&lt;</option>
+        <option>&gt;</option>
+        <option selected="selected">contains</option>
 
-    <button onclick="advancedSearch.searchNodes()">Search</button>
+    </select>
+
+    <input id="propertiesSelectionDialog_valueInput">
+
+
+
+    <button id="advancedSearchDialog_searchButton" onclick="advancedSearch.searchNodes()">Search</button>
 <input type="hidden" id="propertiesSelectionDialog_filterModeInput">
 <input type="hidden" id="propertiesSelectionDialog_typeInput">
 
@@ -43,6 +46,11 @@
 
 <script>
 toutlesensController.initLabels(advancedSearchDialog_LabelSelect);
-
+/*$('body').on('keypress', '#advancedSearchDialog_searchButton', function(args) {
+    if (args.keyCode == 13) {
+        $('#advancedSearchDialog_searchButton').click();
+        return false;
+    }
+});*/
 </script>
 

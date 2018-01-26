@@ -115,6 +115,7 @@ var mainMenu = (function () {
         if (!relType || relType == "") {
             return alert("select a relation type before saving relation")
         }
+
         var direction;
         var payload;
         if (relType.indexOf("-") == 0) {//inverse
@@ -146,19 +147,23 @@ var mainMenu = (function () {
             }
             $("#message").html("relation saved");
             $("#dialog").dialog("close");
-            toutlesensController.currentRelationData = {};
-            toutlesensController.replayGraph("same");
 
-            if (true || inEditMenu) {
+            if(toutlesensController.currentRelationData.context=="graphicRelCreation"){
                 var relation = {
-                    source: toutlesensController.currentRelationData.sourceNode.id,
-                    target: toutlesensController.currentRelationData.targetNode.id,
+                    sourceNode: toutlesensController.currentRelationData.sourceNode,
+                    targetNode: toutlesensController.currentRelationData.targetNode,
                     type: relType,
                     direction: direction,
                     properties: {}
                 }
                 d3graphCreation.addRelation(relation)
+
             }
+            else if( context=="visJsGraphAddRel"){
+                toutlesensController.currentRelationData = {};
+                toutlesensController.replayGraph("same");
+            }
+
 
 
         })

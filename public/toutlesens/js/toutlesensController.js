@@ -146,9 +146,13 @@ var toutlesensController = (function () {
 
 
     self.generateGraph = function (id, options, callback) {
+        if(!options)
+            options={};
         var addToPreviousQuery = false;
         if (options.addToPreviousQuery == true)
             addToPreviousQuery = true;
+
+        options.applyFilters=true;
 
         d3.select("#graphDiv").selectAll("svg").remove();
         $("#graphDiv").html("");
@@ -220,18 +224,28 @@ var toutlesensController = (function () {
 
         var output = currentDisplayType;
 
-        if (options && options.applyFilters) {
+        if ( options && options.applyFilters) {
             filters.setQueryFilters();
+           // $("#tabs-controlPanel").tabs("enable", 1);
+            $("#tabs-controlPanel").tabs( "enable", 2);
+
+
             // $(".paintIcon").css("visibility","visible")
         }
         else {
             self.setGraphMessage("Too many relations to display the graph<br>filter by  relation or label types")
-            output = "filtersDescription";
+          //  output = "filtersDescription";
             $(".paintIcon").css("visibility", "hidden")
         }
 
 
 
+
+
+
+
+
+        /*----------------------------------------------------------------------------------------------------*/
         $("#waitImg").css("visibility", "visible")
         toutlesensData.getNodeAllRelations(id, output, addToPreviousQuery, function (err, data) {
             toutlesensData.whereFilter = "";
@@ -281,16 +295,6 @@ var toutlesensController = (function () {
             }
 
 
-            // after dblclik on force graph display flower directly without count
-            /*   if (currentDisplayType == "FLOWER" && applyFilters != "flowerFiltersInited") {// add depth criteria ??
-             //   filters.checkPreviouscheckedFilters();
-             // filters.currentFilters={}
-
-             self.generateGraph(currentObject.id, "flowerFiltersInited");
-             return;
-
-             }*/
-
             if (self.collapseTargetLabels.length > 0) {//if we want to collapse graph
                 data = self.collapseResult(data);
             }
@@ -309,6 +313,7 @@ var toutlesensController = (function () {
 
 
                 toutlesensController.displayGraph(data, currentDisplayType, self.currentLabels);
+                paint.init(data);
                 $("#mainButtons").css("visibility", "visible");
                 $("#waitImg").css("visibility", "hidden")
 
@@ -667,8 +672,20 @@ var toutlesensController = (function () {
         });
     }
 
+    self.findRelationGraph=function(){
+        var type=$("#findRelationsSelect").val();
+     //   var relation=Schema.getRelationsByType(type);
+        toutlesensData.queryRelTypeFilters=":"+type;
+        currentObject.id=null;
+        currentDisplayType = "VISJS-NETWORK";
+        self.generateGraph();
 
+
+
+    }
     self.searchNodesUI = function (resultType, limit, from, callback) {
+
+
         if (!startSearchNodesTime) {// temporisateur
             startSearchNodesTime = new Date();
             return;
@@ -688,6 +705,10 @@ var toutlesensController = (function () {
         if (label == "" && word == "")
             return;
         toutlesensData.searchNodes(subGraph, label, word, resultType, limit, from, callback);
+        setTimeout(function(){
+            infoGenericDisplay.expandAll("treeContainer");
+        },500)
+
     }
 
 
@@ -916,8 +937,7 @@ var toutlesensController = (function () {
 
     self.dispatchAction = function (action, objectId, targetObjectId) {
 
-        if (objectId)
-            currentObject = currentHiddenChildren[objectId];
+$("#graphPopup").css("visibility","hidden");
 
         var id;
         if (currentObject && currentObject.id)
@@ -949,8 +969,8 @@ var toutlesensController = (function () {
                     var str = "<input type='image' src='images/back.png' height='15px' alt='back' onclick='toutlesensController.restorePopupMenuNodeInfo()' ><br>"
                     str += textOutputs.formatNodeInfo(obj[0].n.properties);
                     str += "<br>" + customizeUI.customInfo(obj);
-                    popupMenuNodeInfoCache = $("#popupMenuNodeInfo").html();
-                    $("#popupMenuNodeInfo").html(str);
+                    popupMenuNodeInfoCache = $("#nodeInfoMenuDiv").html();
+                    $("#nodeInfoMenuDiv").html(str);
                 });
 
             }
@@ -964,27 +984,36 @@ var toutlesensController = (function () {
         var mode = $("#representationSelect").val();
 
         if (action == "nodeInfos") {
-            $("#externalInfoPanel").html("");
+         /*   $("#externalInfoPanel").html("");
             $("#externalSourceSelect").val(null);
             if (id) {
                 toutlesensData.showInfos2(id, self.showInfosCallback);
                 self.selectLeftTab('#attrsTab');
             }
+          */
+         $("#nodeInfoMenuDiv") .css("visibility", "visible");
+
+        toutlesensDialogsController.setPopupMenuNodeInfoContent();
         }
 
         if (action == 'relationInfos') {
             var str = textOutputs.getRelationAttrsInfo();
-            $("#popupMenuNodeInfoDiv").html(str);
-            $("#popupMenuNodeInfoDiv").show();
+            $("#nodeInfoDiv").html(str);
+            $("#nodeInfoDiv").show();
             //   self.selectLeftTab('#attrsTab');
             //  $("#infoPanel").html(str);
         }
+      else  if (action == 'expandNode') {
+            toutlesensController.generateGraph(currentObject.id, {applyFilters:false,addToPreviousQuery:true});
+        }
+       else if (action == 'closeNode') {
+
+        }
 
 
-        if (action == "unfoldNode") {
-
+     /*   if (action == "unfoldNode") {
             toutlesensData.getNodeAllRelations(currentObject.id, mode, true);
-        } else if (action == "setAsRootNode") {
+        } */else if (action == "setAsRootNode") {
             //   filters.initGraphFilters([currentObject.label]);
             //  toutlesensData.getNodeAllRelations(currentObject.id, mode);
             if (self.currentSource == "RDF") {
@@ -1014,6 +1043,7 @@ var toutlesensController = (function () {
             $("#linkSourceLabel").html(sourceNode.label);
             self.currentRelationData = {
                 sourceNode: sourceNode,
+                context:"visJsGraphAddRel"
             }
         } else if (action == "linkTarget") {
             //	selectLeftTab('#dataTab');
@@ -1260,26 +1290,13 @@ var toutlesensController = (function () {
     }
 
     self.showPopupMenu = function (x, y, type) {
-        var popup = "popupMenuNodeInfoDiv";
-
-
-        if (type && type == "label") {
-            popup = "popupMenuLabel";
-        }
-        else if (type && type == "nodeInfo") {
-            toutlesensDialogsController.setPopupMenuNodeInfoContent();
-            popup = "popupMenuNodeInfoDiv";
-            $("#popupMenuNodeInfoDiv").show();
-        }
-        $("#" + popup).css("visibility", "visible");
-        //   $("#" + popup).css("visibility", "visible").css("top", y).css("left", x);
-
+        $("#graphPopup").css("visibility", "visible").css("top", y).css("left", x);
     }
     self.hidePopupMenu = function () {
         $("#popupMenuRead").css("visibility", "hidden");
         $("#popupMenuWrite").css("visibility", "hidden");
         $("#popupMenuLabel").css("visibility", "hidden");
-        $("#popupMenuNodeInfoDiv").css("visibility", "hidden");
+        $("#nodeInfoDiv").css("visibility", "hidden");
 
     }
     self.getSVG = function () {
@@ -1340,7 +1357,7 @@ var toutlesensController = (function () {
         $("#tabs-mainPanel").tabs("option", "active", 2);
     }
     self.restorePopupMenuNodeInfo = function () {
-        $("#popupMenuNodeInfo").html(popupMenuNodeInfoCache);
+        $("#nodeInfoMenuDiv").html(popupMenuNodeInfoCache);
     }
 
     self.showThumbnail = function (relativePath) {
@@ -1415,11 +1432,19 @@ var toutlesensController = (function () {
 
 
     self.afterGraphInit = function () {
+        var tabsControlPanelDisabledOptions=[]
+         tabsControlPanelDisabledOptions.push(1);//filters
+        tabsControlPanelDisabledOptions.push(2);//highlight
+        var tabsFindPanelDisabledOptions=[];
+        tabsFindPanelDisabledOptions.push(2)
+        tabsFindPanelDisabledOptions.push(3)
+
+
 
         $("#nextMenuButton").css("visibility", "hidden")
         $("#previousMenuButton").css("visibility", "hidden")
 
-        $("#tabs-mainPanel").tabs("option", "disabled", [2]);
+        $("#tabs-mainPanel").tabs("option", "disabled", "2");
 
 
         if (Gparams.showRelationNames) {
@@ -1428,7 +1453,7 @@ var toutlesensController = (function () {
 
 
         if (!queryParams.rdfMenu) {
-            $("#tabs-controlPanel").tabs("option", "disabled", [5]);
+            tabsControlPanelDisabledOptions.push(4);
 
         }
         if (queryParams.write) {
@@ -1440,24 +1465,40 @@ var toutlesensController = (function () {
             $("#infosHeaderDiv").css("visibility", "visible");
             infoGenericDisplay.userRole = "write";
             cards.userRole = "write";
-            $("#tabs-controlPanel").tabs("option", "enabled", [4]);
+
+
             $("#createNodeButton").css("visibility", "visible");
             $("#editSchemaButton").css("visibility", "visible");
         }
         else {
-            $("#tabs-controlPanel").tabs("option", "desabled", [4]);
+            tabsControlPanelDisabledOptions.push(3);
             $("#infosHeaderDiv").css("visibility", "hidden");
             infoGenericDisplay.userRole = "read"
             cards.userRole = "read";
         }
 
+      /*  $("#nodeDiv").load("htmlSnippets/findNodeDiv.html", function () {
+
+        });*/
+
         $("#pathDiv").load("htmlSnippets/traversalDialog.html", function () {
-            self.initLabels(dialogNodesLabelsSelect);
+
         });
         $("#requestDiv").load("htmlSnippets/currentQueries.html", function () {
             self.initLabels(currentQueriesDialogSourceLabelSelect);
             self.initLabels(currentQueriesDialogTargetLabelSelect);
         });
+
+        $("#highlightDiv").load("htmlSnippets/paintDialog.html", function () {
+
+
+        });
+
+
+
+        $("#tabs-controlPanel").tabs("option", "disabled", tabsControlPanelDisabledOptions);
+        $("#findTabs").tabs("option", "disabled", tabsFindPanelDisabledOptions);
+
     }
 
 
@@ -1532,19 +1573,20 @@ var toutlesensController = (function () {
         var labels = Schema.getAllLabelNames()
         common.fillSelectOptionsWithStringArray(select, labels);
     }
-    /*   self.initLabels = function (selectId) {
-            var select = "#nodesLabelsSelect";
-            if (selectId)
-                select = "#" + selectId;
+   self.intiRelationTypes=function(){
 
 
-            for (var label in Schema.schema.labels) {
-                $(select).append($('<option>', {
-                    text: label,
-                    value: label
-                }).css("color", nodeColors[label]));
-            }
-        }*/
+       var relations = Schema.schema.relations;
+       var types=[];
+       for(var key in relations){
+           var type=relations[key].type;
+           if(types.indexOf(type)<0)
+               types.push(type);
+       }
+       types.sort();
+       types.splice(0,0,"")
+       common.fillSelectOptionsWithStringArray(findRelationsSelect, types);
+   }
 
 
     self.setResponsiveDimensions = function (rightPanelWidth) {
@@ -1564,11 +1606,11 @@ var toutlesensController = (function () {
         $("#textDivContainer").width(totalWidth - rightPanelWidth).height(totalHeight - 0);
 
 
-        $("#treeContainer").width(rightPanelWidth - 100).height((totalHeight / 2) - 200);
+        $("#treeContainer").width(rightPanelWidth - 100).height((totalHeight -Gparams.infoscontrolPanelHeight) - 180);
         // $("#graphLegendDiv").width(rightPanelWidth - 50).height(totalHeight)
         $("#findDiv").width(rightPanelWidth - 50).height((totalHeight))
         $("#findDivInner").width(rightPanelWidth - 50).height((totalHeight))
-        $("#findTabs").width(rightPanelWidth - 50).height((totalHeight / 2))
+        $("#findTabs").width(rightPanelWidth - 50).height((totalHeight -Gparams.infoscontrolPanelHeight-50))
 
         $("#editDiv").width(rightPanelWidth - 50).height((totalHeight))
         $("#highlightDiv").width(rightPanelWidth - 50).height((totalHeight))
@@ -1579,8 +1621,8 @@ var toutlesensController = (function () {
         //  $("#tabs-controlPanel").width(rightPanelWidth - 100).height(totalHeight/2).css("position", "absolute").css("left",(totalWidth-rightPanelWidth) + 30).css("top", 10);
 
 
-        $("#infos-controlPanel").width(rightPanelWidth - 50).height(totalHeight / 2);
-        $("#popupMenuNodeInfoDiv").width(rightPanelWidth - 60).//.css("position", "relative").css("left",  30).css("top", (totalHeight/2)+10);
+        $("#infos-controlPanel").width(rightPanelWidth ).height(Gparams.infoscontrolPanelHeight-20);
+        $("#nodeInfoMenuDiv").width(rightPanelWidth ).height(Gparams.infoscontrolPanelHeight-40).css("visibility","hidden")
 
 
         //   $("#mainButtons").width(rightPanelWidth).height(50).css("position", "absolute").css("left", $("#graphDiv").width() - 200).css("top", 50).css("visibility", "hidden");
@@ -1588,6 +1630,8 @@ var toutlesensController = (function () {
 
 
         $(".objAttrInput").width(rightPanelWidth-100);
+
+
 
     }
 

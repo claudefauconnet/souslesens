@@ -13,6 +13,36 @@ var traversalMenu = (function () {
 
   }
 
+    self.searchNodesUI = function (select) {
+        if (!startSearchNodesTime) {// temporisateur
+            startSearchNodesTime = new Date();
+            return;
+        } else {
+            now = new Date();
+            if (now - startSearchNodesTime < Gparams.searchInputKeyDelay)
+                return;
+        }
+        var word = "";
+        $(select).val("")
+        currentLabel = null;
+        var label = ""
+        word = $(select).val();
+        if (word && word.length < Gparams.searchInputMinLength && label && label.length == "") {
+            return;
+        }
+        if (label == "" && word == "")
+            return;
+        infoGenericDisplay.jsTreeDivId="traversalTreeContainer";
+        debugger;
+        toutlesensData.searchNodes(subGraph, label, word, resultType, limit, from, function(err,query){
+            infoGenericDisplay.loadTree ("", "#", query,"traversalTreeContainer")
+
+        });
+        /*  setTimeout(function(){
+              infoGenericDisplay.expandAll("treeContainer");
+          },500)*/
+
+    }
 
     self.traversalInitNodeDialog = function (select) {
 

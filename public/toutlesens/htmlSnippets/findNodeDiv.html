@@ -1,0 +1,47 @@
+<input type="hidden" value="500" id="limitResult">
+<table border="0">
+    <tr>
+        <td>
+            <table>
+                <tr align="center">
+                    <td><span id='lang_1'>Node</span></td>
+                    <td><input id="word"
+                               onkeyup="toutlesensController.searchNodesUI('matchStr',null,null, infoGenericDisplay.loadSearchResultIntree);"
+                               size="10"></td>
+                    <td><input type="image" height="20px" src="images/erase.png"
+                               onclick="$('#word').val('')"></td>
+                    <td><input type="image" alt="<span id='lang_XX'>search</span>" height="20px"
+                               onclick="advancedSearch.showDialog()"
+                               id="searchButton"
+                               src="images/advancedSearch2.png"/></td>
+
+                    <td><input type="image" alt="search all nodes" height="20px"
+                               onclick="toutlesensController.showAll()"
+                               id="searchAllButton"
+                               src="images/all.png"/></td>
+
+                </tr>
+
+            </table>
+
+
+        </td>
+
+    </tr>
+
+
+    <tr>
+        <td colspan="2">
+
+
+            <div id="treeContainer">
+                <div id="genericTree"></div>
+            </div>
+
+        </td>
+
+
+    </tr>
+
+
+</table>

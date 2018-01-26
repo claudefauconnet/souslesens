@@ -45,8 +45,8 @@ self.zoom=function(scale){
 }
     self.drawSimpleForce = function (nodes, links, linksMap) {
         self.nodes=nodes;
-    sizeCoef=Math.round(Math.log10(links.length))-1
-        if(sizeCoef==0)
+   // sizeCoef=Math.round(Math.log10(links.length))-1;
+        sizeCoef=  Math.log(links.length)*Math.LOG10E;
             sizeCoef=1;
         self.linksMap=linksMap;
         self.maxlLinks = 0

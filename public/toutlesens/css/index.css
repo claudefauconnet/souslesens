@@ -262,12 +262,19 @@ input {
     border-width: 2px;
     color: #555;
 }
-#popupMenuNodeInfo{
+#nodeInfoMenuDiv{
     color: #555;
     font-size:12px;
     max-height: 300px;
     max-width: 350px;
     overflow: auto;
+    background-color: #f6f6f6;
+    border-radius: 5px;
+    border-style: solid;
+    border-color: #999;
+    border-width: 2px;
+    margin:3px;
+    padding:10px;
 }
 
 .popupMenuTable td {
