@@ -205,6 +205,7 @@ var toutlesensData = (function () {
         if (self.matchStatement)
             statement = self.matchStatement;
         else {
+            hasMclause = true;
             statement = "MATCH path=(node1" + node1Label
                 + ")-[r"
                 + toutlesensData.queryRelTypeFilters

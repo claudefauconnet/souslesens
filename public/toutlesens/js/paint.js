@@ -383,7 +383,7 @@ var paint = (function () {
             $("#paintDialogPaletteDiv").css("visibility", "visible");
             $("#paintDialogPropDiv").css("visibility", "visible");
             $("#paintDialog_classesDiv").css("visibility", "hidden");
-            $("#paintDialog_GraphicAttrsDiv").css("visibility", "visible");
+         //   $("#paintDialog_GraphicAttrsDiv").css("visibility", "visible");
 
 
 

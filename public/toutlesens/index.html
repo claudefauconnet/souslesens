@@ -158,11 +158,11 @@
 
         }
 
-        #nodeInfosDiv{
+        #nodeInfosDiv {
         / / display: flex;
             justify-content: center;
             align-items: center;
-           border-width: 1px;
+            border-width: 1px;
             border-color: #5f3f3f;
             border-style: groove;
         }
@@ -302,8 +302,8 @@
             $("#tabs-controlPanel").tabs({
 
                 activate: function (event, ui) {
-                    var index = ui.newTab.index();
-                    toutlesensController.onRadarLeftActivate(index);
+                  /*  var index = ui.newTab.index();
+                    toutlesensController.onRadarLeftActivate(index);*/
                 },
                 create: function (event, ui) {
 
@@ -480,72 +480,16 @@
 <body>
 
 
-<!--  ****************************************************right panel***************************-->
+<!--  ****************************************************main panel***************************-->
 
 
 <div id="tabs-mainPanel">
 
-    <ul id="tab_li_right">
-        <li><a href="#graphTab"><span id='lang_28'><span
-                id='lang_42'>Graphe</span></span></a></li>
-        <li><a href="#textTab"><span id='lang_29'>Liste</span></a></li>
 
-        <!--    <li id="li_nodeDetails"><a href="#nodeDetailsTab">Details </a></li>-->
-        <li id="li_modify"><a href="#dataTab"><span id='lang_31'>Data</span></a></li>
-
-    </ul>
+    <div id="graphDiv"></div>
+</div>
 
 
-    <!--  ****************************************************graph***************************-->
-    <div id="graphTab">
-        <div id="center">
-
-
-            <div id="graphDiv"></div>
-
-
-        </div>
-    </div>
-
-
-    <!--  ****************************************************textTab***************************-->
-    <div id="textTab">
-        <div id="textDivContainer">
-            <table class="visButtonTable">
-                <tr>
-                    <td><input type="image" height="30px"
-                               alt="<span id='lang_13'>liste</span>"
-                               onclick="toutlesensController.onTextVisButton('HTML')" id="listOuput"
-                               src="images/list.png"/></td>
-
-                    <td><input type="image" height="30px" alt="table"
-                               onclick="toutlesensController.onTextVisButton('CSV')" id="csvOutput"
-                               src="images/table.png"/></td>
-                    <td>
-
-                        <button id="listDownloadButton" onclick="textOutputs.downloadTextOutput()">
-                            <span id='lang_43'>telecharcher</span>
-                        </button>
-
-                    </td>
-                    <!--     <td><input type="image" height="30px" alt="table"
-                                    onclick="toutlesensDialogsController.showGanttDialog()" id="Gantt"
-                                    src="images/gantt.png"/></td>
-                         <td>-->
-                </tr>
-            </table>
-
-            <br>
-            <div id="textDiv"></div>
-        </div>
-
-    </div>
-
-
-    <!--  ****************************************************modify***************************-->
-    <div id="dataTab">
-
-    </div>
 </div>
 
 
@@ -570,12 +514,11 @@
             <li><a href="#findDiv"><span id='lang_60'>Find  </span></a></li>
             <li><a href="#filterDiv"><span id='lang_60'>Filter </span></a></li>
             <li><a href="#highlightDiv"><span id='lang_60'>Highlight </span></a></li>
-            <li><a href="#editDiv"><span id='lang_60'>Edit </span></a></li>
-            <li><a href="#rdfDiv"><span id='lang_60'>RDF </span></a></li>
-            <!-- <li><a href="#specialQueriesDiv"><span id='lang_60'>Special </span></a></li>
-
-
-             <li><a href="#rdfDiv"><span id='lang_179'>RDF</span></a></li>-->
+            <!--    <li><a href="#editDiv"><span id='lang_60'>Edit </span></a></li>
+                <li><a href="#rdfDiv"><span id='lang_60'>RDF </span></a></li>
+                <!-- <li><a href="#specialQueriesDiv"><span id='lang_60'>Special </span></a></li>
+            <li><a href="#rdfDiv"><span id='lang_179'>RDF</span></a></li>
+            -->
 
             <!--  <li><a href="#attrsTab"><span id='lang_37'>Infos.</span></a></li>-->
             <!--  <li><a href="#selectionTab"><span id='lang_170'>Selection</span></a></li>-->
@@ -592,60 +535,60 @@
                         <li><a href="#nodeDiv"><span id='lang_60'>Node  </span></a></li>
                         <li><a href="#relationDiv"><span id='lang_60'>Relation </span></a></li>
                         <li><a href="#pathDiv"><span id='lang_60'>Pathes </span></a></li>
-                        <li><a href="#requestDiv"><span id='lang_60'>Request </span></a></li>
+                        <!--  <li><a href="#requestDiv"><span id='lang_60'>Request </span></a></li>-->
 
 
                     </ul>
 
 
                     <div id="nodeDiv">
-<input type="hidden" value="500" id="limitResult">
-<table border="0">
-    <tr>
-        <td>
-            <table>
-                <tr align="center">
-                    <td><span id='lang_1'>Node</span></td>
-                    <td><input id="word"
-                               onkeyup="toutlesensController.searchNodesUI('matchStr',null,null, infoGenericDisplay.loadSearchResultIntree);"
-                               size="10"></td>
-                    <td><input type="image" height="20px" src="images/erase.png"
-                               onclick="$('#word').val('')"></td>
-                    <td><input type="image" alt="<span id='lang_XX'>search</span>" height="20px"
-                               onclick="advancedSearch.showDialog()"
-                               id="searchButton"
-                               src="images/advancedSearch2.png"/></td>
+                        <input type="hidden" value="500" id="limitResult">
+                        <table border="0">
+                            <tr>
+                                <td>
+                                    <table>
+                                        <tr align="center">
+                                            <td><span id='lang_1'>Node</span></td>
+                                            <td><input id="word"
+                                                       onkeyup="toutlesensController.searchNodesUI('matchStr',null,null, infoGenericDisplay.loadSearchResultIntree);"
+                                                       size="10"></td>
+                                            <td><input type="image" height="20px" src="images/erase.png"
+                                                       onclick="$('#word').val('')"></td>
+                                            <td><input type="image" alt="<span id='lang_XX'>search</span>" height="20px"
+                                                       onclick="advancedSearch.showDialog()"
+                                                       id="searchButton"
+                                                       src="images/advancedSearch2.png"/></td>
 
-                    <td><input type="image" alt="search all nodes" height="20px"
-                               onclick="toutlesensController.showAll()"
-                               id="searchAllButton"
-                               src="images/all.png"/></td>
+                                            <td><input type="image" alt="search all nodes" height="20px"
+                                                       onclick="toutlesensController.showAll()"
+                                                       id="searchAllButton"
+                                                       src="images/all.png"/></td>
 
-                </tr>
+                                        </tr>
 
-            </table>
-
-
-        </td>
-
-    </tr>
+                                    </table>
 
 
-    <tr>
-        <td colspan="2">
+                                </td>
+
+                            </tr>
 
 
-            <div id="treeContainer">
-                <div id="genericTree"></div>
-            </div>
-
-        </td>
+                            <tr>
+                                <td colspan="2">
 
 
-    </tr>
+                                    <div id="treeContainer">
+                                        <div id="genericTree"></div>
+                                    </div>
+
+                                </td>
 
 
-</table>
+                            </tr>
+
+
+                        </table>
 
 
                     </div>
@@ -662,9 +605,9 @@
 
                     </div>
 
-                    <div id="requestDiv">
+                    <!--    <div id="requestDiv">
 
-                    </div>
+                        </div>-->
                 </div>
                 <div id="infos-controlPanel">
                     <!--  <div id="nodeInfoDiv" class="popupmenuDiv">-->
@@ -692,55 +635,53 @@
         <div id="highlightDiv">
 
         </div>
-        <div id="editDiv">
-            <button id="createNodeButton" onclick="toutlesensController.dispatchAction('newNode')">
-                New node
-            </button>
-            <button id="editSchemaButton" onclick="toutlesensController.showGraphSchema()">Edit
-                Schema
-            </button>
+        <!--  <div id="editDiv">
+              <button id="createNodeButton" onclick="toutlesensController.dispatchAction('newNode')">
+                  New node
+              </button>
+              <button id="editSchemaButton" onclick="toutlesensController.showGraphSchema()">Edit
+                  Schema
+              </button>
 
 
-            <div id="infosDiv">
-                <div id="infosHeaderDiv">
-                    &nbsp;&nbsp;<button onclick="infoGenericDisplay.saveNode()">Save</button>
-                    &nbsp;&nbsp;<button onclick="infoGenericDisplay.deleteNode()">Delete</button>
-                    NodeLabel<select id="edit_nodeLabelSelect"
-                                     onchange="infoGenericDisplay.setNewNodeProperties(this)"></select>
+              <div id="infosDiv">
+                  <div id="infosHeaderDiv">
+                      &nbsp;&nbsp;<button onclick="infoGenericDisplay.saveNode()">Save</button>
+                      &nbsp;&nbsp;<button onclick="infoGenericDisplay.deleteNode()">Delete</button>
+                      NodeLabel<select id="edit_nodeLabelSelect"
+                                       onchange="infoGenericDisplay.setNewNodeProperties(this)"></select>
 
-                    </tr>
-                </div>
-                <div id="message"></div>
-                <div id="relInfosDivWrapper">
-                    Relation&nbsp;
-                    <span cclass="infoTitle" id="relationType"></span>
-                    <div id="relInfosDiv"></div>
-                </div>
+                      </tr>
+                  </div>
+                  <div id="message"></div>
+                  <div id="relInfosDivWrapper">
+                      Relation&nbsp;
+                      <span cclass="infoTitle" id="relationType"></span>
+                      <div id="relInfosDiv"></div>
+                  </div>
 
-                <div id="nodeInfosDivWrapper">
-                    Node &nbsp;
-                    <span id="nodeLabel" class="infoTitle"></span>
-                </div>
-                <div id="nodeInfosDiv"></div>
-            </div>
+                  <div id="nodeInfosDivWrapper">
+                      Node &nbsp;
+                      <span id="nodeLabel" class="infoTitle"></span>
+                  </div>
+                  <div id="nodeInfosDiv"></div>
+              </div>
 
 
-        </div>
+          </div>-->
+
+
+        <!-- /*******************************************************RDF************************************************************/
+         /*******************************************************RDF************************************************************/
+         /*******************************************************RDF************************************************************/-->
+
+        <!-- <div id="rdfDiv">
+
+
+         </div>-->
+
 
     </div>
-
-
-    <!-- /*******************************************************RDF************************************************************/
-     /*******************************************************RDF************************************************************/
-     /*******************************************************RDF************************************************************/-->
-
-    <div id="rdfDiv">
-
-
-    </div>
-
-
-</div>
 
 
 </div>
@@ -752,8 +693,8 @@
                        onclick='toutlesensController.dispatchAction("expandNode")'></td>
             <td><input type="image" height="20" src="images/center.png"
                        onclick='toutlesensController.dispatchAction("setAsRootNode")'></td>
-         <!--   <td><input type="image" height="20" src="images/erase.png"
-                       onclick='toutlesensController.dispatchAction("closeNode")'></td>-->
+            <!--   <td><input type="image" height="20" src="images/erase.png"
+                          onclick='toutlesensController.dispatchAction("closeNode")'></td>-->
         </tr>
     </table>
 </div>

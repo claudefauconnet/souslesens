@@ -7,7 +7,30 @@ var filters = (function () {
     var currentPropertiesMap;
     self.hasFiltersSelected = false;
     self.currentFilters = {};
-    self.currentSelectdFilters = []
+    self.currentSelectdFilters = [];
+
+
+    self.init = function (data) {
+
+        var labels = []
+        for (var i = 0; i < data.length; i++) {
+            var filterObj = data[i];
+            for (var k = 0; k < filterObj.labels.length; k++) {
+                var label = filterObj.labels[k][0];
+
+                if (labels.indexOf(label) < 0)
+                    labels.push(label);
+
+            }
+
+        }
+        labels.splice(0, 0, "");
+        common.fillSelectOptionsWithStringArray(propertiesSelectionDialog_labelSelect, labels);
+        filters.initLabelPropertySelection("", propertiesSelectionDialog_propsSelect);
+        $("#propertiesSelectionDialog_propsSelect").val(Schema.getNameProperty())
+
+    }
+
 
     self.initGraphFilters = function (data) {
         self.hasFiltersSelected = false;
@@ -16,7 +39,7 @@ var filters = (function () {
         self.postFilter = null;
 
         $("#innerLegendDiv").html("");
-    //   $("#tabs-controlPanel").tabs('option','active',1)
+        //   $("#tabs-controlPanel").tabs('option','active',1)
 
 
         var str = "";
@@ -90,7 +113,7 @@ var filters = (function () {
             str += " relation <b>" + relName + "</b></td>";
             str += "<td> <img  src='./images/filter.png'  width='15px' title='set filter' onclick='filters.showFilterDialog(null,\"" + relName + "\")'></td>"
             if (Gparams.graphAllowPaint)
-                str += "<td> <img  src='./images/paint.jpg' class='paintIcon' id='paintIcon_"+ relName + "' width='15px' title='set filter' onclick='paint.showPaintDialog(null,\"" + relName + "\")'></td>"
+                str += "<td> <img  src='./images/paint.jpg' class='paintIcon' id='paintIcon_" + relName + "' width='15px' title='set filter' onclick='paint.showPaintDialog(null,\"" + relName + "\")'></td>"
 
             str += "</tr>";
         }
@@ -108,7 +131,7 @@ var filters = (function () {
                 str += "label <b>" + label + "</b></td>";
                 str += "<td><img  src='./images/filter.png'  width='15px'  title='set filter' onclick='filters.showFilterDialog(\"" + label + "\",\"" + relName + "\")'></td>"
                 if (Gparams.graphAllowPaint)
-                    str += "<td><img  src='./images/paint.jpg'  class='paintIcon' id='paintIcon_"+ label + "' width='15px'  title='set filter' onclick='paint.showPaintDialog(\"" + label + "\",\"" + relName + "\")'></td>"
+                    str += "<td><img  src='./images/paint.jpg'  class='paintIcon' id='paintIcon_" + label + "' width='15px'  title='set filter' onclick='paint.showPaintDialog(\"" + label + "\",\"" + relName + "\")'></td>"
 
                 str += "</tr>";
 
@@ -127,8 +150,8 @@ var filters = (function () {
         $("#filtersDiv").html(str);
 
 
-      /*  if (!customizeUI.hideFilters == true)
-            $("#filtersDiv").css("visibility", "visible");*/
+        /*  if (!customizeUI.hideFilters == true)
+              $("#filtersDiv").css("visibility", "visible");*/
 
         $(".filterName").on("click", function (event) {
             var mode = "add";
@@ -152,10 +175,8 @@ var filters = (function () {
     }
 
 
-
-
-    self.removeDisplaySelected=function (id){
-        if(!id) {
+    self.removeDisplaySelected = function (id) {
+        if (!id) {
             $(".filterName").each(function (index, value) {
                 $(this).removeClass("displayIcon-selected");
             })
@@ -244,7 +265,7 @@ var filters = (function () {
             toutlesensData.queryRelTypeFilters = ":" + allRelTypesStr;
 
         if (generateGraph) {
-            toutlesensController.generateGraph(null, {applyFilters:true});
+            toutlesensController.generateGraph(null, {applyFilters: true});
         }
 
 
@@ -301,20 +322,20 @@ var filters = (function () {
     self.initLabelPropertySelection = function (type, selectId) {
 
         self.postFilter = null;
-        var properties=[];
-        if(type==""){
-        var allLabels=Schema.getAllLabelNames();
-        for(var i=0;i<allLabels.length;i++){
-            properties.push( Schema.schema.properties[allLabels[i]])
-        }
+        var properties = [];
+        if (type == "") {
+            var allLabels = Schema.getAllLabelNames();
+            for (var i = 0; i < allLabels.length; i++) {
+                properties.push(Schema.schema.properties[allLabels[i]])
+            }
 
-        }else
-         properties = [Schema.schema.properties[type]];
+        } else
+            properties = [Schema.schema.properties[type]];
         var propertiesArray = [""];
-        for(var i=0;i<properties.length;i++) {
+        for (var i = 0; i < properties.length; i++) {
             for (var key in properties[i]) {
-                if(propertiesArray.indexOf(key)<0)
-                propertiesArray.push(key);
+                if (propertiesArray.indexOf(key) < 0)
+                    propertiesArray.push(key);
             }
         }
         propertiesArray.sort();
@@ -348,9 +369,9 @@ var filters = (function () {
         if (booleanOption == "only") {
             $(".paintIcon").each(function (index, value) {
                 if (this.id != "paintIcon_" + type)
-                    $(this).css("visibility","hidden")
+                    $(this).css("visibility", "hidden")
                 else
-                    $(this).css("visibility","visible")
+                    $(this).css("visibility", "visible")
             });
 
 
@@ -363,9 +384,9 @@ var filters = (function () {
 
             self.currentSelectdFilters = [];
         }
-        else{
+        else {
 
-            $(".paintIcon_"+type).css("visibility","visible")
+            $(".paintIcon_" + type).css("visibility", "visible")
         }
         self.synchronizeRelsAndlabels(filterMode, type);
 
@@ -472,10 +493,10 @@ var filters = (function () {
             var labels = self.currentFilters[type].labels;
 
             $(".filterName").each(function (index, value) {
-                var p=this.id.indexOf(":");
-                var name = this.id.substring(p+1)
-                var eachType = this.id.substring(0,p)
-                if ( eachType=="endNode" && labels.indexOf(name) > -1)
+                var p = this.id.indexOf(":");
+                var name = this.id.substring(p + 1)
+                var eachType = this.id.substring(0, p)
+                if (eachType == "endNode" && labels.indexOf(name) > -1)
                     $(this).addClass("displayIcon-selected");
             });
 
@@ -489,10 +510,10 @@ var filters = (function () {
             }
 
             $(".filterName").each(function (index, value) {
-                var p=this.id.indexOf(":");
-                var name = this.id.substring(p+1)
-                var eachType = this.id.substring(0,p)
-                if ( eachType=="relation" && rels.indexOf(name) > -1)
+                var p = this.id.indexOf(":");
+                var name = this.id.substring(p + 1)
+                var eachType = this.id.substring(0, p)
+                if (eachType == "relation" && rels.indexOf(name) > -1)
                     $(this).addClass("displayIcon-selected");
             });
 

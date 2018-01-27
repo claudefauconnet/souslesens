@@ -226,8 +226,11 @@ var toutlesensController = (function () {
 
         if ( options && options.applyFilters) {
             filters.setQueryFilters();
-           // $("#tabs-controlPanel").tabs("enable", 1);
+            $( "#tabs-controlPanel" ).tabs( "option", "disabled", [] );
+            $("#tabs-controlPanel").tabs( "enable", 1);
             $("#tabs-controlPanel").tabs( "enable", 2);
+           // $("#tabs-controlPanel").tabs("enable", 1);
+
 
 
             // $(".paintIcon").css("visibility","visible")
@@ -313,9 +316,12 @@ var toutlesensController = (function () {
 
 
                 toutlesensController.displayGraph(data, currentDisplayType, self.currentLabels);
+
                 paint.init(data);
+            filters.init(data);
                 $("#mainButtons").css("visibility", "visible");
-                $("#waitImg").css("visibility", "hidden")
+                $("#waitImg").css("visibility", "hidden");
+
 
                 self.stackGraph(currentDisplayType, currentLabel, currentObject.id, filters.currentSelectdFilters);
                 if (callback)
@@ -1436,7 +1442,7 @@ $("#graphPopup").css("visibility","hidden");
          tabsControlPanelDisabledOptions.push(1);//filters
         tabsControlPanelDisabledOptions.push(2);//highlight
         var tabsFindPanelDisabledOptions=[];
-        tabsFindPanelDisabledOptions.push(2)
+        //tabsFindPanelDisabledOptions.push(2)
         tabsFindPanelDisabledOptions.push(3)
 
 
@@ -1490,6 +1496,10 @@ $("#graphPopup").css("visibility","hidden");
         });
 
         $("#highlightDiv").load("htmlSnippets/paintDialog.html", function () {
+
+
+        });
+        $("#filterDiv").load("htmlSnippets/filterDialog.html", function () {
 
 
         });
@@ -1602,8 +1612,8 @@ $("#graphPopup").css("visibility","hidden");
 
 
         $("#graphDiv").width(totalWidth - rightPanelWidth).height(totalHeight - 0)
-        $("#dataDiv").width(totalWidth - -rightPanelWidth).height(totalHeight - 0);
-        $("#textDivContainer").width(totalWidth - rightPanelWidth).height(totalHeight - 0);
+      //  $("#dataDiv").width(totalWidth - -rightPanelWidth).height(totalHeight - 0);
+     //   $("#textDivContainer").width(totalWidth - rightPanelWidth).height(totalHeight - 0);
 
 
         $("#treeContainer").width(rightPanelWidth - 100).height((totalHeight -Gparams.infoscontrolPanelHeight) - 180);
@@ -1626,7 +1636,7 @@ $("#graphPopup").css("visibility","hidden");
 
 
         //   $("#mainButtons").width(rightPanelWidth).height(50).css("position", "absolute").css("left", $("#graphDiv").width() - 200).css("top", 50).css("visibility", "hidden");
-        $("#mainButtons").width(200).height(50).css("position", "absolute").css("left", 20).css("top", 50).css("visibility", "hidden");
+        $("#mainButtons").width(200).height(50).css("position", "absolute").css("left", 20).css("top", 10).css("visibility", "hidden");
 
 
         $(".objAttrInput").width(rightPanelWidth-100);
