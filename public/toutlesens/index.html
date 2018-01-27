@@ -143,13 +143,14 @@
     <script src="js/functionalities.js"></script>
 
     <script src="js/d3graphCreation.js"></script>
-
+    <script src="../common/js/others/async.js"></script>
 
     <!-- test visjs------------------------------------------>
     <script src="js/visjs/visjs.js"></script>
     <script src="js/visjs/visJsGraph.js"></script>
     <script src="../common/js/connectors.js"></script>
     <link rel="stylesheet" type="text/css" href="js/visjs/vis-network.min.css.js"/>
+
     <!-- test visjs---------------------------------------->
     <style>
         #treeContainer {
@@ -242,7 +243,7 @@
             ///$("#advancedQueriesDiv").tabs(); see advancedSearch.js
             $(".fillScreenHeight").css("bottom", 600);
 
-            $("#findTabs").tabs();
+
 
             for (var i = 0; i < Gparams.palette.length; i++) {
                 /*	$("#colorTest").append("<div style='background-color:"+palette[i]+"'>"+palette[i]+"</div>");*/
@@ -301,15 +302,23 @@
             );
             $("#tabs-controlPanel").tabs({
 
+
+
+            });
+            $("#findTabs").tabs({
                 activate: function (event, ui) {
-                  /*  var index = ui.newTab.index();
-                    toutlesensController.onRadarLeftActivate(index);*/
+                    var index = ui.newTab.index();
+                    if (index == 0) {
+                        infoGenericDisplay.currentActionObj = {type: "findNode"}
+                        var nodeDivDetach = $("#nodeDivDetachable").detach();
+                        $("#nodeDiv").append(nodeDivDetach);
+
+                    }
                 },
                 create: function (event, ui) {
-
+                    infoGenericDisplay.currentActionObj = {type: "findNode"}
 
                 }
-
             });
 
 
@@ -542,54 +551,56 @@
 
 
                     <div id="nodeDiv">
-                        <input type="hidden" value="500" id="limitResult">
-                        <table border="0">
-                            <tr>
-                                <td>
-                                    <table>
-                                        <tr align="center">
-                                            <td><span id='lang_1'>Node</span></td>
-                                            <td><input id="word"
-                                                       onkeyup="toutlesensController.searchNodesUI('matchStr',null,null, infoGenericDisplay.loadSearchResultIntree);"
-                                                       size="10"></td>
-                                            <td><input type="image" height="20px" src="images/erase.png"
-                                                       onclick="$('#word').val('')"></td>
-                                            <td><input type="image" alt="<span id='lang_XX'>search</span>" height="20px"
-                                                       onclick="advancedSearch.showDialog()"
-                                                       id="searchButton"
-                                                       src="images/advancedSearch2.png"/></td>
+                        <div id="nodeDivDetachable">
+                            <input type="hidden" value="500" id="limitResult">
+                            <table border="0">
+                                <tr>
+                                    <td>
+                                        <table>
+                                            <tr align="center">
+                                                <td><span id='lang_1'>Node</span></td>
+                                                <td><input id="word"
+                                                           onkeyup="toutlesensController.searchNodesUI('matchStr',null,null, infoGenericDisplay.loadSearchResultIntree);"
+                                                           size="10"></td>
+                                                <td><input type="image" height="20px" src="images/erase.png"
+                                                           onclick="$('#word').val('')"></td>
+                                                <td><input type="image" alt="<span id='lang_XX'>search</span>"
+                                                           height="20px"
+                                                           onclick="advancedSearch.showDialog()"
+                                                           id="searchButton"
+                                                           src="images/advancedSearch2.png"/></td>
 
-                                            <td><input type="image" alt="search all nodes" height="20px"
-                                                       onclick="toutlesensController.showAll()"
-                                                       id="searchAllButton"
-                                                       src="images/all.png"/></td>
+                                                <td><input type="image" alt="search all nodes" height="20px"
+                                                           onclick="toutlesensController.showAll()"
+                                                           id="searchAllButton"
+                                                           src="images/all.png"/></td>
 
-                                        </tr>
+                                            </tr>
 
-                                    </table>
-
-
-                                </td>
-
-                            </tr>
+                                        </table>
 
 
-                            <tr>
-                                <td colspan="2">
+                                    </td>
+
+                                </tr>
 
 
-                                    <div id="treeContainer">
-                                        <div id="genericTree"></div>
-                                    </div>
-
-                                </td>
+                                <tr>
+                                    <td colspan="2">
 
 
-                            </tr>
+                                        <div id="treeContainer">
+                                            <div id="genericTree"></div>
+                                        </div>
+
+                                    </td>
 
 
-                        </table>
+                                </tr>
 
+
+                            </table>
+                        </div>
 
                     </div>
 
@@ -602,6 +613,54 @@
                     </div>
 
                     <div id="pathDiv">
+
+                        <table>
+                            <tr>
+                                <td colspan="3">
+                                    Shortest path
+                                </td>
+                            </tr>
+                            <tr>
+
+                                <td>
+                                    <button  onclick="traversalMenu.findTraversalNode('source'); ">Between node</button>
+                                </td>
+                                <td><span id="shortestPath_sourceNode"></span></td>
+                                <td></td>
+
+                            </tr>
+                            <tr>
+
+
+
+                                <td>   <button  onclick="traversalMenu.findTraversalNode('target'); ">And  node</button>
+                                </td>
+                                <td><span id="shortestPath_targetNode" class="targetNode"></span></td>
+                                <td></td>
+
+                            </tr>
+
+
+                            <tr>
+                                <td colspan="1">
+                                 <button onclick="traversalMenu.executeShortestPathTraversalSearch()" id="executeShortestPathButton" style="visibility:hidden">Search</button>
+
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="3" >
+                                    &nbsp;<span id="shortestPathDistance"></span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="3" >
+                                    <div id="traversalFindDiv" style="background-color: #b3b6c2">
+                                    </div>
+                                </td>
+                            </tr>
+
+
+                        </table>
 
                     </div>
 

@@ -204,7 +204,7 @@ var filters = (function () {
             if (property == "all") {
 
                 type = filter.type;
-                if (filterMode == "endNode") {
+                if (filterMode == "endNode" && type!="") {
                     if (allNodeLabelsStr.length > 0)
                         allNodeLabelsStr += " OR ";
                     allNodeLabelsStr += "m:" + type;
@@ -224,7 +224,7 @@ var filters = (function () {
 
                 if (operator == "contains") {
                     operator = "=~ ";
-                    value = ".*" + value + ".*"
+                    value = "(?i).*" + value + ".*"
 
                 }
                 if (toutlesensData.whereFilter != "")
@@ -266,8 +266,30 @@ var filters = (function () {
 
         if (generateGraph) {
             toutlesensController.generateGraph(null, {applyFilters: true});
+            self.addCurrentFilterToFiltersDiv(filter)
         }
 
+
+    }
+    self.addCurrentFilterToFiltersDiv=function(filter){
+        $(".filterDiv").remove()
+        var str="<div class='filterDiv' id='filterDiv_"+filter.type+"'> ["+filter.type+"]";
+        if(filter.property) {
+            str += filter.property
+            if (filter.operator) {
+                str += " "+filter.operator + " "+filter.value;
+
+            }
+        }
+
+        str+="<input type='image' align='center' src='images/erase.png' width='20px' onclick='filters.removeFilterFromCurrentFiltersDiv(\""+filter.type+"\")'>"
+        $("#propertiesSelectionDialog_currentFiltersDiv").append(str);
+    }
+
+    self.removeFilterFromCurrentFiltersDiv=function(type){
+        $("#filterDiv_"+type).remove()
+
+        self.filterOnProperty("remove",null,null,type);
 
     }
 
@@ -366,6 +388,13 @@ var filters = (function () {
             type = $("#propertiesSelectionDialog_typeInput").val();
 
 
+        if (option == "remove") {
+            for (var i = 0; i < self.currentSelectdFilters.length; i++) {
+                if (self.currentSelectdFilters[i].type == type)
+                    self.currentSelectdFilters.splice(i, 1);
+            }
+        }
+
         if (booleanOption == "only") {
             $(".paintIcon").each(function (index, value) {
                 if (this.id != "paintIcon_" + type)
@@ -399,12 +428,7 @@ var filters = (function () {
             }
 
         }
-        if (option == "remove") {
-            for (var i = 0; i < self.currentSelectdFilters.length; i++) {
-                if (self.currentSelectdFilters[i].type == type)
-                    self.currentSelectdFilters.splice(i, 1);
-            }
-        }
+
 
 
         else if (!property) {

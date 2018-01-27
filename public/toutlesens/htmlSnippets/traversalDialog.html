@@ -25,8 +25,10 @@
 
     }
 
-    function searchNode(selectId) {
-
+    function searchTraversalNode(selectId) {
+        toutlesensController.setFindPanelExpandTree(true);
+var nodeDivDetach= $("#nodeDivDetachable");//.detach();
+$("#traversalFindDiv").append(nodeDivDetach);
      //   toutlesensController.searchNodesUI("", null, null, function(err,result,}){
 
     }
@@ -42,7 +44,7 @@
                 <td><span id="lang_109">source node</span></td>
                 <td>
                     <input id="traversalSourceNode" value=" ?"
-                           onclick="searchNode();traversalMenu.context.currentNode='source'">
+                           onclick="infoGenericDisplay.currentActionObj={type:'findShortestPath',stage:'sourceNode'};searchTraversalNode();  ">
                 </td>
                 <td><input type="image" height="20px" src="images/erase.png"
                            onclick="$('#traversalSourceNode').val('?');"></td>
@@ -53,11 +55,17 @@
                 <td><span id="lang_133" class="targetNode">target node</span></td>
 
                 <td><span class="targetNode"><input
-                        onclick="toutlesensController.searchNodesUI();traversalMenu.context.currentNode='target'" id="traversalTargetNode"
+                        onclick="  infoGenericDisplay.currentActionObj={type:'findShortestPath',stage:'targetNode'};searchTraversalNode();" id="traversalTargetNode"
                         value=" ?"></span></td>
                 <td><input type="image" height="20px" src="images/erase.png"
                            onclick="$('#traversalTargetNode').val('?');"></td>
 
+            </tr>
+            <tr>
+                <td colspan="3">
+                    <div id="traversalFindDiv">
+                    </div>
+                </td>
             </tr>
 
             <tr>

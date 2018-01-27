@@ -60,6 +60,8 @@ var Gparams = {
     maxNodesForRelNamesOnGraph:100,
     graphMaxDataLengthToDisplayGraphDirectly:1000,
 
+    shortestPathMaxDistanceTest:8,
+
 
     //urls************************
     httpProxyUrl: serverRootUrl+"/http",

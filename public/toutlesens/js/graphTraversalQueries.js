@@ -26,19 +26,19 @@ var graphTraversalQueries = (function () {
      * SOFTWARE.
      *
      ******************************************************************************/
-    self.getAllSimplePaths = function (startId, endId, depth, algo,callback) {
+    self.getAllSimplePaths = function (startId, endId, depth, algo, callback) {
 
 
         var body = '{ "to":"' + endId + '","max_depth":' + depth + ',"algorithm":"'
             + algo + '"}';
         var urlSuffix = "/db/data/node/" + startId + "/paths";
         var paramsObj = {
-            cypher:1,
+            cypher: 1,
             mode: "POST",
             urlSuffix: urlSuffix,
             payload: body,
         }
-        console.log(JSON.stringify(paramsObj),"null",2);
+        console.log(JSON.stringify(paramsObj), "null", 2);
 
         console.log(urlSuffix);
         $.ajax({
@@ -47,20 +47,21 @@ var graphTraversalQueries = (function () {
             data: paramsObj,
             dataType: "json",
             success: function (data, textStatus, jqXHR) {
-                if (!data || data.length == 0) {
-                    return  callback("No result")
+                if (!data) {
+                    return callback("No result")
                     $("#waitImg").css("visibility", "hidden");
                 }
                 if (data.length > Gparams.graphDisplayLimitMax) {
 
                     return callback("trop de resultats "
-                    + data.length
-                    + " pour dessiner le graphe.Modifiez les parametres")
+                        + data.length
+                        + " pour dessiner le graphe.Modifiez les parametres")
 
                 }
+                if (data.length == 0)
+                    return callback(null, data);
 
-
-               self.processPathResults(data,callback);
+                self.processPathResults(data, callback);
             },
             error: function (xhr, err, msg) {
                 toutlesensController.onErrorInfo(xhr)
@@ -71,7 +72,7 @@ var graphTraversalQueries = (function () {
 
     }
 
- self.processPathResults = function (data,callback) {
+    self.processPathResults = function (data, callback) {
 
 
         var RelIds = [];
@@ -88,25 +89,21 @@ var graphTraversalQueries = (function () {
         }
 
 
-
-
-
-
         var startNodeId = parseInt(data[0].start.substring(data[0].start
-                .lastIndexOf("/") + 1));
+            .lastIndexOf("/") + 1));
         var endNodeId = parseInt(data[0].end
             .substring(data[0].end.lastIndexOf("/") + 1))
-        self.getRelationsByIds(RelIds, data, startNodeId, endNodeId,function(err,data,rels){
-            if(err)
-               return console.log(err);
+        self.getRelationsByIds(RelIds, data, startNodeId, endNodeId, function (err, data, rels) {
+            if (err)
+                return console.log(err);
 
-           callback(null,data)
+            callback(null, data)
 
         });
 
     }
 
-    self.getRelationsByIds = function (RelIds, rawData, startNodeId, endNodeId,callback) {
+    self.getRelationsByIds = function (RelIds, rawData, startNodeId, endNodeId, callback) {
         // var query = "MATCH (n)-[r]->(m) WHERE ID(r) IN "+
         // JSON.stringify(normalRelIds)+ " RETURN
         // n,m,r,labels(n),labels(m),ID(n),ID(m),type(r),ID(r) ";
@@ -116,14 +113,14 @@ var graphTraversalQueries = (function () {
             + " RETURN EXTRACT(rel IN relationships(path) | type(rel))as rels,nodes(path)as nodes, EXTRACT(node IN nodes(path) | ID(node)) AS ids, EXTRACT(node IN nodes(path) | labels(node)) "
             + ", EXTRACT(rel IN relationships(path) | labels(startNode(rel))) as startLabels, EXTRACT(rel IN relationships(path) | labels(endNode(rel))) as endLabels";
 
-        payload={match:query}
+        payload = {match: query}
         $.ajax({
             type: "POST",
             url: Gparams.neo4jProxyUrl,
             data: payload,
             dataType: "json",
             success: function (data, textStatus, jqXHR) {
-var rels={}
+                var rels = {}
                 for (var i = 0; i < data.length; i++) {// marquage des
                     // noeuds source et
                     // cible
@@ -142,13 +139,13 @@ var rels={}
 
 
                     //extract relations objs for filters
-                    var relsI=data[i].rels;
+                    var relsI = data[i].rels;
                     for (var j = 0; j < relsI.length; j++) {
-                        var relJ=relsI[j]
-                    if(!rels[relJ])
-                        rels[relJ]={rels:[relJ],labels:[[]]};
+                        var relJ = relsI[j]
+                        if (!rels[relJ])
+                            rels[relJ] = {rels: [relJ], labels: [[]]};
                         for (var k = 0; k < data[i].nodes.length; k++) {
-                            if( rels[relJ].labels[0].indexOf(data[i].nodes[k].labels[0])<0){
+                            if (rels[relJ].labels[0].indexOf(data[i].nodes[k].labels[0]) < 0) {
                                 rels[relJ].labels[0].push(data[i].nodes[k].labels[0])
                             }
                         }
@@ -157,11 +154,11 @@ var rels={}
 
 
                 }
-                var relsArray=[]
-                for (var key in rels){
+                var relsArray = []
+                for (var key in rels) {
                     relsArray.push(rels[key]);
                 }
-                callback(null,data,relsArray);
+                callback(null, data, relsArray);
 
             },
             error: function (xhr, err, msg) {

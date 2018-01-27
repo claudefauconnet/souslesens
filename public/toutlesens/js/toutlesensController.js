@@ -262,6 +262,7 @@ var toutlesensController = (function () {
 
             if (data.length == 0) {
                 self.setGraphMessage("No  result");
+                $("#waitImg").css("visibility", "hidden")
                 return;
             }
             if (output == "filtersDescription") {
@@ -712,6 +713,7 @@ var toutlesensController = (function () {
             return;
         toutlesensData.searchNodes(subGraph, label, word, resultType, limit, from, callback);
         setTimeout(function(){
+            self.setFindPanelExpandTree(true);
             infoGenericDisplay.expandAll("treeContainer");
         },500)
 
@@ -1296,6 +1298,9 @@ $("#graphPopup").css("visibility","hidden");
     }
 
     self.showPopupMenu = function (x, y, type) {
+        self.setFindPanelExpandTree(false);
+      //  $("#tabs-findTabs").tabs( "option", "active", 0 );
+        $("#tabs-controlPanel").tabs( "option", "active", 0 );
         $("#graphPopup").css("visibility", "visible").css("top", y).css("left", x);
     }
     self.hidePopupMenu = function () {
@@ -1487,9 +1492,9 @@ $("#graphPopup").css("visibility","hidden");
 
         });*/
 
-        $("#pathDiv").load("htmlSnippets/traversalDialog.html", function () {
+     /*   $("#pathDiv").load("htmlSnippets/traversalDialog.html", function () {
 
-        });
+        });*/
         $("#requestDiv").load("htmlSnippets/currentQueries.html", function () {
             self.initLabels(currentQueriesDialogSourceLabelSelect);
             self.initLabels(currentQueriesDialogTargetLabelSelect);
@@ -1616,11 +1621,11 @@ $("#graphPopup").css("visibility","hidden");
      //   $("#textDivContainer").width(totalWidth - rightPanelWidth).height(totalHeight - 0);
 
 
-        $("#treeContainer").width(rightPanelWidth - 100).height((totalHeight -Gparams.infoscontrolPanelHeight) - 180);
+        $("#treeContainer").width(rightPanelWidth - 100);
         // $("#graphLegendDiv").width(rightPanelWidth - 50).height(totalHeight)
         $("#findDiv").width(rightPanelWidth - 50).height((totalHeight))
         $("#findDivInner").width(rightPanelWidth - 50).height((totalHeight))
-        $("#findTabs").width(rightPanelWidth - 50).height((totalHeight -Gparams.infoscontrolPanelHeight-50))
+        $("#findTabs").width(rightPanelWidth - 50);
 
         $("#editDiv").width(rightPanelWidth - 50).height((totalHeight))
         $("#highlightDiv").width(rightPanelWidth - 50).height((totalHeight))
@@ -1631,8 +1636,8 @@ $("#graphPopup").css("visibility","hidden");
         //  $("#tabs-controlPanel").width(rightPanelWidth - 100).height(totalHeight/2).css("position", "absolute").css("left",(totalWidth-rightPanelWidth) + 30).css("top", 10);
 
 
-        $("#infos-controlPanel").width(rightPanelWidth ).height(Gparams.infoscontrolPanelHeight-20);
-        $("#nodeInfoMenuDiv").width(rightPanelWidth ).height(Gparams.infoscontrolPanelHeight-40).css("visibility","hidden")
+        $("#infos-controlPanel").width(rightPanelWidth-50 );
+        $("#nodeInfoMenuDiv").width(rightPanelWidth-70 ).height(Gparams.infoscontrolPanelHeight-40).css("visibility","hidden")
 
 
         //   $("#mainButtons").width(rightPanelWidth).height(50).css("position", "absolute").css("left", $("#graphDiv").width() - 200).css("top", 50).css("visibility", "hidden");
@@ -1641,6 +1646,21 @@ $("#graphPopup").css("visibility","hidden");
 
         $(".objAttrInput").width(rightPanelWidth-100);
 
+        self.setFindPanelExpandTree(true);
+
+    }
+
+
+    self.setFindPanelExpandTree=function(expandTree){
+        var infoscontrolPanelHeight=Gparams.infoscontrolPanelHeight;
+        if(expandTree===true){
+            infoscontrolPanelHeight=0;
+        }
+
+
+            $("#treeContainer").height((totalHeight -infoscontrolPanelHeight) - 150);
+        $("#findTabs").height((totalHeight -infoscontrolPanelHeight-50))
+            $("#infos-controlPanel").height(infoscontrolPanelHeight-20);
 
 
     }
