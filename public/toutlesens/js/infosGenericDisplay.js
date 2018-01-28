@@ -493,7 +493,10 @@ var infoGenericDisplay = (function () {
         currentMenuData = menuItem.item.data;
         currentMenuData.relation = menuItem.item.relation;
         currentNameProperty = Schema.getNameProperty(currentMenuData.relation.endLabel);
-        var matchStr = "MATCH (n:" + currentMenuData.relation.endLabel + ") where n.subGraph='" + self.subGraph + "' return n order by n." + currentNameProperty;
+        var whereSubGraph="";
+        if(self.subGraph!="DB_")
+            whereSubGraph=" where n.subGraph='" + self.subGraph +"'"
+        var matchStr = "MATCH (n:" + currentMenuData.relation.endLabel + ") "+whereSubGraph+" return n order by n." + currentNameProperty;
         var payload = {
             match: matchStr,
             nodeLabel: currentMenuData.relation.endLabel,
@@ -850,8 +853,10 @@ var infoGenericDisplay = (function () {
 
             /*   if (node.data.label)
              var label = node.data.label;*/
-
-            var matchStr = "match (n)-[r]-(m) where ID(m)=" + parentId + " and m.subGraph=\"" + self.subGraph + "\" return n,r limit " + Gparams.jsTreeMaxChildNodes;
+            var whereSubGraph="";
+            if(self.subGraph!="DB_")
+                whereSubGraph=" and n.subGraph='" + self.subGraph +"'"
+            var matchStr = "match (n)-[r]-(m) where ID(m)=" + parentId + whereSubGraph + " return n,r limit " + Gparams.jsTreeMaxChildNodes;
             var payload = {match: matchStr, parentLabel: label, parentId: parentId, limit: limit};
             self.callAPIproxy(payload, "retrieve", function (error, data) {
                 var jsonData = self.formatResultToJtreeData(data, parentJstreeId, node.parents);
