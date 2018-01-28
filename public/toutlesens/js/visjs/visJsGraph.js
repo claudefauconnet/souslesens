@@ -36,7 +36,8 @@ var visjsGraph = (function () {
         self.nodes = new vis.DataSet(visjsData.nodes);
         self.edges = new vis.DataSet(visjsData.edges);
 
-        var x = Math.log10(self.edges.length * 2) + 1;
+       // var x = Math.log10(self.edges.length * 2) + 1;
+           var x =( Math.log(self.edges.length * 2)*Math.LOG10E )+ 1;
         stopPhysicsTimeout = Math.pow(10, x);
         console.log("x" + x + " stopPhysicsTimeout: " + self.edges.length + " time " + stopPhysicsTimeout)
         data = {
