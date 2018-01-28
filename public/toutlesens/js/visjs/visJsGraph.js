@@ -220,15 +220,42 @@ var visjsGraph = (function () {
         for (var key in  self.nodes._data) {
             var node = self.nodes._data[key];
             if (nodeIds.indexOf(key) > -1) {
-                node.color = {background: color};
+                node.shape="star";
+                node.color =color
+               node.size =radius*2;
+               /* node.color = {background: color};
                // node.color = {color: color};
                // node.size =Math.min(node.size*1.5,radius*2);
-                node.size = 2 * radius;
+                node.size = 2 * radius;*/
             }
             else {
-                if (otherNodesColor)
-                    node.color = {background: otherNodesColor};
-             //   node.size=radius;
+                if (node.initialColor)
+                    node.color = {background:  node.initialColor};
+                if (node.labelNeo == currentLabel) {
+                    node.size = 15;
+
+                }
+
+                if (node.image && node.image.length > 0) {
+                    node.shape = 'circularImage';
+                    node.image = node.image.replace(/File:/, "File&#58;");
+                    node.brokenImage = "images/questionmark.png";
+                    node.borderWidth = 4
+                    node.size = 30;
+
+                }
+                else if (node.icon && node.icon.length > 0) {
+                    node.shape = 'circularImage';
+                    node.image = node.icon;
+                    node.brokenImage = 'http://www.bnf.fr/bnf_dev/icono/bnf.png'
+                    node.borderWidth = 4
+                    node.size = 30;
+
+                }
+                else {
+                    node.shape = null;
+                    node.size = 15;
+                }
             }
             nodes.push(node);
         }
