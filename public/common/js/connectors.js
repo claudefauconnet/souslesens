@@ -30,9 +30,12 @@ var connectors = (function () {
                     var nodeNeo = nodes[j].properties;
 
                     var labels = nodes[j].labels;
+                    var labelVisjs=nodeNeo[Gparams.defaultNodeNameProperty];
+                    if(labelVisjs.length>Gparams.nodeMaxTextLength)
+                        labelVisjs=labelVisjs.substring(0,Gparams.nodeMaxTextLength)+"...";
                     var color = nodeColors[nodes[j].labels[0]]
                     var nodeObj = {
-                        label: nodeNeo[Gparams.defaultNodeNameProperty],
+                        label:labelVisjs ,
                         labelNeo: labels[0],// because visjs where label is the node name
                         color: color,
                         myId: nodeNeo.id,
@@ -47,8 +50,8 @@ var connectors = (function () {
 
                     }
                     if (nodes[j].outline) {
-                        nodeObj.font = {size: 18, color:Gparams.outlineTextColor, strokeWidth: 3, strokeColor: '#ffffff'}
-                        nodeObj.size = 25;
+                       nodeObj.font = {size: 18, color:Gparams.outlineTextColor, strokeWidth: 3, strokeColor: '#ffffff'}
+                       nodeObj.size = 25;
                     }
 
 
