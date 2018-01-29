@@ -1231,7 +1231,7 @@ var old = function () {
                 }
             }
             var whereSubGraph="";
-            if(subGraph!="DB_")
+            if(subGraph!=Gparams.defaultSubGraph)
                 whereSubGraph=" where n.subGraph='" + subGraph +"'"
             callNeoMatch(" MATCH (n) "+whereSubGraph+" RETURN DISTINCT  LABELS(n) as label, COUNT(n) as count", null, function (stats) {
                 for (var j = 0; j < stats.length; j++) {

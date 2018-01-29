@@ -882,7 +882,7 @@ function eraseNeoSubgraph(subGraph) {
         return;
 
     var whereSubGraph="";
-    if(subGraph!="DB_")
+    if(subGraph!=Gparams.defaultSubGraph)
         whereSubGraph=" where n.subGraph='" + subGraph +"'"
     var match = 'MATCH (n)-[r]-(m) '+whereSubGraph+' delete  r';
     callNeoMatch(match, null, function (data) {

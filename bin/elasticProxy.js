@@ -320,8 +320,10 @@ var elasticProxy = {
                 }
 
             for (var i = 0; i < andWords.length; i++) {
-                var match = ({"match": {}});
-                match[queryField] = andWords[i]
+
+
+                var match = ({"match":{} });
+                match.match[queryField] = andWords[i]
                 query.bool.must.push(match);
 
             }

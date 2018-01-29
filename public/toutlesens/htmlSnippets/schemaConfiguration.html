@@ -1,0 +1,41 @@
+<html>
+<link href="../../common/js/jsoneditor/jsoneditor.min.css" rel="stylesheet" type="text/css">
+<script src="../../common/js/jsoneditor/jsoneditor.min.js"></script>
+<script>
+
+
+</script>
+
+
+Schema
+
+<div id="createSchema">
+    Souslesens needs to use a schema that represent the graph model (nodes,relations and properties)
+    <br>
+    This schema is automatically generated from the Neo4j database.
+    You can then modify it
+    <br>
+
+    <button onclick="schemaConfiguration.generateSchema()"></button>
+    <div id="jsoneditor"></div>
+
+    <script>
+        var container = document.getElementById("jsoneditor");
+        var options = {
+          //  mode: 'tree'
+        };
+        var editor = new JSONEditor(container, options);
+
+
+        var json = {
+            "Array": [1, 2, 3],
+            "Boolean": true,
+            "Null": null,
+            "Number": 123,
+            "Object": {"a": "b", "c": "d"},
+            "String": "Hello World"
+        };
+        editor.set(json);
+    </script>
+</div>
+</html>

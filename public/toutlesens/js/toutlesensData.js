@@ -205,7 +205,7 @@ var toutlesensData = (function () {
         if (self.matchStatement)
             statement = self.matchStatement;
         else {
-            hasMclause = false;
+
             statement = "MATCH path=(node1" + node1Label
                 + ")-[r"
                 + toutlesensData.queryRelTypeFilters
@@ -219,6 +219,8 @@ var toutlesensData = (function () {
 
         }
         statement += returnStatement;
+        if(statement.indexOf("-(m)")>-1)
+            hasMclause = true;
 
         if (Gparams.allowOrphanNodesInGraphQuery && hasMclause == false)
             graphQueryUnionStatement = " MATCH path=(node1" + node1Label + ") "// for nodes without relations

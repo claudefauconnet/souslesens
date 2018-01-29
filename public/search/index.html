@@ -309,9 +309,9 @@
                     if (isFieldQuery()) {
                         var visData = connectors.elasticSkosToVisjs(data.docs);
                         visjsGraph.draw("graphDiv", visData);
-                        showResults(data.docs);
+                      //  showResults(data.docs);
                     } else {
-
+                        showResults(data.docs);
                         showPageControls(data.total);
                     }
 

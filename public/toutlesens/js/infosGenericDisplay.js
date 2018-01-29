@@ -494,7 +494,7 @@ var infoGenericDisplay = (function () {
         currentMenuData.relation = menuItem.item.relation;
         currentNameProperty = Schema.getNameProperty(currentMenuData.relation.endLabel);
         var whereSubGraph="";
-        if(self.subGraph!="DB_")
+        if(self.subGraph!=Gparams.defaultSubGraph)
             whereSubGraph=" where n.subGraph='" + self.subGraph +"'"
         var matchStr = "MATCH (n:" + currentMenuData.relation.endLabel + ") "+whereSubGraph+" return n order by n." + currentNameProperty;
         var payload = {
@@ -854,7 +854,7 @@ var infoGenericDisplay = (function () {
             /*   if (node.data.label)
              var label = node.data.label;*/
             var whereSubGraph="";
-            if(self.subGraph!="DB_")
+            if(self.subGraph!=Gparams.defaultSubGraph)
                 whereSubGraph=" and n.subGraph='" + self.subGraph +"'"
             var matchStr = "match (n)-[r]-(m) where ID(m)=" + parentId + whereSubGraph + " return n,r limit " + Gparams.jsTreeMaxChildNodes;
             var payload = {match: matchStr, parentLabel: label, parentId: parentId, limit: limit};

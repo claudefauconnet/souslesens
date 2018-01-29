@@ -29,6 +29,7 @@ var Gparams = {
 
 
     //init defaults*******************************
+    defaultSubGraph:"DB_",
     visibleLinkProperty:null,
     logLevel:5,
     readOnly: true,
@@ -118,6 +119,7 @@ var Gparams = {
     user: "anonymous",
     curveOffset: 40,
     relStrokeWidth: 4,
+
 
 
 

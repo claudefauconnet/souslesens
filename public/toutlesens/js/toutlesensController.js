@@ -550,7 +550,7 @@ var toutlesensController = (function () {
                 }
 
                 var whereSubGraph="";
-                if(subGraph!="DB_")
+                if(subGraph!=Gparams.defaultSubGraph)
                     whereSubGraph=" where n.subGraph='" + subGraph +"'"
                 var matchAll = "MATCH path=(n)-[r]-(m) "+whereSubGraph ;
                 matchAll += " return " + returnStr + "  limit " + Gparams.neoQueryLimit;
@@ -1516,7 +1516,7 @@ $("#graphPopup").css("visibility","hidden");
 
     self.checkMaxNumberOfNodeRelations = function (nodeId, maxRels, callback) {
         var whereSubGraph="";
-        if(subGraph!="DB_")
+        if(subGraph!=Gparams.defaultSubGraph)
             whereSubGraph=" and n.subGraph='" + subGraph +"'"
         var matchStr = "match (n)-[r]-(m) where ID(m)=" + nodeId +whereSubGraph+" return count(r) as count";
         var payload = {match: matchStr};
