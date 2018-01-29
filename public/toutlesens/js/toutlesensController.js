@@ -549,8 +549,10 @@ var toutlesensController = (function () {
                     }
                 }
 
-
-                var matchAll = "MATCH path=(n)-[r]-(m) where n.subGraph='" + subGraph + "' ";
+                var whereSubGraph="";
+                if(subGraph!="DB_")
+                    whereSubGraph=" where n.subGraph='" + subGraph +"'"
+                var matchAll = "MATCH path=(n)-[r]-(m) "+whereSubGraph ;
                 matchAll += " return " + returnStr + "  limit " + Gparams.neoQueryLimit;
                 toutlesensData.executeNeoQuery(QUERY_TYPE_MATCH, matchAll, function (data) {
                     data.patternNodes = nodeIds;
@@ -961,11 +963,6 @@ $("#graphPopup").css("visibility","hidden");
 
 
         if (action == "addNodeToGraph") {
-            /*  var numberOfLevelsVal = $("#depth").val();
-             numberOfLevelsVal = parseInt(numberOfLevelsVal)+2;
-             graphQueryUnionStatement="MATCH path=(node1)-[r*.."+numberOfLevelsVal + "]-(m) where ID(node1)="+currentObject.id+" and  ID(m)="+targetObjectId+" and node1.subGraph='"+subGraph+"'";
-             //initGraphFilters(currentObject.label);*/
-            //  toutlesensData.getNodeAllRelations(targetObjectId, mode, true);
             self.generateGraph(targetObjectId, {applyFilters: false});
         }
 
@@ -1518,7 +1515,10 @@ $("#graphPopup").css("visibility","hidden");
 
 
     self.checkMaxNumberOfNodeRelations = function (nodeId, maxRels, callback) {
-        var matchStr = "match (n)-[r]-(m) where ID(m)=" + nodeId + " and m.subGraph=\"" + subGraph + "\" return count(r) as count";
+        var whereSubGraph="";
+        if(subGraph!="DB_")
+            whereSubGraph=" and n.subGraph='" + subGraph +"'"
+        var matchStr = "match (n)-[r]-(m) where ID(m)=" + nodeId +whereSubGraph+" return count(r) as count";
         var payload = {match: matchStr};
         $.ajax({
             type: "POST",

@@ -45,7 +45,7 @@ var dataModel = (function () {
         self.allRelationsArray = [""];
         self.allLabels = [""];
         var where = "";
-        if (subGraph && subGraph != "undefined")
+        if (subGraph && subGraph != "")
             where = " where n.subGraph='" + subGraph + "'";
 
 

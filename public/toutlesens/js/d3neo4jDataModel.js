@@ -50,7 +50,7 @@ var d3neo4jDataModel = (function(){
         allLabels: [""]
     }
     var where = "";
-    if (subGraph && subGraph != "undefined")
+    if (subGraph && subGraph != "")
         where = " where n.subGraph='" + subGraph + "'";
 
 

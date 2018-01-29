@@ -153,6 +153,9 @@ var common = (function () {
 
     }
 
+
+
+
     self.changePassword = function () {
 
         if (self.submitPassword("#login2", "#passwordOld", true)) {

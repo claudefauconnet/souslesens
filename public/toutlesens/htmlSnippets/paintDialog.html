@@ -22,13 +22,14 @@
 </select>
 <br>
     Property
+    <br>
     <select id="paintDialog_propsSelect" onchange='paint.onPropertySelect(this)'>
 
     </select>
 
 <div id="paintDialogPropQueryDiv" style="visibility: hidden">
     <select id="paintDialog_operatorSelect" >
-        <option>contains</option>
+        <option selected="selected">contains</option>
         <option>=</option>
         <option>!=</option>
         <option>&lt;</option>
@@ -56,6 +57,10 @@
 
 
 </div>
+
+<button onclick="paint.clearHighlight()"> Clear</button>
+
+
 <div id="paintDialog_classesDiv"   style="visibility: hidden">
     Nclasses <input id="paintDialog_NclassesInput" style="width:30px" value="5">
     <button onclick="paint.paintClasses()">Paint classes</button>

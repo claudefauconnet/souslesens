@@ -592,6 +592,7 @@ function loadAndFetchDataToImport(params, importFn, _rootCallBack) {
                 for (var key in params.fields) {
                     if (rawLine[key])
                         importLine[key] = rawLine[key];
+
                 }
             }
             else

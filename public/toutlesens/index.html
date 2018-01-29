@@ -231,6 +231,8 @@
             queryParams = toutlesensController.getQueryParams(document.location.search);
             customizeUI.init();
             subGraph = queryParams.subGraph;
+            if(!subGraph)
+                subGraph="DB_";
             functionalities.hideFunctionalities();
             lang.setLangage();
 

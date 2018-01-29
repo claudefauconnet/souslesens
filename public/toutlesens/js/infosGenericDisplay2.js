@@ -209,7 +209,10 @@ var infoGenericDisplay = (function () {
 
 
             var rootId = "";
-            matchStr = "MATCH (n:" + label + ") where n.subGraph='" + self.subGraph + "' return n limit " + limit;
+            var whereSubGraph="";
+            if(self.subGraph!="DB_")
+                whereSubGraph=" where n.subGraph='" + self.subGraph +"'"
+            matchStr = "MATCH (n:" + label + ") "+whereSubGraph+" return n limit " + limit;
         }
         var payload = {match: matchStr, nodeLabel: label, query: {}, limit: limit};
         self.callAPIproxy(payload, "retrieve", function (error, data) {

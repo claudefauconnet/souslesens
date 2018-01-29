@@ -46,6 +46,8 @@ var Schema = (function () {
         var subGraph = _subGraph;
         if (!_subGraph)
             subGraph = subGraph = queryParams.subGraph;
+        if(!subGraph)
+            subGraph="DB_";
         self.schema = {
             labels: {},
             relations: {},

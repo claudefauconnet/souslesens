@@ -165,7 +165,10 @@ var elasticApps = {
 
                 }
             }
-            restAPI.retrieve({match: "Match(n) where n.subGraph=\"" + subGraph + "\" DETACH  delete n  "}, function (err, result) {
+            var whereSubGraph="";
+            if(subGraph && subGraph!="DB_")
+                whereSubGraph=" where n.subGraph='" + subGraph +"'"
+            restAPI.retrieve({match: "Match(n)"+whereSubGraph+" DETACH  delete n  "}, function (err, result) {
                 elasticApps.writeToNeoBatch(subGraph, "rules", "closeTo", neoNodes, neoRelations, function (err, result) {
                     if (err)
                         return callback(err);

@@ -516,8 +516,11 @@ function loadLabels(subGraphName) {
 
     if (!subGraphName)
         subGraphName = $('#subGraphSelect').val();
-    var match = "Match (n) where n.subGraph=\"" + subGraphName
-        + "\" return distinct labels(n)[0] as label";
+    var whereSubGraph="";
+    if(subGraphName!="")
+        whereSubGraph=" where n.subGraph='" + subGraphName +"'"
+    var match = "Match (n) " +whereSubGraph
+        + " return distinct labels(n)[0] as label";
     callNeoMatch(match, null, function (data) {
 
         if (data && data.length > 0) {
@@ -878,10 +881,12 @@ function eraseNeoSubgraph(subGraph) {
     if (!ok)
         return;
 
-    var match = 'MATCH (n)-[r]-(m) where n.subGraph="' + subGraph + '" delete  r';
-
+    var whereSubGraph="";
+    if(subGraph!="DB_")
+        whereSubGraph=" where n.subGraph='" + subGraph +"'"
+    var match = 'MATCH (n)-[r]-(m) '+whereSubGraph+' delete  r';
     callNeoMatch(match, null, function (data) {
-        var match = 'MATCH (n)where n.subGraph="' + subGraph + '" delete n';
+        var match = 'MATCH (n)'+whereSubGraph+' delete n';
         callNeoMatch(match, null, function (data) {
             $("#message").html("subGraph=" + subGraph + "deleted");
             $("#message").css("color", "red");
@@ -1081,7 +1086,12 @@ function deleteLabel() {
     }
 
     if (confirm("delete all nodes and relations  with selected label?")) {
-        var match = "Match (n:" + label + ") where n.subGraph='" + subGraph + "' DETACH delete n";
+        var whereSubGraph="";
+        if(subGraphName!="")
+            whereSubGraph=" where n.subGraph='" + subGraphName +"'"
+        var match = "Match (n) " +whereSubGraph
+            + " return distinct labels(n)[0] as label";
+        var match = "Match (n:" + label + ") "+whereSubGraph+" DETACH delete n";
         callNeoMatch(match, null, function (data) {
             $("#message").html("nodes with label=" + label + "deleted");
             $("#message").css("color", "green");

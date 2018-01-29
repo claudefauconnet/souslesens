@@ -36,6 +36,8 @@ var paint = (function () {
         $("#paintDialog_propsSelect").val(Schema.getNameProperty())
         self.initColorsPalette(10, "paintDialogPalette");
         self.onActionTypeSelect("outline")
+        $("#paintDialog_valueInput").css("visibility","visible");
+        $("#paintDialog_operatorSelect").css("visibility","visible")
     }
 
 
@@ -345,6 +347,9 @@ var paint = (function () {
 
         }
 
+    }
+    self.clearHighlight=function(){
+        visjsGraph.paintNodes([],null, "#eee", 0);
     }
 
     self.isLabelNodeOk = function (data, property, operator, value, type) {

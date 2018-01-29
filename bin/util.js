@@ -109,22 +109,24 @@ Util = {
             key2 = key2.replace(/ /g, "_");
             if (key2 != "") {
                 var valueObj = obj[key];
-
-                var value = "" + valueObj;
-                if (isNaN(valueObj)) {
-                    value = value.replace(/[\n|\r|\t]+/g, " ");
-                    value = value.replace(/&/g, " and ");
-                    value = value.replace(/"/g, "'");
-                    value = value.replace(/,/g, "\\,");
-                    value = value.replace(/\//g, "%2F");
-                    value = value.replace(/\\/g, "")
-                    value = value.replace(/:/g, "")
+                if( valueObj.indexOf("http")==0) {
+                    value = encodeURI(valueObj)
+                }else {
+                    var value = "" + valueObj;
+                    if (isNaN(valueObj)) {
+                        value = value.replace(/[\n|\r|\t]+/g, " ");
+                        value = value.replace(/&/g, " and ");
+                        value = value.replace(/"/g, "'");
+                        value = value.replace(/,/g, "\\,");
+                        // value = value.replace(/\//g, "%2F");
+                        value = value.replace(/\\/g, "")
+                        //  value = value.replace(/:/g, "")
+                    }
+                    else if (value.indexOf(".") > -1)
+                        value = parseFloat(value)
+                    else
+                        value = parseInt(value)
                 }
-                else if (value.indexOf(".") > -1)
-                    value = parseFloat(value)
-                else
-                    value = parseInt(value)
-
 
                 obj2[key2] = value;
             }
