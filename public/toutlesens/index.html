@@ -304,21 +304,30 @@
             );
             $("#tabs-controlPanel").tabs({
 
+                activate: function (event, ui) {
+                    var index = ui.newTab.index();
 
+
+                },
 
             });
             $("#findTabs").tabs({
                 activate: function (event, ui) {
                     var index = ui.newTab.index();
                     if (index == 0) {
-                        infoGenericDisplay.currentActionObj = {type: "findNode"}
+                        toutlesensController.currentActionObj = {type: "findNode"}
                         var nodeDivDetach = $("#nodeDivDetachable").detach();
                         $("#nodeDiv").append(nodeDivDetach);
 
                     }
+
+                    if (index == 1)
+                        toutlesensController.currentActionObj = {type: "relation"}
+                    if (index == 2)
+                        toutlesensController.currentActionObj = {type: "pathes"}
                 },
                 create: function (event, ui) {
-                    infoGenericDisplay.currentActionObj = {type: "findNode"}
+                    toutlesensController.currentActionObj = {type: "findNode"}
 
                 }
             });
@@ -428,8 +437,6 @@
                     }
                 }
 
-
-                toutlesensController.appInitEnded = true;
                 toutlesensController.appInitEnded = true;
 
             })
@@ -646,6 +653,9 @@
                             <tr>
                                 <td colspan="1">
                                  <button onclick="traversalMenu.executeShortestPathTraversalSearch()" id="executeShortestPathButton" style="visibility:hidden">Search</button>
+                                    <button onclick="traversalMenu.executeMoreOrLessShortestPathTraversalSearch(true)" id="executeLessShortestPathButton" style="visibility:hidden">-</button>
+                                   <button onclick="traversalMenu.executeMoreOrLessShortestPathTraversalSearch()" id="executeMoreShortestPathButton" style="visibility:hidden">+</button>
+
 
                                 </td>
                             </tr>

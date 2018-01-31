@@ -98,9 +98,13 @@ var visjsGraph = (function () {
         network = new vis.Network(container, data, options);
         window.setTimeout(function () {
             network.setOptions({
-                physics: {enabled: false}
+                physics: {enabled: false},
+
             });
-            network.fit()
+            network.fit();
+
+
+
         }, stopPhysicsTimeout);
 
 
@@ -391,6 +395,23 @@ var visjsGraph = (function () {
         self.nodes.update(nodes);
         network.fit()
 
+    }
+    self.outlinePathNodes=function(){
+        var pathNodes=[]
+        for (var key in  self.nodes._data) {
+            var node = self.nodes._data[key];
+            if (node.isSource) {
+                //  node.x = 0;
+                //   node.y = 0;
+                pathNodes.push(""+node.id);
+            }
+            if (node.target) {
+                // node.x = $("#graphDiv").width();
+                //   node.y = $("#graphDiv").height();
+                pathNodes.push(""+node.id);
+            }
+        }
+        self.paintNodes(pathNodes, "red", null, 20) ;
     }
 
     return self;

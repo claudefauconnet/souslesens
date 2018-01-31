@@ -44,7 +44,7 @@ $("#traversalFindDiv").append(nodeDivDetach);
                 <td><span id="lang_109">source node</span></td>
                 <td>
                     <input id="traversalSourceNode" value=" ?"
-                           onclick="infoGenericDisplay.currentActionObj={type:'findShortestPath',stage:'sourceNode'};searchTraversalNode();  ">
+                           onclick="toutlesensController.currentActionObj={type:'findShortestPath',stage:'sourceNode'};searchTraversalNode();  ">
                 </td>
                 <td><input type="image" height="20px" src="images/erase.png"
                            onclick="$('#traversalSourceNode').val('?');"></td>
@@ -55,7 +55,7 @@ $("#traversalFindDiv").append(nodeDivDetach);
                 <td><span id="lang_133" class="targetNode">target node</span></td>
 
                 <td><span class="targetNode"><input
-                        onclick="  infoGenericDisplay.currentActionObj={type:'findShortestPath',stage:'targetNode'};searchTraversalNode();" id="traversalTargetNode"
+                        onclick="  toutlesensController.currentActionObj={type:'findShortestPath',stage:'targetNode'};searchTraversalNode();" id="traversalTargetNode"
                         value=" ?"></span></td>
                 <td><input type="image" height="20px" src="images/erase.png"
                            onclick="$('#traversalTargetNode').val('?');"></td>

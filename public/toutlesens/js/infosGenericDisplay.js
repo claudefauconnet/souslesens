@@ -46,7 +46,7 @@ var infoGenericDisplay = (function () {
     self.iconSize = "20px";
     self.isAddingRelation = false;
 
-    self.currentActionObj={};
+
 
 
     self.initLabels = function (subGraph, callback) {
@@ -840,14 +840,14 @@ var infoGenericDisplay = (function () {
 
               }*/
 
-            if (self.currentActionObj.type=="findNode") {
+            if (toutlesensController.currentActionObj.type=="findNode") {
                 node = ids[parentJstreeId];
                 $("#tabs-radarRight").tabs("enable", 2);
                 self.showNodeData(node);
                 toutlesensController.addToHistory = true;
                 toutlesensController.generateGraph(parentId, {applyFilters: toutlesensController.drawGraph});
-            }else if( self.currentActionObj.type=='findShortestPath'){
-               traversalMenu.setTraversalNode(self.currentActionObj.stage,node.data);
+            }else if( toutlesensController.currentActionObj.type=='findShortestPath'){
+               traversalMenu.setTraversalNode(toutlesensController.currentActionObj.stage,node.data);
 
             }
 

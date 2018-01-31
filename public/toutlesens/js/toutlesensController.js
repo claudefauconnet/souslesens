@@ -1298,7 +1298,10 @@ $("#graphPopup").css("visibility","hidden");
         self.setFindPanelExpandTree(false);
       //  $("#tabs-findTabs").tabs( "option", "active", 0 );
         $("#tabs-controlPanel").tabs( "option", "active", 0 );
-        $("#graphPopup").css("visibility", "visible").css("top", y).css("left", x);
+        if(toutlesensController.currentActionObj.type!="findShortestPath")
+            $("#graphPopup").css("visibility", "visible").css("top", y).css("left", x);
+
+
     }
     self.hidePopupMenu = function () {
         $("#popupMenuRead").css("visibility", "hidden");

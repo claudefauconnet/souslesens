@@ -29,6 +29,16 @@ button, .mainMenuDiv {
     padding: 4px;
 }
 
+button, .mainMenuDiv {
+    color: white;
+    font-size: 14px;
+    font-family: verdana, sans-serif;
+    background-color:#b3b6c2;
+
+    margin: 1px;
+    padding: 4px;
+}
+
 
 
 select {

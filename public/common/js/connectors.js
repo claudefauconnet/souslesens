@@ -89,8 +89,16 @@ var connectors = (function () {
                         delete nodeObj.color;
                         delete nodeObj.initialColor;
 
-                    }
 
+                    }
+                   // console.log(JSON.stringify(nodes[j]));
+
+                    if(nodes[j].isSource){
+                        nodeObj.isSource=true;
+                    }
+                    if(nodes[j].isTarget){
+                        nodeObj.isTarget=true;
+                    }
 
                     visjsData.nodes.push(nodeObj);
 
