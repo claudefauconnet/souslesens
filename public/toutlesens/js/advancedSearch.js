@@ -24,7 +24,8 @@ var advancedSearch = (function () {
         searchObj.relType = $("#advancedSearchDialog__RelSelect").val();
         searchObj.property = $("#advancedSearchDialog__propsSelect").val();
         searchObj.operator = $("#advancedSearchDialog_operatorSelect").val();
-       searchObj.value = $("#propertiesSelectionDialog_valueInput").val();
+       searchObj.value = $("#advancedSearchDialog_valueInput").val();
+
 
 
 

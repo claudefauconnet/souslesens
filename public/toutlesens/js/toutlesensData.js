@@ -219,8 +219,10 @@ var toutlesensData = (function () {
 
         }
         statement += returnStatement;
-        if(statement.indexOf("-(m)")>-1)
+        if(toutlesensController.currentActionObj.mode == "filter" || statement.indexOf("-(m)")>-1)
             hasMclause = true;
+
+
 
         if (Gparams.allowOrphanNodesInGraphQuery && hasMclause == false)
             graphQueryUnionStatement = " MATCH path=(node1" + node1Label + ") "// for nodes without relations
@@ -1440,6 +1442,7 @@ var toutlesensData = (function () {
         }
 
         str = "MATCH (n" + labelStr + ") " + whereStr + subGraphWhere + returnStr;
+        console.log(str)
         if (resultType == "matchStr" && callback) {
             return callback(null, str);
         }
@@ -1448,7 +1451,7 @@ var toutlesensData = (function () {
         //    console.log(str);
         var payload = {match: str};
 
-        console.log(str)
+
         $.ajax({
             type: "POST",
             url: Gparams.neo4jProxyUrl,
