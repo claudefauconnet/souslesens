@@ -113,7 +113,7 @@ var connectors = (function () {
 
             for (var j = 0; j < rels.length; j++) {
                 var rel = rels[j];
-                var color = linkColors[nodesMap[ids[j + 1]].endRel];
+                var color = linkColors[rel];
                 var relObj = {
                     from: ids[j],
                     to: ids[j + 1],

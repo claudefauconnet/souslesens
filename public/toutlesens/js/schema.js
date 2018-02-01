@@ -26,7 +26,7 @@
  ******************************************************************************/
 
 var Schema = (function () {
- var serverDir = "./config/schemas/";
+    var serverDir = "./config/schemas/";
 
     self = {};
     self.subGraph;
@@ -41,13 +41,22 @@ var Schema = (function () {
         fieldsSelectValues: {}
     }
 
-// if no schema exists create one,store it and load it
+
+
+
+
+    /**
+     * load schema from config/schemas dir
+     * if no schema call schema configDialog
+     */
+
     self.load = function (_subGraph, callback) {
         var subGraph = _subGraph;
         if (!_subGraph)
             subGraph = subGraph = queryParams.subGraph;
-        if(!subGraph)
-            subGraph=Gparams.defaultSubGraph;
+        if (!subGraph) {
+            subGraph = Gparams.defaultSubGraph;
+        }
         self.schema = {
             labels: {},
             relations: {},
@@ -56,60 +65,6 @@ var Schema = (function () {
             fieldsSelectValues: {},
             Gparams: {}
         }
-
-
-        function initSchema(data, callback) {
-
-            if (data.result)
-                data = data.result;
-            if (data) {
-                if (typeof data !== "object")
-                    data = JSON.parse(data);
-
-
-                if (!data.defaultNodeNameProperty)
-                    data.defaultNodeNameProperty = "name";
-
-                for (var key in self.schema) {// pour completer le champs vides non enregistrés par Jquery
-                    if (!data[key])
-                        data[key] = {};
-                }
-
-
-                self.schema = data;
-                if (Gparams)
-                    Gparams.defaultNodeNameProperty = self.schema.defaultNodeNameProperty;
-                //name  used in UI but not stored
-                for (var key in self.schema.relations) {
-                    self.schema.relations[key].name = key
-                }
-
-                for (var key in self.schema.labels) {
-                    if (!self.schema.properties[key])
-                        self.schema.properties[key] = {};
-                    if (!self.schema.properties[key][self.schema.defaultNodeNameProperty])
-                        self.schema.properties[key][self.schema.defaultNodeNameProperty] = {
-                            "type": "text"
-                        }
-                }
-
-                self.setLabelsColor();
-                self.setLinkColors();
-                if (self.schema.Gparams) {
-                    for (var key in self.schema.Gparams) {
-                        Gparams[key] = self.schema.Gparams[key];
-                    }
-                }
-
-                Gparams.defaultNodeNameProperty = self.schema.defaultNodeNameProperty;
-
-                if (callback)
-                    callback(null, self.schema);
-
-            }
-
-        }
-
         self.subGraph = subGraph;
         var payload = {
             retrieve: 1,
@@ -125,26 +80,120 @@ var Schema = (function () {
             error: function (error, ajaxOptions, thrownError) {
                 // if schema does not exist we create one by analyzing Neo4j db content
                 console.log(error);
-
-
-                self.generateNeoImplicitSchema(subGraph, true, function (err, _schema) {
-                    if (err)
-                        return callback(err);
-                    else {
-                        initSchema(_schema, callback);
-
-                    }
-                })
+             self.showSchemaConfigDialog({create:1});
 
 
             },
             success: function (_schema) {
                 //if schema has been found and loaded
-                initSchema(_schema, callback);
+                self.initSchema(_schema, callback);
             }
         })
     }
 
+    self.showSchemaConfigDialog=function(options){
+        $("#dialogLarge").load("htmlSnippets/schemaConfig.html", function () {
+            if(options && options.create )
+            $("#schemaConfig_createSchemaDiv").css("visibility", "visible");
+            else
+                $("#schemaConfig_configSchemaDiv").css("visibility", "visible");
+
+
+            $("#subGraph").val(subGraph);//  self.initLabelPropertySelection(label);
+
+
+        })
+        $("#dialogLarge").dialog("option", "title", "Souslesens schema configuration");
+        $("#dialogLarge").dialog("open");
+    }
+
+    /**
+     * generate implicit schema and update schemaconfigDialog to modifiy it
+     *
+     */
+
+
+    self.createSchema = function () {
+        self.generateNeoImplicitSchema(subGraph, true, function (err, _schema) {
+            if (err) {
+                console.log(err)
+                return $("#schemaConfig_message").html("ERROR while generating schema");
+            }
+            else {
+                $("#schemaConfig_message").html("Schema generated");
+                $("#schemaConfig_configSchemaDiv").css("visibility", "visible");
+
+                self.initSchema(_schema, callback);
+
+            }
+        })
+    }
+    self.setDefaultNodeNameProperty = function () {
+        var newName = $("#schemaConfig_defaultNodeNameProperty").val();
+        if (newName !== "") {
+            self.schema.defaultNodeNameProperty=newName;
+            self.save(subGraph)
+
+
+
+        }
+    }
+
+    /**
+     * performs initialisation of toutlesens after loading schema
+
+     */
+    self.initSchema = function (data, callback) {
+
+        if (data.result)
+            data = data.result;
+        if (data) {
+            if (typeof data !== "object")
+                data = JSON.parse(data);
+
+
+            if (!data.defaultNodeNameProperty)
+                data.defaultNodeNameProperty = "name";
+
+            for (var key in self.schema) {// pour completer le champs vides non enregistrés par Jquery
+                if (!data[key])
+                    data[key] = {};
+            }
+
+
+            self.schema = data;
+            if (Gparams)
+                Gparams.defaultNodeNameProperty = self.schema.defaultNodeNameProperty;
+            //name  used in UI but not stored
+            for (var key in self.schema.relations) {
+                self.schema.relations[key].name = key
+            }
+
+            for (var key in self.schema.labels) {
+                if (!self.schema.properties[key])
+                    self.schema.properties[key] = {};
+                if (!self.schema.properties[key][self.schema.defaultNodeNameProperty])
+                    self.schema.properties[key][self.schema.defaultNodeNameProperty] = {
+                        "type": "text"
+                    }
+            }
+
+            self.setLabelsColor();
+            self.setLinkColors();
+            if (self.schema.Gparams) {
+                for (var key in self.schema.Gparams) {
+                    Gparams[key] = self.schema.Gparams[key];
+                }
+            }
+
+            Gparams.defaultNodeNameProperty = self.schema.defaultNodeNameProperty;
+
+            if (callback)
+                callback(null, self.schema);
+
+        }
+
+    }
 
     self.save = function (subGraph, json, callback) {
         if (!json)
@@ -196,7 +245,7 @@ var Schema = (function () {
                 var i = 0;
                 for (var key in Schema.schema.relations) {
                     var relation = Schema.schema.relations[key];
-                    var relKey = relation.name;
+                    var relKey = relation.type;
                     var p = relKey.indexOf("#");
                     if (p > -1)
                         relKey = relKey.substring(0, p);
@@ -267,7 +316,7 @@ var Schema = (function () {
 
     }
 
-    self.getAllLabelNames=function() {
+    self.getAllLabelNames = function () {
         var labels = [""];
 
         for (var label in self.schema.labels) {
@@ -278,19 +327,18 @@ var Schema = (function () {
     }
 
 
-
-    self.getPermittedRelTypes = function (startLabel, endLabel,inverseRelAlso) {
+    self.getPermittedRelTypes = function (startLabel, endLabel, inverseRelAlso) {
         relTypes = [];
         var relations = self.schema.relations;
         for (var key in relations) {
             var relation = relations[key];
-            var type=relations[key].type;
+            var type = relations[key].type;
 
             if (relation.startLabel == startLabel && relation.endLabel == endLabel)
                 relTypes.push(type);
 
-            if(inverseRelAlso && relation.startLabel == endLabel && relation.endLabel == startLabel)
-                relTypes.push("-"+type);
+            if (inverseRelAlso && relation.startLabel == endLabel && relation.endLabel == startLabel)
+                relTypes.push("-" + type);
         }
         return relTypes;
     }
@@ -370,7 +418,7 @@ var Schema = (function () {
                         var name = key + "--" + (i);
                     relation.properties.subGraph
                     relation.type = key;
-                    relation.properties=[]
+                    relation.properties = []
                     relationsNewModel[name] = relation;
 
                 }

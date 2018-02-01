@@ -159,7 +159,7 @@ var mainMenu = (function () {
                 d3graphCreation.addRelation(relation)
 
             }
-            else if( context=="visJsGraphAddRel"){
+            else if( toutlesensController.currentRelationData.context=="visJsGraphAddRel"){
                 toutlesensController.currentRelationData = {};
                 toutlesensController.replayGraph("same");
             }

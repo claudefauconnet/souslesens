@@ -47,3 +47,6 @@ public/toutlesens/icons/*
 *.log
 *.log
 public/toutlesens/js/infosGenericDisplay2.js
+*.log
+*.log
+*.js

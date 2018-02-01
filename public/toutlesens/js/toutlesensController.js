@@ -683,11 +683,15 @@ var toutlesensController = (function () {
 
     self.findRelationGraph=function(){
         var type=$("#findRelationsSelect").val();
-     //   var relation=Schema.getRelationsByType(type);
-        toutlesensData.queryRelTypeFilters=":"+type;
-        currentObject.id=null;
-        currentDisplayType = "VISJS-NETWORK";
-        self.generateGraph();
+        if(type!=="") {
+            $("#findRelationsCurrentType").html(type);
+            $("#findRelationsSelect").val("");
+            //   var relation=Schema.getRelationsByType(type);
+            toutlesensData.queryRelTypeFilters = ":" + type;
+            currentObject.id = null;
+            currentDisplayType = "VISJS-NETWORK";
+            self.generateGraph();
+        }
 
 
 
@@ -1513,6 +1517,12 @@ $("#graphPopup").css("visibility","hidden");
 
         $("#tabs-controlPanel").tabs("option", "disabled", tabsControlPanelDisabledOptions);
         $("#findTabs").tabs("option", "disabled", tabsFindPanelDisabledOptions);
+
+
+      /*  if(queryParams.write){
+            util.addTabToTab("data","dataTab","tabs-controlPanel");
+        }*/
+
 
     }
 

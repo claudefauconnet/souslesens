@@ -364,5 +364,20 @@ var util = (function () {
     }
 
 
+    self.addTabToTab=function(newTabName,newTabId,toTabDiv){
+        $("<li><a href='#"+newTabId+"'>"+newTabName+"</a></li>")
+            .appendTo("#"+toTabDiv);
+        $("<div id='"+newTabId+"'>aa</div>").appendTo("#"+toTabDiv);
+        $("#"+toTabDiv).tabs("refresh");
+    }
+
+    /*self.removeTabFromTab=function(newTabId,fromTabDiv){
+        $()
+        $("<li><a href='#"+tabId+"'>"+newTabName+"</a></li>")
+            .appendTo("#"+toTabDiv);
+        $("<div id='\"+tabId+\"'>????</div>").appendTo("#"+toTabDiv);
+        $("#"+toTabDiv).tabs("refresh");
+    }*/
+
     return self;
 })();
