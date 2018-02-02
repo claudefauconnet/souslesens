@@ -360,14 +360,17 @@ var elasticProxy = {
 
         console.log(JSON.stringify(options, null, 2));
         request(options, function (error, response, body) {
+
             elasticProxy.processSearchResult(error, index, body, callback);
 
         });
     },
     processSearchResult: function (error, index, body, callback) {
 
-        if (error)
+        if (error) {
+            console.log(error);
             return callback(error);
+        }
         if (!body.hits) {
             return callback(null, []);
         }

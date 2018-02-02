@@ -1484,6 +1484,8 @@ $("#graphPopup").css("visibility","hidden");
 
             $("#createNodeButton").css("visibility", "visible");
             $("#editSchemaButton").css("visibility", "visible");
+            $("#parametersMenuButton").css("visibility", "visible");
+
         }
         else {
             tabsControlPanelDisabledOptions.push(3);
