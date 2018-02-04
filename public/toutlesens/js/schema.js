@@ -128,6 +128,14 @@ var Schema = (function () {
             }
         })
     }
+
+    self.resetSchema=function(){
+        if(confirm("delete  this schema and recreate one from graph database ?")){
+            self.createSchema();
+            setTimeout(location.reload(),2000);
+        }
+    }
+
     self.setDefaultNodeNameProperty = function () {
         var newName = $("#schemaConfig_defaultNodeNameProperty").val();
         if (newName !== "") {

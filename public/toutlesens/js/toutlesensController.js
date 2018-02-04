@@ -156,7 +156,7 @@ var toutlesensController = (function () {
 
         d3.select("#graphDiv").selectAll("svg").remove();
         $("#graphDiv").html("");
-        $("#mainButtons").css("visibility", "hidden");
+      //  $("#mainButtons").css("visibility", "hidden");
         $("#graphMessage").html("");
         $("#relInfoDiv").html("");
 
@@ -1656,7 +1656,7 @@ $("#graphPopup").css("visibility","hidden");
 
 
         //   $("#mainButtons").width(rightPanelWidth).height(50).css("position", "absolute").css("left", $("#graphDiv").width() - 200).css("top", 50).css("visibility", "hidden");
-        $("#mainButtons").width(200).height(50).css("position", "absolute").css("left", 20).css("top", 10).css("visibility", "hidden");
+        $("#mainButtons").width(200).height(50).css("position", "absolute").css("left", 20).css("top", 10);//.css("visibility", "hidden");
 
 
         $(".objAttrInput").width(rightPanelWidth-100);

@@ -183,7 +183,7 @@ var traversalMenu = (function () {
                     $("#tabs-controlPanel").tabs( "enable", 2);*/
                     setTimeout(function () {
                         visjsGraph.paintNodes(["" + self.context.source.id, "" + self.context.target.id], "red", null, 10)
-                        $("#executeMoreShortestPathButton").css("visibility", "visible")
+                     //   $("#executeMoreShortestPathButton").css("visibility", "visible")
                         //  visjsGraph.outlinePathNodes();
 
                     }, 1000)

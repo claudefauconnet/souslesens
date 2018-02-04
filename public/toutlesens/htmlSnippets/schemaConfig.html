@@ -22,11 +22,19 @@
 
 
     <div id="schemaConfig_configSchemaDiv" style="visibility: hidden;margin:20px">
+
+        <button onclick="location.reload()">Start</button>
+        <br>
+
         <input id="schemaConfig_defaultNodeNameProperty" value="name">
         <button onclick="Schema.setDefaultNodeNameProperty()">Modify default node name property</button>
 
-        <button onclick="$('#schemaConfig_editDiv').css('visibility','visible'); editor.set(Schema.schema);">Edit Schema
-        </button>
+        <button onclick="$('#schemaConfig_editDiv').css('visibility','visible'); editor.set(Schema.schema);">Edit Schema</button>
+
+        <button onclick="Schema.resetSchema()">reset Schema</button>
+
+
+
 
     </div>
     <div id="schemaConfig_editDiv" style="visibility: hidden;margin:20px">
