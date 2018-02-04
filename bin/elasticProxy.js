@@ -51,6 +51,7 @@ logger.setLevel('info');
 var baseUrl = serverParams.elasticUrl
 var maxContentLength = 150;
 var elasticSchema = null;
+var wordBlackList = null;
 
 var client = null;
 
@@ -70,6 +71,22 @@ var elasticProxy = {
             }
         }
         return elasticSchema;
+    },
+    getWordBlacklist: function () {
+        if (!wordBlackList) {
+            var str = fs.readFileSync(path.resolve(__dirname, "../config/search/wordBlackList.json"));
+
+            try {
+                console.log("" + str)
+                wordBlackList = JSON.parse("" + str);
+            }
+            catch (e) {
+                console.log(e)
+                return null;
+            }
+        }
+        return wordBlackList;
+
     },
     ping: function () {
         getClient().ping({
@@ -169,8 +186,8 @@ var elasticProxy = {
                 }
             };
         var fields = elasticProxy.getShemaFields(index);
-        if (fields.indexOf("content") < 0)
-            fields.push("content");
+        if (!fields || fields.indexOf("content") < 0)
+            fields=["content"];
         payload._source = fields;
 
         if (words) {
@@ -322,7 +339,7 @@ var elasticProxy = {
             for (var i = 0; i < andWords.length; i++) {
 
 
-                var match = ({"match":{} });
+                var match = ({"match": {}});
                 match.match[queryField] = andWords[i]
                 query.bool.must.push(match);
 
@@ -512,7 +529,7 @@ var elasticProxy = {
 
 
         }
-
+        var wordBlacklist = elasticProxy.getWordBlacklist();
         var payload = {
             "query": query,
             "size": serverParams.elasticMaxFetch,
@@ -523,143 +540,7 @@ var elasticProxy = {
                         "order": {"_count": "desc"},
                         "field": "content",
                         "size": size,
-                        "exclude": ["le", "la", "les", "un", "une", "des", "je", "tu", "il", "à", "a",
-                            "elle", "nous", "vous", "ils", "moi", "toi", "lui", "eux", "a", "est",
-                            "sont", "si", "et", "pour", "dans", "du", "en", "par", "sur",
-                            "etre", "que", "au", "qui", "plus", "pas", "ce", "avec", "aux", "au",
-                            "cette", "ce", "ces", "non", "oui", "donc", "un", "une", "ceci", "est", "tres",
-                            "fait", "entre", "trois", "apres", "avant", "pendant", "ete", "moins", "contre",
-                            "dont", "ses", "sous", "son", "tout", "car", "cela", "comme", "bien", "mais",
-                            "tout", "rien", "trop", "veut", "deux", "notre", "nos", "votre", "vos", "leurs",
-                            "leur", "via", "ainsi", "chaque", "data", "deja", "faire",
-                            "applications", "are", "aux", "avec", "afin", "aussi", "base", "but",
-                            "cas", "etc", "exemple", "idee", "information", "lors",
-                            "mettre", "mise", "mon", "meme", "part", "permet", "peut", "place",
-                            "possible", "pourrait", "sans", "serait", "soit", "total",
-                            "autres", "avoir", "avons", "chez", "ai", "meilleure", "permettant",
-                            "plusieurs", "simple", "tous", "egalement",
-                            "creer", "doit", "faut", "good", "groupe", "important", "jour",
-                            "niveau", "nombre", "necessaire", "oeuvre", "permettre", "peuvent", "point",
-                            "points", "possibilite", "toutes", "travail", "type", "vers",
-                            "differents", "proposer", "null", "permettrait", "mieux", "sein", "000",
-                            "fois", "local", "utiliser", "video", "videos", "images", "francois", "nicolas", "direct", 'même',
-                            'monde',
-                            'd’une',
-                            'autre',
-                            'selon',
-                            'toute',
-                            'c’est',
-                            'd’un',
-                            'forme',
-                            'celle',
-                            'très',
-                            'certains',
-                            'depuis',
-                            'encore',
-                            'alors',
-                            'quand',
-                            'certain',
-                            'seulement',
-                            'était',
-                            'autour',
-                            'avait',
-                            'tant',
-                            'étant',
-                            'ceux',
-                            'celui',
-                            'différentes',
-                            'elles',
-                            'celle',
-                            'd’autres',
-                            'souvent',
-                            'surtout',
-                            'après',
-                            'n’est',
-                            'l’on',
-                            'qu’il',
-                            "de",
-                            "ou",
-                            "ne",
-                            "on",
-                            "se",
-                            "sa",
-                            "p",
-                            "y",
-                            "ont",
-                            "où",
-                            "été",
-                            "toujours",
-                            "dire", "ci", "là", "cet",
-                            "dit",
-                            "n",
-                            "quelque",
-                            "in",
-                            "mêmes",
-                            "t",
-                            "b",
-                            "peu",
-                            "propre",
-                            "ici",
-                            "déjà",
-                            "d",
-                            "seule",
-                            "celles",
-                            "ni",
-                            "tel",
-                            "of",
-                            "puis",
-                            "va",
-                            "rôle",
-                            "telle",
-                            "jamais",
-                            "mis",
-                            "côté",
-                            "quelques",
-                            "cependant",
-                            "the",
-                            "plutôt",
-                            "autant",
-                            "suite",
-                            "également",
-                            "dès",
-                            "c",
-                            "lequel",
-                            "ensuite",
-                            "qu’*",
-                            "d'*",
-                            "s'*",
-                            "and",
-                            "l",
-
-
-                            "shall",
-                            "be",
-                            "to",
-                            "for",
-                            "with",
-                            "or",
-                            "as",
-                            "by",
-                            "all",
-                            "at",
-                            "is",
-                            "not",
-                            "this",
-                            "from",
-                            "any",
-                            "that",
-                            "used",
-                            "each",
-                            "if",
-                            "an",
-                            "when",
-                            "case",
-                            "have",
-                            "during",
-                            "than"
-
-
-                        ]
+                        "exclude": wordBlacklist
                     }
                 }
             }
@@ -687,7 +568,7 @@ var elasticProxy = {
             url: baseUrl + index + "/_search"
         };
 
-        //  console.log(JSON.stringify(payload, null, 2))
+        console.log(JSON.stringify(payload, null, 2))
         request(ajaxOptions, function (error, response, body) {
             if (error)
                 return callback(error);
@@ -1397,7 +1278,7 @@ var elasticProxy = {
         }
         else {
             fileContent = "" + fs.readFileSync(file);
-            fileContent = elasticCustom.processContent(fileContent);
+           // fileContent = elasticCustom.processContent(fileContent);
             var title = file.substring(file.lastIndexOf("/") + 1);
             options = {
                 method: 'PUT',

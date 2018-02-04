@@ -31,8 +31,10 @@ var connectors = (function () {
 
                     var labels = nodes[j].labels;
                     var labelVisjs=nodeNeo[Gparams.defaultNodeNameProperty];
-                    if(labelVisjs.length>Gparams.nodeMaxTextLength)
+                    if(labelVisjs && labelVisjs.length>Gparams.nodeMaxTextLength)
                         labelVisjs=labelVisjs.substring(0,Gparams.nodeMaxTextLength)+"...";
+                    else
+                        labelVisjs="";
                     var color =nodeColors[nodes[j].labels[0]]
                     var nodeObj = {
                         label:labelVisjs ,
