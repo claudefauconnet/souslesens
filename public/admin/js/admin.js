@@ -84,7 +84,7 @@ function callMongo(urlSuffix, payload, callback) {
         urlSuffix = "";
     $.ajax({
         type: "POST",
-        url: Gparams.mongoProxyUrl + urlSuffix,
+        url:    "../../.."+ Gparams.mongoProxyUrl + urlSuffix,
         data: payload,
         dataType: "json",
         success: function (data, textStatus, jqXHR) {
@@ -121,7 +121,7 @@ function callExportToNeo(type, data, callback) {
     };
     $.ajax({
         type: "POST",
-        url: Gparams.exportMongoToNeo,
+        url:  "../../.."+ Gparams.exportMongoToNeo,
         data: payload,
         dataType: "json",
         success: function (data, textStatus, jqXHR) {
@@ -157,7 +157,7 @@ function callNeoMatch(match, url, callback) {
         match: match
     };
     if (!url)
-        url = Gparams.neo4jProxyUrl;
+        url =  "../../.."+ Gparams.neo4jProxyUrl;
 
     $.ajax({
         type: "POST",
@@ -582,7 +582,7 @@ function deleteRequest() {
             }
             $.ajax({
                 type: "POST",
-                url: serverRootUrl+"/jsonFileStorage",
+                url:  "../../.."+serverRootUrl+"/jsonFileStorage",
                 data: paramsObj,
                 dataType: "json",
                 success: function (data, textStatus, jqXHR) {
@@ -679,7 +679,7 @@ function saveRequest(json) {
         }
         $.ajax({
             type: "POST",
-            url: serverRootUrl+"/jsonFileStorage",
+            url:  "../../.."+serverRootUrl+"/jsonFileStorage",
             data: paramsObj,
             dataType: "json",
             success: function (data, textStatus, jqXHR) {
@@ -731,7 +731,7 @@ function loadRequests() {
         }
         $.ajax({
             type: "POST",
-            url: serverRootUrl+"/jsonFileStorage",
+            url:  "../../.."+serverRootUrl+"/jsonFileStorage",
             data: paramsObj,
             dataType: "json",
             success: function (data, textStatus, jqXHR) {
@@ -976,7 +976,7 @@ function submitMatchNeo(query, callback) {
     console.log("QUERY----" + JSON.stringify(payload));
     $.ajax({
         type: "POST",
-        url: Gparams.neo4jProxyUrl,
+        url:  "../../.."+Gparams.neo4jProxyUrl,
         data: paramsObj,
         dataType: "json",
         success: function (data, textStatus, jqXHR) {

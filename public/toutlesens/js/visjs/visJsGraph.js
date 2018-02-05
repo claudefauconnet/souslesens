@@ -141,6 +141,7 @@ var visjsGraph = (function () {
                    lastClick=now;
                    console.log(delay);
                    if(delay<dblClickDuration) {//dbleclick*/
+                currentObject._graphPosition=params.pointer.DOM;
                 if (params.event.srcEvent.ctrlKey) {
                     toutlesensController.dispatchAction ("expandNode", nodeId)
 
@@ -148,8 +149,9 @@ var visjsGraph = (function () {
 
                 var point = params.pointer.DOM;
                 toutlesensController.dispatchAction ("nodeInfos", nodeId);
-               // toutlesensController.dispatchAction ("showPopup", nodeId);
-                toutlesensController.showPopupMenu(point.x, point.y, "nodeInfo");
+
+
+
             }
         });
 

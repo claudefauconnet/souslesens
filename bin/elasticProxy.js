@@ -187,7 +187,7 @@ var elasticProxy = {
             };
         var fields = elasticProxy.getShemaFields(index);
         if (!fields || fields.indexOf("content") < 0)
-            fields=["content"];
+            fields = ["content"];
         payload._source = fields;
 
         if (words) {
@@ -1141,7 +1141,8 @@ var elasticProxy = {
             url: baseUrl + index + "/"
         }
         request(options, function (error, response, body) {
-
+            if (error)
+                return callback(error);
             var status = response.statusCode;
             if (!status) {
                 return callback("elastic server did not respond, is the service on?")
@@ -1208,6 +1209,15 @@ var elasticProxy = {
                             "general_document": {
 
                                 "properties": {
+                                    "date": {
+                                        "type": "text"
+                                    },
+                                    "path": {
+                                        "type": "text"
+                                    },
+                                    "title": {
+                                        "type": "text"
+                                    },
                                     "content": {
                                         "type": "text",
                                         "index_options": "offsets",
@@ -1272,13 +1282,14 @@ var elasticProxy = {
                 url: baseUrl + index + "/" + type + "/" + id + "?pipeline=attachment",
                 json: {
                     "data": fileContent,
-                    "path": file
+                    "path": file,
+                    "title": file
                 }
             }
         }
         else {
             fileContent = "" + fs.readFileSync(file);
-           // fileContent = elasticCustom.processContent(fileContent);
+            // fileContent = elasticCustom.processContent(fileContent);
             var title = file.substring(file.lastIndexOf("/") + 1);
             options = {
                 method: 'PUT',
@@ -1553,7 +1564,7 @@ var elasticProxy = {
 
         schema = elasticProxy.getSchema();
         if (!schema || !schema[index] || !schema[index].mappings)
-            return null;
+            return ["content","path","title","date"];
 
         var fields = [];
         var types = [];

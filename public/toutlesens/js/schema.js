@@ -26,9 +26,11 @@
  ******************************************************************************/
 
 var Schema = (function () {
-    var serverDir = "./config/schemas/";
-
     self = {};
+    var serverDir = "./config/schemas/";
+    self.neo4jProxyUrl="../../.."+Gparams.neo4jProxyUrl;
+    self.serverRootUrl="../../..";
+
     self.subGraph;
 
 
@@ -71,7 +73,7 @@ var Schema = (function () {
             path: serverDir + subGraph + ".json",
 
         }
-        $.ajax(serverRootUrl + '/jsonFileStorage', {
+        $.ajax(self.serverRootUrl + '/jsonFileStorage', {
             data: payload,
             dataType: "json",
             type: 'POST',
@@ -226,7 +228,7 @@ var Schema = (function () {
             path: serverDir + subGraph + ".json",
             data: json///JSON.stringify(json)
         }
-        $.ajax(serverRootUrl + '/jsonFileStorage', {
+        $.ajax(self.serverRootUrl + '/jsonFileStorage', {
             data: payload,
             dataType: "json",
             type: 'POST',

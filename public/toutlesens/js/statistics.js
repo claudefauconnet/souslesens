@@ -27,7 +27,7 @@
 
 var statistics = (function(){
  var self = {};
-
+    self.neo4jProxyUrl="../../.."+Gparams.neo4jProxyUrl;
 
 
  var statQueries = {
@@ -118,7 +118,7 @@ self.buildStatTree(queryName, query, function (jsonTree) {
     console.log(query);
     $.ajax({
         type: "POST",
-        url: Gparams.neo4jProxyUrl,
+        url: self.neo4jProxyUrl,
         data: payload,
         dataType: "json",
         success: function (data, textStatus, jqXHR) {

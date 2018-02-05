@@ -129,7 +129,11 @@ self.getAllpropertiesDialogContent("setSearchNodeReturnFilterVal()");
 }
 
 
-
+self.getNodeInfoButtons=function(){
+      var str=   "<input type='image' height='20px'  alt='set as rootNode' onclick='toutlesensController.dispatchAction(\"expandNode\")' src='images/expand.png'/>";
+    str+=   "<input type='image' height='20px'  alt='set as rootNode' onclick='toutlesensController.dispatchAction(\"setAsRootNode\")' src='images/center.png'/>"
+    return  str;
+}
 
    self.setPopupMenuNodeInfoContent=function() {
        var name;
@@ -144,15 +148,10 @@ self.getAllpropertiesDialogContent("setSearchNodeReturnFilterVal()");
            name= currentObject[Schema.defaultNodeNameProperty]
  name=textOutputs.formatNode(name+"<br>");
 
-  /*  var str =
-        "<input type='image' height='15px' alt='infos'  onclick='dispatchAction(\"nodeInfosPopup\")' src='images/infos.png'/>" +
-        "<input type='image' height='15px'  alt='set as rootNode' onclick='dispatchAction(\"setAsRootNode\")' src='images/squareRoot.png'/>" + "&nbsp;" +
-        "<B><span style='color:" + nodeColors[currentObject.label] + "'> [" + currentObject.label + "]<span>" +name+"</B>"*/
+
 
   var str="<table> <tr>" ;//+
-      //  "<td> <input type='image' height='20px' alt='infos'  onclick='toutlesensController.dispatchAction(\"nodeInfosPopup\")' src='images/infos.png'/></td>";
- // if(currentDisplayType=="SIMPLE_FORCE_GRAPH")
-     str+=   "<td><input type='image' height='20px'  alt='set as rootNode' onclick='toutlesensController.dispatchAction(\"setAsRootNode\")' src='images/center.png'/></td>"
+       str+="<td>"+ self.getNodeInfoButtons()+"</td>";
     if(Gparams.readOnly ==false){
         str+="<td> <input type='image' height='20px' alt='infos'  onclick='toutlesensController.dispatchAction(\"modifyNode\")' src='images/modify.png'/></td>"+
       "<td><input type='image' height='20px'  alt='set as rootNode' onclick='toutlesensController.dispatchAction(\"linkSource\")' src='images/sourceLink.png'/></td>"+
@@ -189,7 +188,7 @@ self.getAllpropertiesDialogContent("setSearchNodeReturnFilterVal()");
        str += "</td>";
        str += "</tr>";
     str += "</table>";
-    $("#nodeInfoMenuDiv").html(str);
+   return str;
 
 }
 

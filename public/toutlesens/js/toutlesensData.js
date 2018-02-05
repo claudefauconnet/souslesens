@@ -27,11 +27,11 @@
 
 var toutlesensData = (function () {
     var self = {};
-    var navigationPath = [];
+    self.neo4jProxyUrl="../../.."+Gparams.neo4jProxyUrl;
 
+    var navigationPath = [];
     self.cachedResultArray = null;
     self.cachedResultTree = null;
-
     self.queryExcludeRelFilters = "";
     self.queryNodeLabelFilters = "";
     self.queryRelTypeFilters = "";
@@ -61,7 +61,7 @@ var toutlesensData = (function () {
         $("#neoQueriesHistoryId").prepend(queryStr + "<br><br>");
         $.ajax({
             type: "POST",
-            url: Gparams.neo4jProxyUrl,
+            url: self.neo4jProxyUrl,
             data: payload,
             dataType: "json",
             success: function (data, textStatus, jqXHR) {
@@ -253,7 +253,7 @@ var toutlesensData = (function () {
 
         $.ajax({
             type: "POST",
-            url: Gparams.neo4jProxyUrl,
+            url: self.neo4jProxyUrl,
             data: payload,
             dataType: "json",
             success: function (data, textStatus, jqXHR) {
@@ -355,7 +355,7 @@ var toutlesensData = (function () {
         console.log(urlSuffix);
         $.ajax({
             type: "POST",
-            url: Gparams.neo4jProxyUrl,
+            url: self.neo4jProxyUrl,
             data: paramsObj,
             dataType: "json",
             success: function (data, textStatus, jqXHR) {
@@ -1454,7 +1454,7 @@ var toutlesensData = (function () {
 
         $.ajax({
             type: "POST",
-            url: Gparams.neo4jProxyUrl,
+            url: self.neo4jProxyUrl,
             data: payload,
             dataType: "json",
             success: function (data, textStatus, jqXHR) {

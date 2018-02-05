@@ -26,6 +26,8 @@
  ******************************************************************************/
 var dataModel = (function () {
     var self = {};
+    self.neo4jProxyUrl="../../.."+Gparams.neo4jProxyUrl;
+    self.mongoProxyUrl="../../.."+Gparams.mongoProxyUrl;
 
     self.labels = {};
     self.labelsRelations = {};
@@ -58,7 +60,7 @@ var dataModel = (function () {
         }
         $.ajax({
             type: "POST",
-            url: Gparams.neo4jProxyUrl,
+            url: self.neo4jProxyUrl,
             //data : paramsObj,
             data: payload,
             dataType: "json",
@@ -125,7 +127,7 @@ var dataModel = (function () {
                 // console.log("QUERY----" + JSON.stringify(payload));
                 $.ajax({
                     type: "POST",
-                    url: Gparams.neo4jProxyUrl,
+                    url: self.neo4jProxyUrl,
                     data: payload,
                     dataType: "json",
                     success: function (data, textStatus, jqXHR) {
@@ -182,7 +184,7 @@ var dataModel = (function () {
                         // console.log("QUERY----" + JSON.stringify(payload));
                         $.ajax({
                             type: "POST",
-                            url: Gparams.neo4jProxyUrl,
+                            url: self.neo4jProxyUrl,
                             data: payload,
                             dataType: "json",
                             success: function (data, textStatus, jqXHR) {
@@ -245,7 +247,7 @@ var dataModel = (function () {
         var payload = {match: query};
         $.ajax({
             type: "POST",
-            url: Gparams.neo4jProxyUrl,
+            url: self.neo4jProxyUrl,
             data: payload,
             dataType: "json",
             success: function (data, textStatus, jqXHR) {
@@ -269,7 +271,7 @@ var dataModel = (function () {
             urlSuffix = "";
         $.ajax({
             type: "POST",
-            url: Gparams.mongoProxyUrl + urlSuffix,
+            url: self.mongoProxyUrl + urlSuffix,
             data: payload,
             dataType: "json",
             success: function (data, textStatus, jqXHR) {
@@ -283,7 +285,7 @@ var dataModel = (function () {
 
     self.listSubGraph = function () {
         var match = "MATCH (n)  return distinct n.subGraph";
-        self.callNeoMatch(match, Gparams.neo4jProxyUrl, function (data) {
+        self.callNeoMatch(match, self.neo4jProxyUrl, function (data) {
             console.log(data);
         });
     }
@@ -293,7 +295,7 @@ var dataModel = (function () {
             match: match
         };
         if (!url)
-            url = Gparams.neo4jProxyUrl;
+            url = self.neo4jProxyUrl;
 
         $.ajax({
             type: "POST",

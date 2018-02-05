@@ -30,6 +30,11 @@
 
 var toutlesensController = (function () {
     var self = {};
+    self.neo4jProxyUrl = "../../.." + Gparams.neo4jProxyUrl;
+    self.rdfProxyUrl = "../../.." + Gparams.rdfProxyUrl;
+    self.imagesRootPath = "../../.." + Gparams.imagesRootPath;
+
+
     self.collapseTargetLabels = [];
     self.currentActionObj = null;
     self.currentSource = "NEO4J";
@@ -38,6 +43,7 @@ var toutlesensController = (function () {
     self.graphHistoryObj.index = -1;
     self.graphHistoryObj.sequence = [];
     self.currentRelationData = {};
+    self.hasRightPanel = true;
 
 
 // http://graphaware.com/neo4j/2015/01/16/neo4j-graph-model-design-labels-versus-indexed-properties.html
@@ -146,17 +152,17 @@ var toutlesensController = (function () {
 
 
     self.generateGraph = function (id, options, callback) {
-        if(!options)
-            options={};
+        if (!options)
+            options = {};
         var addToPreviousQuery = false;
         if (options.addToPreviousQuery == true)
             addToPreviousQuery = true;
 
-        options.applyFilters=true;
+        options.applyFilters = true;
 
         d3.select("#graphDiv").selectAll("svg").remove();
         $("#graphDiv").html("");
-      //  $("#mainButtons").css("visibility", "hidden");
+        //  $("#mainButtons").css("visibility", "hidden");
         $("#graphMessage").html("");
         $("#relInfoDiv").html("");
 
@@ -224,28 +230,21 @@ var toutlesensController = (function () {
 
         var output = currentDisplayType;
 
-        if ( options && options.applyFilters) {
+        if (options && options.applyFilters) {
             filters.setQueryFilters();
-            $( "#tabs-controlPanel" ).tabs( "option", "disabled", [] );
-            $("#tabs-controlPanel").tabs( "enable", 1);
-            $("#tabs-controlPanel").tabs( "enable", 2);
-           // $("#tabs-controlPanel").tabs("enable", 1);
-
+            $("#tabs-controlPanel").tabs("option", "disabled", []);
+            $("#tabs-controlPanel").tabs("enable", 1);
+            $("#tabs-controlPanel").tabs("enable", 2);
+            // $("#tabs-controlPanel").tabs("enable", 1);
 
 
             // $(".paintIcon").css("visibility","visible")
         }
         else {
             self.setGraphMessage("Too many relations to display the graph<br>filter by  relation or label types")
-          //  output = "filtersDescription";
+            //  output = "filtersDescription";
             $(".paintIcon").css("visibility", "hidden")
         }
-
-
-
-
-
-
 
 
         /*----------------------------------------------------------------------------------------------------*/
@@ -276,7 +275,7 @@ var toutlesensController = (function () {
                 if (nRels <= Gparams.graphMaxDataLengthToDisplayGraphDirectly) {
                     //   filters.applyAllRelationsFilter();
                     $(".paintIcon").css("visibility", "visible");
-                    self.generateGraph(currentObject.id, {applyFilters: true,addToPreviousQuery:addToPreviousQuery});
+                    self.generateGraph(currentObject.id, {applyFilters: true, addToPreviousQuery: addToPreviousQuery});
 
                     return;
 
@@ -319,7 +318,7 @@ var toutlesensController = (function () {
                 toutlesensController.displayGraph(data, currentDisplayType, self.currentLabels);
 
                 paint.init(data);
-            filters.init(data);
+                filters.init(data);
                 $("#mainButtons").css("visibility", "visible");
                 $("#waitImg").css("visibility", "hidden");
 
@@ -397,7 +396,7 @@ var toutlesensController = (function () {
         }
         $.ajax({
             type: "POST",
-            url: Gparams.rdfProxyUrl,
+            url: self.rdfProxyUrl,
             data: payload,
             dataType: "json",
             success: function (data, textStatus, jqXHR) {
@@ -549,10 +548,10 @@ var toutlesensController = (function () {
                     }
                 }
 
-                var whereSubGraph="";
-                if(subGraph!=Gparams.defaultSubGraph)
-                    whereSubGraph=" where n.subGraph='" + subGraph +"'"
-                var matchAll = "MATCH path=(n)-[r]-(m) "+whereSubGraph ;
+                var whereSubGraph = "";
+                if (subGraph != Gparams.defaultSubGraph)
+                    whereSubGraph = " where n.subGraph='" + subGraph + "'"
+                var matchAll = "MATCH path=(n)-[r]-(m) " + whereSubGraph;
                 matchAll += " return " + returnStr + "  limit " + Gparams.neoQueryLimit;
                 toutlesensData.executeNeoQuery(QUERY_TYPE_MATCH, matchAll, function (data) {
                     data.patternNodes = nodeIds;
@@ -681,9 +680,9 @@ var toutlesensController = (function () {
         });
     }
 
-    self.findRelationGraph=function(){
-        var type=$("#findRelationsSelect").val();
-        if(type!=="") {
+    self.findRelationGraph = function () {
+        var type = $("#findRelationsSelect").val();
+        if (type !== "") {
             $("#findRelationsCurrentType").html(type);
             $("#findRelationsSelect").val("");
             //   var relation=Schema.getRelationsByType(type);
@@ -692,7 +691,6 @@ var toutlesensController = (function () {
             currentDisplayType = "VISJS-NETWORK";
             self.generateGraph();
         }
-
 
 
     }
@@ -718,10 +716,10 @@ var toutlesensController = (function () {
         if (label == "" && word == "")
             return;
         toutlesensData.searchNodes(subGraph, label, word, resultType, limit, from, callback);
-        setTimeout(function(){
+        setTimeout(function () {
             self.setFindPanelExpandTree(true);
             infoGenericDisplay.expandAll("treeContainer");
-        },500)
+        }, 500)
 
     }
 
@@ -949,9 +947,9 @@ var toutlesensController = (function () {
     }
 
 
-    self.dispatchAction = function (action, objectId, targetObjectId) {
+    self.dispatchAction = function (action, objectId, targetObjectId, callback) {
 
-$("#graphPopup").css("visibility","hidden");
+        $("#graphPopup").css("visibility", "hidden");
 
         var id;
         if (currentObject && currentObject.id)
@@ -969,20 +967,39 @@ $("#graphPopup").css("visibility","hidden");
         if (action == "addNodeToGraph") {
             self.generateGraph(targetObjectId, {applyFilters: false});
         }
+        if (action == "nodeInfosInPanel") {
 
-        if (action == "nodeInfosPopup") {
-            $("#externalInfoPanel").html("");
-            $("#externalSourceSelect").val(null);
+        }
+
+        if (action == "nodeInfos") {
+
+
             if (id) {
                 toutlesensData.showInfos2(id, function (obj) {
-                    var str = "<input type='image' src='images/back.png' height='15px' alt='back' onclick='toutlesensController.restorePopupMenuNodeInfo()' ><br>"
-                    str += textOutputs.formatNodeInfo(obj[0].n.properties);
-                    str += "<br>" + customizeUI.customInfo(obj);
-                    popupMenuNodeInfoCache = $("#nodeInfoMenuDiv").html();
-                    $("#nodeInfoMenuDiv").html(str);
-                });
+                    var $currentObj = currentObject;
+                    if (self.hasRightPanel) {
+                        var str = "<input type='image' src='images/back.png' height='15px' alt='back' onclick='toutlesensController.restorePopupMenuNodeInfo()' ><br>"
+                        str += textOutputs.formatNodeInfo(obj[0].n.properties);
+                        str += "<br>" + customizeUI.customInfo(obj);
+                        popupMenuNodeInfoCache = $("#nodeInfoMenuDiv").html();
+                        $("#nodeInfoMenuDiv").html(str);
+                        $("#nodeInfoMenuDiv").css("top", "total");
+                        $("#nodeInfoMenuDiv").css("visibility", "visible");
+                        $("#nodeInfoMenuDiv").html(toutlesensDialogsController.setPopupMenuNodeInfoContent());
+                        self.setFindPanelExpandTree(false);
+                        $("#graphPopup").html(toutlesensDialogsController.getNodeInfoButtons());
+                        toutlesensController.showPopupMenu($currentObj._graphPosition.x, $currentObj._graphPosition.y, "nodeInfo");
+                    }
+                    else {
+                        var str=toutlesensDialogsController.setPopupMenuNodeInfoContent();
+                       // var str = textOutputs.formatNodeInfo(obj[0].n.properties);
+                        $("#graphPopup").html(str);
 
+                        toutlesensController.showPopupMenu($currentObj._graphPosition.x, $currentObj._graphPosition.y, "nodeInfo");
+                    }
+                });
             }
+
             return;
         }
 
@@ -992,18 +1009,6 @@ $("#graphPopup").css("visibility","hidden");
         $("#linkActionDiv").css("visibility", "hidden");
         var mode = $("#representationSelect").val();
 
-        if (action == "nodeInfos") {
-         /*   $("#externalInfoPanel").html("");
-            $("#externalSourceSelect").val(null);
-            if (id) {
-                toutlesensData.showInfos2(id, self.showInfosCallback);
-                self.selectLeftTab('#attrsTab');
-            }
-          */
-         $("#nodeInfoMenuDiv") .css("visibility", "visible");
-
-        toutlesensDialogsController.setPopupMenuNodeInfoContent();
-        }
 
         if (action == 'relationInfos') {
             var str = textOutputs.getRelationAttrsInfo();
@@ -1012,17 +1017,17 @@ $("#graphPopup").css("visibility","hidden");
             //   self.selectLeftTab('#attrsTab');
             //  $("#infoPanel").html(str);
         }
-      else  if (action == 'expandNode') {
-            toutlesensController.generateGraph(currentObject.id, {applyFilters:false,addToPreviousQuery:true});
+        else if (action == 'expandNode') {
+            toutlesensController.generateGraph(currentObject.id, {applyFilters: false, addToPreviousQuery: true});
         }
-       else if (action == 'closeNode') {
+        else if (action == 'closeNode') {
 
         }
 
 
-     /*   if (action == "unfoldNode") {
-            toutlesensData.getNodeAllRelations(currentObject.id, mode, true);
-        } */else if (action == "setAsRootNode") {
+        /*   if (action == "unfoldNode") {
+               toutlesensData.getNodeAllRelations(currentObject.id, mode, true);
+           } */ else if (action == "setAsRootNode") {
             //   filters.initGraphFilters([currentObject.label]);
             //  toutlesensData.getNodeAllRelations(currentObject.id, mode);
             if (self.currentSource == "RDF") {
@@ -1052,7 +1057,7 @@ $("#graphPopup").css("visibility","hidden");
             $("#linkSourceLabel").html(sourceNode.label);
             self.currentRelationData = {
                 sourceNode: sourceNode,
-                context:"visJsGraphAddRel"
+                context: "visJsGraphAddRel"
             }
         } else if (action == "linkTarget") {
             //	selectLeftTab('#dataTab');
@@ -1088,8 +1093,8 @@ $("#graphPopup").css("visibility","hidden");
             if (Gparams.readOnly == false) {
                 self.initLabels(edit_nodeLabelSelect);
                 $("#infosHeaderDiv").css("visibility", "visible");
-             /*   $("#tabs-mainPanel").tabs("enable", 2);
-                $("#tabs-mainPanel").tabs("option", "active", 2);*/
+                /*   $("#tabs-mainPanel").tabs("enable", 2);
+                   $("#tabs-mainPanel").tabs("option", "active", 2);*/
             }
 
         } else if (action == "switchNodesVisibilityFromLabel") {
@@ -1299,10 +1304,11 @@ $("#graphPopup").css("visibility","hidden");
     }
 
     self.showPopupMenu = function (x, y, type) {
-        self.setFindPanelExpandTree(false);
-      //  $("#tabs-findTabs").tabs( "option", "active", 0 );
-        $("#tabs-controlPanel").tabs( "option", "active", 0 );
-        if(toutlesensController.currentActionObj.type!="findShortestPath")
+
+
+        //  $("#tabs-findTabs").tabs( "option", "active", 0 );
+        $("#tabs-controlPanel").tabs("option", "active", 0);
+        if (toutlesensController.currentActionObj.type != "findShortestPath")
             $("#graphPopup").css("visibility", "visible").css("top", y).css("left", x);
 
 
@@ -1376,7 +1382,7 @@ $("#graphPopup").css("visibility","hidden");
     }
 
     self.showThumbnail = function (relativePath) {
-        var url = Gparams.imagesRootPath + relativePath.replace("%2F", "/");
+        var url = self.imagesRootPath + relativePath.replace("%2F", "/");
         var str2 = ' <img id="thumbnailImage" src="' + url + '" border="0" height="real_height" width="real_width"  onclick="toutlesensController.showImage(\'' + url + '\')" onload="resizeImg(this, null, 300);">'
         if ($("#largeImageCBX").prop("checked")) {
             self.showImage(url);
@@ -1447,13 +1453,12 @@ $("#graphPopup").css("visibility","hidden");
 
 
     self.afterGraphInit = function () {
-        var tabsControlPanelDisabledOptions=[]
-         tabsControlPanelDisabledOptions.push(1);//filters
+        var tabsControlPanelDisabledOptions = []
+        tabsControlPanelDisabledOptions.push(1);//filters
         tabsControlPanelDisabledOptions.push(2);//highlight
-        var tabsFindPanelDisabledOptions=[];
+        var tabsFindPanelDisabledOptions = [];
         //tabsFindPanelDisabledOptions.push(2)
         tabsFindPanelDisabledOptions.push(3)
-
 
 
         $("#nextMenuButton").css("visibility", "hidden")
@@ -1494,13 +1499,13 @@ $("#graphPopup").css("visibility","hidden");
             cards.userRole = "read";
         }
 
-      /*  $("#nodeDiv").load("htmlSnippets/findNodeDiv.html", function () {
+        /*  $("#nodeDiv").load("htmlSnippets/findNodeDiv.html", function () {
 
-        });*/
+          });*/
 
-     /*   $("#pathDiv").load("htmlSnippets/traversalDialog.html", function () {
+        /*   $("#pathDiv").load("htmlSnippets/traversalDialog.html", function () {
 
-        });*/
+           });*/
         $("#requestDiv").load("htmlSnippets/currentQueries.html", function () {
             self.initLabels(currentQueriesDialogSourceLabelSelect);
             self.initLabels(currentQueriesDialogTargetLabelSelect);
@@ -1516,28 +1521,27 @@ $("#graphPopup").css("visibility","hidden");
         });
 
 
-
         $("#tabs-controlPanel").tabs("option", "disabled", tabsControlPanelDisabledOptions);
         $("#findTabs").tabs("option", "disabled", tabsFindPanelDisabledOptions);
 
 
-      /*  if(queryParams.write){
-            util.addTabToTab("data","dataTab","tabs-controlPanel");
-        }*/
+        /*  if(queryParams.write){
+              util.addTabToTab("data","dataTab","tabs-controlPanel");
+          }*/
 
 
     }
 
 
     self.checkMaxNumberOfNodeRelations = function (nodeId, maxRels, callback) {
-        var whereSubGraph="";
-        if(subGraph!=Gparams.defaultSubGraph)
-            whereSubGraph=" and n.subGraph='" + subGraph +"'"
-        var matchStr = "match (n)-[r]-(m) where ID(m)=" + nodeId +whereSubGraph+" return count(r) as count";
+        var whereSubGraph = "";
+        if (subGraph != Gparams.defaultSubGraph)
+            whereSubGraph = " and n.subGraph='" + subGraph + "'"
+        var matchStr = "match (n)-[r]-(m) where ID(m)=" + nodeId + whereSubGraph + " return count(r) as count";
         var payload = {match: matchStr};
         $.ajax({
             type: "POST",
-            url: Gparams.neo4jProxyUrl,
+            url: self.neo4jProxyUrl,
             data: payload,
             dataType: "json",
             success: function (data, textStatus, jqXHR) {
@@ -1603,37 +1607,40 @@ $("#graphPopup").css("visibility","hidden");
         var labels = Schema.getAllLabelNames()
         common.fillSelectOptionsWithStringArray(select, labels);
     }
-   self.intiRelationTypes=function(){
+    self.intiRelationTypes = function () {
 
 
-       var relations = Schema.schema.relations;
-       var types=[];
-       for(var key in relations){
-           var type=relations[key].type;
-           if(types.indexOf(type)<0)
-               types.push(type);
-       }
-       types.sort();
-       types.splice(0,0,"")
-       common.fillSelectOptionsWithStringArray(findRelationsSelect, types);
-   }
+        var relations = Schema.schema.relations;
+        var types = [];
+        for (var key in relations) {
+            var type = relations[key].type;
+            if (types.indexOf(type) < 0)
+                types.push(type);
+        }
+        types.sort();
+        types.splice(0, 0, "")
+        common.fillSelectOptionsWithStringArray(findRelationsSelect, types);
+    }
 
 
     self.setResponsiveDimensions = function (rightPanelWidth) {
         if (rightPanelWidth == 0) {
             $("#tabs-controlPanel").css("visibility", "hidden");
+            self.hasRightPanel = false;
 
         }
-        else
+        else {
+            self.hasRightPanel = true;
             $("#tabs-controlPanel").css("visibility", "visible");
+        }
 
         $("#tabs-mainPanel").width(totalWidth - (rightPanelWidth)).height(totalHeight)
         $("#controlPanel").width(rightPanelWidth - 50).height(totalHeight).css("position", "absolute").css("left", totalWidth - rightPanelWidth + 30).css("top", 10);
 
 
         $("#graphDiv").width(totalWidth - rightPanelWidth).height(totalHeight - 0)
-      //  $("#dataDiv").width(totalWidth - -rightPanelWidth).height(totalHeight - 0);
-     //   $("#textDivContainer").width(totalWidth - rightPanelWidth).height(totalHeight - 0);
+        //  $("#dataDiv").width(totalWidth - -rightPanelWidth).height(totalHeight - 0);
+        //   $("#textDivContainer").width(totalWidth - rightPanelWidth).height(totalHeight - 0);
 
 
         $("#treeContainer").width(rightPanelWidth - 100);
@@ -1651,31 +1658,31 @@ $("#graphPopup").css("visibility","hidden");
         //  $("#tabs-controlPanel").width(rightPanelWidth - 100).height(totalHeight/2).css("position", "absolute").css("left",(totalWidth-rightPanelWidth) + 30).css("top", 10);
 
 
-        $("#infos-controlPanel").width(rightPanelWidth-50 );
-        $("#nodeInfoMenuDiv").width(rightPanelWidth-70 ).height(Gparams.infoscontrolPanelHeight-40).css("visibility","hidden")
+        $("#infos-controlPanel").width(rightPanelWidth - 50);
+        $("#nodeInfoMenuDiv").width(rightPanelWidth - 70).height(Gparams.infoscontrolPanelHeight - 40).css("visibility", "hidden")
 
 
         //   $("#mainButtons").width(rightPanelWidth).height(50).css("position", "absolute").css("left", $("#graphDiv").width() - 200).css("top", 50).css("visibility", "hidden");
         $("#mainButtons").width(200).height(50).css("position", "absolute").css("left", 20).css("top", 10);//.css("visibility", "hidden");
 
 
-        $(".objAttrInput").width(rightPanelWidth-100);
+        $(".objAttrInput").width(rightPanelWidth - 100);
 
         self.setFindPanelExpandTree(true);
 
     }
 
 
-    self.setFindPanelExpandTree=function(expandTree){
-        var infoscontrolPanelHeight=Gparams.infoscontrolPanelHeight;
-        if(expandTree===true){
-            infoscontrolPanelHeight=0;
+    self.setFindPanelExpandTree = function (expandTree) {
+        var infoscontrolPanelHeight = Gparams.infoscontrolPanelHeight;
+        if (expandTree === true) {
+            infoscontrolPanelHeight = 0;
         }
 
 
-            $("#treeContainer").height((totalHeight -infoscontrolPanelHeight) - 150);
-        $("#findTabs").height((totalHeight -infoscontrolPanelHeight-50))
-            $("#infos-controlPanel").height(infoscontrolPanelHeight-20);
+        $("#treeContainer").height((totalHeight - infoscontrolPanelHeight) - 150);
+        $("#findTabs").height((totalHeight - infoscontrolPanelHeight - 50))
+        $("#infos-controlPanel").height(infoscontrolPanelHeight - 20);
 
 
     }
