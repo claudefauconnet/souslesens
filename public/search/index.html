@@ -71,8 +71,9 @@
         #dialogContentDiv {
             width: 800px;
             height: 600px;
+        margin-left: 10px;
             overflow: auto;
-            background-color: #eeeeee;
+            background-color: white;
             font-size: 12px;
             font-weight: normal;
         }
@@ -90,18 +91,17 @@
             /*   position: absolute;
                top:200px;
                left:300px;*/
-            display: flex;
-        / / justify-content: center;
-            align-items: center;
+            display: block;
+        align: center;
             position: absolute;
             height: 650px;
             width: 850px;
             top: 100px;
             left: 300px;
-            background-color: #b3b6c2;
+            background-color: whitesmoke;
             visibility: hidden;
-            border: beige;
-            border-style: ridge;
+            border: gray;
+            border-style: groove;
         }
 
         #associatedWordsBreadcrumbDiv {
@@ -161,6 +161,7 @@
 
     <link rel="stylesheet" href="../../common/js/jsTree/themes/default/style.min.css"/>
     <script>
+        var elasticUrl = "../../../elastic";
         var associatedWords = [];
         var oldWord = "";
         var currentClassifierData = [];
@@ -196,7 +197,7 @@
 
                 $.ajax({
                     type: "POST",
-                    url: "/elastic",
+                    url: elasticUrl,
                     data: payload,
                     dataType: "json",
                     success: function (data, textStatus, jqXHR) {
@@ -296,7 +297,7 @@
 
             $.ajax({
                 type: "POST",
-                url: "/elastic",
+                url: elasticUrl,
                 data: payload,
                 dataType: "json",
                 success: function (data, textStatus, jqXHR) {
@@ -309,7 +310,7 @@
                     if (isFieldQuery()) {
                         var visData = connectors.elasticSkosToVisjs(data.docs);
                         visjsGraph.draw("graphDiv", visData);
-                      //  showResults(data.docs);
+                        //  showResults(data.docs);
                     } else {
                         showResults(data.docs);
                         showPageControls(data.total);
@@ -368,7 +369,6 @@
                 ;//processed after result
             }
 
-
             if (currentType)
                 payload.type = currentType;
 
@@ -381,7 +381,7 @@
 
             $.ajax({
                 type: "POST",
-                url: "/elastic",
+                url: elasticUrl,
                 data: payload,
                 dataType: "json",
                 success: function (data, textStatus, jqXHR) {
@@ -491,10 +491,17 @@
                 str += "<span class=title>" + obj.title + "</span>"
             }
             if (obj.date) {
-                str += "&nbsp;&nbsp;<span class=date>" + obj.date + "</span>&nbsp;&nbsp;";
+                str += "&nbsp;&nbsp;" + obj.date + "&nbsp;&nbsp;";
+            }
+            if (obj.path) {
+return;
+                var path = decodeURIComponent(obj.path)
+                str +=  "<a href='file://"+path+"' > doc</a>";
+              //  str += "<img  title='load document' onclick='getOriginalDocument(\"" + obj.path + "\")' src='./icons/document.png' width='20px'> </a>";
+
             }
             str += "<img  title='pre-visualize' onclick='visualizeDocContent(\"" + obj._id + "\")' src='./icons/details.png' width='20px'> </a>";
-            //   str += "<img title='go to document' onclick='openDocument(\"" + obj.path + "\")' src='document.png' width='15px'> </a><br>";
+            //   str += "<img title='go to document' onclick='getOriginalDocument(\"" + obj.path + "\")' src='document.png' width='15px'> </a><br>";
             // str += "<span class=path>" + obj.path + "</span><br>";
 
             str += "<ul>";
@@ -585,7 +592,7 @@
         }
 
 
-        function visualizeDocContent(id) {
+        function   visualizeDocContent(id) {
             $("#dialogLeftDiv").html("");
             currentDocId = id;
             var index = $("#indexInput").val();
@@ -601,10 +608,10 @@
                 words: words
             };
 
-
+            console.log(JSON.stringify(payload, null, 2))
             $.ajax({
                 type: "POST",
-                url: "/elastic",
+                url: elasticUrl,
                 data: payload,
                 dataType: "json",
                 success: function (data, textStatus, jqXHR) {
@@ -666,8 +673,37 @@
 
         }
 
-        function openDocument(path) {
-            window.location.href = "file:///" + path;
+        function getOriginalDocument(path) {
+
+          var path = decodeURIComponent(path)
+console.log(path)
+
+            $("#originalDocIframe").attr("src", "file:///+"+path);
+          return;
+         /*   $("#dialogContentDiv").html("<iframe width='500' height='500' src='file:///+"+path+"'>")
+            $("#dialog").css("visibility", "visible");*/
+         //   window.location.href = "file:///" + path;
+
+            var payload = {
+                getOriginalDocument: 1,
+                docRemotePath: path
+            }
+            $.ajax({
+                type: "POST",
+                url: elasticUrl,
+                data: payload,
+               // dataType: "json",
+                success: function (data, textStatus, jqXHR) {
+                    console.log("getOriginalDocument ok");
+                    $("#dialogContentDiv").html(data);
+                    $("#dialog").css("visibility", "visible");
+                }
+                , error: function (xhr, err, msg) {
+                    console.log(xhr);
+                    return (err);
+                }
+            });
+
 
         }
 
@@ -701,7 +737,7 @@
 
             $.ajax({
                 type: "POST",
-                url: "/elastic",
+                url: elasticUrl,
                 data: payload,
                 dataType: "json",
                 success: function (data, textStatus, jqXHR) {
@@ -733,7 +769,7 @@
 
                         $.ajax({
                             type: "POST",
-                            url: "/elastic",
+                            url: elasticUrl,
                             data: payload,
                             dataType: "json",
                             success: function (data, textStatus, jqXHR) {
@@ -773,7 +809,7 @@
 
             $.ajax({
                 type: "POST",
-                url: "/elastic",
+                url: elasticUrl,
                 data: payload,
                 dataType: "json",
                 success: function (data, textStatus, jqXHR) {
@@ -886,7 +922,7 @@
 
         function isFieldQuery() {
             var field = $("#queryFieldSelect").val();
-            if (field == "")
+            if (!field || field == "")
                 return false;
             return true;
         }
@@ -905,10 +941,10 @@
         Associated words<br>
         filter
         <select id="associatedWordsFilter" onchange="getAssociatedWords()">
-            <option value="allwords">low</option>
+            <option value="allwords" selected="selected">low</option>
             </optionvalue>
             <option value="lemmes">medium</option>
-            <option value="wordnetEntities" selected="selected">high</option>
+            <option value="wordnetEntities">high</option>
             <!--  <option>googleEntities</option>-->
         </select>
         <div id="associatedWordsDiv"></div>
@@ -968,21 +1004,20 @@
                     <button onclick='closeDialog()'>X</button>
 
                 </td>
-            </tr>
-            <tr>
+
                 <td>
 
                     <button onclick='findSimilarDocuments()'> similar Docs</button>
                     <!-- <button onclick='nexHighlight()'> >></button>-->
                     <br>
                 </td>
-            </tr>
-            <tr>
+
                 <td>
                     <div id="dialogLeftDiv"></div>
                     <!--  <button onclick='$("#dialog").css("visibility","hidden")'>X</button>-->
                 </td>
             </tr>
+
 
         </table>
 
@@ -991,6 +1026,7 @@
     </div>
 
 </div>
+<iframe id="originalDocIframe width="500" height="550"></iframe>
 
 
 </body>
