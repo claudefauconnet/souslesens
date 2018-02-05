@@ -35,11 +35,14 @@ var util = require('./util.js');
 var request = require('request');
 var async = require('async');
 var path = require('path');
+var mime = require('mime');
 var classifierManager = require("./rdf/classifierManager.js");
 
 var elasticCustom = require("./elasticCustom.js");
 
 var socket = require('../routes/socket.js');
+
+
 var logger = require('logger').createLogger(path.resolve(__dirname, "../logs/elastic.log"));
 logger.setLevel('info');
 /*logger.format =function(level,date,message){
@@ -192,6 +195,8 @@ var elasticProxy = {
 
         if (words) {
             for (var i = 0; i < words.length; i++) {
+                if( words[i]=="")
+                    continue;
                 if (words[i].indexOf("*") > -1) {
                     payload.query.bool.must.push({"wildcard": {"content": words[i]}})
 
@@ -207,7 +212,7 @@ var elasticProxy = {
             url: baseUrl + index + "/_search"
         };
 
-        //    console.log(JSON.stringify(payload, null, 2));
+        console.log(JSON.stringify(payload, null, 2));
         request(options, function (error, response, body) {
             elasticProxy.processSearchResult(error, index, body, callback);
 
@@ -287,6 +292,7 @@ var elasticProxy = {
             queryField = "content"
         else
             queryField = "content." + queryField
+
 
 
         if (!resultFields) {
@@ -394,7 +400,8 @@ var elasticProxy = {
         var hits = body.hits.hits;
 
         var total = body.hits.total;
-        var docs = [];
+        var docs = []
+
 
         var uiMappings = {}
         schema = elasticProxy.getSchema();
@@ -878,15 +885,15 @@ var elasticProxy = {
     ,
     indexDocumentDir: function (dir, index, type, recursive, callback) {
 
-        var acceptedExtensions = ["doc", "docx", "xls", "xslx", "pdf", "odt", "ppt", "pptx", "html", "htm", "txt", "csv"];
+        var acceptedExtensions = ["doc", "docx", "xls", "xslx", "pdf", "odt","ods", "ppt", "pptx", "html", "htm", "txt", "csv"];
 
         var indexedFiles = [];
 
         function getFilesRecursive(dir) {
             elasticProxy.sendMessage("indexing " + dir);
             dir = path.normalize(dir);
-            if (dir.charAt(dir.length - 1) != '/')
-                dir += '/';
+            if (dir.charAt(dir.length - 1) !=  path.sep)
+                dir += path.sep;
             var files = fs.readdirSync(dir);
             for (var i = 0; i < files.length; i++) {
                 var fileName = dir + files[i];
@@ -923,7 +930,7 @@ var elasticProxy = {
         indexedFiles.sort();
         var t0 = new Date().getTime();
         async.eachSeries(indexedFiles, function (fileName, callbackInner) {
-                var base64Extensions = ["doc", "docx", "xls", "xslx", "pdf", "ppt", "pptx"];
+                var base64Extensions = ["doc", "docx", "xls", "xslx", "pdf", "ppt", "pptx","ods","odt"];
                 var p = fileName.lastIndexOf(".");
                 if (p < 0)
                     callback("no extension for file " + fileName);
@@ -1272,7 +1279,12 @@ var elasticProxy = {
         //  var file = "./search/testDocx.doc";
         //  var file = "./search/testPDF.pdf";
         var fileContent;
-        var file = _file;
+        var file = path.resolve(_file);
+        var p=file.lastIndexOf(path.sep);
+        var title=file;
+        if(p>-1)
+            title=file.substring(p+1);
+
         var options;
         if (base64) {
             index = index + "temp"
@@ -1282,21 +1294,20 @@ var elasticProxy = {
                 url: baseUrl + index + "/" + type + "/" + id + "?pipeline=attachment",
                 json: {
                     "data": fileContent,
-                    "path": file,
-                    "title": file
+                    "path": encodeURIComponent(file),
+                    "title": title
                 }
             }
         }
         else {
             fileContent = "" + fs.readFileSync(file);
             // fileContent = elasticCustom.processContent(fileContent);
-            var title = file.substring(file.lastIndexOf("/") + 1);
             options = {
                 method: 'PUT',
                 url: baseUrl + index + "/" + type + "/" + id,
                 json: {
                     "content": fileContent,
-                    "path": file,
+                    "path": encodeURIComponent(file),
                     "title": title
                 }
             }
@@ -1564,7 +1575,7 @@ var elasticProxy = {
 
         schema = elasticProxy.getSchema();
         if (!schema || !schema[index] || !schema[index].mappings)
-            return ["content","path","title","date"];
+            return ["content", "path", "title", "date"];
 
         var fields = [];
         var types = [];
@@ -1589,7 +1600,23 @@ var elasticProxy = {
 
     },
 
+    getOriginalDocument: function (docRemotePath, callback) {
+        docRemotePath=decodeURIComponent(docRemotePath);
+        var extension = path.extname(docRemotePath);
+        var doc = null;
 
+        fs.readFile(docRemotePath, function (err, data) {
+            if (err)
+                return callback(err);
+            var result = {
+                data: "" + data,
+                contentType: mime.getType(extension)
+            }
+            callback(err, result);
+
+
+        })
+    },
 }
 
 

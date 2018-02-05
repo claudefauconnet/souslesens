@@ -29,7 +29,7 @@ console.log("***********************serverParams.routesRootUrl " + serverParams.
  app.use(cors()); // use CORS for all requests and all routes*/
 
 
-router.get('/:url', function(req, res) {
+router.get('/:url', function (req, res) {
     url = req.params.url;
     console.log(url);
 
@@ -172,10 +172,15 @@ router.post(serverParams.routesRootUrl + '/elastic', function (req, response) {
             processResponse(response, error, result)
         });
     else if (req.body && req.body.getMappingsFields)
-        elasticProxy.getMappingsFields(req.body.index,  function (error, result) {
+        elasticProxy.getMappingsFields(req.body.index, function (error, result) {
             processResponse(response, error, result)
         });
 
+
+    else if (req.body && req.body.getOriginalDocument)
+        elasticProxy.getOriginalDocument(req.body.docRemotePath, function (error, result) {
+            processResponse(response, error, result)
+        });
 
 
 });
@@ -396,7 +401,7 @@ router.post(serverParams.routesRootUrl + '/fs', function (req, response) {
         });
     }
     if (req.body.saveFileContent) {
-        fileSystemProxy.saveFileContent(req.body.path,req.body.data, function (error, result) {
+        fileSystemProxy.saveFileContent(req.body.path, req.body.data, function (error, result) {
             processResponse(response, error, result)
         });
     }

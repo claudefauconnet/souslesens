@@ -37,7 +37,8 @@
     "socket.io": "^1.7.4",
     "xml2js": "^0.4.19",
     "xmlbuilder": "^9.0.4",
-    "xmldom": "latest"
+    "xmldom": "latest",
+    "mime":"latest"
   },
   "devDependencies": {},
   "scripts": {
@@ -56,11 +57,16 @@
     "dataviz",
     "visjs",
     "rdf",
-    "elasticsearch"
+    "elasticsearch",
+    "thesaurus",
+    "RFD",
+    "ontology"
   ],
   "author": "Claude.fauconnet",
   "license": "MIT",
-  "bugs": "https://github.com/claudefauconnet/souslesens/bugs",
-  "url": "https://github.com/claudefauconnet/souslesens/issues",
-  "homepage": "https://github.com/claudefauconnet/souslesens#readme"
+  "bugs": {
+    "url": "https://github.com/souslesens/souslesensGraph/issues"
+  },
+  "url": "https://github.com/souslesens/souslesensGraph/",
+  "homepage": "https://github.com/souslesens/souslesensGraph/wiki"
 }
