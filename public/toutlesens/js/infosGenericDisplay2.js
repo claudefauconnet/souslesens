@@ -210,7 +210,7 @@ var infoGenericDisplay = (function () {
 
             var rootId = "";
             var whereSubGraph="";
-            if(self.subGraph!="DB_")
+            if(self.subGraph!=Gparams.defaultSubGraph)
                 whereSubGraph=" where n.subGraph='" + self.subGraph +"'"
             matchStr = "MATCH (n:" + label + ") "+whereSubGraph+" return n limit " + limit;
         }

@@ -20,6 +20,7 @@ var googleAPIproxy = require("../bin/nlp/googleAPIproxy..js");
 var serverParams = require("../bin/serverParams.js")
 var socket = require('./socket.js');
 var fileSystemProxy = require("../bin/fileSystemProxy..js")
+var authentication=require("../bin/authentication..js")
 
 
 console.log("***********************serverParams.routesRootUrl " + serverParams.routesRootUrl + "*********")
@@ -418,6 +419,18 @@ router.post(serverParams.routesRootUrl + '/jsonFileStorage', function (req, resp
             processResponse(response, error, result)
         });
 });
+
+router.post(serverParams.routesRootUrl + '/authentication', function (req, response) {
+    if (req.body.authentify)
+        authentication.authentify(req.body.login, req.body.password, function (error, result) {
+            processResponse(response, error, result)
+        });
+
+});
+
+
+
+
 
 
 function processResponse(response, error, result) {

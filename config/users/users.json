@@ -1,0 +1,19 @@
+{
+  "Claude": {
+    "login": "Claude",
+    "password": "CF1"
+  },
+  "Jacques": {
+    "login": "Jacques",
+    "password": "JO1"
+  },
+  "Chloe": {
+    "login": "Chloe",
+    "password": "CN1"
+  }
+  ,
+  "Sebastien": {
+    "login": "Sebastien",
+    "password": "ST1"
+  }
+}

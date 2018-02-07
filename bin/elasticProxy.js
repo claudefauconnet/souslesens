@@ -195,7 +195,7 @@ var elasticProxy = {
 
         if (words) {
             for (var i = 0; i < words.length; i++) {
-                if( words[i]=="")
+                if (words[i] == "")
                     continue;
                 if (words[i].indexOf("*") > -1) {
                     payload.query.bool.must.push({"wildcard": {"content": words[i]}})
@@ -294,7 +294,6 @@ var elasticProxy = {
             queryField = "content." + queryField
 
 
-
         if (!resultFields) {
             resultFields = elasticProxy.getShemaFields(index, type);
 
@@ -344,10 +343,18 @@ var elasticProxy = {
 
             for (var i = 0; i < andWords.length; i++) {
 
+                var queryAndWords = {};
+                if (word.indexOf("*") > -1) {
+                    queryAndWords = {
+                        "wildcard": {"content": word}
+                    }
+                } else {
+                    var queryAndWords = {"match": {}};
+                    queryAndWords.match[queryField] = andWords[i]
+                }
 
-                var match = ({"match": {}});
-                match.match[queryField] = andWords[i]
-                query.bool.must.push(match);
+
+                query.bool.must.push(queryAndWords);
 
             }
 
@@ -361,8 +368,7 @@ var elasticProxy = {
             "query": query,
             "highlight": {
                 "fields": {
-                    "queryField": {}
-                    //  "content":{"fragment_size" : 50, "number_of_fragments" : 10}
+                    "content": {"fragment_size": 50, "number_of_fragments": 5}
                 }
             }
 
@@ -381,7 +387,7 @@ var elasticProxy = {
             url: baseUrl + index + type + "/_search"
         };
 
-        console.log(JSON.stringify(options, null, 2));
+        console.log(JSON.stringify(payload, null, 2));
         request(options, function (error, response, body) {
 
             elasticProxy.processSearchResult(error, index, body, callback);
@@ -437,10 +443,18 @@ var elasticProxy = {
                     obj[key] = value;
                 }
             }
-            if (hits[i].highlight && hits[i].highlight.content)
-                obj.highlights = hits[i].highlight.content;
-            else
-                obj.highlights = [];
+
+            obj.highlights = [];
+            if (hits[i].highlight && hits[i].highlight.content) {
+
+                //dedoublonage des highlights
+                for (var j = 0; j < hits[i].highlight.content.length; j++) {
+                    if (obj.highlights.indexOf(hits[i].highlight.content[j]) < 0)
+                        obj.highlights.push(hits[i].highlight.content[j]);
+                }
+
+            }
+
 
             obj.type = hits[i]._type;
             obj._id = hits[i]._id;
@@ -575,7 +589,7 @@ var elasticProxy = {
             url: baseUrl + index + "/_search"
         };
 
-        console.log(JSON.stringify(payload, null, 2))
+        //  console.log(JSON.stringify(payload, null, 2))
         request(ajaxOptions, function (error, response, body) {
             if (error)
                 return callback(error);
@@ -885,14 +899,14 @@ var elasticProxy = {
     ,
     indexDocumentDir: function (dir, index, type, recursive, callback) {
 
-        var acceptedExtensions = ["doc", "docx", "xls", "xslx", "pdf", "odt","ods", "ppt", "pptx", "html", "htm", "txt", "csv"];
+        var acceptedExtensions = ["doc", "docx", "xls", "xslx", "pdf", "odt", "ods", "ppt", "pptx", "html", "htm", "txt", "csv"];
 
         var indexedFiles = [];
 
         function getFilesRecursive(dir) {
             elasticProxy.sendMessage("indexing " + dir);
             dir = path.normalize(dir);
-            if (dir.charAt(dir.length - 1) !=  path.sep)
+            if (dir.charAt(dir.length - 1) != path.sep)
                 dir += path.sep;
             var files = fs.readdirSync(dir);
             for (var i = 0; i < files.length; i++) {
@@ -930,7 +944,7 @@ var elasticProxy = {
         indexedFiles.sort();
         var t0 = new Date().getTime();
         async.eachSeries(indexedFiles, function (fileName, callbackInner) {
-                var base64Extensions = ["doc", "docx", "xls", "xslx", "pdf", "ppt", "pptx","ods","odt"];
+                var base64Extensions = ["doc", "docx", "xls", "xslx", "pdf", "ppt", "pptx", "ods", "odt"];
                 var p = fileName.lastIndexOf(".");
                 if (p < 0)
                     callback("no extension for file " + fileName);
@@ -1242,9 +1256,74 @@ var elasticProxy = {
                     }
                 };
 
+                if (true) {
+
+
+                    options.json.settings = {
+
+                        "analysis": {
+                            "analyzer": {
+                                "default": {
+                                    "tokenizer": "standard",
+                                    "filter": ["standard", "my_ascii_folding"]
+                                }
+                            },
+                            "filter": {
+                                "my_ascii_folding": {
+                                    "type": "asciifolding",
+                                    "preserve_original": true
+                                }
+                            }
+                        }
+                    }
+
+
+                    /*   "analysis": {
+                           "analyzer": {
+                               "default": {
+                                   "type": "custom",
+                                   "tokenizer": "standard",
+                                   "filter": [ "lowercase", "asciifolding" ]
+                               }
+                           }
+
+                       }
+                   }*/
+                    /* {
+                    "analysis": {
+                        "filter": {
+                            "synonyms_fr_filter": {
+                                "type": "synonym",
+                                "synonyms_path": "synonyms/wordNetSyns.txt"
+                            },
+                            "stemmer_filter": {
+                                "type": "stemmer",
+                                "language": "french"
+                            }
+
+                        },
+                        "analyzer": {
+                            "my_synonyms": {
+                                "tokenizer": "standard",
+                                "filter": [
+                                    "lowercase",
+                                    "synonyms_fr_filter",
+                                    "asciifolding"
+                                ]
+                            }
+                        }
+                    }
+
+
+                }*/
+                }
+//console.log(JSON.stringify(options,null, 2));
                 request(options, function (error, response, body) {
                     if (error)
                         return callback(error);
+
+                    if (body.error)
+                        return callback(body.error);
                     //******************************* initfielddata*******************************
                     //    http://localhost:9200/my_index2/_mapping/my_type
                     var options = {
@@ -1280,10 +1359,10 @@ var elasticProxy = {
         //  var file = "./search/testPDF.pdf";
         var fileContent;
         var file = path.resolve(_file);
-        var p=file.lastIndexOf(path.sep);
-        var title=file;
-        if(p>-1)
-            title=file.substring(p+1);
+        var p = file.lastIndexOf(path.sep);
+        var title = file;
+        if (p > -1)
+            title = file.substring(p + 1);
 
         var options;
         if (base64) {
@@ -1575,7 +1654,7 @@ var elasticProxy = {
 
         schema = elasticProxy.getSchema();
         if (!schema || !schema[index] || !schema[index].mappings)
-            return ["content", "path", "title", "date"];
+            return ["path", "title", "date"];
 
         var fields = [];
         var types = [];
@@ -1601,7 +1680,7 @@ var elasticProxy = {
     },
 
     getOriginalDocument: function (docRemotePath, callback) {
-        docRemotePath=decodeURIComponent(docRemotePath);
+        docRemotePath = decodeURIComponent(docRemotePath);
         var extension = path.extname(docRemotePath);
         var doc = null;
 

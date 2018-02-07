@@ -8,9 +8,19 @@
         body {
             font-family: verdana, sans-serif;
             font-size: 12px;
+            height: 100%;
+            padding: 0;
+            margin: 0;
+            display: -webkit-box;
+            display: -moz-box;
+            display: -ms-flexbox;
+            display: -webkit-flex;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
-        em {
+        em,.em {
             background-color: #dad55e;
         }
 
@@ -71,7 +81,7 @@
         #dialogContentDiv {
             width: 800px;
             height: 600px;
-        margin-left: 10px;
+            margin-left: 10px;
             overflow: auto;
             background-color: white;
             font-size: 12px;
@@ -92,7 +102,7 @@
                top:200px;
                left:300px;*/
             display: block;
-        align: center;
+            align: center;
             position: absolute;
             height: 650px;
             width: 850px;
@@ -100,7 +110,7 @@
             left: 300px;
             background-color: whitesmoke;
             visibility: hidden;
-            border: gray;
+            border: #0a6aa1;
             border-style: groove;
         }
 
@@ -137,6 +147,21 @@
         / / background-color: #93aeca;
         }
 
+        .docListResult {
+            background: #93aeca;
+            margin: 5px;
+            padding: 10px;
+            border-radius: 5px;
+            min-width: 400px;
+        }
+
+        li {
+            margin-left: 10px;
+        }
+        .subQuerySpan,.searchInput{
+            margin: 5px;
+        }
+
         .currentPageLink {
             font-weight: bold;
         }
@@ -162,6 +187,7 @@
     <link rel="stylesheet" href="../../common/js/jsTree/themes/default/style.min.css"/>
     <script>
         var elasticUrl = "../../../elastic";
+        var authenticationUrl = "../../../authentication";
         var associatedWords = [];
         var oldWord = "";
         var currentClassifierData = [];
@@ -174,6 +200,11 @@
         var mode = "";
         var fetchSize = 10;
         var maxCsvSize = 10000;
+        var currentDocHighlightIndex = 0;
+        var dialogContentDivScroll = 0
+
+        var queryAssociatedWords = true;
+        var showClassifiersDiv = false;
 
         $(function () {
             totalWidth = $(window).width();
@@ -185,6 +216,14 @@
             $("#dialog").css("left", ((totalWidth) / 2) - 400)
             $("#slopSpan").css("visibility", "hidden");
             $("#showMongoFormInput").css("visibility", "hidden");
+
+            $("#subQuerySpan").css("visibility", "hidden")
+            $("#searchInput").focus();
+
+            if (showClassifiersDiv)
+                $("#classifiersDiv").css("visibility", "visible");
+            else
+                $("#classifiersDiv").css("visibility", "hidden");
 
 
             if (queryParams.index) {
@@ -216,9 +255,14 @@
                 var val = $(this).val()
                 if (val.indexOf(" ") > 0) {
                     $("#slopSpan").css("visibility", "visible")
+                   $("#slopInput").val("5")
+              $("#slopInput").css("visibility","visible");
                 }
-                else
+                else {
+                    $("#slopInput").css("visibility","hidden");
+                    $("#slopInput").val("")
                     $("#slopSpan").css("visibility", "hidden")
+                }
 
             });
 
@@ -237,10 +281,47 @@
             $("#dialog").on("blur", function () {
                 $("#dialog").css("visibility", "hidden")
             });
+
+
+            if (true) {
+
+                $("#loginDiv").css("visibility", "visible");
+                $("#panels").css("visibility", "hidden");
+
+            }
         })
+
+        function doLogin() {
+            var payload = {
+                authentify: 1,
+                login: $("#loginInput").val(),
+                password: $("#passwordInput").val()
+            }
+            $.ajax({
+                type: "POST",
+                url: authenticationUrl,
+                data: payload,
+                dataType: "json",
+                success: function (data, textStatus, jqXHR) {
+                    $("#loginDiv").css("visibility", "hidden");
+                    $("#panels").css("visibility", "visible");
+                    $("#searchInput").focus();
+
+
+                }, error: function (err) {
+                    $("#loginMessage").html("invalid  login or password");
+
+                }
+            })
+
+        }
 
 
         function search(_from, pageIncrement, page, callback) {
+
+
+
+
             var from;
             if (!_from) {
                 from = 0;
@@ -256,19 +337,38 @@
 
             $("#dialog").css("visibility", "hidden")
 
+            $("#subQuerySpan").css("visibility", "visible")
+            $("#addWordInput").val("");
+
+
+
             $("#conceptDiv").html("");
             $("#countDiv").html("");
             $("#resultDiv").html("");
             $("#associatedWordsDiv").html("");
 
 
+
+
             var index = $("#indexInput").val();
             var word = $("#searchInput").val().trim();
+
+
+
+
             if (word != oldWord) {
                 associatedWords = []
             }
             oldWord = word;
             var slop = $("#slopInput").val();
+
+            if(slop!="" && word.indexOf(" ")>0 && word.indexOf("*")>0 ){
+
+                $("#resultDiv").html("Impossible to have a query with this pattern : xxx(*) yyy(*) and a distance between the two words. remove *");
+                return;
+            }
+
+
             var classifierSourceStr = $("#classifierSource").val();
 
             var size = fetchSize;
@@ -325,7 +425,8 @@
                 }
 
             });
-            getAssociatedWords();
+            if (queryAssociatedWords)
+                getAssociatedWords();
             /*----------------associated words********************************/
 
         }
@@ -399,7 +500,16 @@
         }
 
         function showResults(data) {
+
+            if(data.length==0){
+$("#resultDiv").html(" No result   Try to add an * (wildcard) at the end of the word")
+
+                return;
+            }
             var html = "<table>";
+
+
+
             for (var i = 0; i < data.length; i++) {
                 html += "<tr>";
                 html += "<td>";
@@ -484,23 +594,38 @@
                 return JSON.stringify(obj);
             }
 
-            var str = "";
+            var str = "<div class='docListResult'>";
             if (icons["docTypes"] && icons["docTypes"][obj.type])
                 str += "<img  src='./icons/" + icons["docTypes"][obj.type] + "'>";
-            if (obj.title) {
+
+            str += "<img style='border-style: solid;border-color: #0000cc;border-width: 1px;border-radius: 2px' title='pre-visualize' onclick='visualizeDocContent(\"" + obj._id + "\")' src='./icons/details.png' width='20px'> </a>&nbsp;&nbsp;&nbsp;";
+
+            if (obj.path) {
+                var path = decodeURIComponent(obj.path)
+                var p = path.lastIndexOf("/");
+                if (p < 0)
+                    p = path.lastIndexOf("\\");
+                if (p > -1)
+                    path = path.substring(p + 1)
+                str += "<span class=title>" + path + "</span>"
+            }
+            else if (obj.title) {
                 str += "<span class=title>" + obj.title + "</span>"
             }
+            else
+                str += "<span class=title>" + obj[0] + "</span>"
+
             if (obj.date) {
                 str += "&nbsp;&nbsp;" + obj.date + "&nbsp;&nbsp;";
             }
             if (obj.path) {
-return;
+
                 var path = decodeURIComponent(obj.path)
-                str +=  "<a href='file://"+path+"' > doc</a>";
-              //  str += "<img  title='load document' onclick='getOriginalDocument(\"" + obj.path + "\")' src='./icons/document.png' width='20px'> </a>";
+                //  str +=  "<a href='file://"+path+"' > doc</a>";
+                //  str += "<img  title='load document' onclick='getOriginalDocument(\"" + obj.path + "\")' src='./icons/document.png' width='20px'> </a>";
 
             }
-            str += "<img  title='pre-visualize' onclick='visualizeDocContent(\"" + obj._id + "\")' src='./icons/details.png' width='20px'> </a>";
+
             //   str += "<img title='go to document' onclick='getOriginalDocument(\"" + obj.path + "\")' src='document.png' width='15px'> </a><br>";
             // str += "<span class=path>" + obj.path + "</span><br>";
 
@@ -511,9 +636,28 @@ return;
 
             }
             str += "</ul>";
-
+            str += "<div>"
             return str;
         }
+
+       function  addWordToQuery(){
+
+            var word=$("#addWordInput").val();
+            if(word.length>0)
+
+           $("#slopInput").val("")
+            if($("#booleanSearchMode").val()=="and"){
+                addAssociatedWord(word);
+
+            }
+            else{
+                $("#searchInput").val(  $("#searchInput").val() +" "+word)
+                $("#slopInput").val("")
+                $("#slopInput").css("visibility","hidden")
+                search();
+            }
+        }
+
 
 
         function addAssociatedWord(word) {
@@ -592,7 +736,7 @@ return;
         }
 
 
-        function   visualizeDocContent(id) {
+        function visualizeDocContent(id) {
             $("#dialogLeftDiv").html("");
             currentDocId = id;
             var index = $("#indexInput").val();
@@ -619,7 +763,7 @@ return;
                     words.pop(word);
                     if (data.docs && data.docs.length > 0) {
                         var doc = data.docs[0];
-
+                        currentDocHighlightIndex = -1;
 
                         for (var i = 0; i < doc.highlights.length; i++) {
                             var highlight = doc.highlights[i];
@@ -629,8 +773,9 @@ return;
                             highlight = highlight.replace(/<\/em>/g, "</b>");
                             var p = doc.content.indexOf(highlight2);
                             if (p > -1) {
+
                                 //   doc.content=doc.content.substring(0,p)+"<em>"+doc.content.substring(p+1,p+1+highlight.length)+"</em>"+doc.content.substring(p+1)
-                                doc.content = doc.content.substring(0, p) + "<em>" + highlight + "</em>" + doc.content.substring(p + 1 + highlight.length)
+                                doc.content = doc.content.substring(0, p) + "<em id='em_" + i + "'>" + highlight + "</em>" + doc.content.substring(p + 1 + highlight.length)
                             }
 
                         }
@@ -675,14 +820,14 @@ return;
 
         function getOriginalDocument(path) {
 
-          var path = decodeURIComponent(path)
-console.log(path)
+            var path = decodeURIComponent(path)
+            console.log(path)
 
-            $("#originalDocIframe").attr("src", "file:///+"+path);
-          return;
-         /*   $("#dialogContentDiv").html("<iframe width='500' height='500' src='file:///+"+path+"'>")
-            $("#dialog").css("visibility", "visible");*/
-         //   window.location.href = "file:///" + path;
+            $("#originalDocIframe").attr("src", "file:///+" + path);
+            return;
+            /*   $("#dialogContentDiv").html("<iframe width='500' height='500' src='file:///+"+path+"'>")
+               $("#dialog").css("visibility", "visible");*/
+            //   window.location.href = "file:///" + path;
 
             var payload = {
                 getOriginalDocument: 1,
@@ -692,7 +837,7 @@ console.log(path)
                 type: "POST",
                 url: elasticUrl,
                 data: payload,
-               // dataType: "json",
+                // dataType: "json",
                 success: function (data, textStatus, jqXHR) {
                     console.log("getOriginalDocument ok");
                     $("#dialogContentDiv").html(data);
@@ -928,13 +1073,34 @@ console.log(path)
         }
 
 
+        function scrollToHighlight(amount) {
+
+
+            currentDocHighlightIndex += amount;
+            var h = $("#dialogContentDiv").height() / 2
+            var z = $("#em_" + currentDocHighlightIndex).offset().top;
+
+            if (z > h)
+                z -= h;
+         /*   if(z<h)
+                z=h;*/
+
+            z=dialogContentDivScroll+(z*amount);
+            console.log(z);
+            $("#dialogContentDiv").animate({scrollTop: (z)}, 500);
+            dialogContentDivScroll = z
+
+
+        }
+
+
     </script>
 
 
 </head>
 <body>
 
-<div id="panels">
+<div id="panels" style="margin-top: 30px;   ">
 
 
     <div id="leftPanel" style="visibility: hidden">
@@ -960,6 +1126,7 @@ console.log(path)
                         document.getElementById('searchButton').click()">
             &nbsp;
             <button id="searchButton" onclick="search()">Search</button>
+
             <span id="slopSpan"> &nbsp; distance <input id="slopInput" size="2"></span>
             <button id="showMongoFormInput" onclick="showMongoForm()">Create</button>
 
@@ -968,9 +1135,13 @@ console.log(path)
         <div id="infos" style="visibility: hidden"><span id="countDiv"></span><span id="pages"></span> <img
                 title='export csv' onclick='toCsv()' src='./icons/csv.png' width='20px'> </a></div>
         <br>
+        <span id="subQuerySpan"> &nbsp; <input id="addWordInput">
+       &nbsp; <select id="booleanSearchMode"><option>and</option><option>or</option></select><button onclick="addWordToQuery().val()">+</button></span>
+
         <div id="associatedWordsBreadcrumbDiv"></div>
 
         <hr>
+
 
         <div id="resultDiv"></div>
         <div id="graphDiv"></div>
@@ -984,7 +1155,8 @@ console.log(path)
         <!--  sources
           <div id="sourcesDiv"></div>-->
         <br><br>
-        classifierSource <select id="classifierSource" onchange="search()">
+        <div id="classifiersDiv">
+            classifierSource <select id="classifierSource" onchange="search()">
             <option></option>
             <option>custom</option>
             <option>BNF</option>
@@ -995,7 +1167,8 @@ console.log(path)
             <option>PLM</option>
         </select>
 
-        <div id="conceptDiv"></div>
+            <div id="conceptDiv"></div>
+        </div>
     </div>
     <div id="dialog"><br>
         <table>
@@ -1005,12 +1178,21 @@ console.log(path)
 
                 </td>
 
-                <td>
+                <!--   <td>
 
-                    <button onclick='findSimilarDocuments()'> similar Docs</button>
-                    <!-- <button onclick='nexHighlight()'> >></button>-->
+                       <button onclick='findSimilarDocuments()'> similar Docs</button>
+
+                       <br>
+                   </td>-->
+
+                <td>
+                    &nbsp;<b><span class="em">passages pertinents</span></b>
+                    <button onclick='scrollToHighlight(+1)'> ></button>
+                    <!--  <button onclick='scrollToHighlight(-1)'> </button>-->
+                     <!-- <button onclick='nexHighlight()'> >></button>-->
                     <br>
                 </td>
+
 
                 <td>
                     <div id="dialogLeftDiv"></div>
@@ -1026,7 +1208,12 @@ console.log(path)
     </div>
 
 </div>
-<iframe id="originalDocIframe width="500" height="550"></iframe>
+<div id="loginDiv" style="position: absolute;top:200px;left: 200px;visibility: hidden">
+    login<input id="loginInput">
+    password<input type="password" id="passwordInput">
+    <button onclick="doLogin()">OK</button>
+    <div id="loginMessage"></div>
+</div>
 
 
 </body>
