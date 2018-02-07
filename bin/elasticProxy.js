@@ -246,7 +246,6 @@ var elasticProxy = {
             url: baseUrl + index + "/_search"
         };
 
-
         request(options, function (error, response, body) {
             if (error)
                 return callback(error);
