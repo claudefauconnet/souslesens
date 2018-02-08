@@ -64,9 +64,11 @@
 
         #centerPanel {
             width: 600px;
-            float: left;
+         //   float: left;
+            display: table;
             overflow-y: auto;
             font-size: 12px;
+            justify-content: center;
 
         }
 
@@ -95,6 +97,7 @@
         #top {
             font-size: 14px;
             font-weight: bold;
+
         }
 
         #dialog {
@@ -598,7 +601,7 @@ $("#resultDiv").html(" No result   Try to add an * (wildcard) at the end of the 
             if (icons["docTypes"] && icons["docTypes"][obj.type])
                 str += "<img  src='./icons/" + icons["docTypes"][obj.type] + "'>";
 
-            str += "<img style='border-style: solid;border-color: #0000cc;border-width: 1px;border-radius: 2px' title='pre-visualize' onclick='visualizeDocContent(\"" + obj._id + "\")' src='./icons/details.png' width='20px'> </a>&nbsp;&nbsp;&nbsp;";
+            str += "<img style='border-style: solid;border-color: #0000cc;border-width: 1px;border-radius: 8px' title='pre-visualize' onclick='visualizeDocContent(\"" + obj._id + "\")' src='./icons/details.png' width='20px'> </a>&nbsp;&nbsp;&nbsp;";
 
             if (obj.path) {
                 var path = decodeURIComponent(obj.path)

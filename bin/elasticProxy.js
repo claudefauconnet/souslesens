@@ -1264,13 +1264,17 @@ var elasticProxy = {
                             "analyzer": {
                                 "default": {
                                     "tokenizer": "standard",
-                                    "filter": ["standard", "my_ascii_folding"]
+                                    "filter": ["my_lowercase", "my_ascii_folding"]
                                 }
                             },
                             "filter": {
                                 "my_ascii_folding": {
                                     "type": "asciifolding",
                                     "preserve_original": true
+                                },
+                                "my_lowercase": {
+                                    "type": "lowercase",
+
                                 }
                             }
                         }
@@ -1449,9 +1453,19 @@ var elasticProxy = {
                 if (objElastic.attachment) {
                     newObj = objElastic.attachment;
                     newObj.path = objElastic.path;
+                    var p = newObj.path.lastIndexOf(encodeURIComponent(path.sep));
+                    newObj.title = newObj.path;
+                    if (p > -1)
+                        newObj.title = newObj.path.substring(p + 1);
+
+                    // we inject the title and date in the content
+                    newObj.content= newObj.title+"\n"+newObj.date+"\n"+newObj.content;
+
+
                 }
                 else {
                     newObj = objElastic;
+
 
                 }
 

@@ -16,4 +16,9 @@
     "login": "Sebastien",
     "password": "ST1"
   }
+  ,
+  "George":{
+    "login": "George",
+    "password": "GC1"
+  }
 }
