@@ -884,6 +884,7 @@ var infoGenericDisplay = (function () {
     }
 
     self.showNodeData = function (node, neoId) {
+        filters.removeAllFilters();
         if (!node) {
             node = self.findNodeByNeoId(neoId);
             if (!node)

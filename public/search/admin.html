@@ -230,6 +230,14 @@
 
     </div>
     <div id="makeJsonIndexTab">
+        <form name="uploadCsvForm" enctype="multipart/form-data"   action="/elasticIndexJson"
+              method="post"
+              target="votar">
+           index <input name="jsonIndexName">
+            type<input name="jsonType">
+            <input type="file"  accept=".json" name="jsonArray" value="choose file..."/>
+            <input type="submit" value="upload" name="submit"/>
+        </form>
 
     </div>
 

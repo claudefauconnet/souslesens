@@ -65,7 +65,7 @@ var toutlesensDialogsController = (function(){
     $("#dialog").dialog("option", "title", "valeur d'une propriete");
 self.getAllpropertiesDialogContent("setSearchNodeReturnFilterVal()");
     $("#dialog").html(str);
-    $("#dialog").dialog("open").position({my: 'center', at: 'center', of: '#tabs-controlPanel'});
+    $("#dialog").dialog("open").position({my: 'center', at: 'center', of: '#tabs-analyzePanel'});
 }
 
 
@@ -75,7 +75,7 @@ self.getAllpropertiesDialogContent("setSearchNodeReturnFilterVal()");
         $("#advancedSearchIframe").prop("src", "./advancedSearchDialog.html?subGraph=" + subGraph);
     }
 
-    $("#dialogAdvancedSearch").dialog("open").position({my: 'center', at: 'center', of: '#tabs-controlPanel'});
+    $("#dialogAdvancedSearch").dialog("open").position({my: 'center', at: 'center', of: '#tabs-analyzePanel'});
 }
 
    self.showGanttDialog=function() {
@@ -84,7 +84,7 @@ self.getAllpropertiesDialogContent("setSearchNodeReturnFilterVal()");
         $("#dialogGanttIframe").prop("src", "./ganttDialog.html?subGraph=" + subGraph);
     }
 
-    $("#dialogGantt").dialog("open").position({my: 'center', at: 'center', of: '#tabs-controlPanel'});
+    $("#dialogGantt").dialog("open").position({my: 'center', at: 'center', of: '#tabs-analyzePanel'});
 }
 
 
@@ -97,7 +97,7 @@ self.getAllpropertiesDialogContent("setSearchNodeReturnFilterVal()");
     else {
         $("#advancedDisplayIframe").prop('contentWindow').advancedDisplay.initDecorationDiv();
     }
-    $("#dialogAdvancedDisplay").dialog("open").position({my: 'center', at: 'center', of: '#tabs-controlPanel'});
+    $("#dialogAdvancedDisplay").dialog("open").position({my: 'center', at: 'center', of: '#tabs-analyzePanel'});
 
 
 }

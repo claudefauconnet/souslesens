@@ -178,9 +178,9 @@ var traversalMenu = (function () {
                     }
 
                     $("#shortestPathDistance").text("ShortestPath between " + self.context.source.name + " and " + self.context.target.name + " distance : " + (maxDistance - 1));
-                /*    $( "#tabs-controlPanel" ).tabs( "option", "disabled", [] );
-                    $("#tabs-controlPanel").tabs( "enable", 1);
-                    $("#tabs-controlPanel").tabs( "enable", 2);*/
+                /*    $( "#tabs-analyzePanel" ).tabs( "option", "disabled", [] );
+                    $("#tabs-analyzePanel").tabs( "enable", 1);
+                    $("#tabs-analyzePanel").tabs( "enable", 2);*/
                     setTimeout(function () {
                         visjsGraph.paintNodes(["" + self.context.source.id, "" + self.context.target.id], "red", null, 10)
                      //   $("#executeMoreShortestPathButton").css("visibility", "visible")
@@ -206,9 +206,9 @@ var traversalMenu = (function () {
                     $("#shortestPathDistance").text("Pathes between " + self.context.source.name + " and " + self.context.target.name + " distance : " +  self.context.currentDistance)
                     visjsGraph.draw("graphDiv", connectors.neoResultsToVisjs(data));
                     filters.initGraphFilters(data);
-                 /*   $( "#tabs-controlPanel" ).tabs( "option", "disabled", [] );
-                    $("#tabs-controlPanel").tabs( "enable", 1);
-                    $("#tabs-controlPanel").tabs( "enable", 2);*/
+                 /*   $( "#tabs-analyzePanel" ).tabs( "option", "disabled", [] );
+                    $("#tabs-analyzePanel").tabs( "enable", 1);
+                    $("#tabs-analyzePanel").tabs( "enable", 2);*/
                     setTimeout(function () {
                         visjsGraph.paintNodes("" + [self.context.source.id, "" + self.context.target.id], "red", null, 10);
 

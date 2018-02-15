@@ -988,24 +988,28 @@ var elasticProxy = {
     indexJsonArray: function (indexName, type, _array, callback) {
         var array = _array;
         elasticPayload = [];
-        var startId = 10000
+        var startId =Math.round( Math.random()*100000000);
         var partitions = [];
         var index = 0;
-        while (index < array.length) {
-            var subArray = []
-            for (var i = 0; (i < 2000 || index == array.length); i++) {
-                subArray.push(array[index]);
-                index += 1;
 
+        var subArray=[];
+        for (var i = 0; i < array.length; i++) {
+
+
+            subArray.push(array[i]);
+            if (subArray.length >= serverParams.elasticFethSize || i == array.length - 1) {
+                partitions.push(subArray);
+                subArray = [];
             }
-            partitions.push(subArray)
-
         }
+
+
         var partitionIndex = 0
         async.eachSeries(partitions, function (array, callbackSeries) {
                 for (var i = 0; i < array.length; i++) {
                     elasticPayload.push({index: {_index: indexName, _type: type, _id: "_" + (startId++)}})
-                    var payload = {"content": array[i]};
+                   // var payload = {"content": array[i]};
+                    var payload=array[i]
                     elasticPayload.push(payload);
                 }
 
@@ -1019,6 +1023,9 @@ var elasticProxy = {
                         return callbackSeries(err)
 
                     } else {
+                        if(errors){
+                            return callback(errors);
+                        }
                         console.log("partition " + (partitionIndex++))
                         return callbackSeries();
 
@@ -1028,7 +1035,7 @@ var elasticProxy = {
             function (err) {
                 if (err)
                     return callback(err);
-                callback(null);
+                callback(null,"done");
 
             }
         )

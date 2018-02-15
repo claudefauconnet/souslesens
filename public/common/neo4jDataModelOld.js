@@ -168,7 +168,7 @@ var dataModel = (function () {
                             str += "<br>set subGraph property <input id='subGraphName' value='" + queryParamsSubGraph + "'><br><button onclick='dataModel.generateSubGraphPropertyOnAllNodes()'>Apply and continue</button> ";
                             str += "<br><button onclick='window.close();  $(\"#dialog\").dialog(\"close\")')>Quit souslesens</button>"
                             $("#dialog").html(str);
-                            $("#dialog").dialog("open");//.position({my: 'center', at: 'center', of: '#tabs-controlPanel'});
+                            $("#dialog").dialog("open");//.position({my: 'center', at: 'center', of: '#tabs-analyzePanel'});
 
 
                         }

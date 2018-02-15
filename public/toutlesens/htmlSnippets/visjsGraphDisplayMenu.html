@@ -69,7 +69,7 @@
     <tr>
         <td colspan="2" >
             control panel
-            <select onchange="switchControlPanelDisplay(this)">
+            <select onchange="switchanalyzePanelDisplay(this)">
                 <option></option>
                 <option>show</option>
                 <option>hide</option>
@@ -82,6 +82,12 @@
 
     <tr><td>
        <button onclick=" Schema.showSchemaConfigDialog();$('#dialog').dialog('close');">Schema...</button>
+    </td>
+    </tr>
+
+    <tr><td>
+        <button onclick=" visjsGraph.saveGraph();$('#dialog').dialog('close');">ExportGraph</button>
+        <button onclick=" visjsGraph.reloadGraph();$('#dialog').dialog('close');">ImportGraph</button>
     </td>
     </tr>
 
@@ -151,7 +157,7 @@
         }
     });
 
-    function switchControlPanelDisplay(select){
+    function switchanalyzePanelDisplay(select){
 var val=$(select).val();
 if(val=="hide")
     toutlesensController.setResponsiveDimensions(0);

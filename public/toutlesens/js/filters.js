@@ -39,7 +39,7 @@ var filters = (function () {
         self.postFilter = null;
 
         $("#innerLegendDiv").html("");
-        //   $("#tabs-controlPanel").tabs('option','active',1)
+        //   $("#tabs-analyzePanel").tabs('option','active',1)
 
 
         var str = "";
@@ -286,6 +286,13 @@ var filters = (function () {
         $("#propertiesSelectionDialog_currentFiltersDiv").append(str);
     }
 
+
+    self.removeAllFilters=function(){
+        toutlesensData.queryNodeLabelFilters="";
+        toutlesensData.whereFilter="";
+        toutlesensData.queryNodeLabelFilters="";
+    }
+
     self.removeFilterFromCurrentFiltersDiv=function(type){
         $("#filterDiv_"+type).remove()
 
@@ -371,6 +378,7 @@ var filters = (function () {
         common.fillSelectOptionsWithStringArray(selectId, propertiesArray)
 
     }
+
 
 
     self.filterOnProperty = function (option, booleanOption, filterMode, type, property, operator, value) {

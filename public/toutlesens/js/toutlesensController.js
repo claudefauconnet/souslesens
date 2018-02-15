@@ -68,7 +68,7 @@ var toutlesensController = (function () {
         currentSourceNode = currentObject;
 
         if (currentDisplayType != "SIMPLE_UI") {
-            //   $("#tabs-controlPanel").tabs("enable");
+            //   $("#tabs-analyzePanel").tabs("enable");
             $("#tabs-mainPanel").tabs("enable");
             $("#currentNodeSpan").html("Noeud central : " + text);
 
@@ -232,10 +232,10 @@ var toutlesensController = (function () {
 
         if (options && options.applyFilters) {
             filters.setQueryFilters();
-            $("#tabs-controlPanel").tabs("option", "disabled", []);
-            $("#tabs-controlPanel").tabs("enable", 1);
-            $("#tabs-controlPanel").tabs("enable", 2);
-            // $("#tabs-controlPanel").tabs("enable", 1);
+            $("#tabs-analyzePanel").tabs("option", "disabled", []);
+            $("#tabs-analyzePanel").tabs("enable", 1);
+            $("#tabs-analyzePanel").tabs("enable", 2);
+            // $("#tabs-analyzePanel").tabs("enable", 1);
 
 
             // $(".paintIcon").css("visibility","visible")
@@ -316,7 +316,7 @@ var toutlesensController = (function () {
 
 
                 toutlesensController.displayGraph(data, currentDisplayType, self.currentLabels);
-
+               self.setFindPanelExpandTree(true);
                 paint.init(data);
                 filters.init(data);
                 $("#mainButtons").css("visibility", "visible");
@@ -454,7 +454,7 @@ var toutlesensController = (function () {
          } else
          $("#graphMessage").html("");*/
         help.setGraphActionsHelp();
-        /*     $("#tabs-controlPanel").tabs({
+        /*     $("#tabs-analyzePanel").tabs({
          disabled: false
          });*/
         $("#tabs-mainPanel").tabs({
@@ -924,8 +924,8 @@ var toutlesensController = (function () {
 
     self.selectLeftTab = function (tabId) {
 
-        var index = $('#tabs-controlPanel a[href="' + tabId + '"]').parent().index();
-        $("#tabs-controlPanel").tabs("option", "active", index);
+        var index = $('#tabs-analyzePanel a[href="' + tabId + '"]').parent().index();
+        $("#tabs-analyzePanel").tabs("option", "active", index);
 
     }
 
@@ -986,7 +986,7 @@ var toutlesensController = (function () {
                         $("#nodeInfoMenuDiv").css("top", "total");
                         $("#nodeInfoMenuDiv").css("visibility", "visible");
                         $("#nodeInfoMenuDiv").html(toutlesensDialogsController.setPopupMenuNodeInfoContent());
-                        self.setFindPanelExpandTree(false);
+                     self.setFindPanelExpandTree(false);
                         $("#graphPopup").html(toutlesensDialogsController.getNodeInfoButtons());
                         toutlesensController.showPopupMenu($currentObj._graphPosition.x, $currentObj._graphPosition.y, "nodeInfo");
                     }
@@ -1307,7 +1307,7 @@ var toutlesensController = (function () {
 
 
         //  $("#tabs-findTabs").tabs( "option", "active", 0 );
-        $("#tabs-controlPanel").tabs("option", "active", 0);
+        $("#tabs-analyzePanel").tabs("option", "active", 0);
         if (toutlesensController.currentActionObj.type != "findShortestPath")
             $("#graphPopup").css("visibility", "visible").css("top", y).css("left", x);
 
@@ -1453,9 +1453,9 @@ var toutlesensController = (function () {
 
 
     self.afterGraphInit = function () {
-        var tabsControlPanelDisabledOptions = []
-        tabsControlPanelDisabledOptions.push(1);//filters
-        tabsControlPanelDisabledOptions.push(2);//highlight
+        var tabsanalyzePanelDisabledOptions = []
+        tabsanalyzePanelDisabledOptions.push(1);//filters
+        tabsanalyzePanelDisabledOptions.push(2);//highlight
         var tabsFindPanelDisabledOptions = [];
         //tabsFindPanelDisabledOptions.push(2)
         tabsFindPanelDisabledOptions.push(3)
@@ -1473,7 +1473,7 @@ var toutlesensController = (function () {
 
 
         if (!queryParams.rdfMenu) {
-            tabsControlPanelDisabledOptions.push(4);
+            tabsanalyzePanelDisabledOptions.push(4);
 
         }
         if (queryParams.write) {
@@ -1493,7 +1493,7 @@ var toutlesensController = (function () {
 
         }
         else {
-            tabsControlPanelDisabledOptions.push(3);
+            tabsanalyzePanelDisabledOptions.push(3);
             $("#infosHeaderDiv").css("visibility", "hidden");
             infoGenericDisplay.userRole = "read"
             cards.userRole = "read";
@@ -1521,12 +1521,12 @@ var toutlesensController = (function () {
         });
 
 
-        $("#tabs-controlPanel").tabs("option", "disabled", tabsControlPanelDisabledOptions);
+        $("#tabs-analyzePanel").tabs("option", "disabled", tabsanalyzePanelDisabledOptions);
         $("#findTabs").tabs("option", "disabled", tabsFindPanelDisabledOptions);
 
 
         /*  if(queryParams.write){
-              util.addTabToTab("data","dataTab","tabs-controlPanel");
+              util.addTabToTab("data","dataTab","tabs-analyzePanel");
           }*/
 
 
@@ -1554,7 +1554,7 @@ var toutlesensController = (function () {
                     // str += "enter criteria"
                     str += "<br><button onclick=' $(\"#dialog\").dialog(\"close\")')>close</button>"
                     $("#dialog").html(str);
-                    $("#dialog").dialog("open");//.position({my: 'center', at: 'center', of: '#tabs-controlPanel'});
+                    $("#dialog").dialog("open");//.position({my: 'center', at: 'center', of: '#tabs-analyzePanel'});
                     callback(false);
                 }
                 callback(true);
@@ -1625,17 +1625,17 @@ var toutlesensController = (function () {
 
     self.setResponsiveDimensions = function (rightPanelWidth) {
         if (rightPanelWidth == 0) {
-            $("#tabs-controlPanel").css("visibility", "hidden");
+            $("#tabs-analyzePanel").css("visibility", "hidden");
             self.hasRightPanel = false;
 
         }
         else {
             self.hasRightPanel = true;
-            $("#tabs-controlPanel").css("visibility", "visible");
+            $("#tabs-analyzePanel").css("visibility", "visible");
         }
 
         $("#tabs-mainPanel").width(totalWidth - (rightPanelWidth)).height(totalHeight)
-        $("#controlPanel").width(rightPanelWidth - 50).height(totalHeight).css("position", "absolute").css("left", totalWidth - rightPanelWidth + 30).css("top", 10);
+        $("#analyzePanel").width(rightPanelWidth - 50).height(totalHeight).css("position", "absolute").css("left", totalWidth - rightPanelWidth + 30).css("top", 10);
 
 
         $("#graphDiv").width(totalWidth - rightPanelWidth).height(totalHeight - 0)
@@ -1645,7 +1645,7 @@ var toutlesensController = (function () {
 
         $("#treeContainer").width(rightPanelWidth - 100);
         // $("#graphLegendDiv").width(rightPanelWidth - 50).height(totalHeight)
-        $("#findDiv").width(rightPanelWidth - 50).height((totalHeight))
+        $("#findDiv").width(rightPanelWidth - 50).height((totalHeight)).css("position","absolute").css("top","0px").css("left",(totalWidth-rightPanelWidth)+30)
         $("#findDivInner").width(rightPanelWidth - 50).height((totalHeight))
         $("#findTabs").width(rightPanelWidth - 50);
 
@@ -1654,12 +1654,12 @@ var toutlesensController = (function () {
         $("#filterDiv").width(rightPanelWidth - 50).height((totalHeight))
         $("#infosDiv").width(rightPanelWidth - 50).height((totalHeight))
 
-        $("#controlPanel").width(rightPanelWidth - 10).height(totalHeight).css("position", "absolute").css("left", (totalWidth - rightPanelWidth) + 30).css("top", 10);
-        //  $("#tabs-controlPanel").width(rightPanelWidth - 100).height(totalHeight/2).css("position", "absolute").css("left",(totalWidth-rightPanelWidth) + 30).css("top", 10);
+     //   $("#analyzePanel").width(rightPanelWidth - 10).height(totalHeight).css("position", "absolute").css("left", (totalWidth - rightPanelWidth) + 30).css("top", 10);
+        //  $("#tabs-analyzePanel").width(rightPanelWidth - 100).height(totalHeight/2).css("position", "absolute").css("left",(totalWidth-rightPanelWidth) + 30).css("top", 10);
 
 
-        $("#infos-controlPanel").width(rightPanelWidth - 50);
-        $("#nodeInfoMenuDiv").width(rightPanelWidth - 70).height(Gparams.infoscontrolPanelHeight - 40).css("visibility", "hidden")
+        $("#analyzePanel").width(rightPanelWidth - 50);
+        $("#nodeInfoMenuDiv").width(rightPanelWidth - 70).height(Gparams.infosanalyzePanelHeight - 40).css("visibility", "hidden")
 
 
         //   $("#mainButtons").width(rightPanelWidth).height(50).css("position", "absolute").css("left", $("#graphDiv").width() - 200).css("top", 50).css("visibility", "hidden");
@@ -1674,15 +1674,17 @@ var toutlesensController = (function () {
 
 
     self.setFindPanelExpandTree = function (expandTree) {
-        var infoscontrolPanelHeight = Gparams.infoscontrolPanelHeight;
+        var analyzePanelHeight = Gparams.infosanalyzePanelHeight;
         if (expandTree === true) {
-            infoscontrolPanelHeight = 0;
+            analyzePanelHeight = 0;
         }
 
 
-        $("#treeContainer").height((totalHeight - infoscontrolPanelHeight) - 150);
-        $("#findTabs").height((totalHeight - infoscontrolPanelHeight - 50))
-        $("#infos-controlPanel").height(infoscontrolPanelHeight - 20);
+        $("#treeContainer").height((totalHeight - analyzePanelHeight) - 150);
+        $("#findTabs").height((totalHeight - analyzePanelHeight - 50));
+
+        $("#analyzePanel").height(analyzePanelHeight- 20);
+
 
 
     }

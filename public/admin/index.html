@@ -232,7 +232,7 @@
             var split = 250;
             var right = 250;
             $("#left").width(2300).height(totalHeight - 10);
-            $("#tabs-controlPanel").width(split).height(totalHeight - 10);
+            $("#tabs-analyzePanel").width(split).height(totalHeight - 10);
             $("#info_panel").width(totalWidth - 30).height(totalHeight - 10);
             $("#graphDiv").width(totalWidth - (split + right )).height(totalHeight - 100);
             $("#tabs-center").width((totalWidth - (split + right ))).height(totalHeight - 10);
@@ -290,7 +290,7 @@
         <div id="left-radar">
             <span id="radarTitle"></span>
             <div id="stateDisplay"></div>
-            <div id="tabs-controlPanel">
+            <div id="tabs-analyzePanel">
                 <table align="center" id="sourceTable">
 
 
@@ -310,7 +310,7 @@
 
                             <div id="importCSVdiv">
                                 ImportCSV<br>
-                                <form name="uploadCsvForm" enctype="multipart/form-data"   action="/uploadCsvForNeo"
+                                <form name="uploadCsvForm"  enctype="multipart/form-data"   action="/uploadCsvForNeo"
                                       method="post"
                                       target="votar">
                                     <input type="file"  accept=".csv" name="csv" class='exportNeo' value="choose file..."/>

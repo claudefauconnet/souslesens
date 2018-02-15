@@ -20,7 +20,7 @@ var googleAPIproxy = require("../bin/nlp/googleAPIproxy..js");
 var serverParams = require("../bin/serverParams.js")
 var socket = require('./socket.js');
 var fileSystemProxy = require("../bin/fileSystemProxy..js")
-var authentication=require("../bin/authentication..js")
+var authentication = require("../bin/authentication..js")
 
 
 console.log("***********************serverParams.routesRootUrl " + serverParams.routesRootUrl + "*********")
@@ -186,6 +186,20 @@ router.post(serverParams.routesRootUrl + '/elastic', function (req, response) {
 
 });
 
+router.post(serverParams.routesRootUrl + '/elasticIndexJson', function (req, response) {
+    fileUpload.upload(req, "jsonArray", function (err, req) {
+        var dataStr = "" + req.file.buffer;
+        try {
+            var data = JSON.parse(dataStr);
+        }catch(e){
+            processResponse(response, e, null);
+        }
+        elasticProxy.indexJsonArray(req.body.jsonIndexName, req.body.jsonType, data, function (error, result) {
+            processResponse(response, error, result)
+        });
+
+    });
+});
 
 router.post(serverParams.routesRootUrl + '/exportMongoToNeo', function (req, response) {
     exportMongoToNeo.clearVars();
@@ -427,10 +441,6 @@ router.post(serverParams.routesRootUrl + '/authentication', function (req, respo
         });
 
 });
-
-
-
-
 
 
 function processResponse(response, error, result) {
