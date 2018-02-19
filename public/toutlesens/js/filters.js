@@ -11,7 +11,6 @@ var filters = (function () {
 
 
     self.init = function (data) {
-
         var labels = []
         for (var i = 0; i < data.length; i++) {
             var filterObj = data[i];
@@ -379,8 +378,37 @@ var filters = (function () {
 
     }
 
+    /**
+     *
+     * new method filtering visJs graph directly
+     * @param option
+     * @param booleanOption
+     * @param filterMode
+     * @param type
+     * @param property
+     * @param operator
+     * @param value
+     */
+    self.filterGraphOnProperty = function (option, booleanOption, filterMode, type, property, operator, value) {
 
 
+        if (!property)
+            property = $("#propertiesSelectionDialog_propsSelect").val();
+        if (!value)
+            value = $("#propertiesSelectionDialog_valueInput").val();
+        if (!filterMode)
+            filterMode = $("#propertiesSelectionDialog_filterModeInput").val();
+        if (!operator)
+            operator = $("#propertiesSelectionDialog_operatorSelect").val();
+        if (!type)
+            type = $("#propertiesSelectionDialog_typeInput").val();
+        visjsGraph.filterGraph(property,operator,value,type);
+
+    }
+
+    /**
+     * oldmethod using a new NeoQuery
+     */
     self.filterOnProperty = function (option, booleanOption, filterMode, type, property, operator, value) {
 
 

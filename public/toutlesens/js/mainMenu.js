@@ -93,6 +93,7 @@ var mainMenu = (function () {
 
     }
 
+
     self.showCreateRelationDialog = function () {
         var links = [];
         var allowedRelTypes = Schema.getPermittedRelTypes(toutlesensController.currentRelationData.sourceNode.labelNeo, toutlesensController.currentRelationData.targetNode.labelNeo,true);
@@ -101,7 +102,7 @@ var mainMenu = (function () {
         }
 
       //  allowedRelTypes.splice(0, 0, "");
-        $("#dialog").load("htmlSnippets/relationsController.html", function () {
+        $("#dialog").load("htmlSnippets/relationsForm.html", function () {
             common.fillSelectOptionsWithStringArray(relations_relTypeSelect, allowedRelTypes)
             $("#dialog").dialog("option", "title", "Relation");
 
@@ -110,7 +111,7 @@ var mainMenu = (function () {
     }
 
 
-    self.saveRelation = function () {
+    self.saveRelation = function (callback) {
         var relType = $("#relations_relTypeSelect").val();
         if (!relType || relType == "") {
             return alert("select a relation type before saving relation")
@@ -147,8 +148,16 @@ var mainMenu = (function () {
             }
             $("#message").html("relation saved");
             $("#dialog").dialog("close");
+            if(callback){
+                var edge=result[0].r.properties;
+                edge.from=result[0].r._fromId;
+                edge.to=result[0].r._toId;
+                edge.id=result[0].r._id;
+                edge.type=result[0].r.type;
+                callback(edge);
+            }
 
-            if(toutlesensController.currentRelationData.context=="graphicRelCreation"){
+         /*   if(toutlesensController.currentRelationData.context=="graphicRelCreation"){
                 var relation = {
                     sourceNode: toutlesensController.currentRelationData.sourceNode,
                     targetNode: toutlesensController.currentRelationData.targetNode,
@@ -162,7 +171,7 @@ var mainMenu = (function () {
             else if( toutlesensController.currentRelationData.context=="visJsGraphAddRel"){
                 toutlesensController.currentRelationData = {};
                 toutlesensController.replayGraph("same");
-            }
+            }*/
 
 
 

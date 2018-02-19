@@ -306,9 +306,10 @@
             $("#tabs-analyzePanel").tabs({
 
                 activate: function (event, ui) {
+
                     var index = ui.newTab.index();
                     if (index == 0)
-                        toutlesensController.currentActionObj.mode = "find";
+                        toutlesensController.currentActionObj.mode = "infos";
                     if (index == 1)
                         toutlesensController.currentActionObj.mode = "filter";
                     if (index == 2)
@@ -321,6 +322,7 @@
             });
             $("#findTabs").tabs({
                 activate: function (event, ui) {
+                    toutlesensController.setFindPanelExpandTree(true);
                     var index = ui.newTab.index();
                     if (index == 0) {
                         toutlesensController.currentActionObj = {type: "findNode"}
@@ -519,16 +521,18 @@
 <div id="mainButtons">
     <!--   <input type="image" title="Data menu" height="40px" onclick="mainMenu.showDataMenu()" id="dataMenuButton"
               src="images/data.png"/>-->
-    <input type="image" title="Graph menu" height="2àpx" onclick="mainMenu.showGraphDisplayMenu()"
+    <input type="image" title="Graph menu" height="20px" onclick="mainMenu.showGraphDisplayMenu()"
            id="parametersMenuButton" src="images/parameters.png"/>
     <input type="image" title="Take a snapshot" height="20px" onclick="visjsGraph.saveGraph()"
            id="snapShotMenuButton" src="images/snapshot.png"/>
     <input type="image" title="Previous display" height="20px"
-           onclick="visjsGraph.replayGraph('previous')" id="previousMenuButton"
+           onclick="visjsGraph.previousGraph()" id="previousMenuButton"
            src="images/previous.jpg"/>
-    <input type="image" title="Next display" height="20px" onclick="visjsGraph.replayGraph('next')"
+    <input type="image" title="Next display" height="20px" onclick="visjsGraph.nextGraph()"
            id="nextMenuButton" src="images/next.jpg"/>
-    <img id="waitImg" src="images/waitAnimated.gif" width="50px"
+    <input type="image" title="Next display" height="20px" onclick="toutlesensController.dispatchAction('addNode')";
+           id="newNodeButton" src="images/new.jpg"/>
+    <img id="waitImg" src="images/waitAnimated.gif" width="20px"
          style="visibility: hidden;">
 </div>
 
@@ -615,7 +619,17 @@
                 <table>
                     <tr>
                         <td colspan="3">
-                            Shortest path
+                           <select  id="pathType">
+                               <option value="shortestPath">
+                                   Shortest path
+                               </option>
+                               <option value="allSimplePaths">
+                                   All paths
+                               </option>
+                            <!--   <option>
+                                  Advanced pathes
+                               </option>-->
+                           </select>
                         </td>
                     </tr>
                     <tr>
@@ -641,7 +655,7 @@
 
                     <tr>
                         <td colspan="1">
-                            <button onclick="traversalMenu.executeShortestPathTraversalSearch()"
+                            <button onclick="traversalMenu.executePathesUI()"
                                     id="executeShortestPathButton" style="visibility:hidden">Search
                             </button>
                             <button onclick="traversalMenu.executeMoreOrLessShortestPathTraversalSearch(true)"
@@ -675,54 +689,46 @@
 
                 </div>-->
         </div>
-        <div id="analyzePanel">
-            <div id="tabs-analyzePanel">
+    </div>
+</div>
+<div id="analyzePanel">
+    <div id="tabs-analyzePanel">
 
-                <ul>
-                    <li><a href="#infosDiv"><span id='lang_60'>Infos  </span></a></li>
-                    <li><a href="#filterDiv"><span id='lang_60'>Filter </span></a></li>
-                    <li><a href="#highlightDiv"><span id='lang_60'>Highlight </span></a></li>
+        <ul>
+            <li><a href="#infosDiv"><span id='lang_60'>Infos  </span></a></li>
+            <li><a href="#filterDiv"><span id='lang_60'>Filter </span></a></li>
+            <li><a href="#highlightDiv"><span id='lang_60'>Highlight </span></a></li>
 
-                </ul>
-                <div id="infosDiv">
-                    <div id="nodeInfoMenuDiv"></div>
-                </div>
-                <div id="filterDiv">
-                    <div id="graphLegendDiv">
-                        <div id="paintDiv"></div>
-                        <!-- <div> Outline nodes<input id="visJsSearchGraphButton" style="visibility: hidden"></div>-->
-                        <div id="filtersDiv"></div>
+        </ul>
+        <div id="infosDiv">
+            <div id="nodeInfoMenuDiv"></div>
+        </div>
+        <div id="filterDiv">
+            <div id="graphLegendDiv">
+                <div id="paintDiv"></div>
+                <!-- <div> Outline nodes<input id="visJsSearchGraphButton" style="visibility: hidden"></div>-->
+                <div id="filtersDiv"></div>
 
-                        <div id="innerLegendDiv"></div>
-                        <div id="graphMessage" class="message"><br></div>
-                        <div id="relInfoDiv"></div>
-                    </div>
-
-                </div>
-
-                <div id="highlightDiv">
-
-                </div>
-
+                <div id="innerLegendDiv"></div>
+                <div id="graphMessage" class="message"><br></div>
+                <div id="relInfoDiv"></div>
             </div>
 
         </div>
-    </div>
 
+        <div id="highlightDiv">
+
+        </div>
+
+    </div>
 
 </div>
 
+
+
+
 <div id="graphPopup" style="visibility: hidden;position: absolute;background-color: white;margin: 2px;padding: 2px">
-    <table>
-        <tr>
-            <td><input type="image" height="20" src="images/expand.png"
-                       onclick='toutlesensController.dispatchAction("expandNode")'></td>
-            <td><input type="image" height="20" src="images/center.png"
-                       onclick='toutlesensController.dispatchAction("setAsRootNode")'></td>
-            <!--   <td><input type="image" height="20" src="images/erase.png"
-                          onclick='toutlesensController.dispatchAction("closeNode")'></td>-->
-        </tr>
-    </table>
+
 </div>
 
 <div id="dialog" title="dialog"></div>

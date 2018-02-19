@@ -14,12 +14,16 @@ var connectors = (function () {
         var uniqueRels = [];
         for (var i = 0; i < resultArray.length; i++) {
             var rels = resultArray[i].rels;
+            if(!rels)
+                rels=[];
             var nodes = resultArray[i].nodes;
+            if(!nodes)
+                nodes=[];
             var relProperties = resultArray[i].relProperties;
+            if(!relProperties)
+                relProperties=[];
 
 
-            if (!nodes)
-                continue;
 
             var ids = resultArray[i].ids;
             var legendRelIndex = 1;
@@ -99,6 +103,19 @@ var connectors = (function () {
                     }
                     if(nodes[j].isTarget){
                         nodeObj.isTarget=true;
+                    }
+
+                    if(nodes[j].isPathSource){
+                        nodeObj.shape ="star";
+                        nodeObj.color="red";
+                        nodeObj.x=-500;
+                        nodeObj.y=-500;
+                    }
+                    if(nodes[j].isPathTarget){
+                        nodeObj.shape ="star";
+                        nodeObj.color="red";
+                        nodeObj.x=500;
+                        nodeObj.y=500;
                     }
 
                     visjsData.nodes.push(nodeObj);

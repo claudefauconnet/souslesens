@@ -26,7 +26,7 @@ var graphTraversalQueries = (function () {
      * SOFTWARE.
      *
      ******************************************************************************/
-    self.getAllSimplePaths = function (startId, endId, depth, algo, callback) {
+    self.getPathes = function (startId, endId, depth, algo, callback) {
 
 
         var body = '{ "to":"' + endId + '","max_depth":' + depth + ',"algorithm":"'
@@ -132,9 +132,9 @@ var graphTraversalQueries = (function () {
                         data[i].relProperties.push("");
                         var nodeId = ids[j];
                         if (startNodeId == nodeId)
-                            data[i].nodes[j].isSource = true;
+                            data[i].nodes[j].isPathSource = true;
                         if (endNodeId == nodeId)
-                            data[i].nodes[j].isTarget = true;
+                            data[i].nodes[j].isPathTarget = true;
                     }
 
 

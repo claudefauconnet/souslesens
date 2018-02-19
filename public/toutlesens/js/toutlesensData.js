@@ -338,7 +338,7 @@ var toutlesensData = (function () {
 
     }
 
-    self.getAllSimplePaths = function (startId, endId, depth, algo, callback) {
+    self.getPathes = function (startId, endId, depth, algo, callback) {
 
 
         var body = '{ "to":"' + endId + '","max_depth":' + depth + ',"algorithm":"'

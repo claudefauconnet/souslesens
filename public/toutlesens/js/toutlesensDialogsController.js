@@ -132,6 +132,7 @@ self.getAllpropertiesDialogContent("setSearchNodeReturnFilterVal()");
 self.getNodeInfoButtons=function(){
       var str=   "<input type='image' height='20px'  alt='set as rootNode' onclick='toutlesensController.dispatchAction(\"expandNode\")' src='images/expand.png'/>";
     str+=   "<input type='image' height='20px'  alt='set as rootNode' onclick='toutlesensController.dispatchAction(\"setAsRootNode\")' src='images/center.png'/>"
+    str+=   "<input type='image' height='20px'  alt='remove node from graph' onclick='toutlesensController.dispatchAction(\"removeNode\")' src='images/trash.png'/>"
     return  str;
 }
 

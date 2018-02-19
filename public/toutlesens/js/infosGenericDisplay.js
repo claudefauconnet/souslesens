@@ -809,9 +809,9 @@ var infoGenericDisplay = (function () {
         var node = node;
         if(node.parent=="#"){//label node
 
-      /*      currentLabel=node.text;
+          currentLabel=node.text;
             currentObject.id==null;
-          return  toutlesensController.generateGraph(null, {applyFilters:true});*/
+          return  toutlesensController.generateGraph(null, {applyFilters:true});
         }
 
         self.selectedNodeData = node.data;
@@ -907,7 +907,7 @@ var infoGenericDisplay = (function () {
             $("#nodeLabel").html(label);
 
             self.setAttributesValue(label, attrObject, node);
-            self.drawAttributes(attrObject, "nodeInfosDiv");
+            self.drawAttributes(attrObject, "nodeFormDiv");
             if (queryParams.write)
                 $("#infosHeaderDiv").css("visibility", "visible");
 
@@ -949,7 +949,7 @@ var infoGenericDisplay = (function () {
     /*********************************************************************************************************/
     /*********************************************************************************************************/
 
-    self.saveNode = function () {
+    self.saveNode = function (callback) {
         self.saveRelation();
         if (self.currentNodeChanges.length == 0)
             return;
@@ -979,7 +979,15 @@ var infoGenericDisplay = (function () {
                     return;
                 }
                 $("#message").html("node saved");
-                toutlesensController.replayGraph("same");
+                if(callback){
+                    var node=result[0].n.properties;
+                    node.id=result[0].n._id
+                    node.neoLabel=result[0].n.labels[0];
+                    node.label=node.name
+                    callback( node);
+
+                }
+              //  toutlesensController.replayGraph("same");
 
                 var node = result[0]
                 //  var node = self.addNodeToJstree(result[0], null, false);
@@ -1028,7 +1036,15 @@ var infoGenericDisplay = (function () {
                     return;
                 }
                 $("#message").html("node saved");
-                d3graphCreation.addNode(self.currentLabel, setObj)
+
+                if(callback) {
+                    var node=result[0].n.properties;
+                    node.id=result[0].n._id
+                    node.neoLabel=result[0].n.labels[0];
+                    node.label=node.name
+                    callback( node);
+                }
+              //  d3graphCreation.addNode(self.currentLabel, setObj)
                 //  toutlesensController.replayGraph("same");
 
 
@@ -1103,12 +1119,12 @@ var infoGenericDisplay = (function () {
         if (queryParams.write)
             $("#infosHeaderDiv").css("visibility", "visible");
         $("#relInfosDivWrapper").css("visibility", "visibility");
-        $("#nodeInfosDiv").html(str);
+        $("#nodeFormDiv").html(str);
     }
     self.clearNodePropertiesDiv = function () {
         $("#infosHeaderDiv").css("visibility", "hidden");
         $("#relInfosDivWrapper").css("visibility", "hidden");
-        $("#nodeInfosDiv").html("");
+        $("#nodeFormDiv").html("");
     }
 
 
@@ -1334,7 +1350,7 @@ var infoGenericDisplay = (function () {
         var attrObject = Schema.schema.properties[label];
         self.selectedNodeData = null;
         self.setAttributesValue(label, attrObject, {});
-        self.drawAttributes(attrObject, "nodeInfosDiv");
+        self.drawAttributes(attrObject, "nodeFormDiv");
 
     }
 

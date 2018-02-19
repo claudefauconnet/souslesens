@@ -98,7 +98,7 @@ var advancedSearch = (function () {
     self.executePathQuery = function () {
         var maxDistance = parseInt($("#graphPathMaxDistance").val());
         var algo = "allSimplePaths"// $("#graphPathsAlgorithm").val();
-        graphTraversalQueries.getAllSimplePaths(currentActionObj.graphPathSourceNode.nodeId, currentActionObj.graphPathTargetNode.nodeId, maxDistance, algo);
+        graphTraversalQueries.getPathes(currentActionObj.graphPathSourceNode.nodeId, currentActionObj.graphPathTargetNode.nodeId, maxDistance, algo);
 
     }*/
 

@@ -375,6 +375,14 @@ var paint = (function () {
             return result;
 
 
+        }else{
+
+            for( var key in data){
+                if( self.isLabelNodeOk (data, key, operator, value, type)){
+                    return true;
+                }
+            }
+
         }
         return false;
 
