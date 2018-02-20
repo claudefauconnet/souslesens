@@ -42,37 +42,7 @@ var common = (function () {
     var nTentatives = 0;
 
 
-//moved  var dataPath = "data";
-//moved  var messageDivId = "stateDisplay";
-//moved  var dbName;
 
-//moved  var isIE8 = false;
-
-//moved  var filter;
-//moved  var filterValue;
-//moved  var isRadarReadOnly = true;
-//moved  var http = "";
-//moved  var currentObject;
-//moved  var currentObject.id;
-//moved  var canModifyRadarDetails = false;
-//moved  var rapahaelItemsSet;
-//moved  var canModify = false;
-//moved  var view = "home";
-
-//moved  var password = "T0talr@d@r";
-//moved  var authentify = false;
-//moved  var identified = false;
-//moved  var userRole = "all";
-//moved  var userLogin = "anonymous";
-//moved  var userName = "anonymous";
-//moved  var user;
-
-//moved  var maxTentatives = 5;
-//moved  var nTentatives = 0;
-
-//moved  var positionControMode = "CONFINED"; // alternatives CHANGE-ATTRS and
-    // CONFINED see radarRaphael.js
-//moved  var radarAxes = [];
     self.init = function () {
         IEversion = self.getInternetExplorerVersion();
         if (IEversion > 0) {
@@ -82,17 +52,8 @@ var common = (function () {
         if (IEversion <= 9)
             ; // console.log("---browser------IE --" + IEversion);
 
-        /*
-         * var version =parseFloat($.browser.version)
-         *
-         * if ($.browser.msie && version<9){ alert("IE " + version + " is not suppoted
-         * by this application (min IE9 )"); }
-         */
 
-//moved  var appname = window.navigator.appName;
-//moved  var version = window.navigator.appVersion;
-
-        queryParams = getQueryParams(document.location.search);
+        queryParams = self.getQueryParams(document.location.search);
         dbName = queryParams.dbName;
 
         if (queryParams.canModify == "y") {
@@ -104,12 +65,7 @@ var common = (function () {
         }
 
         if (queryParams.admin == "true") {
-//moved  	var userRole = "admin";
-//moved  	var userLogin = "CF";
-//moved  	var userName = "CF";
-            /*
-             * isRadarReadOnly = false; canModifyRadarDetails=true;
-             */
+
         }
         filter = queryParams.filter;
         if (filter) {
@@ -176,7 +132,7 @@ var common = (function () {
 
     }
 
-    function getQueryParams(qs) {
+    self.getQueryParams=function(qs) {
         qs = qs.split("+").join(" ");
 
         var params = {}, tokens, re = /[?&]?([^=]+)=([^&]*)/g;

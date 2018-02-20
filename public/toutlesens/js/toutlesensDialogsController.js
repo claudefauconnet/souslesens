@@ -171,7 +171,7 @@ self.getNodeInfoButtons=function(){
 
 
        if( true){// show properties
-           toutlesensData.showInfos2(currentObject.id, function (obj) {
+           toutlesensData.getNodeInfos(currentObject.id, function (obj) {
 
                str += textOutputs.formatNodeInfo(obj[0].n.properties);
                str += "<br>" + customizeUI.customInfo(obj);

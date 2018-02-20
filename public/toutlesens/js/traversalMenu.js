@@ -38,7 +38,7 @@ var traversalMenu = (function () {
         self.findTraversalNode = function (type) {
 
             toutlesensController.currentActionObj = {type: 'findShortestPath', stage: type}
-            toutlesensController.setFindPanelExpandTree(true);
+            toutlesensController.setRightPanelAppearance(true);
             var nodeDivDetach = $("#nodeDivDetachable").detach();
             $("#traversalFindDiv").append(nodeDivDetach);
             $("#word").focus();
@@ -107,7 +107,7 @@ var traversalMenu = (function () {
                     currentDisplayType = "VISJS-NETWORK";
                   //  var data
                     visjsGraph.draw("graphDiv", connectors.neoResultsToVisjs(data));
-                    toutlesensController.setFindPanelExpandTree();
+                    toutlesensController.setRightPanelAppearance();
                     filters.init(data);
 
                     if (data.length == 0) {
@@ -140,7 +140,7 @@ var traversalMenu = (function () {
                     $("#shortestPathDistance").text("Pathes between " + self.context.source.name + " and " + self.context.target.name + " distance : " +  self.context.currentDistance)
 
                     visjsGraph.draw("graphDiv", connectors.neoResultsToVisjs(data));
-                    toutlesensController.setFindPanelExpandTree();
+                    toutlesensController.setRightPanelAppearance();
                     filters.init(data);
 
 

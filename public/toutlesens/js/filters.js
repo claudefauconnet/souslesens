@@ -57,6 +57,7 @@ var filters = (function () {
 
         }
         labels.splice(0, 0, "");
+        relTypes.splice(0, 0, "");
         common.fillSelectOptionsWithStringArray(propertiesSelectionDialog_labelSelect, labels);
         common.fillSelectOptionsWithStringArray(propertiesSelectionDialog_relTypeSelect, relTypes);
 

@@ -157,10 +157,19 @@ self.generateExternalImg(src);
 }
 
 
+
+    self.associateExternalResourceToNode = function () {
+        var source = $("#externalSourceSelect").val();
+        var prop = {};
+        prop["uri_" + source] = currentExternalUri;
+        modifyData.updateProperties(currentObject, prop);
+
+    }
+
    self.showExternalResourceDetails=function(uri){
 	currentExternalUri=uri;
 	$("#tabs-mainPanel").tabs("option", "active", 2);
-	$("#nodeDetailsDiv").html("  <button onclick='associateExternalResourceToNode()'>"+
+	$("#nodeDetailsDiv").html("  <button onclick='self.associateExternalResourceToNode()'>"+
 		"Associer  cette page au noeud courant </button><br"+
 		"<iframe width='"+((totalWidth / 4 * 3) - 50)+"' height='"+(totalHeight - 150)+"' src='"+uri+"'>");
 //	$("#nodeDetailsDiv").attr("src",uri);

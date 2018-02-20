@@ -47,7 +47,7 @@ var advancedSearch = (function () {
                             infoGenericDisplay.loadTreeFromNeoResult("#", data);
                         }
                         setTimeout(function(){
-                            toutlesensController.setFindPanelExpandTree(true);
+                            toutlesensController.setRightPanelAppearance(true);
                             infoGenericDisplay.expandAll("treeContainer");
                         },500)
 
@@ -60,7 +60,7 @@ var advancedSearch = (function () {
             toutlesensData.searchNodes(subGraph, searchObj.label, value, "matchStr", Gparams.jsTreeMaxChildNodes, 0,function(err,result){
                 infoGenericDisplay.loadSearchResultIntree(err,result);
                 setTimeout(function(){
-                    toutlesensController.setFindPanelExpandTree(true);
+                    toutlesensController.setRightPanelAppearance(true);
                     infoGenericDisplay.expandAll("treeContainer");
                 },500)
 

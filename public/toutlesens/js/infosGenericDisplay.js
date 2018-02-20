@@ -830,15 +830,7 @@ var infoGenericDisplay = (function () {
         toutlesensController.checkMaxNumberOfNodeRelations(parentId, Gparams.jsTreeMaxChildNodes, function () {
             currentObject = node.data;
             currentObject.id = parentId;
-            /*  if (toutlesensController && currentDisplayType && currentDisplayType == "CARDS") {
 
-                  toutlesensController.onVisButton("CARDS");
-
-              }
-              if (toutlesensController && currentDisplayType && currentDisplayType != "FORM") {
-                  toutlesensController.generateGraph(parentId, toutlesensController.drawGraph);
-
-              }*/
 
             if (toutlesensController.currentActionObj.type=="findNode") {
                 node = ids[parentJstreeId];

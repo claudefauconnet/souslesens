@@ -108,7 +108,7 @@ var toutlesensData = (function () {
 
                     toutlesensController.setMessage("No results", blue);
                     $("#waitImg").css("visibility", "hidden");
-                    toutlesensController.cleanTabDivs();
+
 
                     return -1;
                 }
@@ -683,7 +683,7 @@ var toutlesensData = (function () {
     }
 
 
-    self.showInfos2 = function (id, callback) {
+    self.getNodeInfos = function (id, callback) {
         query = "MATCH (n) WHERE ID(n) =" + id + " RETURN n ";
 
         self.executeNeoQuery(QUERY_TYPE_MATCH, query, function (d) {
@@ -984,266 +984,13 @@ var toutlesensData = (function () {
     }
 
 
-    self.jsonToHierarchyTree = function (json, groupBy) {
-        if (Array.isArray(json))
-            self.toFlareJson(json);
-
-        self.transformTree = function (node, hierarchNode, levelX, id) {
-            var labels = {};
-            hierarchNode.children = [];
-            var layerIndex = 0;
-            if (!node.children)
-                return;
 
 
-            var labelCardinality = {};
-            for (var i = 0; i < node.children.length; i++) {
-                if (labelCardinality[node.children[i].label] == null) {
-                    labelCardinality[node.children[i].label] = 1;
-                } else {
-                    labelCardinality[node.children[i].label] += 1;
-                }
-
-            }
 
 
-            for (var i = 0; i < node.children.length; i++) {
-                if (i == 0)
-                    levelX++;
-                var childLabel = node.children[i].label;
-
-                var groupLabels = labelCardinality[node.children[i].label] > 2 ? true : false;
-
-                if (levelX < 3 && groupLabels) {// on ne groupe les
-                    // noeud de meme
-                    // label q'au
-                    // premier niveau ou
-                    // si'l y en a
-                    // plusieurs
-                    if (!labels[childLabel]) {
-                        labels[childLabel] = {
-                            name: childLabel + "#" + levelX + (100 * layerIndex),
-                            children: [],
-                            level: levelX,
-                            value: 0,
-                            rate: 0,
-                            shape: "textBox",
-                            color: nodeColors[childLabel],
-                            relType: node.children[i].relType,
-                            relDir: node.children[i].relDir,
-                            relProperties: {},
-                            id: id++,
-                            nodeType: "label",
-                            parentNodeType: "root"
-                        };
-                        if (node.children[i].decoration && node.children[i].decoration.groupOnGraph == true) {// le label de decoration remplace le label Neo4j
-                            var color = "grey";
-                            if (node.children[i].decoration.color)
-                                color = node.children[i].decoration.color;
-                            labels[childLabel].color = color;
 
 
-                        }
-                        if (i == 0)
-                            levelX++;
-                        // layerIndex+=1;
-                        //
-                    }
 
-                    labels[childLabel].value += 1;
-                    labels[childLabel].rate += 1;
-                }
-                var childNode = {
-                    name: node.children[i].name + "_" + levelX,
-                    value: 1,
-                    rate: 1,
-                    level: levelX + 1,
-                    label: node.children[i].label,
-                    id: node.children[i].id,
-                    color: nodeColors[childLabel],
-                    relType: node.children[i].relType,
-                    relDir: node.children[i].relDir,
-                    relProperties: {},
-                    id: node.children[i].id,
-                    nodeType: "node",
-                    neoAttrs: node.children[i].neoAttrs
-
-                }
-                if (node.children[i].decoration) {
-                    childNode.decoration = node.children[i].decoration
-                }
-                var hiddenChildren = node.children[i].hiddenChildren;
-                if (hiddenChildren && hiddenChildren.length > 0)
-                    childNode.hiddenChildren = hiddenChildren;
-
-
-                self.transformTree(node.children[i], childNode, levelX);
-
-                if (levelX < 3 && groupLabels) {// on ne groupe les
-                    // noeud de meme
-                    // label q'au
-                    // premier niveau ou
-                    // si'l y en a
-                    // plusieurs
-                    childNode.parentNodeType = "label";
-                    labels[childLabel].children.push(childNode);
-                } else {
-                    childNode.parentNodeType = "node";
-                    hierarchNode.children.push(childNode)
-                }
-
-            }
-
-            for (var label in labels) {
-                hierarchNode.children.push(labels[label]);
-            }
-
-        }
-
-        var hierRoot = {
-            name: "[" + json.label + "] " + json.name,
-            id: json.id,
-            color: nodeColors[json.label],
-            level: 0,
-            isRoot: true,
-            children: []
-
-        }
-        if (json.decoration) {
-            hierRoot.decoration = json.decoration;
-        }
-
-        self.transformTree(json, hierRoot, 0, 1000);
-
-        /*
-         * for(var label in labels){ hierRoot.children.push(labels[label]); }
-         */
-        hierRoot.value = hierRoot.children.length
-        hierRoot.rate = hierRoot.children.length
-
-        return hierRoot;
-
-    }
-
-    /*******************************************************************************
-     * Tree********************************************
-     * *******************************************************************************************************************************************************************
-     ******************************************************************************/
-    self.prepareTreeData = function (neoResult) {
-        $("#spreadSheetDiv").css("visibility", "hidden");
-        toutlesensController.showInfosCallback(neoResult);
-        var nameLength = 30;
-        var data = neoResult[0].data;
-        var variables = neoResult[0].columns;
-
-        if (variables.length < 2)
-            return;
-
-        var nodes = {};
-        toutlesensController.setMessage(data.length + " rows retrieved", green);
-        var distinctParentNodes = {};
-        var parentsVar = 0;
-        if (currentVariable)
-            parentsVar = variables.indexOf(currentVariable);
-        // selection des noeuds parents
-        for (var i = 0; i < data.length; i++) {
-            var row = data[i].row;
-            var obj = row[parentsVar];
-            if (!distinctParentNodes[obj.id]) {
-                distinctParentNodes[obj.id] = {
-                    _id: obj.id + "_" + treeLevel,
-                    name: obj.name,// + " " + obj.id + "_" + treeLevel,
-                    label: obj.label,
-                    children: []
-                };
-            }
-        }
-        // remplissages des enfants
-
-        var childrenVar = [];
-        for (var i = 0; i < variables.length; i++) {
-            if (variables[i] != parentsVar)
-                childrenVar.push(i)
-        }
-        ;
-
-        for (var key in distinctParentNodes) {
-
-            var index = 0;
-            for (var i = 0; i < data.length; i++) {
-                var row = data[i].row;
-                var obj = row[parentsVar];
-                if (key == "" + obj.id) {
-                    // var childObj = row[childrenVar[0]];
-                    var childObj = row[1];
-                    distinctParentNodes[key].children.push({
-                        _id: childObj.id + "_" + treeLevel,
-                        name: childObj.name,// + " " + childObj.id + "_"+
-                        // treeLevel,
-                        label: childObj.label,
-                        children: []
-                    })
-                }
-            }
-        }
-        var root = {};
-        if (oldTreeRootNode && treeSelectedNode) {
-            root = oldTreeRootNode;
-            var id = treeSelectedNode.id;
-
-            treeSelectedNode = null;
-            toutlesensController.findNodeInTree(id, oldTreeRootNode);
-            if (!root2)
-                return;
-            if (root2 && root2.children)
-                return;
-            root2.children = [];
-            var key2;
-            for (var key in distinctParentNodes) {
-                for (var i = 0; i < distinctParentNodes[key].children.length; i++) {// on
-                    // ajoute
-                    // les
-                    // nouveaux
-                    // noeuds
-                    // à
-                    // l'ancien
-                    // arbre
-                    var newChild = distinctParentNodes[key].children[i];
-                    var p = newChild._id.indexOf("_");
-
-                    var newId = newChild._id.substring(0, p);
-                    toutlesensController.findNodeInTree(newId, oldTreeRootNode);
-                    if (oldChild) {// si le noeud existe dejà on ne l'ajoute pas
-                        ;// console.log(JSON.stringify(oldChild));
-                        continue;
-                    }
-
-                    root2.children.push(newChild);
-                }
-            }
-
-            root = oldTreeRootNode;
-
-        } else {
-            /*
-             * var root = {
-             *
-             * id : -1, isRoot : true, name : "..", // name : "-" + currentVariable,
-             * children : [] } for ( var key in distinctParentNodes) {
-             *
-             * root.children.push(distinctParentNodes[key]); }
-             */
-            for (var key in distinctParentNodes) {
-                var root = distinctParentNodes[key];
-            }
-        }
-
-        oldTreeRootNode = root;
-        treeLevel += 1;
-        if (!d3tree)
-            d3tree = new d3treeGraph($("#graphDiv"));
-        d3tree.drawTree(root);
-    }
 
     self.formatTreeToCsv = function (json) {
         self.recursiveSetParent = function (node) {
@@ -1487,16 +1234,7 @@ var toutlesensData = (function () {
                 }
 
 
-                if (resultType == "count") {
-                    var count = data[0].count
-                    toutlesensController.initResultPagination(count);
-                } else if (resultType == "displayStartNodesPage") {
-                    toutlesensController.fillLabelsPage(data);
-                } else if (resultType == "nodeListHTML") {
-                    textOutputs.drawNodesOnlyTable(data);
 
-                } else
-                    toutlesensController.fillWordsSelect(data);
 
             },
             error: function (xhr, err, msg) {
