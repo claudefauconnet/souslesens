@@ -106,8 +106,7 @@ var restAPI = {
                 requestData = fs.readFileSync("./uploads/requests_" + fileName + ".json");
             if (requestData) {
                 requestData = JSON.parse("" + requestData);
-                //   for (var i = 0; i < requestData.length; i++) {
-                //  deleteMappings(requestData, subGraph)
+
                 for (var key in requestData) {
                     if (requestData[key].name) {
                         if (requestData[key].name.indexOf("Nodes_") == 0) {
@@ -484,29 +483,6 @@ var execNeoUpdate = function (sourceType, dbName, subGraph, nodeLabels, relTypes
         })
     })
 }
-var deleteMappings = function (mappings, subGraph) {
-    for (var key in mappings) {
-        if (mappings[key].name.indexOf("Nodes_") == 0) {
-            var request = mappings[key].request;
-
-            try {
-
-                var path = "./uploads/neoNodesMapping_" + subGraph + "_" + request.label + "_" + request.mongoKey + ".js";
-                if (fs.existsSync(path)) {
-                    fs.unlinkSync(path);
-                }
-
-
-            }
-
-            catch
-                (e) {
-                console.log(e);
-            }
-        }
-    }
-}
-
 
 module.exports = restAPI;
 

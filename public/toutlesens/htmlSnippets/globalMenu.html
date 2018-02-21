@@ -1,0 +1,36 @@
+<table>
+    <tr>
+
+
+    <tr>
+        <td colspan="2">
+            control panel
+            <select onchange="switchanalyzePanelDisplay(this)">
+                <option></option>
+                <option>show</option>
+                <option>hide</option>
+            </select>
+
+
+        </td>
+    </tr>
+
+
+    <tr>
+        <td>
+            <button onclick=" Schema.showSchemaConfigDialog();$('#dialog').dialog('close');">Schema...</button>
+        </td>
+    </tr>
+
+
+    <script>
+        function switchanalyzePanelDisplay(select) {
+            var val = $(select).val();
+            if (val == "hide")
+                toutlesensController.setResponsiveDimensions(0);
+            else
+                toutlesensController.setResponsiveDimensions(rightPanelWidth);
+            $("#mainButtons").css("visibility", "visible");
+
+        }
+    </script>

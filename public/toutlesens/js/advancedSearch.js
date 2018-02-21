@@ -6,13 +6,12 @@ var advancedSearch = (function () {
 
 
         $("#dialog").load("htmlSnippets/advancedSearchMenu.html", function () {
-            //  self.initLabelPropertySelection(label);
             $("#dialog").dialog("option", "title", "Advanced search");
             $("#dialog").dialog("open");
             toutlesensController.initLabels(advancedSearchDialog_LabelSelect);
-            filters.initLabelPropertySelection("",advancedSearchDialog__propsSelect)
+            filters.initLabelProperty("",advancedSearchDialog__propsSelect)
             $("#advancedSearchDialog__propsSelect").val(Schema.getNameProperty())
-            //  self.initLabels(currentQueriesDialogTargetLabelSelect);
+
         })
     }
     self.searchNodes = function () {

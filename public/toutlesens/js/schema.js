@@ -101,7 +101,7 @@ var Schema = (function () {
                 $("#schemaConfig_configSchemaDiv").css("visibility", "visible");
 
 
-            $("#subGraph").val(subGraph);//  self.initLabelPropertySelection(label);
+            $("#subGraph").val(subGraph);//  self.initLabelProperty(label);
 
 
         })

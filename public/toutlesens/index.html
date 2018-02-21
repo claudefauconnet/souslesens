@@ -80,7 +80,7 @@
     <script src="js//externalRessourcesCommon.js"></script>
     <script src="js//externalRessourcesDbPedia.js"></script>
     <script src="js//externalRessourcesBNF.js"></script>
-    -->
+
 
     <script src="js/d3common.js"></script>
     <script src="js/d3legend.js"></script>
@@ -94,11 +94,11 @@
     <script src="js/d3treemap.js"></script>
     <script src="js/d3forceCollapseClass.js"></script>
     <script src="js/d3tree.js"></script>
-    <script src="js/d3schema.js"></script>
+    <script src="js/d3schema.js"></script>  -->
 
     <script src="js/cards.js"></script>
 
-
+    <script src="../common/js/common.js"></script>
     <script src="../common/js/util.js"></script>
 
 
@@ -127,7 +127,7 @@
     <script src="./js/infosGenericDisplay.js"></script>
 
     <script src="./js/neoToMongo.js"></script>
-    <script src="../common/js/devisuProxy.js"></script>
+
 
     <script src="js/advancedSearch.js"></script>
     <script src="../common/js/others/tableFlip.js"></script>
@@ -230,7 +230,7 @@
 
         $(function () {
 
-            queryParams = toutlesensController.getQueryParams(document.location.search);
+            queryParams = common.getQueryParams(document.location.search);
             customizeUI.init();
             subGraph = queryParams.subGraph;
             if (!subGraph)
@@ -322,7 +322,7 @@
             });
             $("#findTabs").tabs({
                 activate: function (event, ui) {
-                    toutlesensController.setFindPanelExpandTree(true);
+                    toutlesensController.setRightPanelAppearance(true);
                     var index = ui.newTab.index();
                     if (index == 0) {
                         toutlesensController.currentActionObj = {type: "findNode"}
@@ -515,25 +515,26 @@
 
 
     <div id="graphDiv"></div>
+
 </div>
 
 
 <div id="mainButtons">
     <!--   <input type="image" title="Data menu" height="40px" onclick="mainMenu.showDataMenu()" id="dataMenuButton"
               src="images/data.png"/>-->
-    <input type="image" title="Graph menu" height="20px" onclick="mainMenu.showGraphDisplayMenu()"
-           id="parametersMenuButton" src="images/parameters.png"/>
-    <input type="image" title="Take a snapshot" height="20px" onclick="visjsGraph.saveGraph()"
-           id="snapShotMenuButton" src="images/snapshot.png"/>
-    <input type="image" title="Previous display" height="20px"
-           onclick="visjsGraph.previousGraph()" id="previousMenuButton"
-           src="images/previous.jpg"/>
+    <input type="image" title="Graph menu" height="20px" onclick="mainMenu.showGlobalMenu()" id="parametersMenuButton" src="images/parameters.png"/>
+    &nbsp;<input type="image" alt="search all nodes" height="20px"   onclick="toutlesensController.showAll()"   id="searchAllButton" src="images/all.png"/></td>
+
+    <input type="image" title="Take a snapshot" height="20px" onclick="visjsGraph.saveGraph()" id="snapShotMenuButton" src="images/snapshot.png"  class="graphDisplayed"/>
+    <input type="image" title="Export to text" height="20px" onclick="toutlesensController.dispatchAction('showGraphText')" id="toTextMenuButton" src="images/text.png"  class="graphDisplayed"/>
+    <input type="image" title="Previous display" height="20px"  onclick="visjsGraph.previousGraph()" id="previousMenuButton" src="images/previous.jpg"/>
     <input type="image" title="Next display" height="20px" onclick="visjsGraph.nextGraph()"
            id="nextMenuButton" src="images/next.jpg"/>
-    <input type="image" title="Next display" height="20px" onclick="toutlesensController.dispatchAction('addNode')";
-           id="newNodeButton" src="images/new.jpg"/>
+    <input type="image" title="Next display" height="20px" onclick="toutlesensController.dispatchAction('addNode')"  class="canModify";
+           id="newNodeButton" src="images/newNode.png"/>
     <img id="waitImg" src="images/waitAnimated.gif" width="20px"
          style="visibility: hidden;">
+    <div id="graphLegendDiv"></div>
 </div>
 
 <div id="findDiv">
@@ -563,18 +564,14 @@
                                                    size="10"></td>
                                         <td><input type="image" height="20px" src="images/erase.png"
                                                    onclick="$('#word').val('')"></td>
-                                    </tr>
-                                    <tr>
-                                        <td><span id='lang_1'></span></td>
+
+
                                         <td><input type="image" alt="<span id='lang_XX'>search</span>"
                                                    height="20px"
                                                    onclick="advancedSearch.showDialog()"
                                                    id="searchButton"
                                                    src="images/advancedSearch2.png"/>
-                                            &nbsp;&nbsp;<input type="image" alt="search all nodes" height="20px"
-                                                               onclick="toutlesensController.showAll()"
-                                                               id="searchAllButton"
-                                                               src="images/all.png"/></td>
+
 
                                     </tr>
 
@@ -607,7 +604,7 @@
 
 
             <div id="relationDiv">
-                type <select id="findRelationsSelect" onchange="toutlesensController.findRelationGraph()">
+                type <select id="findRelationsSelect" onchange="toutlesensController.generateGraphFromRelType(this)">
 
             </select>
                 <div id="findRelationsCurrentType"></div>
@@ -698,27 +695,25 @@
             <li><a href="#infosDiv"><span id='lang_60'>Infos  </span></a></li>
             <li><a href="#filterDiv"><span id='lang_60'>Filter </span></a></li>
             <li><a href="#highlightDiv"><span id='lang_60'>Highlight </span></a></li>
+            <li><a href="#graphOptionsDiv"><span id='lang_60'>Graph </span></a></li>
 
         </ul>
         <div id="infosDiv">
             <div id="nodeInfoMenuDiv"></div>
         </div>
         <div id="filterDiv">
-            <div id="graphLegendDiv">
-                <div id="paintDiv"></div>
-                <!-- <div> Outline nodes<input id="visJsSearchGraphButton" style="visibility: hidden"></div>-->
-                <div id="filtersDiv"></div>
-
-                <div id="innerLegendDiv"></div>
-                <div id="graphMessage" class="message"><br></div>
-                <div id="relInfoDiv"></div>
-            </div>
 
         </div>
 
         <div id="highlightDiv">
 
         </div>
+
+        <div id="graphOptionsDiv">
+
+        </div>
+
+
 
     </div>
 

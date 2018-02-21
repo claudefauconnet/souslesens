@@ -46,6 +46,7 @@ var Gparams = {
 
     searchInputKeyDelay:500,
     searchInputMinLength:2,
+    showRelationNames:true,
 
 
 
@@ -130,7 +131,7 @@ var Gparams = {
     minOpacity: .3,
     d3ForceParams: {distance: 200, charge: -500, gravity: .25},
     htmlOutputWithAttrs: true,
-    showRelationNames: false,
+
     isInframe: false,
     treeGraphVertSpacing: 35,
     smallDialogSize: {w: 300, h: 400},

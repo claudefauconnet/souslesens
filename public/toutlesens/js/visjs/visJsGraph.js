@@ -90,26 +90,16 @@ var visjsGraph = (function () {
 
         };
 
-        var manipulation = {
-            enabled: true,
-            initiallyActive: true,
 
-            addNode: function (data, callback) {
-                // filling in the popup DOM elements
-
-            }
-            ,
-            editNode: function (data, callback) {
-                // filling in the popup DOM elements
-
-            }
-            ,
-            addEdge: function (data, callback) {
+        options.manipulation = true;
+        if (graphLayoutSelect) {// not loaded at the beginning
+            var layoutObj = self.setLayoutOption(graphLayoutSelect)
+            for (var key in layoutObj) {
+                options[key] = layoutObj[key]
 
             }
         }
 
-        options.manipulation = true;
         if (data.edges.length > 1000)
             options.layout = {improvedLayout: false}
 
@@ -221,6 +211,36 @@ var visjsGraph = (function () {
 
 
     }
+
+
+    self.setLayoutOption = function (select, apply) {
+
+        var layoutArray = $(select).val().split(" ");
+        var layoutType = layoutArray[0];
+        var param = layoutArray[1];
+
+        var layoutObj = {
+             edges: {
+                 smooth: true,
+                 arrows: {to : true }
+             }
+        };
+
+        if (layoutType == "hierarchical") {
+            var layoutObj={layout:{hierarchical:{sortMethod:param}}}
+
+
+
+
+        }
+        if (layoutType == "randomSeed") {
+            layoutObj.layout = {randomSeed: param}
+        }
+        if (apply)
+            network.setOptions(layoutObj)
+        return (layoutObj)
+
+    }
     self.clusterByLabel = function () {
         var label = paint.currentLabel;
         if (!label || !nodeColors[label])
@@ -248,6 +268,56 @@ var visjsGraph = (function () {
         };
         network.cluster(clusterOptionsByData);
 
+    }
+
+
+    self.drawLegend = function (labels, relTypes) {
+        var nodes = [];
+        var x = 10;
+        var y = -50;
+        for (var i = 0; i < labels.length; i++) {
+            var label = labels[i];
+            if (!nodeColors[label])
+                continue;
+            labelObj = {
+                id: label,
+                shape: "square",
+                size: 5,
+                color: nodeColors[label],
+                label: label,
+                font: {size: 10},
+                x: x,
+                y: y,
+                // margin: { top: 5, right:5, bottom:5, left: 5 }
+            }
+            x += 50
+            nodes.push(labelObj);
+        }
+        ;
+
+
+        var data = {
+            nodes: nodes,
+            edges: []
+        };
+        var options = {
+            nodes: {
+                shape: 'square'
+            }
+        };
+        var container = document.getElementById("graphLegendDiv");
+        var network = new vis.Network(container, data, options);
+        network.on("click", function (params) {
+
+            var label = params.nodes[0];
+            currentLabel = label;
+            currentObject.id == null;
+            return toutlesensController.generateGraph(null, {applyFilters: true},function(err,result){
+                currentLabel = null;
+            });
+
+
+        });
     }
 
 
@@ -354,6 +424,7 @@ var visjsGraph = (function () {
         for (var key in self.edges._data) {
             if (show) {
                 self.edges._data[key].label = self.edges._data[key].type;
+                self.edges._data[key].label.arrows = 'to';
                 //  self.edges._data[key].font = {background: "red","font-style": 'italic', "font-size": "8px",strokeWidth: 0}
                 self.edges._data[key].font = {size: 8, color: 'grey', face: 'arial'}
             }
@@ -386,7 +457,8 @@ var visjsGraph = (function () {
 
     self.changeLayout = function (select) {
         self.layout = $(select).val();
-        var options = {}
+        var options = { }
+
         if (self.layout == "physics") {
 
             options.physics = {
@@ -485,6 +557,44 @@ var visjsGraph = (function () {
 
     }
 
+    self.graph2Text = function () {
+        var str0 = "";
+        var graphNodesArray = self.exportNodes();
+        var graphData = {}
+        for (var i = 0; i < graphNodesArray.length; i++) {
+            var node = graphNodesArray[i];
+            graphData[node.id] = node;
+        }
+
+
+        function node2Text(node) {
+
+            var str = "";
+            var properties = node.neoAttrs;
+            var color = nodeColors[node.neoLabel];
+            var connections = node.connections
+            str += "<br>" + "[" + node.labelNeo + "]" + JSON.stringify(properties)
+            str += "<ul>"
+            for (var i = 0; i < connections.length; i++) {
+                str += "<li>"
+                var linkedNode = graphData["" + connections[i]];
+                str += "[" + linkedNode.labelNeo + "]" + linkedNode.neoAttrs[Schema.getNameProperty()]
+                str += "</li>"
+
+
+            }
+            str += "</ul>"
+            return str;
+
+        }
+
+        for (var key in graphData) {
+            var node = graphData[key];
+            str0 += node2Text(node);
+        }
+
+        return str0;
+    }
 
     self.importNodes = function (inputData) {
 
@@ -617,22 +727,27 @@ var visjsGraph = (function () {
         self.importNodes(data);
     }
 
-    self.filterGraph = function (property, operator, value, type) {
+    self.filterGraph = function (objectType, property, operator, value, type) {
         self.saveGraph();
+        if (objectType == "node") {
+            for (var key in  self.nodes._data) {
+                var node = self.nodes._data[key];
+                if (!paint.isLabelNodeOk(node.neoAttrs, property, operator, value, type)) {
 
-        for (var key in  self.nodes._data) {
-            var node = self.nodes._data[key];
-            if (!paint.isLabelNodeOk(node.neoAttrs, property, operator, value, type)) {
-
-                self.nodes.remove({id: key})
-                var connectedEdges = network.getConnectedEdges(key);
-                for (var i = 0; i < connectedEdges.length; i++) {
-                    var connectedEdgeId = connectedEdges[i];
-                    self.edges.remove({id: connectedEdgeId})
+                    self.nodes.remove({id: key})
+                    var connectedEdges = network.getConnectedEdges(key);
+                    for (var i = 0; i < connectedEdges.length; i++) {
+                        var connectedEdgeId = connectedEdges[i];
+                        self.edges.remove({id: connectedEdgeId})
+                    }
                 }
+
+
             }
+        }
+        else if (objectType == "relation") {
 
-
+            //    TO DO   !!!!
         }
     }
 
@@ -654,9 +769,9 @@ var visjsGraph = (function () {
             $("#graphPopup").html(toutlesensDialogsController.getNodeInfoButtons());
         }
 
-       node.x=-100;
-        node.y=-100;
-        node.color=nodeColors[node.neoLabel]
+        node.x = -100;
+        node.y = -100;
+        node.color = nodeColors[node.neoLabel]
 
         self.nodes.add(node);
     }
@@ -672,7 +787,7 @@ var visjsGraph = (function () {
     }
 
 
-        return self;
+    return self;
 
 
 })()

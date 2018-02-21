@@ -22,7 +22,7 @@ var connectors = (function () {
             var relProperties = resultArray[i].relProperties;
             if(!relProperties)
                 relProperties=[];
-
+            var startLabels=resultArray[i].startLabels;
 
 
             var ids = resultArray[i].ids;
@@ -34,6 +34,7 @@ var connectors = (function () {
                     var nodeNeo = nodes[j].properties;
 
                     var labels = nodes[j].labels;
+
                     var labelVisjs=nodeNeo[Gparams.defaultNodeNameProperty];
                     if(labelVisjs &&  labelVisjs.length>Gparams.nodeMaxTextLength)
                         labelVisjs=labelVisjs.substring(0,Gparams.nodeMaxTextLength)+"...";
@@ -130,20 +131,34 @@ var connectors = (function () {
 
 
             for (var j = 0; j < rels.length; j++) {
+
+                var startLabel= startLabels[j][0];
+                var from,to,queryId;
+                if(startLabel!=labels[j]){
+                    from=ids[j];
+                    to=ids[j+1];
+                    queryId=ids[j+1];
+                }else {
+                    from=ids[j+1];
+                    to=ids[j];
+                    queryId=ids[j+1];
+                }
+
+
                 var rel = rels[j];
-                var color = linkColors[rel];
+                var color ="#99d";//linkColors[rel];
                 var relObj = {
-                    from: ids[j],
-                    to: ids[j + 1],
+                    from: from,
+                    to: to,
                     type: rel,
                     neoId: relProperties[j]._id,
                     neoAttrs: relProperties[j].properties,
                     color: color,
-                    width:2
+                    width:1
                     // font:{background:color},
                 }
 
-                if(toutlesensData.queriesIds.indexOf(relObj.to)>-1) {
+                if(toutlesensData.queriesIds.indexOf(queryId)>-1) {
                     relObj.width = Gparams.outlineEdgeWidth;
                     relObj.color=Gparams.outlineColor;
                 }
@@ -160,8 +175,10 @@ var connectors = (function () {
                 else
                     uniqueRels.push(relUniqueId);
 
-                if (Gparams.showRelationNames === true)
+                if (Gparams.showRelationNames == true) {
                     relObj.label = relObj.type;
+                    relObj.arrows={to:{scaleFactor:0.5}}
+                }
 
 
                 visjsData.edges.push(relObj);

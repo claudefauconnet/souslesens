@@ -1,53 +1,5 @@
 <table>
-    <tr>
-        <td colspan="3">
 
-            <!--       <table class="visButtonTable" id="visButtonTableDiv">
-
-
-         <tr>
-                    <td><input type="image" height="30px" title="form" class="displayIcon"
-                               onclick="toutlesensController.onVisButton('FORM',this)"
-                               id="formButton"
-                               src="images/form.png"/></td>
-                    <td><input type="image" height="30px" title="fleur" class="displayIcon"
-                               onclick="toutlesensController.onVisButton('FLOWER',this)"
-                               id="treeFlowerButton"
-                               src="images/flower.png"/></td>
-                    <td><input type="image" height="30px" title="graphBulk" class="displayIcon"
-                               onclick="toutlesensController.onVisButton('SIMPLE_FORCE_GRAPH_BULK',this)"
-                               id="graphBulkButton"
-                               src="images/graphBulk.png"/></td>
-
-                    <td><input type="image" height="30px" class="displayIcon"
-                               title="<span id='lang_9'>carte</span>"
-                               onclick="toutlesensController.onVisButton('SIMPLE_FORCE_GRAPH',this)"
-                               id="graphButton" src="images/graph.png"/></td>
-                    <td><input type="image" height="30px" title="cards" class="displayIcon"
-                               onclick="toutlesensController.onVisButton('CARDS',this)"
-                               id="cardsButton"
-                               src="images/cards.png"/></td>
-
-                    <!--<td><input type="image" class="displayIcon"
-                                        title="<span id='lang_7'>arbre</span>" height="30px"
-                                        onclick="toutlesensController.onVisButton('TREE',this)"
-                                        id="treeButton"
-                                        src="images/tree.png"/></td>
-
-
-                    <td><input type="image" height="30px" title="treeMap" class="displayIcon"
-                               onclick="toutlesensController.onVisButton('TREEMAP',this)"
-                               id="treemapButton"
-                               src="images/treemap.png"/></td>
-
-
-                </tr>
-            </table>-->
-
-
-        </td>
-
-    </tr>
     <tr valign="middle">
         <td><span id='lang_15'>Profondeur</span>&nbsp;<input
                 id="depth" value="1" size="1"></td>
@@ -62,48 +14,31 @@
                    onchange="visjsGraph.displayRelationNames()">nom des relations
 
 
-
         </td>
     </tr>
 
+
     <tr>
-        <td colspan="2" >
-            control panel
-            <select onchange="switchanalyzePanelDisplay(this)">
-                <option></option>
-                <option>show</option>
-                <option>hide</option>
+        <td colspan="2">
+            layout
+            <select id="graphLayoutSelect" onchange="visjsGraph.setLayoutOption(this,true)">
+                <option>randomSeed 2</option>
+                <option>randomSeed 4</option>
+                <option>hierarchical directed</option>
+                <option>hierarchical hubsize</option>
             </select>
 
 
-
         </td>
     </tr>
 
-    <tr><td>
-       <button onclick=" Schema.showSchemaConfigDialog();$('#dialog').dialog('close');">Schema...</button>
-    </td>
-    </tr>
 
-    <tr><td>
-        <button onclick=" visjsGraph.saveGraph();$('#dialog').dialog('close');">ExportGraph</button>
-        <button onclick=" visjsGraph.reloadGraph();$('#dialog').dialog('close');">ImportGraph</button>
-    </td>
-    </tr>
-
-  <!--  <tr>
-        <td>Layout
+    <tr>
+        <td>
+            <button onclick=" visjsGraph.saveGraph();$('#dialog').dialog('close');">ExportGraph</button>
+            <button onclick=" visjsGraph.reloadGraph();$('#dialog').dialog('close');">ImportGraph</button>
         </td>
-        <td colspan="3">
-           <select onchange="visjsGraph.changeLayout(this)">
-               <option>physics</option>
-               <option>hierarchical</option>
-           </select>
-        </td>
-    </tr>-->
-
-
-
+    </tr>
 
 
 </table>
@@ -129,7 +64,7 @@
         value: 6,
         slide: function (event, ui) {
 
-            var scale=Math.log(ui.value/3)
+            var scale = Math.log(ui.value / 3)
             d3simpleForceLight.zoom(scale)
         }
     });
@@ -153,17 +88,9 @@
         value: 1,
         slide: function (event, ui) {
             $("#depth").val(ui.value);
-            toutlesensController.generateGraph(null,{applyFilters:true}, true);
+            toutlesensController.generateGraph(null, {applyFilters: true}, true);
         }
     });
 
-    function switchanalyzePanelDisplay(select){
-var val=$(select).val();
-if(val=="hide")
-    toutlesensController.setResponsiveDimensions(0);
-else
-    toutlesensController.setResponsiveDimensions(rightPanelWidth);
-        $("#mainButtons").css("visibility", "visible");
 
-    }
 </script>

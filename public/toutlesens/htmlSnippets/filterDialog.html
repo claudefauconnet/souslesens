@@ -1,10 +1,13 @@
 
 
 
-
-
 <div id="propertiesSelectionPropDiv" style="visibility: visible;">
-    Label<select id="propertiesSelectionDialog_labelSelect" onchange="filters.initLabelPropertySelection($(this).val(),propertiesSelectionDialog_propsSelect)"></select>
+    object<select id="propertiesSelectionDialog_ObjectTypeInput" onchange="filters.setLabelsOrTypes(this)">
+    <option selected="selected">node</option>
+    <option>relation</option>
+</select>
+
+    Label or type<select id="propertiesSelectionDialog_ObjectNameInput" onchange="filters.initProperty(null,$(this).val(),propertiesSelectionDialog_propsSelect)"></select>
     <br>
 Property
 
@@ -24,23 +27,21 @@ Property
 
 </select>
 <input id="propertiesSelectionDialog_valueInput">
-<input type="hidden" id="propertiesSelectionDialog_filterModeInput">
-<input type="hidden" id="propertiesSelectionDialog_typeInput">
+
+
 
 </div>
 
 
 
 <br>
-<button onclick="filters.filterGraphOnProperty(null,'only')">Apply</button>
+<button onclick="filters.filterOnProperty(null,'only')">Apply</button>
 <!--<button onclick="filters.filterOnProperty(null,'add')">Add</button> <br>-->
 <br>
 
 
-<div id="previouspropertiesDiv">
-<br>
-</div>
-<div id="propertiesSelectionDialog_currentFiltersDiv">
+<div id="filterMessage">
 
 </div>
+
 

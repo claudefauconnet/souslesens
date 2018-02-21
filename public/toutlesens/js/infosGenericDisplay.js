@@ -47,8 +47,6 @@ var infoGenericDisplay = (function () {
     self.isAddingRelation = false;
 
 
-
-
     self.initLabels = function (subGraph, callback) {
         self.clearNodePropertiesDiv();
         if (self.Neo4jStorage) {
@@ -109,7 +107,7 @@ var infoGenericDisplay = (function () {
     }
 
 
-    self.loadTree = function (label, parentId, _matchStr,treeId) {
+    self.loadTree = function (label, parentId, _matchStr, treeId) {
 
         var matchStr = "";
         ids = {};
@@ -156,17 +154,17 @@ var infoGenericDisplay = (function () {
 
                 // types[label] = {icon: "/toutlesens/icons/" + labels[label].icon}
             }
-            if(!treeId)
-                treeId=self.jsTreeDivId;
+            if (!treeId)
+                treeId = self.jsTreeDivId;
 
             var jsTree = $('#' + treeId);
             jsTree.jstree("destroy").empty();
             jsTree.on("select_node.jstree",
-                    function (evt, obj) {
+                function (evt, obj) {
 
-                        $(".jstree-themeicon").css("background-size", self.iconSize);
-                        self.onSelect(obj.node);
-                    })
+                    $(".jstree-themeicon").css("background-size", self.iconSize);
+                    self.onSelect(obj.node);
+                })
 
                 .on("loaded.jstree", function (evt, obj) {
                     $(".jstree-themeicon").css("background-size", self.iconSize);
@@ -221,10 +219,10 @@ var infoGenericDisplay = (function () {
 
                     }
                 ).bind("move_node.jstree", function (e, data) {
-                    return self.ondDropEnd(data);
+                return self.ondDropEnd(data);
 
 
-                });
+            });
             /*
              $(document).bind("dnd_move.vakata", function (data, element, helper, event) {
              self.ondDropEnd(data);
@@ -493,10 +491,10 @@ var infoGenericDisplay = (function () {
         currentMenuData = menuItem.item.data;
         currentMenuData.relation = menuItem.item.relation;
         currentNameProperty = Schema.getNameProperty(currentMenuData.relation.endLabel);
-        var whereSubGraph="";
-        if(self.subGraph!=Gparams.defaultSubGraph)
-            whereSubGraph=" where n.subGraph='" + self.subGraph +"'"
-        var matchStr = "MATCH (n:" + currentMenuData.relation.endLabel + ") "+whereSubGraph+" return n order by n." + currentNameProperty;
+        var whereSubGraph = "";
+        if (self.subGraph != Gparams.defaultSubGraph)
+            whereSubGraph = " where n.subGraph='" + self.subGraph + "'"
+        var matchStr = "MATCH (n:" + currentMenuData.relation.endLabel + ") " + whereSubGraph + " return n order by n." + currentNameProperty;
         var payload = {
             match: matchStr,
             nodeLabel: currentMenuData.relation.endLabel,
@@ -658,8 +656,8 @@ var infoGenericDisplay = (function () {
     self.formatResultToJtreeData = function (data, parentId, ancestors) {
         var labels = [];
         var jsonData = [];
-        var names=[];
-        var nameKey=Schema.getNameProperty();
+        var names = [];
+        var nameKey = Schema.getNameProperty();
         for (var i = 0; i < data.length; i++) {
             var label = data[i].n.labels[0];
             if (labels.indexOf(label) < 0) {
@@ -669,12 +667,12 @@ var infoGenericDisplay = (function () {
                 jsonData.push({parent: "#", text: label, id: label})
                 for (var j = 0; j < data.length; j++) {
 
-                        var childLabel = data[j].n.labels[0];
-                        if (childLabel == label) {
-                            var properties = $.extend(true, {}, data[j].n.properties);
-                            var name=properties[nameKey];
-                            if(names.indexOf(name)<0) {
-                                names.push(name);
+                    var childLabel = data[j].n.labels[0];
+                    if (childLabel == label) {
+                        var properties = $.extend(true, {}, data[j].n.properties);
+                        var name = properties[nameKey];
+                        if (names.indexOf(name) < 0) {
+                            names.push(name);
 
                             properties.label = label;
                             properties.neoId = data[j].n._id;
@@ -807,11 +805,11 @@ var infoGenericDisplay = (function () {
 
     self.onSelect = function (node) {
         var node = node;
-        if(node.parent=="#"){//label node
+        if (node.parent == "#") {//label node
 
-          currentLabel=node.text;
-            currentObject.id==null;
-          return  toutlesensController.generateGraph(null, {applyFilters:true});
+            currentLabel = node.text;
+            currentObject.id == null;
+            return toutlesensController.generateGraph(null, {applyFilters: true});
         }
 
         self.selectedNodeData = node.data;
@@ -832,22 +830,23 @@ var infoGenericDisplay = (function () {
             currentObject.id = parentId;
 
 
-            if (toutlesensController.currentActionObj.type=="findNode") {
+            if (toutlesensController.currentActionObj.type == "findNode") {
                 node = ids[parentJstreeId];
                 $("#tabs-radarRight").tabs("enable", 2);
                 self.showNodeData(node);
                 toutlesensController.addToHistory = true;
                 toutlesensController.generateGraph(parentId, {applyFilters: toutlesensController.drawGraph});
-            }else if( toutlesensController.currentActionObj.type=='findShortestPath'){
-               traversalMenu.setTraversalNode(toutlesensController.currentActionObj.stage,node.data);
-
+                return;
+            } else if (toutlesensController.currentActionObj.type == 'findShortestPath') {
+                traversalMenu.setTraversalNode(toutlesensController.currentActionObj.stage, node.data);
+                return;
             }
 
             /*   if (node.data.label)
              var label = node.data.label;*/
-            var whereSubGraph="";
-            if(self.subGraph!=Gparams.defaultSubGraph)
-                whereSubGraph=" and n.subGraph='" + self.subGraph +"'"
+            var whereSubGraph = "";
+            if (self.subGraph != Gparams.defaultSubGraph)
+                whereSubGraph = " and n.subGraph='" + self.subGraph + "'"
             var matchStr = "match (n)-[r]-(m) where ID(m)=" + parentId + whereSubGraph + " return n,r limit " + Gparams.jsTreeMaxChildNodes;
             var payload = {match: matchStr, parentLabel: label, parentId: parentId, limit: limit};
             self.callAPIproxy(payload, "retrieve", function (error, data) {
@@ -971,15 +970,15 @@ var infoGenericDisplay = (function () {
                     return;
                 }
                 $("#message").html("node saved");
-                if(callback){
-                    var node=result[0].n.properties;
-                    node.id=result[0].n._id
-                    node.neoLabel=result[0].n.labels[0];
-                    node.label=node.name
-                    callback( node);
+                if (callback) {
+                    var node = result[0].n.properties;
+                    node.id = result[0].n._id
+                    node.neoLabel = result[0].n.labels[0];
+                    node.label = node.name
+                    callback(node);
 
                 }
-              //  toutlesensController.replayGraph("same");
+                //  toutlesensController.replayGraph("same");
 
                 var node = result[0]
                 //  var node = self.addNodeToJstree(result[0], null, false);
@@ -1029,14 +1028,14 @@ var infoGenericDisplay = (function () {
                 }
                 $("#message").html("node saved");
 
-                if(callback) {
-                    var node=result[0].n.properties;
-                    node.id=result[0].n._id
-                    node.neoLabel=result[0].n.labels[0];
-                    node.label=node.name
-                    callback( node);
+                if (callback) {
+                    var node = result[0].n.properties;
+                    node.id = result[0].n._id
+                    node.neoLabel = result[0].n.labels[0];
+                    node.label = node.name
+                    callback(node);
                 }
-              //  d3graphCreation.addNode(self.currentLabel, setObj)
+                //  d3graphCreation.addNode(self.currentLabel, setObj)
                 //  toutlesensController.replayGraph("same");
 
 

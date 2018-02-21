@@ -17,7 +17,7 @@
 
 
 <div id="paintDialogPropDiv" class="paintDialogDiv" style="visibility: hidden">
-    Label<select id="paintDialog_labelSelect" onchange="filters.initLabelPropertySelection($(this).val(),paintDialog_propsSelect)">
+    Label<select id="paintDialog_labelSelect" onchange="filters.initLabelProperty($(this).val(),paintDialog_propsSelect)">
 
 </select>
 <br>
@@ -41,7 +41,7 @@
 
     <input id="paintDialog_valueInput">
 </div>
-    <input type="hidden" id="paintDialog_filterModeInput">
+    <input type="hidden" id="paintDialog_filterObjectTypeInput">
     <input type="hidden" id="paintDialog_typeInput">
     <!--<button onclick="filters.outLineProperty()">outline property</button>-->
 

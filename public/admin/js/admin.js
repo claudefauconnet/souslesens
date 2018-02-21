@@ -1012,7 +1012,7 @@ function initBatchNeoRefresh(type) {
 
     var str = "";
     var checked = "";//"' checked='checked' ";
-    var onclick = " onclick='startQueryFilterMode() '"
+    var onclick = " onclick='startQueryfilterObjectType() '"
     onclick = "";
     var noChecked = "";
     str += "<table>"

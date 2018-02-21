@@ -5,12 +5,10 @@
 
 <div id="advancedSearchDialog_Div" style="visibility: visible;">
     Label
-    <select id="advancedSearchDialog_LabelSelect" onchange="filters.initLabelPropertySelection($(this).val(),advancedSearchDialog__propsSelect)">
+    <select id="advancedSearchDialog_LabelSelect" onchange="filters.initLabelProperty($(this).val(),advancedSearchDialog__propsSelect)">
 
     </select>
- <!--  <br> Relation type
-    <select id="advancedSearchDialog__RelSelect" onchange="filters.initLabelPropertySelection($(this).val(),advancedSearchDialog__propsSelect)">
-      </select>-->
+
     <br>
     Property
 <select id="advancedSearchDialog__propsSelect">
@@ -34,7 +32,7 @@
 
 
     <button id="advancedSearchDialog_searchButton" onclick="advancedSearch.searchNodes()">Search</button>
-<input type="hidden" id="propertiesSelectionDialog_filterModeInput">
+<input type="hidden" id="propertiesSelectionDialog_ObjectTypeInput">
 <input type="hidden" id="propertiesSelectionDialog_typeInput">
 
 </div>

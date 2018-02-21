@@ -32,7 +32,7 @@ var paint = (function () {
         }
         labels.splice(0,0,"");
         common.fillSelectOptionsWithStringArray(paintDialog_labelSelect,labels);
-        filters.initLabelPropertySelection("",paintDialog_propsSelect);
+        filters.initLabelProperty("",paintDialog_propsSelect);
         $("#paintDialog_propsSelect").val(Schema.getNameProperty())
         self.initColorsPalette(10, "paintDialogPalette");
         self.onActionTypeSelect("outline")
@@ -59,14 +59,14 @@ var paint = (function () {
             //   $("#filtersDiv").css("visibility", "hidden")
             if (true || label) {
 
-              //  filters.initLabelPropertySelection(label, paintDialog_propsSelect);
+              //  filters.initLabelProperty(label, paintDialog_propsSelect);
                 $("#paintDialog_clusterNodesButton").css("visibility","visible");
                 $("#paintDialogTypeSpan").html("Node label :"+label)
             }
             else {
 
                 $("#paintDialog_clusterNodesButton").css("visibility","hidden")
-                filters.initRelationPropertySelection(relType, paintDialog_propsSelect);
+                filters.initRelationProperty(relType, paintDialog_propsSelect);
                 $("#paintDialogTypeSpan").html("Relation type :"+relType)
             }
             paint.initColorsPalette(10, "paintDialogPalette");
@@ -270,7 +270,7 @@ var paint = (function () {
             var radius = $("#paintDialog_circleRadiusInput").val();
             var property = $("#paintDialog_propsSelect").val();
             var value = $("#paintDialog_valueInput").val();
-            var filterMode = $("#paintDialog_filterModeInput").val();
+            var filterObjectType = $("#paintDialog_filterObjectTypeInput").val();
             var operator = $("#paintDialog_operatorSelect").val();
             var type = $("#paintDialog_typeInput").val();
         self.currentLabel=$("#paintDialog_labelSelect").val();

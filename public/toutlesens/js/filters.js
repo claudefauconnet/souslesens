@@ -27,6 +27,8 @@
 var filters = (function () {
     var self = {};
     self.currentSelectdFilters = [];
+    self.currentLabels = [];
+    self.currentRelTypes = []
 
     /**
      *
@@ -47,6 +49,7 @@ var filters = (function () {
                     labels.push(label);
 
             }
+            self.currentLabels = labels;
             for (var k = 0; k < filterObj.rels.length; k++) {
                 var relType = filterObj.rels[k];
 
@@ -54,15 +57,33 @@ var filters = (function () {
                     relTypes.push(relType);
 
             }
+            self.currentRelTypes = relTypes;
+
 
         }
         labels.splice(0, 0, "");
         relTypes.splice(0, 0, "");
-        common.fillSelectOptionsWithStringArray(propertiesSelectionDialog_labelSelect, labels);
-        common.fillSelectOptionsWithStringArray(propertiesSelectionDialog_relTypeSelect, relTypes);
+        common.fillSelectOptionsWithStringArray(propertiesSelectionDialog_ObjectNameInput, self.currentLabels);
 
-        filters.initLabelPropertySelection("", propertiesSelectionDialog_propsSelect);
+
+        filters.initLabelProperty("", propertiesSelectionDialog_propsSelect);
         $("#propertiesSelectionDialog_propsSelect").val(Schema.getNameProperty())
+
+    }
+
+    /**
+     * inititialize   select  propertiesSelectionDialog_ObjectNameInput with current objectsType  : node or relation
+     *
+     *
+     * @param select
+     */
+
+    self.setLabelsOrTypes = function (select) {
+        var type = $(select).val();
+        if (type == "node")
+            common.fillSelectOptionsWithStringArray(propertiesSelectionDialog_ObjectNameInput, self.currentLabels);
+        else if (type == "relation")
+            common.fillSelectOptionsWithStringArray(propertiesSelectionDialog_ObjectNameInput, self.currentRelTypes);
 
     }
 
@@ -82,6 +103,24 @@ var filters = (function () {
 
 
     /**
+     * initialize a select with the properties defined in the schema for a relation type or a label
+     *
+     * @param  objectType : node or relation
+     * @param type value of the type
+     * @param selectId select to initialize
+     */
+
+    self.initProperty = function (objectType, type, selectId) {
+        objectType=$('#propertiesSelectionDialog_ObjectTypeInput').val()
+        if (objectType == "node")
+            self.initLabelProperty(type, selectId);
+        else if (objectType == "relation")
+            self.initRelationProperty(type, selectId);
+
+    }
+
+
+    /**
      * initialize a select with the properties defined in the schema for this relation type
      *
      *
@@ -89,7 +128,7 @@ var filters = (function () {
      * @param selectId select to initialize
      */
 
-    self.initRelationPropertySelection = function (type, selectId) {
+    self.initRelationProperty = function (type, selectId) {
         self.postFilter = null;
         var relations = Schema.getRelationsByType(type);
         var propertiesArray = [""];
@@ -103,9 +142,7 @@ var filters = (function () {
             }
         }
         propertiesArray.sort();
-        $("#propertiesSelectionTypeSpan").html("Relation type" + type);
-        $("#propertiesSelectionDialog_filterModeInput").val("relation");
-        $("#propertiesSelectionDialog_typeInput").val(type);
+
         if (!selectId)
             selectId = document.getElementById("propertiesSelectionDialog_propsSelect")
         common.fillSelectOptionsWithStringArray(selectId, propertiesArray)
@@ -119,7 +156,7 @@ var filters = (function () {
      * @param type label
      * @param selectId select to initialize
      */
-    self.initLabelPropertySelection = function (type, selectId) {
+    self.initLabelProperty = function (type, selectId) {
 
         self.postFilter = null;
         var properties = [];
@@ -142,7 +179,7 @@ var filters = (function () {
 
         $("#propertiesSelectionTypeSpan").html("Node label " + type);
         $("#propertiesSelectionDialog_typeInput").val(type);
-        $("#propertiesSelectionDialog_filterModeInput").val("endNode");
+
 
         if (!selectId)
             selectId = document.getElementById("propertiesSelectionDialog_propsSelect")
@@ -155,26 +192,26 @@ var filters = (function () {
      *  method filtering visJs graph directly without executing a cypher query
      * @param option
      * @param booleanOption
-     * @param filterMode
-     * @param type
+     * @param objectType
+     * @param objectName
      * @param property
      * @param operator
      * @param value
      */
-    self.filterGraphOnProperty = function (option, booleanOption, filterMode, type, property, operator, value) {
+    self.filterGraphOnProperty = function (option, booleanOption, objectType, objectName, property, operator, value) {
 
 
         if (!property)
             property = $("#propertiesSelectionDialog_propsSelect").val();
         if (!value)
             value = $("#propertiesSelectionDialog_valueInput").val();
-        if (!filterMode)
-            filterMode = $("#propertiesSelectionDialog_filterModeInput").val();
+        if (!objectType)
+            objectType = $("#propertiesSelectionDialog_ObjectTypeInput").val();
         if (!operator)
             operator = $("#propertiesSelectionDialog_operatorSelect").val();
-        if (!type)
-            type = $("#propertiesSelectionDialog_typeInput").val();
-        visjsGraph.filterGraph(property, operator, value, type);
+        if (!objectName)
+            objectName = $("#propertiesSelectionDialog_ObjectNameInput").val();
+        visjsGraph.filterGraph(objectType,property, operator, value, objectName);
 
     }
 
@@ -185,39 +222,38 @@ var filters = (function () {
      *
      *
      *
-     * @param option
-     * @param booleanOption
-     * @param filterMode
-     * @param type
+     * @param option : remove or add
+     * @param booleanOption : only , and ,all
+     * @param objectType node or relation
+     * @param objectName :value of the type
      * @param property
      * @param operator
      * @param value
      */
-    self.filterOnProperty = function (option, booleanOption, filterMode, type, property, operator, value) {
+    self.filterOnProperty = function (option, booleanOption, objectType, objectName, property, operator, value) {
 
 
         if (!property)
             property = $("#propertiesSelectionDialog_propsSelect").val();
         if (!value)
             value = $("#propertiesSelectionDialog_valueInput").val();
-        if (!filterMode)
-            filterMode = $("#propertiesSelectionDialog_filterModeInput").val();
+        if (!objectType)
+            objectType = $("#propertiesSelectionDialog_ObjectTypeInput").val();
         if (!operator)
             operator = $("#propertiesSelectionDialog_operatorSelect").val();
-        if (!type)
-            type = $("#propertiesSelectionDialog_typeInput").val();
-
+        if (!objectName)
+            objectName = $("#propertiesSelectionDialog_ObjectNameInput").val();
 
         if (option == "remove") {
             for (var i = 0; i < self.currentSelectdFilters.length; i++) {
-                if (self.currentSelectdFilters[i].type == type)
+                if (self.currentSelectdFilters[i].objectName == objectName)
                     self.currentSelectdFilters.splice(i, 1);
             }
         }
 
         if (booleanOption == "only") {
             $(".paintIcon").each(function (index, value) {
-                if (this.id != "paintIcon_" + type)
+                if (this.id != "paintIcon_" + objectName)
                     $(this).css("visibility", "hidden")
                 else
                     $(this).css("visibility", "visible")
@@ -225,7 +261,7 @@ var filters = (function () {
 
 
             $(".displayIcon-selected").each(function (index, value) {
-                if (this.id != filterMode + ":" + type)
+                if (this.id != ObjectType + ":" + objectName)
                     $(this).removeClass("displayIcon-selected");
 
 
@@ -243,8 +279,8 @@ var filters = (function () {
         if (property == "" || option == "all") {
             newFilter = {
                 property: "all",
-                filterMode: filterMode,
-                type: type
+                objectType: objectType,
+                objectName: objectName
             }
 
         }
@@ -263,9 +299,9 @@ var filters = (function () {
             newFilter = {
                 property: property,
                 value: value,
-                filterMode: filterMode,
+                objectType: objectType,
                 operator: operator,
-                type: type
+                objectName: objectName
 
             }
         }
@@ -274,9 +310,6 @@ var filters = (function () {
         $("#dialog").dialog("close");
         self.setQueryFilters(true);
     }
-
-
-
 
 
     /**
@@ -300,7 +333,7 @@ var filters = (function () {
             value = filter.value;
             operator = filter.operator;
             property = filter.property;
-            filterMode = filter.filterMode;
+            objectType = filter.objectType;
 
             if (filter.off == true)
                 continue;
@@ -309,16 +342,16 @@ var filters = (function () {
             // no property but all nodes or relations
             if (property == "all") {
 
-                type = filter.type;
-                if (filterMode == "endNode" && type != "") {
+                objectName = filter.objectName;
+                if (objectType == "endNode" && objectName != "") {
                     if (allNodeLabelsStr.length > 0)
                         allNodeLabelsStr += " OR ";
-                    allNodeLabelsStr += "m:" + type;
+                    allNodeLabelsStr += "m:" + objectName;
                 }
-                else if (filterMode == "relation") {
+                else if (objectType == "relation") {
                     if (allRelTypesStr.length > 0)
                         allRelTypesStr += "|";
-                    allRelTypesStr += type;
+                    allRelTypesStr += objectName;
                 }
 
 
@@ -337,7 +370,7 @@ var filters = (function () {
                     toutlesensData.whereFilter += " AND ";
 
 
-                if (filterMode == "relation") {
+                if (objectType == "relation") {
                     if (common.isNumber(value))
 
                         toutlesensData.whereFilter += "r." + property + operator + value + " ";
@@ -345,14 +378,14 @@ var filters = (function () {
                         toutlesensData.whereFilter += "r." + property + operator + "\"" + value + "\" ";
 
                 }
-                else if (filterMode == "startNode") {
+                else if (objectType == "startNode" ) {
                     if (common.isNumber(value))
                         toutlesensData.whereFilter += "node1." + property + operator + value + " ";
                     else
                         toutlesensData.whereFilter += "node1." + property + operator + "\"" + value + "\" ";
 
                 }
-                else if (filterMode == "endNode") {
+                else if (objectType == "endNode" || objectType == "node") {
                     if (common.isNumber(value))
                         toutlesensData.whereFilter += "m." + property + operator + value + " ";
                     else
@@ -372,7 +405,9 @@ var filters = (function () {
 
         if (generateGraph) {
             toutlesensController.generateGraph(null, {applyFilters: true});
-            self.addCurrentFilterToFiltersDiv(filter)
+            var message= self.printPropertyFilters()+"<br>"+self.printRelationsFilters
+            $("filterMessage").html(message);
+
         }
 
 
@@ -396,10 +431,10 @@ var filters = (function () {
                 var str2 = "";
                 var str1 = "";
                 if (filter.property == "all")
-                    str1 = "all " + filter.filterMode + " " + filter.type;
+                    str1 = "all " + filter.objectType + " " + filter.objectName;
                 else
 
-                    str1 += filter.type + " : " + filter.property + " " + filter.operator + " " + filter.value
+                    str1 += filter.objectName + " : " + filter.property + " " + filter.operator + " " + filter.value
 
                 str += str1 + str2 + "<br>";
 
@@ -407,9 +442,6 @@ var filters = (function () {
         }
         return str;
     }
-
-
-
 
 
     /**
@@ -428,10 +460,6 @@ var filters = (function () {
         }
         return str;
     }
-
-
-
-
 
 
     return self;

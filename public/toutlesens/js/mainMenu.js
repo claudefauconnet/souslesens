@@ -11,27 +11,25 @@ var mainMenu = (function () {
 
         //   toutlesensController.setSplitterPosition(Gparams.splitterMin);
         $("#dialog").load("htmlSnippets/mainMenu.html", function () {
-            //  self.initLabelPropertySelection(label);
+            //  self.initLabelProperty(label);
             $("#dialog").dialog("option", "title", "Toutlesens main menu");
             $("#dialog").dialog("open");
             self.initLabels(mainMenuLabelsSelect);
         })
     }
 
-    self.showGraphDisplayMenu = function () {
+    self.showGlobalMenu = function () {
         $("#dialog").dialog({modal: false});
         $("#dialog").dialog("option", "title", "Toutlesens main menu");
 
-        var dialog = "graphDisplayMenu.html";
-        if (Gparams.useVisjsNetworkgraph)
-            dialog = "visjsGraphDisplayMenu.html";
 
-        $("#dialog").load("htmlSnippets/" + dialog, function () {
-            //  self.initLabelPropertySelection(label);
+        $("#dialog").load("htmlSnippets/globalMenu.html", function () {
+            //  self.initLabelProperty(label);
 
-            $("#dialog").dialog("open");
+
 
         })
+        $("#dialog").dialog("open");
     }
 
 
@@ -82,7 +80,7 @@ var mainMenu = (function () {
         else if (option == "customQueries") {
             // toutlesensController.setSplitterPosition(Gparams.splitterMin);
             $("#dialog").load("htmlSnippets/currentQueries.html", function () {
-                //  self.initLabelPropertySelection(label);
+                //  self.initLabelProperty(label);
                 $("#dialog").dialog("option", "title", "Current queries");
                 $("#dialog").dialog("open");
                 self.initLabels(currentQueriesDialogSourceLabelSelect);

@@ -198,8 +198,12 @@ var toutlesensData = (function () {
         }
 
         var node1Label = "";
-        if (currentLabel)
+        if (false && currentLabel)
             node1Label = ":" + currentLabel;
+
+        var node2Label = "";
+        if (currentLabel)
+            node2Label = ":" + currentLabel;
 
         var statement;
         if (self.matchStatement)
@@ -210,7 +214,7 @@ var toutlesensData = (function () {
                 + ")-[r"
                 + toutlesensData.queryRelTypeFilters
                 + relCardinalityStr
-                + "]-(m) "
+                + "]-(m"+node2Label+") "
                 + whereStatement
                 + graphQueryTargetFilter
                 + toutlesensData.queryNodeLabelFilters
