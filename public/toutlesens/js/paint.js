@@ -287,7 +287,7 @@ var paint = (function () {
                         ids.push(key);
                         legendStr=" All "+self.currentLabel;
                     }
-                    else if (self.isLabelNodeOk(nodeData.neoAttrs, property, operator, value, type)) {
+                    else if (self.isLabelNodeOk(nodeData, property, operator, value, type)) {
                         ids.push(key);
                         legendStr=self.currentLabel+"."+property+""+operator+""+value;
                     }
@@ -357,30 +357,37 @@ var paint = (function () {
 
         if (property && property.length > 0) {
 
-            if (!data[property])
+            if (!data.neoAttrs[property])
                 return false;
 
 
             var comparison;
             if (operator == "contains")
-                comparison = "\"" + data[property] + "\".match(/.*" + value + ".*/i)";
+                comparison = "\"" + data.neoAttrs[property] + "\".match(/.*" + value + ".*/i)";
             else {
                 if (common.isNumber(value))
                     value = value;
                 else
                     value = "'" + value + "'"
-                comparison = data[property] + operator + value;
+                comparison = data.neoAttrs[property] + operator + value;
             }
             var result = eval(comparison)
             return result;
 
 
         }else{
+            if (value && value.length > 0) {// we look for value in all properties
 
-            for( var key in data){
-                if( self.isLabelNodeOk (data, key, operator, value, type)){
-                    return true;
+                for (var key in data) {
+                    if (self.isLabelNodeOk(data, key, operator, value, type)) {
+                        return true;
+                    }
                 }
+            }
+            else{// we look that type corresponds
+
+               if( data.labelNeo==type)
+                   return true;
             }
 
         }

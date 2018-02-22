@@ -18,7 +18,7 @@
 
 
     <tr>
-        <td >
+        <td  colspan="3">
             layout
             <select id="graphLayoutSelect" onchange="visjsGraph.setLayoutOption(this,graphLayoutDirectionSelect,true)">
                 <option>random</option>
@@ -28,16 +28,20 @@
 
 
         </td>
-        <td >
-            <div id="graphLayoutDirectionDir" style="visibility: hidden">
-            direction
-            <select id="graphLayoutDirectionSelect" onchange="visjsGraph.setLayoutOption(graphLayoutSelect,this,true)">
-                <option value="UD">Up-Down</option>
-                <option value="DU">Down-Up</option>
-                <option value="LR">Left-Right</option>
-                <option value="RL">Right-Left</option>
+    </tr>
 
-            </select>
+
+    <tr>
+        <td  colspan="3">
+            <div id="graphLayoutDirectionDir" style="visibility: hidden">
+                direction
+                <select id="graphLayoutDirectionSelect"  onchange="visjsGraph.setLayoutOption(graphLayoutSelect,this,true)">
+                    <option value="UD">Up-Down</option>
+                    <option value="DU">Down-Up</option>
+                    <option value="LR">Left-Right</option>
+                    <option value="RL">Right-Left</option>
+
+                </select>
 
             </div>
 
@@ -46,12 +50,12 @@
     </tr>
 
 
- <!--   <tr>
-        <td>
-            <button onclick=" visjsGraph.saveGraph();$('#dialog').dialog('close');">ExportGraph</button>
-            <button onclick=" visjsGraph.reloadGraph();$('#dialog').dialog('close');">ImportGraph</button>
-        </td>
-    </tr>-->
+    <!--   <tr>
+           <td>
+               <button onclick=" visjsGraph.saveGraph();$('#dialog').dialog('close');">ExportGraph</button>
+               <button onclick=" visjsGraph.reloadGraph();$('#dialog').dialog('close');">ImportGraph</button>
+           </td>
+       </tr>-->
 
 
 </table>

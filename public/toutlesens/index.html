@@ -310,16 +310,28 @@
                 activate: function (event, ui) {
 
                     var index = ui.newTab.index();
+
                     if (index == 0) {
                         toutlesensController.currentActionObj.mode = "infos";
                     }
                     if (index == 1) {
                         toutlesensController.currentActionObj.mode = "filter";
+                        var filterMovableDiv = $("#filterMovableDiv").detach();
+                        $("#filterDiv").append(filterMovableDiv);
+                        $("#filterActionDiv").html(
+                            "<button onclick=\"filters.filterOnProperty(null,'only')\">Apply</button>" +
+                            //  "<button onclick=\"filters.filterOnProperty(null,'add')\">Add</button>" +
+                            "<button onclick=\"filters.filterOnProperty(null,'removeAll')\">Clear</button>"
+                        );
                     }
                     if (index == 2) {
                         toutlesensController.currentActionObj.mode = "highlight";
-                        var nodeDivDetach = $("#nodeDivDetachable").detach();
-                        $("#nodeDiv").append(nodeDivDetach);
+                        var filterMovableDiv = $("#filterMovableDiv").detach();
+                        $("#highlightDiv").append(filterMovableDiv);
+                        $("#filterActionDiv").html("htmlSnippets/paintDialog.html", function () {
+
+                        });
+
                     }
                     if (index == 3) {
                         toutlesensController.currentActionObj.mode = "graph";
@@ -529,14 +541,23 @@
 
 <div id="mainButtons">
 
-    <input type="image" title="Graph menu" height="20px" onclick="toutlesensController.dispatchAction('showGlobalMenu');" id="parametersMenuButton" src="images/parameters.png"/>
-    &nbsp;<input type="image" title="Display all nodes" height="20px"   onclick="toutlesensController.showAll()"   id="searchAllButton" src="images/all.png"/></td>
-    <input type="image" title="Export to text" height="20px" onclick="toutlesensController.dispatchAction('showGraphText')" id="toTextMenuButton" src="images/text.png"  class="graphDisplayed"/>
-    <input type="image" title="Take a snapshot" height="20px" onclick="visjsGraph.saveGraph()" id="snapShotMenuButton" src="images/snapshot.png"  class="graphDisplayed"/>
+    <input type="image" title="Graph menu" height="20px"
+           onclick="toutlesensController.dispatchAction('showGlobalMenu');" id="parametersMenuButton"
+           src="images/parameters.png"/>
+    &nbsp;<input type="image" title="Display all nodes" height="20px" onclick="toutlesensController.showAll()"
+                 id="searchAllButton" src="images/all.png"/></td>
+    <input type="image" title="Export to text" height="20px"
+           onclick="toutlesensController.dispatchAction('showGraphText')" id="toTextMenuButton" src="images/text.png"
+           class="graphDisplayed"/>
+    <input type="image" title="Take a snapshot" height="20px" onclick="visjsGraph.saveGraph()" id="snapShotMenuButton"
+           src="images/snapshot.png" class="graphDisplayed"/>
 
-    <input type="image" title="Previous graph" height="20px"  onclick="visjsGraph.previousGraph()" id="previousMenuButton" src="images/previous.jpg"/>
-    <input type="image" title="Next graph" height="20px" onclick="visjsGraph.nextGraph()"  id="nextMenuButton" src="images/next.jpg"/>
-    <input type="image" title="Next display" height="20px" onclick="toutlesensController.dispatchAction('addNode')"  class="canModify"; id="newNodeButton" src="images/newNode.png"/>
+    <input type="image" title="Previous graph" height="20px" onclick="visjsGraph.previousGraph()"
+           id="previousMenuButton" src="images/previous.jpg"/>
+    <input type="image" title="Next graph" height="20px" onclick="visjsGraph.nextGraph()" id="nextMenuButton"
+           src="images/next.jpg"/>
+    <input type="image" title="Next display" height="20px" onclick="toutlesensController.dispatchAction('addNode')"
+           class="canModify" ; id="newNodeButton" src="images/newNode.png"/>
     <img id="waitImg" src="images/waitAnimated.gif" width="20px" style="visibility: hidden;">
 
     <div id="graphLegendDiv"></div>
@@ -572,7 +593,7 @@
 
 
                                         <td><input type="image" alt="<span id='lang_XX'>search</span>"
-                                                   height="20px"
+                                                   height="30px"
                                                    onclick="advancedSearch.showDialog()"
                                                    id="searchButton"
                                                    src="images/advancedSearch2.png"/>
@@ -621,17 +642,17 @@
                 <table>
                     <tr>
                         <td colspan="3">
-                           <select  id="pathType">
-                               <option value="shortestPath">
-                                   Shortest path
-                               </option>
-                               <option value="allSimplePaths">
-                                   All paths
-                               </option>
-                            <!--   <option>
-                                  Advanced pathes
-                               </option>-->
-                           </select>
+                            <select id="pathType">
+                                <option value="shortestPath">
+                                    Shortest path
+                                </option>
+                                <option value="allSimplePaths">
+                                    All paths
+                                </option>
+                                <!--   <option>
+                                      Advanced pathes
+                                   </option>-->
+                            </select>
                         </td>
                     </tr>
                     <tr>
@@ -719,13 +740,13 @@
         </div>
 
 
-
     </div>
 
 </div>
 
 
-
+/*************************** movable
+divs**********************************************************************************/
 
 <div id="graphPopup" style="visibility: hidden;position: absolute;background-color: white;margin: 2px;padding: 2px">
 
@@ -733,6 +754,51 @@
 
 <div id="dialog" title="dialog"></div>
 <div id="dialogLarge"></div>
+
+
+<div id="filterMovableDiv">
+    object<select id="propertiesSelectionDialog_ObjectTypeInput" onchange="filters.setLabelsOrTypes(this)">
+    <option selected="selected">node</option>
+    <option>relation</option>
+</select>
+
+    <select id="propertiesSelectionDialog_ObjectNameInput"
+            onchange="filters.initProperty(null,$(this).val(),propertiesSelectionDialog_propsSelect)"></select>
+    <br>
+    Property
+
+    <br>
+    <select id="propertiesSelectionDialog_propsSelect">
+
+    </select>
+    <br>
+
+    <table>
+        <tr>
+            <td>
+                <select id="propertiesSelectionDialog_operatorSelect">
+                    <option>=</option>
+                    <option>!=</option>
+                    <option>&lt;</option>
+                    <option>&gt;</option>
+                    <option selected="selected">contains</option>
+                </select>
+            </td>
+            <td>
+                <input id="propertiesSelectionDialog_valueInput" size="15">
+            </td>
+            <td>
+                <input type="image" height="20px" src="images/erase.png"
+                       onclick="$('#propertiesSelectionDialog_valueInput').val('')">
+            </td>
+        </tr>
+    </table>
+    <div id="filterActionDiv">
+
+
+    </div>
+
+</div>
 
 </body>
 </html>

@@ -19,7 +19,7 @@ var visjsGraph = (function () {
     var dblClickDuration = 500;
 
     var dragPosition = {};
-    var options={};
+    var options = {};
 
 
     self.draw = function (divId, visjsData) {
@@ -48,7 +48,6 @@ var visjsGraph = (function () {
         };
 
 
-
         options = {
 
 
@@ -67,14 +66,27 @@ var visjsGraph = (function () {
             },
             nodes: {
                 shape: 'dot',
-                size: 10,
-                font: {size: 14}
+               size: 10,
+                font: {size: 14},
+              /*  scaling: {
+                    label: {
+                        min: 10,
+                        max: 10
+                    },
+
+
+                }*/
             },
-            edges: {
-                smooth: true,
-                font: {size: 10}
-                //font: { "font-style":'italic'}
-            },
+            edges:
+                {
+                    smooth: true,
+                    font:
+                        {
+                            size:8
+                        }
+                    //font: { "font-style":'italic'}
+                }
+            ,
             interaction: {
                 // navigationButtons: true,
                 keyboard: true
@@ -88,7 +100,7 @@ var visjsGraph = (function () {
 
 
         if (graphLayoutSelect) {// not loaded at the beginning
-            var layoutObj = self.setLayoutOption(graphLayoutSelect)
+            var layoutObj = self.setLayoutOption(graphLayoutSelect, graphLayoutDirectionSelect)
             for (var key in layoutObj) {
                 options[key] = layoutObj[key]
 
@@ -202,34 +214,31 @@ var visjsGraph = (function () {
         });
 
 
-
-
-
     }
 
 
-    self.setLayoutOption = function (selectLayout,selectDirection, apply) {
+    self.setLayoutOption = function (selectLayout, selectDirection, apply) {
 
         var layoutArray = $(selectLayout).val().split(" ");
         var direction = $(selectDirection).val();
         var layoutType = layoutArray[0];
-        var param="";
-        if(layoutArray.length>1)
-         param = layoutArray[1];
+        var param = "";
+        if (layoutArray.length > 1)
+            param = layoutArray[1];
 
         if (layoutType == "hierarchical") {
-            ($("#graphLayoutDirectionDir").css("visibility","visible"))
-            options.layout={hierarchical:{sortMethod:param,direction:direction},randomSeed: false}
+            ($("#graphLayoutDirectionDir").css("visibility", "visible"))
+            options.layout = {hierarchical: {sortMethod: param, direction: direction}}
         }
         if (layoutType == "random") {
-            ($("#graphLayoutDirectionDir").css("visibility","hidden"))
-            options.layout = {hierarchical:false,randomSeed:2}
+            ($("#graphLayoutDirectionDir").css("visibility", "hidden"))
+            options.layout = {hierarchical: false, randomSeed: 2}
         }
         if (apply) {
-           // var xx=network.layoutEngine.options;
-            network.setOptions( options)
+            // var xx=network.layoutEngine.options;
+            network.setOptions(options)
         }
-        return ( options)
+        return (options)
 
     }
     self.clusterByLabel = function () {
@@ -303,7 +312,7 @@ var visjsGraph = (function () {
             var label = params.nodes[0];
             currentLabel = label;
             currentObject.id == null;
-            return toutlesensController.generateGraph(null, {applyFilters: true},function(err,result){
+            return toutlesensController.generateGraph(null, {applyFilters: true}, function (err, result) {
                 currentLabel = null;
             });
 
@@ -448,7 +457,7 @@ var visjsGraph = (function () {
 
     self.changeLayout = function (select) {
         self.layout = $(select).val();
-        var options = { }
+        var options = {}
 
         if (self.layout == "physics") {
 
@@ -658,8 +667,8 @@ var visjsGraph = (function () {
      */
 
     self.dragConnectedNodes = function (nodeId, offset) {
-        if(toutlesensData.queriesIds.length<2)
-        return;
+        if (toutlesensData.queriesIds.length < 2)
+            return;
         var connectedNodes = network.getConnectedNodes(nodeId);
         var connectedEdges = network.getConnectedEdges(nodeId);
         var positions = network.getPositions()
@@ -700,10 +709,10 @@ var visjsGraph = (function () {
     }
 
 
-
-
     self.previousGraph = function () {
         self.previousGraphs.index -= 1;
+        if(  self.previousGraphs.index<0)
+            self.previousGraphs.index=0;
         self.reloadGraph(self.previousGraphs.index);
         self.setPreviousNextButtons();
     }
@@ -713,18 +722,16 @@ var visjsGraph = (function () {
         self.setPreviousNextButtons();
     }
 
-    self.setPreviousNextButtons=function(){
-        if (self.previousGraphs.index>0)
+    self.setPreviousNextButtons = function () {
+        if (self.previousGraphs.index > 0)
             $("#previousMenuButton").css("visibility", "visible")
         else
             $("#previousMenuButton").css("visibility", "hidden")
-        if (self.previousGraphs.index < (self.previousGraphs.length-1))
+        if (self.previousGraphs.index < (self.previousGraphs.length - 1))
             $("#nextMenuButton").css("visibility", "visible")
         else
             $("#nextMenuButton").css("visibility", "hidden")
     }
-
-
 
 
     self.saveGraph = function () {
@@ -746,7 +753,7 @@ var visjsGraph = (function () {
         if (objectType == "node") {
             for (var key in  self.nodes._data) {
                 var node = self.nodes._data[key];
-                if (!paint.isLabelNodeOk(node.neoAttrs, property, operator, value, type)) {
+                if (!paint.isLabelNodeOk(node, property, operator, value, type)) {
 
                     self.nodes.remove({id: key})
                     var connectedEdges = network.getConnectedEdges(key);
@@ -804,4 +811,5 @@ var visjsGraph = (function () {
     return self;
 
 
-})()
+})
+()

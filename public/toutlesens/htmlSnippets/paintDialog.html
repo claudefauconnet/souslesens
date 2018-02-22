@@ -1,60 +1,10 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/4.2.2/d3.min.js"></script>
 
 
-<span id="paintDialogTypeSpan"></span><br>
-
-
-
-
-<!--<button onclick='paint.onActionTypeSelect("outline")'>Outline</button>
-<button id="paintDialogClusterButton" onclick='paint.onActionTypeSelect("cluster")'>Cluster</button>
-<button id="paintDialogClassesButton" onclick='paint.onActionTypeSelect("classes")'>Classes</button>-->
-
-<div id="paintDialogAction"   class="paintDialogDiv"  style="visibility: hidden">
-
-</div>
-
-
-
-<div id="paintDialogPropDiv" class="paintDialogDiv" style="visibility: hidden">
-    Label<select id="paintDialog_labelSelect" onchange="filters.initLabelProperty($(this).val(),paintDialog_propsSelect)">
-
-</select>
-<br>
-    Property
-    <br>
-    <select id="paintDialog_propsSelect" onchange='paint.onPropertySelect(this)'>
-
-    </select>
-
-<div id="paintDialogPropQueryDiv" style="visibility: hidden">
-    <select id="paintDialog_operatorSelect" >
-        <option selected="selected">contains</option>
-        <option>=</option>
-        <option>!=</option>
-        <option>&lt;</option>
-        <option>&gt;</option>
-
-
-    </select>
-
-
-    <input id="paintDialog_valueInput">
-</div>
-    <input type="hidden" id="paintDialog_filterObjectTypeInput">
-    <input type="hidden" id="paintDialog_typeInput">
-    <!--<button onclick="filters.outLineProperty()">outline property</button>-->
-
-
-</div>
-
 <div id="paintDialogPaletteDiv"  class="paintDialogDiv"  style="visibility: hidden">
 
     Color
     <div id="paintDialogPalette"></div>
-
-
-
 
 </div>
 

@@ -184,9 +184,9 @@ var toutlesensController = (function () {
             toutlesensData.prepareRawData(data, addToPreviousQuery, currentDisplayType, function (err, data, labels, relations) {
 
                 self.setRightPanelAppearance(false);
-                $("#tabs-analyzePanel").tabs("option", "active", 3);
-                paint.init(data);
-                filters.init(data);
+
+             //   paint.init(data);
+              filters.init(data);
                 $("#mainButtons").css("visibility", "visible");
                 $("#waitImg").css("visibility", "hidden");
                 $(".graphDisplayed").css("visibility", "visible");
@@ -568,8 +568,8 @@ var toutlesensController = (function () {
             $("#dialogLarge").dialog("open");
         }
         else if (action == "showGlobalMenu") {
-            $("#dialog").dialog({modal: false});
-            $("#dialog").dialog("option", "title", "Toutlesens main menu");
+            $("#dialog").dialog({modal: true});
+            $("#dialog").dialog("option", "title", "SouslesensGraph main menu");
             $("#dialog").load("htmlSnippets/globalMenu.html", function () {
             })
             $("#dialog").dialog("open");
@@ -802,14 +802,14 @@ var toutlesensController = (function () {
             self.initLabels(currentQueriesDialogTargetLabelSelect);
         });
 
-        $("#highlightDiv").load("htmlSnippets/paintDialog.html", function () {
+    /*    $("#highlightDiv").load("htmlSnippets/paintDialog.html", function () {
 
 
         });
         $("#filterDiv").load("htmlSnippets/filterDialog.html", function () {
 
 
-        });
+        });*/
 
 
         $("#graphOptionsDiv").load("htmlSnippets/visjsGraphDisplayMenu.html", function () {

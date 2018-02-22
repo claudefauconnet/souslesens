@@ -79,6 +79,7 @@ var Schema = (function () {
             type: 'POST',
 
 
+
             error: function (error, ajaxOptions, thrownError) {
                 // if schema does not exist we create one by analyzing Neo4j db content
                 console.log("no schema found, will create one");
@@ -316,13 +317,25 @@ var Schema = (function () {
     }
 
     self.getAllLabelNames = function () {
-        var labels = [""];
-
+        var labels = [];//[""];
         for (var label in self.schema.labels) {
             labels.push(label);
         }
         labels.sort();
         return labels;
+    }
+
+    self.getAllRelationNames = function () {
+        var relations = [];//[""];
+        for (var key in relations) {
+            var relation = relations[key];
+            var type = relation.type;
+            relTypes.push(type);
+        }
+        relations.sort();
+        return relations;
+
+
     }
 
 

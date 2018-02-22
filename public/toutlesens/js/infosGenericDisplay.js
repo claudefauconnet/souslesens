@@ -808,7 +808,8 @@ var infoGenericDisplay = (function () {
         if (node.parent == "#") {//label node
 
             currentLabel = node.text;
-            currentObject.id == null;
+            if( currentObject)
+            currentObject.id = null;
             return toutlesensController.generateGraph(null, {applyFilters: true});
         }
 
@@ -835,7 +836,8 @@ var infoGenericDisplay = (function () {
                 $("#tabs-radarRight").tabs("enable", 2);
                 self.showNodeData(node);
                 toutlesensController.addToHistory = true;
-                toutlesensController.generateGraph(parentId, {applyFilters: toutlesensController.drawGraph});
+                toutlesensController.generateGraph(parentId, {});
+                $("#tabs-analyzePanel").tabs("option", "active", 3);
                 return;
             } else if (toutlesensController.currentActionObj.type == 'findShortestPath') {
                 traversalMenu.setTraversalNode(toutlesensController.currentActionObj.stage, node.data);

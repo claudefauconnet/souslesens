@@ -3,36 +3,59 @@ var advancedSearch = (function () {
     var self = {};
 
     self.showDialog = function () {
+        var filterMovableDiv = $("#filterMovableDiv").detach();
+        $("#dialog").append(filterMovableDiv);
+       // toutlesensController.initLabels(advancedSearchDialog_LabelSelect);
+        $("#filterActionDiv").html( " <button id=\"advancedSearchDialog_searchButton\" onclick=\"advancedSearch.searchNodes()\">Search</button>");
 
-
-        $("#dialog").load("htmlSnippets/advancedSearchMenu.html", function () {
+      /*  $("#dialog").load("htmlSnippets/advancedSearchMenu.html", function () {*/
             $("#dialog").dialog("option", "title", "Advanced search");
             $("#dialog").dialog("open");
-            toutlesensController.initLabels(advancedSearchDialog_LabelSelect);
+            filters.init();
+        /*    toutlesensController.initLabels(advancedSearchDialog_LabelSelect);
             filters.initLabelProperty("",advancedSearchDialog__propsSelect)
             $("#advancedSearchDialog__propsSelect").val(Schema.getNameProperty())
 
-        })
+        })*/
     }
     self.searchNodes = function () {
         currentObject.id=null;
         $("#waitImg").css("visibility", "visible")
         var searchObj = {};
-        searchObj.label = $("#advancedSearchDialog_LabelSelect").val();
-
-        searchObj.relType = $("#advancedSearchDialog__RelSelect").val();
-        searchObj.property = $("#advancedSearchDialog__propsSelect").val();
-        searchObj.operator = $("#advancedSearchDialog_operatorSelect").val();
-       searchObj.value = $("#advancedSearchDialog_valueInput").val();
 
 
 
+        var objectType = $("#propertiesSelectionDialog_ObjectTypeInput").val();
+        if(objectType=="node")
+        searchObj.label = $("#propertiesSelectionDialog_ObjectNameInput").val();
+        if(objectType=="relation")
+        searchObj.relType = $("#propertiesSelectionDialog_ObjectNameInput").val();
+        searchObj.property =  $("#propertiesSelectionDialog_propsSelect").val();
+        searchObj.operator = $("#propertiesSelectionDialog_operatorSelect").val();
+       searchObj.value =  $("#propertiesSelectionDialog_valueInput").val();
 
-        if (searchObj.property == "") {// stack all results and then draw tree
-            var data = [];
+
+
+
+        if (searchObj.property == "") {
+            if( searchObj.value==""){// only  search on label or type
+                toutlesensData.searchNodes(subGraph, searchObj.label, null, "matchStr", Gparams.jsTreeMaxChildNodes, 0,function(err,result){
+                    infoGenericDisplay.loadSearchResultIntree(err,result);
+                    setTimeout(function(){
+                        toutlesensController.setRightPanelAppearance(true);
+                        infoGenericDisplay.expandAll("treeContainer");
+                        $("#dialog").dialog("close");
+                    },500)
+
+
+                })
+                return;
+
+            }
+            var data = [];// stack all results and then draw tree
             var index = 0;
-            var countOptions = $('#advancedSearchDialog__propsSelect').children('option').length - 1;
-            $("#advancedSearchDialog__propsSelect option").each(function () {
+            var countOptions = $('#propertiesSelectionDialog_propsSelect').children('option').length - 1;
+            $("#propertiesSelectionDialog_propsSelect option").each(function () {
                 var property = $(this).val();
 
                 if (property != ""){

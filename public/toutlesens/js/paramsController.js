@@ -10,6 +10,8 @@ var paramsController = (function () {
         }
         else {
             json = Gparams;
+           var str= JSON.stringify( Gparams);// for presentation
+            json = JSON.parse(str);
         }
         if (edit) {
             editor.set(json);
@@ -25,7 +27,7 @@ var paramsController = (function () {
 
     self.saveParams = function () {
 
-        localStorage.setItem('toutlesensParams', editor.get());
+        localStorage.setItem('toutlesensParams', JSON.stringify(editor.get(),null,2));
         Gparams = editor.get();
         $("#paramsMessage").html("parameters saved locally");
 

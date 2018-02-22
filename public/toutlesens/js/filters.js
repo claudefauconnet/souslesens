@@ -38,31 +38,42 @@ var filters = (function () {
      */
 
     self.init = function (data) {
+
         var labels = [];
         var relTypes = [];
-        for (var i = 0; i < data.length; i++) {
-            var filterObj = data[i];
-            for (var k = 0; k < filterObj.labels.length; k++) {
-                var label = filterObj.labels[k][0];
-
-                if (labels.indexOf(label) < 0)
-                    labels.push(label);
-
-            }
-            self.currentLabels = labels;
-            for (var k = 0; k < filterObj.rels.length; k++) {
-                var relType = filterObj.rels[k];
-
-                if (relTypes.indexOf(relType) < 0)
-                    relTypes.push(relType);
-
-            }
-            self.currentRelTypes = relTypes;
-
-
-        }
         labels.splice(0, 0, "");
         relTypes.splice(0, 0, "");
+        if (data) {
+            for (var i = 0; i < data.length; i++) {
+                var filterObj = data[i];
+                for (var k = 0; k < filterObj.labels.length; k++) {
+                    var label = filterObj.labels[k][0];
+
+                    if (labels.indexOf(label) < 0)
+                        labels.push(label);
+
+                }
+                self.currentLabels = labels;
+                for (var k = 0; k < filterObj.rels.length; k++) {
+                    var relType = filterObj.rels[k];
+
+                    if (relTypes.indexOf(relType) < 0)
+                        relTypes.push(relType);
+
+                }
+
+                self.currentRelTypes = relTypes;
+
+
+            }
+        } else {
+
+            self.currentLabels = Schema.getAllLabelNames();
+            self.currentRelTypes = Schema.getAllRelationNames();
+            self.currentLabels.splice(0, 0, "");
+            self.currentRelTypes.splice(0, 0, "");
+        }
+
         common.fillSelectOptionsWithStringArray(propertiesSelectionDialog_ObjectNameInput, self.currentLabels);
 
 
@@ -111,7 +122,7 @@ var filters = (function () {
      */
 
     self.initProperty = function (objectType, type, selectId) {
-        objectType=$('#propertiesSelectionDialog_ObjectTypeInput').val()
+        objectType = $('#propertiesSelectionDialog_ObjectTypeInput').val()
         if (objectType == "node")
             self.initLabelProperty(type, selectId);
         else if (objectType == "relation")
@@ -199,19 +210,13 @@ var filters = (function () {
      * @param value
      */
     self.filterGraphOnProperty = function (option, booleanOption, objectType, objectName, property, operator, value) {
+        if (booleanOption == "removeAll") {
+            visjsGraph.previousGraph();
 
-
-        if (!property)
-            property = $("#propertiesSelectionDialog_propsSelect").val();
-        if (!value)
-            value = $("#propertiesSelectionDialog_valueInput").val();
-        if (!objectType)
-            objectType = $("#propertiesSelectionDialog_ObjectTypeInput").val();
-        if (!operator)
-            operator = $("#propertiesSelectionDialog_operatorSelect").val();
-        if (!objectName)
-            objectName = $("#propertiesSelectionDialog_ObjectNameInput").val();
-        visjsGraph.filterGraph(objectType,property, operator, value, objectName);
+        }
+        else {
+            visjsGraph.filterGraph(objectType, property, operator, value, objectName);
+        }
 
     }
 
@@ -220,7 +225,7 @@ var filters = (function () {
      *
      * initalialize currentFilters with filterDialog.html inputs
      *
-     *
+     * if( self.queriesIds.length>1 ||  toutlesensController.currentActionObj.type=="pathes") we filter directly on graph (self.filterGraphOnProperty)
      *
      * @param option : remove or add
      * @param booleanOption : only , and ,all
@@ -244,28 +249,24 @@ var filters = (function () {
         if (!objectName)
             objectName = $("#propertiesSelectionDialog_ObjectNameInput").val();
 
+        if (toutlesensData.queriesIds.length > 1 || toutlesensController.currentActionObj.type == "pathes") {
+            self.filterGraphOnProperty(option, booleanOption, objectType, objectName, property, operator, value);
+            return;
+        }
+
+
         if (option == "remove") {
             for (var i = 0; i < self.currentSelectdFilters.length; i++) {
                 if (self.currentSelectdFilters[i].objectName == objectName)
                     self.currentSelectdFilters.splice(i, 1);
             }
         }
+        if (booleanOption == "removeAll") {
+            self.currentSelectdFilters = [];
+
+        }
 
         if (booleanOption == "only") {
-            $(".paintIcon").each(function (index, value) {
-                if (this.id != "paintIcon_" + objectName)
-                    $(this).css("visibility", "hidden")
-                else
-                    $(this).css("visibility", "visible")
-            });
-
-
-            $(".displayIcon-selected").each(function (index, value) {
-                if (this.id != ObjectType + ":" + objectName)
-                    $(this).removeClass("displayIcon-selected");
-
-
-            });
 
             self.currentSelectdFilters = [];
         }
@@ -274,39 +275,40 @@ var filters = (function () {
             ;
         }
 
-
-        var newFilter = null;
-        if (property == "" || option == "all") {
-            newFilter = {
-                property: "all",
-                objectType: objectType,
-                objectName: objectName
-            }
-
-        }
-
-
-        else if (!property) {
-            toutlesensController.setGraphMessage("enter a  property", "stop");
-
-        }
-
-        else if (!value) {
-            toutlesensController.setGraphMessage("enter a value for the property", "stop");
-
-        }
-        else {
-            newFilter = {
-                property: property,
-                value: value,
-                objectType: objectType,
-                operator: operator,
-                objectName: objectName
+        if (booleanOption != "removeAll") {
+            var newFilter = null;
+            if (property == "" || option == "all") {
+                newFilter = {
+                    property: "all",
+                    objectType: objectType,
+                    objectName: objectName
+                }
 
             }
+
+
+            else if (!property) {
+                toutlesensController.setGraphMessage("enter a  property", "stop");
+
+            }
+
+            else if (!value) {
+                toutlesensController.setGraphMessage("enter a value for the property", "stop");
+
+            }
+            else {
+                newFilter = {
+                    property: property,
+                    value: value,
+                    objectType: objectType,
+                    operator: operator,
+                    objectName: objectName
+
+                }
+            }
+            if (newFilter)
+                self.currentSelectdFilters.push(newFilter);
         }
-        if (newFilter)
-            self.currentSelectdFilters.push(newFilter);
         $("#dialog").dialog("close");
         self.setQueryFilters(true);
     }
@@ -343,7 +345,7 @@ var filters = (function () {
             if (property == "all") {
 
                 objectName = filter.objectName;
-                if (objectType == "endNode" && objectName != "") {
+                if (objectType == "node" && objectName != "") {
                     if (allNodeLabelsStr.length > 0)
                         allNodeLabelsStr += " OR ";
                     allNodeLabelsStr += "m:" + objectName;
@@ -378,7 +380,7 @@ var filters = (function () {
                         toutlesensData.whereFilter += "r." + property + operator + "\"" + value + "\" ";
 
                 }
-                else if (objectType == "startNode" ) {
+                else if (objectType == "startNode") {
                     if (common.isNumber(value))
                         toutlesensData.whereFilter += "node1." + property + operator + value + " ";
                     else
@@ -405,7 +407,7 @@ var filters = (function () {
 
         if (generateGraph) {
             toutlesensController.generateGraph(null, {applyFilters: true});
-            var message= self.printPropertyFilters()+"<br>"+self.printRelationsFilters
+            var message = self.printPropertyFilters() + "<br>" + self.printRelationsFilters
             $("filterMessage").html(message);
 
         }
