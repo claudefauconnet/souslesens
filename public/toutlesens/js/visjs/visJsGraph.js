@@ -11,7 +11,7 @@ var visjsGraph = (function () {
     self.layout = "physics";
 
     self.previousGraphs = []
-    self.previousGraphs.index = 0;
+    self.previousGraphs.index = -1;
 
 
     var stopPhysicsTimeout = 5000;
@@ -19,6 +19,7 @@ var visjsGraph = (function () {
     var dblClickDuration = 500;
 
     var dragPosition = {};
+    var options={};
 
 
     self.draw = function (divId, visjsData) {
@@ -45,18 +46,10 @@ var visjsGraph = (function () {
             nodes: self.nodes,
             edges: self.edges
         };
-        /*   var options = {};
-         if(data.edges.length>20){
-         options.layout= {
-         improvedLayout: false,
-         }
-         options.physics={
-         stabilization: true
-         }
-         }*/
 
 
-        var options = {
+
+        options = {
 
 
             //   interaction: {hover: true},
@@ -92,6 +85,8 @@ var visjsGraph = (function () {
 
 
         options.manipulation = true;
+
+
         if (graphLayoutSelect) {// not loaded at the beginning
             var layoutObj = self.setLayoutOption(graphLayoutSelect)
             for (var key in layoutObj) {
@@ -207,38 +202,34 @@ var visjsGraph = (function () {
         });
 
 
-        //  var network = new vis.Network(container, data, options);
+
 
 
     }
 
 
-    self.setLayoutOption = function (select, apply) {
+    self.setLayoutOption = function (selectLayout,selectDirection, apply) {
 
-        var layoutArray = $(select).val().split(" ");
+        var layoutArray = $(selectLayout).val().split(" ");
+        var direction = $(selectDirection).val();
         var layoutType = layoutArray[0];
-        var param = layoutArray[1];
-
-        var layoutObj = {
-             edges: {
-                 smooth: true,
-                 arrows: {to : true }
-             }
-        };
+        var param="";
+        if(layoutArray.length>1)
+         param = layoutArray[1];
 
         if (layoutType == "hierarchical") {
-            var layoutObj={layout:{hierarchical:{sortMethod:param}}}
-
-
-
-
+            ($("#graphLayoutDirectionDir").css("visibility","visible"))
+            options.layout={hierarchical:{sortMethod:param,direction:direction},randomSeed: false}
         }
-        if (layoutType == "randomSeed") {
-            layoutObj.layout = {randomSeed: param}
+        if (layoutType == "random") {
+            ($("#graphLayoutDirectionDir").css("visibility","hidden"))
+            options.layout = {hierarchical:false,randomSeed:2}
         }
-        if (apply)
-            network.setOptions(layoutObj)
-        return (layoutObj)
+        if (apply) {
+           // var xx=network.layoutEngine.options;
+            network.setOptions( options)
+        }
+        return ( options)
 
     }
     self.clusterByLabel = function () {
@@ -658,9 +649,17 @@ var visjsGraph = (function () {
         //  network = new vis.Network(container, data, {});
 
     }
-
+    /**
+     *
+     * when a node is dragged and toutlesensData.queriesIds.length>=2  moves the connected nodes
+     *
+     * @param nodeId
+     * @param offset
+     */
 
     self.dragConnectedNodes = function (nodeId, offset) {
+        if(toutlesensData.queriesIds.length<2)
+        return;
         var connectedNodes = network.getConnectedNodes(nodeId);
         var connectedEdges = network.getConnectedEdges(nodeId);
         var positions = network.getPositions()
@@ -700,27 +699,42 @@ var visjsGraph = (function () {
 
     }
 
-    self.saveGraph = function () {
-        self.previousGraphs.index += 1
-        self.previousGraphs.push(self.exportNodes());
-        $("#previousMenuButton").css("visibility", "visible")
-        if (self.previousGraphs.index < self.previousGraphs.length < -1)
-            $("#nextMenuButton").css("visibility", "visible")
 
-    }
+
+
     self.previousGraph = function () {
         self.previousGraphs.index -= 1;
         self.reloadGraph(self.previousGraphs.index);
-        if (self.previousGraphs.index <= 0)
-            $("#previousMenuButton").css("visibility", "hidden");
-        $("#nextMenuButton").css("visibility", "visible")
+        self.setPreviousNextButtons();
     }
     self.nextGraph = function () {
         self.previousGraphs.index += 1;
         self.reloadGraph(self.previousGraphs.index);
-        if (self.previousGraphs.index >= self.previousGraphs.length - 1)
+        self.setPreviousNextButtons();
+    }
+
+    self.setPreviousNextButtons=function(){
+        if (self.previousGraphs.index>0)
+            $("#previousMenuButton").css("visibility", "visible")
+        else
+            $("#previousMenuButton").css("visibility", "hidden")
+        if (self.previousGraphs.index < (self.previousGraphs.length-1))
+            $("#nextMenuButton").css("visibility", "visible")
+        else
             $("#nextMenuButton").css("visibility", "hidden")
     }
+
+
+
+
+    self.saveGraph = function () {
+        self.previousGraphs.index += 1
+        self.previousGraphs.push(self.exportNodes());
+        self.setPreviousNextButtons();
+
+    }
+
+
     self.reloadGraph = function (index) {
 
         var data = self.previousGraphs[index];

@@ -1,8 +1,7 @@
 <table>
 
     <tr valign="middle">
-        <td><span id='lang_15'>Profondeur</span>&nbsp;<input
-                id="depth" value="1" size="1"></td>
+        <td><span id='lang_15'>Profondeur</span>&nbsp;<input id="depth" value="1" size="1" disabled></td>
         <td colspan="2">
             <div id="depthSlider" style="width: 130px;"></div>
         </td>
@@ -19,26 +18,40 @@
 
 
     <tr>
-        <td colspan="2">
+        <td >
             layout
-            <select id="graphLayoutSelect" onchange="visjsGraph.setLayoutOption(this,true)">
-                <option>randomSeed 2</option>
-                <option>randomSeed 4</option>
+            <select id="graphLayoutSelect" onchange="visjsGraph.setLayoutOption(this,graphLayoutDirectionSelect,true)">
+                <option>random</option>
                 <option>hierarchical directed</option>
                 <option>hierarchical hubsize</option>
             </select>
 
 
         </td>
+        <td >
+            <div id="graphLayoutDirectionDir" style="visibility: hidden">
+            direction
+            <select id="graphLayoutDirectionSelect" onchange="visjsGraph.setLayoutOption(graphLayoutSelect,this,true)">
+                <option value="UD">Up-Down</option>
+                <option value="DU">Down-Up</option>
+                <option value="LR">Left-Right</option>
+                <option value="RL">Right-Left</option>
+
+            </select>
+
+            </div>
+
+
+        </td>
     </tr>
 
 
-    <tr>
+ <!--   <tr>
         <td>
             <button onclick=" visjsGraph.saveGraph();$('#dialog').dialog('close');">ExportGraph</button>
             <button onclick=" visjsGraph.reloadGraph();$('#dialog').dialog('close');">ImportGraph</button>
         </td>
-    </tr>
+    </tr>-->
 
 
 </table>

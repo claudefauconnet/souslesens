@@ -18,9 +18,11 @@
 
     <tr>
         <td>
-            <button onclick=" Schema.showSchemaConfigDialog();$('#dialog').dialog('close');">Schema...</button>
+          Edit  <button onclick=" toutlesensController.dispatchAction('showSchemaConfigDialog');$('#dialog').dialog('close');">Graph Schema...</button>
+            &nbsp;<button onclick=" toutlesensController.dispatchAction('showParamsConfigDialog');$('#dialog').dialog('close');">Parameters...</button>
         </td>
     </tr>
+</table>
 
 
     <script>
@@ -33,4 +35,6 @@
             $("#mainButtons").css("visibility", "visible");
 
         }
+
+
     </script>

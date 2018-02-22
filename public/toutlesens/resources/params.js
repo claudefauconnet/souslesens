@@ -63,6 +63,7 @@ var Gparams = {
     graphMaxDataLengthToDisplayGraphDirectly:1000,
 
     shortestPathMaxDistanceTest:8,
+    graphDefaultLayout:"hierarchical directed",
 
 
     //urls************************
@@ -169,6 +170,7 @@ var Gparams = {
         '#FFDEF4',]
 
 }
+
 
 /*
  * palette : [ '#0056B3', '#007DFF', '#A84F02', '#A8A302', '#B354B3', '#B35905',

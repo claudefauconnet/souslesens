@@ -72,29 +72,31 @@
     <script src="js/toutlesensDialogsController.js"></script>
     <script src="js/filters.js"></script>
     <script src="js/paint.js"></script>
-    <script src="js/mainMenu.js"></script>
     <script src="js/traversalMenu.js"></script>
-    <script src="js/modifyData.js"></script>
 
-    <!--
-    <script src="js//externalRessourcesCommon.js"></script>
-    <script src="js//externalRessourcesDbPedia.js"></script>
-    <script src="js//externalRessourcesBNF.js"></script>
+    <script src="js/paramsController.js"></script>
+
+    <!--   <script src="js/modifyData.js"></script>
+     <script src="js/mainMenu.js"></script>
+
+     <script src="js//externalRessourcesCommon.js"></script>
+     <script src="js//externalRessourcesDbPedia.js"></script>
+     <script src="js//externalRessourcesBNF.js"></script>
 
 
-    <script src="js/d3common.js"></script>
-    <script src="js/d3legend.js"></script>
+     <script src="js/d3common.js"></script>
+     <script src="js/d3legend.js"></script>
 
-    <script src="js/d3flower.js"></script>
+     <script src="js/d3flower.js"></script>
 
-    <script src="js/d3simpleForce.js"></script>
-    <script src="js/d3simpleForceLight.js"></script>
-    <script src="js/souslesensForcelayout.js"></script>
-    <script src="js/d3simpleForceBulk.js"></script>
-    <script src="js/d3treemap.js"></script>
-    <script src="js/d3forceCollapseClass.js"></script>
-    <script src="js/d3tree.js"></script>
-    <script src="js/d3schema.js"></script>  -->
+     <script src="js/d3simpleForce.js"></script>
+     <script src="js/d3simpleForceLight.js"></script>
+     <script src="js/souslesensForcelayout.js"></script>
+     <script src="js/d3simpleForceBulk.js"></script>
+     <script src="js/d3treemap.js"></script>
+     <script src="js/d3forceCollapseClass.js"></script>
+     <script src="js/d3tree.js"></script>
+     <script src="js/d3schema.js"></script>  -->
 
     <script src="js/cards.js"></script>
 
@@ -308,14 +310,20 @@
                 activate: function (event, ui) {
 
                     var index = ui.newTab.index();
-                    if (index == 0)
+                    if (index == 0) {
                         toutlesensController.currentActionObj.mode = "infos";
-                    if (index == 1)
+                    }
+                    if (index == 1) {
                         toutlesensController.currentActionObj.mode = "filter";
-                    if (index == 2)
+                    }
+                    if (index == 2) {
                         toutlesensController.currentActionObj.mode = "highlight";
-                    if (index == 3)
-                        toutlesensController.currentActionObj.mode = "edit";
+                        var nodeDivDetach = $("#nodeDivDetachable").detach();
+                        $("#nodeDiv").append(nodeDivDetach);
+                    }
+                    if (index == 3) {
+                        toutlesensController.currentActionObj.mode = "graph";
+                    }
 
 
                 }
@@ -520,20 +528,17 @@
 
 
 <div id="mainButtons">
-    <!--   <input type="image" title="Data menu" height="40px" onclick="mainMenu.showDataMenu()" id="dataMenuButton"
-              src="images/data.png"/>-->
-    <input type="image" title="Graph menu" height="20px" onclick="mainMenu.showGlobalMenu()" id="parametersMenuButton" src="images/parameters.png"/>
-    &nbsp;<input type="image" alt="search all nodes" height="20px"   onclick="toutlesensController.showAll()"   id="searchAllButton" src="images/all.png"/></td>
 
-    <input type="image" title="Take a snapshot" height="20px" onclick="visjsGraph.saveGraph()" id="snapShotMenuButton" src="images/snapshot.png"  class="graphDisplayed"/>
+    <input type="image" title="Graph menu" height="20px" onclick="toutlesensController.dispatchAction('showGlobalMenu');" id="parametersMenuButton" src="images/parameters.png"/>
+    &nbsp;<input type="image" title="Display all nodes" height="20px"   onclick="toutlesensController.showAll()"   id="searchAllButton" src="images/all.png"/></td>
     <input type="image" title="Export to text" height="20px" onclick="toutlesensController.dispatchAction('showGraphText')" id="toTextMenuButton" src="images/text.png"  class="graphDisplayed"/>
-    <input type="image" title="Previous display" height="20px"  onclick="visjsGraph.previousGraph()" id="previousMenuButton" src="images/previous.jpg"/>
-    <input type="image" title="Next display" height="20px" onclick="visjsGraph.nextGraph()"
-           id="nextMenuButton" src="images/next.jpg"/>
-    <input type="image" title="Next display" height="20px" onclick="toutlesensController.dispatchAction('addNode')"  class="canModify";
-           id="newNodeButton" src="images/newNode.png"/>
-    <img id="waitImg" src="images/waitAnimated.gif" width="20px"
-         style="visibility: hidden;">
+    <input type="image" title="Take a snapshot" height="20px" onclick="visjsGraph.saveGraph()" id="snapShotMenuButton" src="images/snapshot.png"  class="graphDisplayed"/>
+
+    <input type="image" title="Previous graph" height="20px"  onclick="visjsGraph.previousGraph()" id="previousMenuButton" src="images/previous.jpg"/>
+    <input type="image" title="Next graph" height="20px" onclick="visjsGraph.nextGraph()"  id="nextMenuButton" src="images/next.jpg"/>
+    <input type="image" title="Next display" height="20px" onclick="toutlesensController.dispatchAction('addNode')"  class="canModify"; id="newNodeButton" src="images/newNode.png"/>
+    <img id="waitImg" src="images/waitAnimated.gif" width="20px" style="visibility: hidden;">
+
     <div id="graphLegendDiv"></div>
 </div>
 

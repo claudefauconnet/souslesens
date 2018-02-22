@@ -24,37 +24,41 @@
  * SOFTWARE.
  *
  ******************************************************************************/
-var fs=require('fs');
-var path=require('path');
+var fs = require('fs');
+var path = require('path');
 
-var jsonFileStorage={
+var jsonFileStorage = {
 
-    store:function(filePath,json,callback){
+    store: function (filePath, json, callback) {
         try {
 
-          //  filePath=path.normalize(filePath);
-            fs.writeFileSync(filePath, JSON.stringify(json,undefined, 4));
+            //  filePath=path.normalize(filePath);
+            fs.writeFileSync(filePath, JSON.stringify(json, undefined, 4));
             callback(null, "file saved")
         }
-        catch(e){
+        catch (e) {
             callback(e)
         }
     },
-    retrieve:function(filePath,callback){
+    retrieve: function (filePath, callback) {
 
         try {
-          //  filePath=path.normalize(filePath);
-            var str=fs.readFileSync(filePath)
-            callback(null, JSON.parse(""+str))
+            //  filePath=path.normalize(filePath);
+            var str = fs.readFileSync(filePath);
+
+            try {
+              callback (null,JSON.parse("" + str));
+            }
+            catch (e) {// in that case return the string content not parsed
+                callback(null, str);
+            }
+
         }
-        catch(e){
+        catch (e) {
             callback(e)
         }
     }
 
 
-
-
-
 }
-module.exports=jsonFileStorage;
+module.exports = jsonFileStorage;

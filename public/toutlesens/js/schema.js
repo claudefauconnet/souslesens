@@ -81,8 +81,12 @@ var Schema = (function () {
 
             error: function (error, ajaxOptions, thrownError) {
                 // if schema does not exist we create one by analyzing Neo4j db content
-                console.log(error);
-             self.showSchemaConfigDialog({create:1});
+                console.log("no schema found, will create one");
+                self.createSchema();
+                setTimeout(function(){
+                    toutlesensController.dispatchAction('showSchemaConfigDialog');//({create:1});
+                },2000)
+
 
 
             },
@@ -93,21 +97,6 @@ var Schema = (function () {
         })
     }
 
-    self.showSchemaConfigDialog=function(options){
-        $("#dialogLarge").load("htmlSnippets/schemaConfig.html", function () {
-            if(options && options.create )
-            $("#schemaConfig_createSchemaDiv").css("visibility", "visible");
-            else
-                $("#schemaConfig_configSchemaDiv").css("visibility", "visible");
-
-
-            $("#subGraph").val(subGraph);//  self.initLabelProperty(label);
-
-
-        })
-        $("#dialogLarge").dialog("option", "title", "Souslesens schema configuration");
-        $("#dialogLarge").dialog("open");
-    }
 
     /**
      * generate implicit schema and update schemaconfigDialog to modifiy it
