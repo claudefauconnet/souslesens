@@ -237,7 +237,7 @@ var filters = (function () {
      */
     self.filterOnProperty = function (option, booleanOption, objectType, objectName, property, operator, value) {
 
-
+        $("#graphPopup").css("visibility", "hidden");
         if (!property)
             property = $("#propertiesSelectionDialog_propsSelect").val();
         if (!value)

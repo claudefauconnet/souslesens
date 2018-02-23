@@ -168,7 +168,7 @@ self.generateExternalImg(src);
 
    self.showExternalResourceDetails=function(uri){
 	currentExternalUri=uri;
-	$("#tabs-mainPanel").tabs("option", "active", 2);
+
 	$("#nodeDetailsDiv").html("  <button onclick='self.associateExternalResourceToNode()'>"+
 		"Associer  cette page au noeud courant </button><br"+
 		"<iframe width='"+((totalWidth / 4 * 3) - 50)+"' height='"+(totalHeight - 150)+"' src='"+uri+"'>");

@@ -288,23 +288,7 @@
             //   $("#nodeInfosDiv").height(totalHeight - 200).width(totalWidth - 650)
 
 
-            $("#tabs-mainPanel").tabs(
-                {
-                    activate: function (event, ui) {
 
-
-                        var index = ui.newTab.index();
-                        if (index == 2) {//data
-                            //  $("#mainButtons").css("visibility", "hidden");
-                        }
-                        if (index == 1) {//list
-                            toutlesensController.onTextVisButton('HTML');
-                            //  $("#mainButtons").css("visibility", "hidden");
-                        }
-
-                    }
-                }
-            );
             $("#tabs-analyzePanel").tabs({
 
                 activate: function (event, ui) {
@@ -328,8 +312,8 @@
                         toutlesensController.currentActionObj.mode = "highlight";
                         var filterMovableDiv = $("#filterMovableDiv").detach();
                         $("#highlightDiv").append(filterMovableDiv);
-                        $("#filterActionDiv").html("htmlSnippets/paintDialog.html", function () {
-
+                        $("#filterActionDiv").load("htmlSnippets/paintDialog.html", function () {
+                            paint.initColorsPalette(10, "paintDialogPalette");
                         });
 
                     }
@@ -531,7 +515,7 @@
 <!--  ****************************************************main panel***************************-->
 
 
-<div id="tabs-mainPanel">
+<div id="mainPanel">
 
 
     <div id="graphDiv"></div>
@@ -544,7 +528,7 @@
     <input type="image" title="Graph menu" height="20px"
            onclick="toutlesensController.dispatchAction('showGlobalMenu');" id="parametersMenuButton"
            src="images/parameters.png"/>
-    &nbsp;<input type="image" title="Display all nodes" height="20px" onclick="toutlesensController.showAll()"
+    &nbsp;<input type="image" title="Display all nodes" height="20px" onclick="toutlesensController.dispatchAction('showAll')"
                  id="searchAllButton" src="images/all.png"/></td>
     <input type="image" title="Export to text" height="20px"
            onclick="toutlesensController.dispatchAction('showGraphText')" id="toTextMenuButton" src="images/text.png"

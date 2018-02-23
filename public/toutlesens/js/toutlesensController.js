@@ -217,7 +217,6 @@ var toutlesensController = (function () {
     self.displayGraph = function (json, output, callback) {
         d3NodesSelection = [];
         $("#textDiv").html("");
-        $("#tabs-mainPanel").tabs("option", "active", 0);
 
         if (currentDisplayType == "VISJS-NETWORK") {
             visjsGraph.draw("graphDiv", connectors.neoResultsToVisjs(toutlesensData.cachedResultArray));
@@ -391,6 +390,11 @@ var toutlesensController = (function () {
      *  "linkTarget"
      *  "modifyNode"
      *  "addNode"
+     *  showGraphText
+     *  showGlobalMenu
+     *  showParamsConfigDialog
+     *  showParamsConfigDialog
+     *  showAll
      *
      *
      * @param action
@@ -496,8 +500,7 @@ var toutlesensController = (function () {
             $("#linkTargetNode").val(targetNode.name);
             $("#linkTargetNode").css("color", nodeColors[targetNode.label]);
             $("#linkTargetLabel").html(targetNode.label);
-            // $("#tabs-mainPanel").tabs("option", "active", 3);
-            //   $("#accordionModifyPanel").accordion("option", "active", 1);
+
             self.currentRelationData.targetNode = targetNode;
             var links = [];
             var allowedRelTypes = Schema.getPermittedRelTypes(toutlesensController.currentRelationData.sourceNode.labelNeo, toutlesensController.currentRelationData.targetNode.labelNeo, true);
@@ -609,10 +612,41 @@ var toutlesensController = (function () {
             $("#dialogLarge").dialog("open");
         }
 
+        else if (action == "showAll") {
+            currentObject.id = null;
+            currentLabel = null;
+            currentDisplayType = "SIMPLE_FORCE_GRAPH"
+            self.generateGraph(null, {applyFilters: true});
+        }
+
+        else if (action == "onLinkClick") {
+            self.generateGraph(objectId, {applyFilters: true}, function () {
+
+            })
+
+        }
+
+
+
+
+
 
 
 
     }
+
+
+    self.showImage = function (url) {
+        // $("#nodeDetailsDiv").prop("src", url);
+        var w = $("#nodeDetailsDiv").width();
+        $("#nodeDetailsDiv").html('<img id="largeImage" src="' + url + '" border="0" height="real_height" width="real_width" onload="resizeImg(this, null, ' + w + ');">')
+
+    }
+    self.restorePopupMenuNodeInfo = function () {
+        $("#nodeInfoMenuDiv").html(popupMenuNodeInfoCache);
+    }
+
+
 
 
     /**
@@ -634,92 +668,10 @@ var toutlesensController = (function () {
 
 
 
-    self.onVisButton = function (value) {
 
 
-        $("#representationSelect").val(value);
-        currentDisplayType = value;
-
-        if (currentDisplayType == "FORM") {
-            if (!currentObject.id) {
-                self.setGraphMessage("A node must be selected for this graph type ", "stop");
-                return;
-            }
-            $("#tabs-mainPanel").tabs("enable", 2);
-            $("#tabs-mainPanel").tabs("option", "active", 2);
-            if (infoGenericDisplay && infoGenericDisplay.selectedNodeData && !infoGenericDisplay.isAddingRelation) {
-                //  var node = infoGenericDisplay.ids[infoGenericDisplay.selectedNodeData.jtreeId];
-                infoGenericDisplay.showNodeData(null, currentObject.id);
-            }
 
 
-        }
-        else if (currentDisplayType == "CARDS") {
-
-            $("#tabs-mainPanel").tabs("option", "active", 0);
-            var label = $("#nodesLabelsSelect").val();
-            var id = currentObject.id;
-
-            if (label || id)
-
-            /*       var rightPanelWidth = $("#graphLegendDiv").width();
-               $("#graphLegendDiv").width(1);*/
-                $("#graphDiv").width($("#graphDiv").width() + rightPanelWidth);
-            $("#graphDiv").css("overflow", "auto")
-            $("#graphDiv").html("");
-            $("#graphDiv").html("<div id=backgroundDiv></div>");
-            cards.init();
-            cards.drawCards(label, id, "cards");
-            return;
-
-
-        }
-
-        else if (currentDisplayType == "SIMPLE_FORCE_GRAPH") {
-            currentObject.id = null;
-            self.generateGraph(null, {applyFilters: false});
-        }
-        else {
-            self.generateGraph(null, {applyFilters: {applyFilters: true}});
-        }
-
-    }
-
-
-    self.onTextVisButton = function (mode) {
-        var treeJon;
-
-        if (mode == "HTML") {
-
-            if (!toutlesensData.cachedResultArray && !toutlesensData.cachedResultTree)
-                treeJon = toutlesensData.getNodeAllRelations(id, mode);
-            if (currentDataStructure == "flat") {
-                treeJon = toutlesensData.flatResultToTree(toutlesensData.cachedResultArray);
-                textOutputs.listTreeResultToHtml(treeJon, Gparams.htmlOutputWithAttrs)
-            }
-            else if (currentDataStructure == "tree") {
-                if (toutlesensData.cachedResultTree)
-                    textOutputs.listTreeResultToHtml(toutlesensData.cachedResultTree, Gparams.htmlOutputWithAttrs)
-            }
-        }
-        else if (mode == "CSV") {
-            if (!toutlesensData.cachedResultArray)
-                toutlesensData.cachedResultArray = toutlesensData.getNodeAllRelations(id, mode);
-            if (currentDataStructure == "flat") {
-                treeJon = toutlesensData.flatResultToTree(toutlesensData.cachedResultArray);
-                textOutputs.drawCSV(treeJon, Gparams.htmlOutputWithAttrs)
-            } else if (currentDataStructure == "tree") {
-                if (toutlesensData.cachedResultTree)
-                    textOutputs.drawCSV(toutlesensData.cachedResultTree, Gparams.htmlOutputWithAttrs)
-                else
-                    toutlesensData.getNodeAllRelations(id, mode);
-            }
-            return;
-
-
-        }
-
-    }
 
 
     self.showPopupMenu = function (x, y, type) {
@@ -735,22 +687,6 @@ var toutlesensController = (function () {
     }
 
 
-    self.onLinkClick = function (id) {
-        self.generateGraph(id, {applyFilters: true}, function () {
-            $("#tabs-mainPanel").tabs("option", "active", 0);
-        })
-
-    }
-    self.showImage = function (url) {
-        // $("#nodeDetailsDiv").prop("src", url);
-        var w = $("#nodeDetailsDiv").width();
-        $("#nodeDetailsDiv").html('<img id="largeImage" src="' + url + '" border="0" height="real_height" width="real_width" onload="resizeImg(this, null, ' + w + ');">')
-        $("#tabs-mainPanel").tabs("enable", 2);
-        $("#tabs-mainPanel").tabs("option", "active", 2);
-    }
-    self.restorePopupMenuNodeInfo = function () {
-        $("#nodeInfoMenuDiv").html(popupMenuNodeInfoCache);
-    }
 
 
     self.afterGraphInit = function () {
@@ -765,7 +701,7 @@ var toutlesensController = (function () {
         $("#nextMenuButton").css("visibility", "hidden")
         $("#previousMenuButton").css("visibility", "hidden")
 
-        $("#tabs-mainPanel").tabs("option", "disabled", "2");
+
 
 
         if (Gparams.showRelationNames) {
@@ -801,16 +737,6 @@ var toutlesensController = (function () {
             self.initLabels(currentQueriesDialogSourceLabelSelect);
             self.initLabels(currentQueriesDialogTargetLabelSelect);
         });
-
-    /*    $("#highlightDiv").load("htmlSnippets/paintDialog.html", function () {
-
-
-        });
-        $("#filterDiv").load("htmlSnippets/filterDialog.html", function () {
-
-
-        });*/
-
 
         $("#graphOptionsDiv").load("htmlSnippets/visjsGraphDisplayMenu.html", function () {
             var layout=Gparams.graphDefaultLayout;
@@ -922,7 +848,7 @@ var toutlesensController = (function () {
         }
         $(".ui-tabs .ui-tabs-panel").css("padding", "2px")
 
-        $("#tabs-mainPanel").width(totalWidth - (rightPanelWidth)).height(totalHeight)
+        $("#mainPanel").width(totalWidth - (rightPanelWidth)).height(totalHeight)
         $("#analyzePanel").width(rightPanelWidth - 50).height(totalHeight).css("position", "absolute").css("left", totalWidth - rightPanelWidth + 20).css("top", 20);
 
 
@@ -987,38 +913,8 @@ var toutlesensController = (function () {
 
     }
 
-    /**
-     *
-     * duisplay graph schema dialog
-     *
-     *
-     *
-     */
-
-    self.showGraphSchema = function () {
 
 
-        $("#dialogLarge").dialog({modal: true});
-        $("#dialogLarge").dialog("option", "title", "Toutlesens Schema");
-
-        var page = "schema.html";
-
-        $("#dialogLarge").load(page, function () {
-
-
-            $("#subGraph").val(subGraph);
-
-
-        })
-        $("#dialogLarge").dialog("open");
-    }
-
-    self.showAll = function () {
-        currentObject.id = null;
-        currentLabel = null;
-        currentDisplayType = "SIMPLE_FORCE_GRAPH"
-        self.generateGraph(null, {applyFilters: true});
-    }
 
 
     return self;

@@ -55,7 +55,7 @@ var textOutputs = (function () {
         html += '<div id="htmlListDiv" style="overflow: scroll;width:' + (totalWidth / 3 * 2) + 'px;height:' + (totalHeight - 100) + 'px;background-color:\'white\' ">' + str + '</div>'
 
         $("#textDiv").html(str);
-        // $("#tabs-mainPanel").tabs("option", "active", 1);
+
 
 
     }
@@ -108,7 +108,7 @@ var textOutputs = (function () {
         var attrs = "";
         if (withAttrs)
             self.getNodeAttrsInfo(node);
-        var anchor = "<a href='javascript:toutlesensController.onLinkClick(" + node.id + ")'>";
+        var anchor = "<a href='javascript:toutlesensController.dispatchAction(\"onLinkClick\"," + node.id + ")'>";
         str += "<li>" + rel + label + anchor + name + "</a>" + deco + attrs + "</li>";
 
 
@@ -340,9 +340,7 @@ var textOutputs = (function () {
         $("#textDiv").html(str);
 
 
-        var index = $('#tabs-mainPanel a[href="#textTab"]').parent().index();
-        $("#tabs-mainPanel").tabs("enable", index);
-      //  $("#tabs-mainPanel").tabs("option", "active", index);
+
     }
 
     self.drawCSV_DataTable = function (json) {

@@ -11,14 +11,11 @@ var paint = (function () {
 
     self.initialNodesattrs = {};
     self.initialLinksattrs = {};
-    var currentAction="";
+    var currentAction = "";
 
 
-
-
-
-    self.init=function(data){
-        var labels=[]
+    self.init = function (data) {
+        var labels = []
         for (var i = 0; i < data.length; i++) {
             var filterObj = data[i];
             for (var k = 0; k < filterObj.labels.length; k++) {
@@ -30,14 +27,14 @@ var paint = (function () {
             }
 
         }
-        labels.splice(0,0,"");
-        common.fillSelectOptionsWithStringArray(paintDialog_labelSelect,labels);
-        filters.initLabelProperty("",paintDialog_propsSelect);
+        labels.splice(0, 0, "");
+        common.fillSelectOptionsWithStringArray(paintDialog_labelSelect, labels);
+        filters.initLabelProperty("", paintDialog_propsSelect);
         $("#paintDialog_propsSelect").val(Schema.getNameProperty())
         self.initColorsPalette(10, "paintDialogPalette");
         self.onActionTypeSelect("outline")
-        $("#paintDialog_valueInput").css("visibility","visible");
-        $("#paintDialog_operatorSelect").css("visibility","visible")
+        $("#paintDialog_valueInput").css("visibility", "visible");
+        $("#paintDialog_operatorSelect").css("visibility", "visible")
     }
 
 
@@ -50,24 +47,24 @@ var paint = (function () {
         // $( "#dialog" ).css("top",100);
         //   $("#dialog").dialog("option", "title", "Graph paint attributes");
         $("#dialog").html("");
-      //  $("#dialog").css("font-size","12px");
-     /*   $("#dialog").height(200);
-        $("#dialog").width(150);*/
+        //  $("#dialog").css("font-size","12px");
+        /*   $("#dialog").height(200);
+           $("#dialog").width(150);*/
 
         $("#dialog").load("htmlSnippets/paintDialog.html", function () {
             // $("#paintDiv").load("htmlSnippets/paintDialog.html", function () {
             //   $("#filtersDiv").css("visibility", "hidden")
             if (true || label) {
 
-              //  filters.initLabelProperty(label, paintDialog_propsSelect);
-                $("#paintDialog_clusterNodesButton").css("visibility","visible");
-                $("#paintDialogTypeSpan").html("Node label :"+label)
+                //  filters.initLabelProperty(label, paintDialog_propsSelect);
+                $("#paintDialog_clusterNodesButton").css("visibility", "visible");
+                $("#paintDialogTypeSpan").html("Node label :" + label)
             }
             else {
 
-                $("#paintDialog_clusterNodesButton").css("visibility","hidden")
+                $("#paintDialog_clusterNodesButton").css("visibility", "hidden")
                 filters.initRelationProperty(relType, paintDialog_propsSelect);
-                $("#paintDialogTypeSpan").html("Relation type :"+relType)
+                $("#paintDialogTypeSpan").html("Relation type :" + relType)
             }
             paint.initColorsPalette(10, "paintDialogPalette");
             $("#dialog").dialog({
@@ -75,8 +72,8 @@ var paint = (function () {
             });
 
 
-           if(paintDialog_propsSelect.options.length<1)
-               $("#paintDialogClassesButton").css("visibility","hidden")
+            if (paintDialog_propsSelect.options.length < 1)
+                $("#paintDialogClassesButton").css("visibility", "hidden")
             $("#dialog").dialog("open");
 
         });
@@ -84,7 +81,7 @@ var paint = (function () {
 
     self.closePaintDialog = function () {
         $("#filtersDiv").css("visibility", "visible");
-        $("#paintDiv").css("height",0);
+        $("#paintDiv").css("height", 0);
         $("#paintDiv").html("");
 
     }
@@ -238,12 +235,12 @@ var paint = (function () {
             str += "<tr><td" + onClick + "><span style='background-color: " + ticksColors[i].color + ";'>&nbsp;&nbsp;&nbsp;</span></td><td>" + ticksColors[i].tick + "</td></tr>"
 
         }
-        $("#paintDiv").css("height",300);
+        $("#paintDiv").css("height", 300);
         $("#paintDiv").html(str);
         jQuery("#dialog").dialog('option', 'position', {
             my: "left bottom",
             at: "left bottom",
-            of: "#tabs-mainPanel"
+         //   of: "#mainPanel"
         });
 
 
@@ -251,7 +248,7 @@ var paint = (function () {
 
 
     self.paintAll = function (option) {
-
+        $("#graphPopup").css("visibility", "hidden");
         var nodeColor = null;
         var nodeR = null;
         var linkStroke = null;
@@ -265,72 +262,70 @@ var paint = (function () {
         }
 
 
+        var radius = $("#paintDialog_circleRadiusInput").val();
+        var property = $("#propertiesSelectionDialog_propsSelect").val();
+        var value = $("#propertiesSelectionDialog_valueInput").val();
+        var filterObjectType = $("#propertiesSelectionDialog_ObjectTypeInput").val();
+        var operator = $("#propertiesSelectionDialog_operatorSelect").val();
+        var type = $("#propertiesSelectionDialog_ObjectNameInput").val();
+        self.currentLabel = $("#paintDialog_labelSelect").val();
 
 
-            var radius = $("#paintDialog_circleRadiusInput").val();
-            var property = $("#paintDialog_propsSelect").val();
-            var value = $("#paintDialog_valueInput").val();
-            var filterObjectType = $("#paintDialog_filterObjectTypeInput").val();
-            var operator = $("#paintDialog_operatorSelect").val();
-            var type = $("#paintDialog_typeInput").val();
-        self.currentLabel=$("#paintDialog_labelSelect").val();
-
-
-            var legendStr="";
+        var legendStr = "";
         if (Gparams.useVisjsNetworkgraph) {
-        if (true || self.currentLabel) {
+            if (true || self.currentLabel) {
 
                 var ids = [];
                 for (var key in visjsGraph.nodes._data) {
                     var nodeData = visjsGraph.nodes._data[key];
                     if (property == "" && nodeData.labelNeo == self.currentLabel) {
                         ids.push(key);
-                        legendStr=" All "+self.currentLabel;
+                        legendStr = " All " + self.currentLabel;
                     }
                     else if (self.isLabelNodeOk(nodeData, property, operator, value, type)) {
                         ids.push(key);
-                        legendStr=self.currentLabel+"."+property+""+operator+""+value;
+                        legendStr = self.currentLabel + "." + property + "" + operator + "" + value;
                     }
                 }
                 visjsGraph.paintNodes(ids, self.currentColor, "#eee", radius);
-                legendStr="<span style='background-color: " +self.currentColor + ";'>&nbsp;&nbsp;&nbsp;</span></td><td>" +legendStr+ "</td></tr>"
-                $("#paintDiv").css("height",100);
+                legendStr = "<span style='background-color: " + self.currentColor + ";'>&nbsp;&nbsp;&nbsp;</span></td><td>" + legendStr + "</td></tr>"
+                $("#paintDiv").css("height", 100);
                 $("#paintDiv").html(legendStr);
 
 
-            }else{// relation
-            var ids = [];
-            var relations=visjsGraph.visjsData.edges;
+            } else {// relation
+                var ids = [];
+                var relations = visjsGraph.visjsData.edges;
 
-                for (var i=0;i<relations.length;i++) {
+                for (var i = 0; i < relations.length; i++) {
                     var relData = relations[i];
                     if (property == "" && relData.type == self.currentRelType) {
                         ids.push(relData.neoId);
-                        legendStr=" All "+self.currentRelType;
+                        legendStr = " All " + self.currentRelType;
                     }
                     else if (self.isLabelNodeOk(relData.neoAttrs, property, operator, value, type)) {
                         ids.push(relData.neoId);
-                        legendStr=self.currentRelType+"."+property+""+operator+""+value;
+                        legendStr = self.currentRelType + "." + property + "" + operator + "" + value;
                     }
                 }
                 visjsGraph.paintEdges(ids, self.currentColor, "#eee", radius);
-                legendStr="<span style='background-color: " +self.currentColor + ";'>&nbsp;&nbsp;&nbsp;</span></td><td>" +legendStr+ "</td></tr>"
-                $("#paintDiv").css("height",100);
+                legendStr = "<span style='background-color: " + self.currentColor + ";'>&nbsp;&nbsp;&nbsp;</span></td><td>" + legendStr + "</td></tr>"
+                $("#paintDiv").css("height", 100);
                 $("#paintDiv").html(legendStr);
 
                 return;
 
-        }
+            }
 
-          /*  self.applyInitialGraphObjectAttrs(nodeColor, nodeR, linkStroke, linkStrokeWidth);
-            d3.selectAll(".pointsRadar").select("circle").each(function (d) {
+            /*  self.applyInitialGraphObjectAttrs(nodeColor, nodeR, linkStroke, linkStrokeWidth);
+              d3.selectAll(".pointsRadar").select("circle").each(function (d) {
 
-                if (option == "outline" && self.isLabelNodeOk(d)) {
-                    d3.select(this).style("fill", self.currentColor)
-                    d3.select(this).style("r", r)
-                }
+                  if (option == "outline" && self.isLabelNodeOk(d)) {
+                      d3.select(this).style("fill", self.currentColor)
+                      d3.select(this).style("r", r)
+                  }
 
-            })*/
+              })*/
 
         }
         else if (self.currentRelType) {
@@ -348,8 +343,8 @@ var paint = (function () {
         }
 
     }
-    self.clearHighlight=function(){
-        visjsGraph.paintNodes([],null, "#eee", 0);
+    self.clearHighlight = function () {
+        visjsGraph.paintNodes([], null, "#eee", 0);
     }
 
     self.isLabelNodeOk = function (data, property, operator, value, type) {
@@ -375,7 +370,7 @@ var paint = (function () {
             return result;
 
 
-        }else{
+        } else {
             if (value && value.length > 0) {// we look for value in all properties
 
                 for (var key in data) {
@@ -384,10 +379,10 @@ var paint = (function () {
                     }
                 }
             }
-            else{// we look that type corresponds
+            else {// we look that type corresponds
 
-               if( data.labelNeo==type)
-                   return true;
+                if (data.labelNeo == type)
+                    return true;
             }
 
         }
@@ -397,14 +392,13 @@ var paint = (function () {
 
 
     self.onActionTypeSelect = function (action) {
-        currentAction=action;
+        currentAction = action;
         if (action == "outline") {//outline
-         //   $("#paintDialogAction").css("visibility", "visible");
+            //   $("#paintDialogAction").css("visibility", "visible");
             $("#paintDialogPaletteDiv").css("visibility", "visible");
             $("#paintDialogPropDiv").css("visibility", "visible");
             $("#paintDialog_classesDiv").css("visibility", "hidden");
-         //   $("#paintDialog_GraphicAttrsDiv").css("visibility", "visible");
-
+            //   $("#paintDialog_GraphicAttrsDiv").css("visibility", "visible");
 
 
         }
@@ -416,16 +410,16 @@ var paint = (function () {
         }
 
         if (action == "classes") {//classes
-            var visibility="visible";
-            if($("#paintDialog_propsSelect").val()=="")
-                visibility="hidden";
-          $("#paintDialog_classesDiv").css("visibility",visibility);
+            var visibility = "visible";
+            if ($("#paintDialog_propsSelect").val() == "")
+                visibility = "hidden";
+            $("#paintDialog_classesDiv").css("visibility", visibility);
             $("#paintDialog_operatorSelect").css("visibility", "hidden");
 
             $("#paintDialogPropDiv").css("visibility", "visible");
             $("#paintDialogPaletteDiv").css("visibility", "hidden");
             $("#paintDialog_GraphicAttrsDiv").css("visibility", "visible");
-           // $("#paintDialog_classesDiv").css("visibility", "visible");
+            // $("#paintDialog_classesDiv").css("visibility", "visible");
 
 
         }
@@ -434,26 +428,26 @@ var paint = (function () {
     }
 
 
-    self.onPropertySelect=function(select){
-        var prop=$(select).val();
-        if(currentAction=="classes") {
+    self.onPropertySelect = function (select) {
+        var prop = $(select).val();
+        if (currentAction == "classes") {
             $("#paintDialogPropQueryDiv").css("visibility", "hidden");
             $("#paintDialog_classesDiv").css("visibility", "visible");
 
         }
-        if(currentAction=="outline" ) {
-            if(prop=="") {
+        if (currentAction == "outline") {
+            if (prop == "") {
                 $("#paintDialogPropQueryDiv").css("visibility", "hidden");
             }
-            else{
+            else {
                 $("#paintDialogPropQueryDiv").css("visibility", "visible");
             }
         }
-        if(currentAction=="classes" ) {
-            if(prop=="") {
+        if (currentAction == "classes") {
+            if (prop == "") {
                 $("#paintDialog_classesDiv").css("visibility", "hidden");
             }
-            else{
+            else {
                 $("#paintDialog_classesDiv").css("visibility", "visible");
             }
         }
@@ -462,16 +456,17 @@ var paint = (function () {
         if (/^#[0-9A-F]{6}$/i.test(rgb)) return rgb;
 
         rgb = rgb.match(/^rgb\((\d+),\s*(\d+),\s*(\d+)\)$/);
+
         function hex(x) {
             return ("0" + parseInt(x).toString(16)).slice(-2);
         }
 
         return "#" + hex(rgb[1]) + hex(rgb[2]) + hex(rgb[3]);
     }
-    self.onLegendItemClick=function(tick){
-        var nodes=visjsGraph.nodesMap;
-        for(var key in nodes){
-            if(nodes[key].label==tick){
+    self.onLegendItemClick = function (tick) {
+        var nodes = visjsGraph.nodesMap;
+        for (var key in nodes) {
+            if (nodes[key].label == tick) {
                 visjsGraph.selectNode([nodes[key].id])
             }
         }
