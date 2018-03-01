@@ -61,4 +61,4 @@ version 2.0.1
 This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details
 
 ## Acknowledgments
- Jean-François Meuriot
+ Jean-Paul Taravella
