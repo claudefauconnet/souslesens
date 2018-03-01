@@ -151,6 +151,8 @@ var toutlesensData = (function () {
             var relCardinalityStr = "";
             if (numberOfLevelsVal > 1)
                 relCardinalityStr = "*.." + numberOfLevelsVal;
+         else
+                relCardinalityStr = "*0..1" ;
 
             var whereStatement = "";
             if (id) {

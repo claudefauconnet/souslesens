@@ -291,11 +291,15 @@ function setMongoKey() {
 
 }
 
-function getRelLabelForField(fieldName) {
+function getRelLabelForField(fieldName) {// arevoir
+    return"";
     if (currentRequests) {
         for (var i = 0; i < currentRequests.length; i++) {
-            if (currentRequests[i].request.mongoField == fieldName)
+
+            if (currentRequests[i].request.mongoField == fieldName){
                 return currentRequests[i].request.label;
+            }
+
         }
 
     }
@@ -586,14 +590,14 @@ function deleteRequest() {
                 data: paramsObj,
                 dataType: "json",
                 success: function (data, textStatus, jqXHR) {
-                    setMessage("request " + request + " deleted", "green");
+                    common.setMessage("request " + request + " deleted", "green");
                     $("#requests option:contains(" + request + ")").remove();
                    if(index>-1)
                     currentRequests.splice(index, 1);
                 },
 
                 error: function (xhr, err, msg) {
-                    setMessage(err, "red");
+                    common.setMessage(err, "red");
                     console.log(xhr);
                     console.log(err);
                     console.log(msg);
@@ -683,7 +687,7 @@ function saveRequest(json) {
             data: paramsObj,
             dataType: "json",
             success: function (data, textStatus, jqXHR) {
-                setMessage(data.result, "green");
+                common.setMessage(data.result, "green");
                 try {
                     loadRequests();
                 }
@@ -694,7 +698,7 @@ function saveRequest(json) {
             },
 
             error: function (xhr, err, msg) {
-                setMessage(err, "red");
+                common.setMessage(err, "red");
                 console.log(xhr);
                 console.log(err);
                 console.log(msg);
@@ -982,7 +986,7 @@ function submitMatchNeo(query, callback) {
         success: function (data, textStatus, jqXHR) {
 
             if (!data || data.length == 0) {
-                // setMessage("No results", blue);
+                // common.setMessage("No results", blue);
                 return;
             }
             var errors = data.errors;
@@ -1164,7 +1168,7 @@ function setImportSourceType() {
 
 function showHelp(fieldName) {
     $("#message").html(help[fieldName]);
-    //setMessage(help[fieldName],"blue");
+    //common.setMessage(help[fieldName],"blue");
 
 
 }

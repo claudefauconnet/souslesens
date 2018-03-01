@@ -52,7 +52,8 @@ var dataModel = (function () {
             where = " where n.subGraph='" + subGraph + "'";
 
 
-        var query = "MATCH (n) OPTIONAL MATCH(n)-[r]-(m) "
+     //   var query = "MATCH (n) OPTIONAL MATCH(n)-[r]-(m) "
+        var query = "MATCH(n)-[r]-(m) "
             + where
             + " RETURN distinct labels(n) as labels_n, type(r) as type_r,labels(m)[0] as label_m, labels(startNode(r))[0] as label_startNode,count(n) as count_n,count(r) as count_r,count(m) as count_m";
 
@@ -66,6 +67,8 @@ var dataModel = (function () {
             data: payload,
             dataType: "json",
             success: function (data, textStatus, jqXHR) {
+                if( data.length==0)
+                    callback(null, dataModel);
 
                 //	var data = data.results[0].data;
 
@@ -79,10 +82,7 @@ var dataModel = (function () {
                         count1: objNeo.count_n,
                         count2: objNeo.count_m,
                     }
-                    if (i == 231) {
-                        var www = obj;
 
-                    }
                     if (obj.relType) {
                         if (!dataModel.labelsRelations[obj.label1])
                             dataModel.labelsRelations[obj.label1] = [];

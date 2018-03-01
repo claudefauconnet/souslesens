@@ -332,6 +332,20 @@ var restAPI = {
         })
     }
     ,
+    deleteRelationById: function (params, callback) {
+
+        if (!params.id)
+            return callback("no id field in payload")
+        var where = " WHERE ID(r)="+params.id;
+
+        var matchStr = "MATCH (n)-[r]-(m)" + where + " delete r return \"relation deleted\"";
+        neoProxy.match(matchStr, function (err, result) {
+            if (err)
+                return callback(err)
+            return callback(null, result);
+        })
+    }
+    ,
     retrieve: function (params, callback) {
         var matchStr = params.match;
         neoProxy.match(matchStr, function (err, result) {

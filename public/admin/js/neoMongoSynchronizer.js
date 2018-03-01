@@ -95,7 +95,7 @@ var neoMongoSynchronizer=(function(){
                 }
                 var strProps=JSON.stringify(props).replace(/"(\w+)"\s*:/g, '$1:');// quote the keys in json;
                //   strProps=JSON.parse(strProps)
-                var neoCreateStr="create (n:"+params.neoLabel+" "+strProps+")";
+                var neoCreateStr="create (n:"+params.labelNeo+" "+strProps+")";
                 console.log(neoCreateStr);
 
 
@@ -170,7 +170,7 @@ var neoMongoSynchronizer=(function(){
             technologies:{
                 mongoCollection:"technologies",
                 mongoDefaultQuery:{},
-                neoLabel:"technology",
+                labelNeo:"technology",
                 neoProps:["id","name","dexcription"]
 
             }

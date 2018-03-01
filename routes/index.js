@@ -373,6 +373,11 @@ router.post(serverParams.routesRootUrl + '/rest', function (req, response) {
             processResponse(response, error, result)
         });
     }
+    if (req.query && req.query.deleteRelationById) {
+        restAPI.deleteRelationById(req.body, function (error, result) {
+            processResponse(response, error, result)
+        });
+    }
 
     if (req.query && req.query.updateRelationById) {
         restAPI.updateRelationById(req.body, function (error, result) {

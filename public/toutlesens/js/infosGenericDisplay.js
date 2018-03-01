@@ -975,9 +975,11 @@ var infoGenericDisplay = (function () {
                 if (callback) {
                     var node = result[0].n.properties;
                     node.id = result[0].n._id
-                    node.neoLabel = result[0].n.labels[0];
+                    node.labelNeo = result[0].n.labels[0];
                     node.label = node.name
-                    callback(node);
+                    visjsGraph.updateNode(node);
+
+                   return callback(node);
 
                 }
                 //  toutlesensController.replayGraph("same");
@@ -996,6 +998,7 @@ var infoGenericDisplay = (function () {
                     node.parent = self.selectedNodeData.parent;
                     node.neoId = self.selectedNodeData.neoId;
                     node.jtreeId = self.selectedNodeData.jtreeId;
+
                 }
 
                 ids[self.selectedNodeData.jtreeId] = node;
@@ -1033,7 +1036,7 @@ var infoGenericDisplay = (function () {
                 if (callback) {
                     var node = result[0].n.properties;
                     node.id = result[0].n._id
-                    node.neoLabel = result[0].n.labels[0];
+                    node.labelNeo = result[0].n.labels[0];
                     node.label = node.name
                     callback(node);
                 }
@@ -1065,8 +1068,10 @@ var infoGenericDisplay = (function () {
                     neoToMongo.syncObjNeoToMongo("delete", self.selectedNodeData, null);
                 if ($('#' + self.jsTreeDivId).jstree())
                     $('#' + self.jsTreeDivId).jstree().delete_node("#" + self.selectedNodeData.jtreeId);
-                self.clearNodePropertiesDiv()
-                toutlesensController.replayGraph("same");
+                self.clearNodePropertiesDiv();
+                visjsGraph.removeNode(self.selectedNodeData.neoId);
+                $("#dialog").dialog("close");
+                    // toutlesensController.replayGraph("same");
             });
 
         }
@@ -1105,6 +1110,23 @@ var infoGenericDisplay = (function () {
 
 
         })
+    }
+    self.deleteRelationById = function (id, callback) {
+        var payload={
+            id:id
+        }
+        self.callAPIproxy(payload, "deleteRelationById", function (err, result) {
+            if (err) {
+                if(callback)
+                    return callback(err);
+                $("#message").html(err);
+                return;
+            }
+            if(callback)
+                return callback(null,result)
+
+
+        });
     }
 
 

@@ -136,6 +136,16 @@ self.getNodeInfoButtons=function(){
     return  str;
 }
 
+    self.setPopupMenuRelationInfoContent=function() {
+
+       var str="";
+      str+= "relType :"+currentObject.label+"<br>";
+        str+= "["+currentObject.fromNode.labelNeo+"]"+currentObject.fromNode.label;
+        str+= "--> ["+currentObject.toNode.labelNeo+"]"+currentObject.toNode.label;
+        str+="<td> <input type='image' height='20px' alt='infos'  onclick='toutlesensController.dispatchAction(\"deleteRelation\")' src='images/trash.png'/></td>";
+        return str;
+    }
+
    self.setPopupMenuNodeInfoContent=function() {
        var name;
       var label;
@@ -181,7 +191,7 @@ self.getNodeInfoButtons=function(){
 
        }
        str+="</td>"
-       if(currentObject.neoAttrs.image ){
+       if( currentObject.neoAttrs && currentObject.neoAttrs.image ){
            str+="<td> <img src='"+currentObject.neoAttrs.image+"' width='100px'></td>"
        }
        str+="<td>"

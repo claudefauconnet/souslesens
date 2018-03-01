@@ -117,6 +117,7 @@ var Schema = (function () {
                 $("#schemaConfig_configSchemaDiv").css("visibility", "visible");
 
                 self.initSchema(_schema, callback);
+                self.save(subGraph);
 
             }
         })

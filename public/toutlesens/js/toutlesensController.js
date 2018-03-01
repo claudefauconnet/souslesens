@@ -158,7 +158,10 @@ var toutlesensController = (function () {
 
             if (data.length == 0) {
                 self.setGraphMessage("No  result");
-                $("#waitImg").css("visibility", "hidden")
+                $("#waitImg").css("visibility", "hidden");
+                $("#tabs-analyzePanel").tabs("enable", 0);
+                self.dispatchAction('nodeInfos');
+                self.setRightPanelAppearance(false);
                 return;
             }
 
@@ -185,8 +188,8 @@ var toutlesensController = (function () {
 
                 self.setRightPanelAppearance(false);
 
-             //   paint.init(data);
-              filters.init(data);
+                //   paint.init(data);
+                filters.init(data);
                 $("#mainButtons").css("visibility", "visible");
                 $("#waitImg").css("visibility", "hidden");
                 $(".graphDisplayed").css("visibility", "visible");
@@ -428,12 +431,13 @@ var toutlesensController = (function () {
                         str += textOutputs.formatNodeInfo(obj[0].n.properties);
                         str += "<br>" + customizeUI.customInfo(obj);
                         popupMenuNodeInfoCache = $("#nodeInfoMenuDiv").html();
-                        $("#nodeInfoMenuDiv").html(str);
+
                         //    $("#nodeInfoMenuDiv").css("top", "total");
                         $("#nodeInfoMenuDiv").css("visibility", "visible");
                         $("#nodeInfoMenuDiv").html(toutlesensDialogsController.setPopupMenuNodeInfoContent());
                         self.setRightPanelAppearance(false);
-                        $("#graphPopup").html(toutlesensDialogsController.getNodeInfoButtons());
+                        $("#graphPopup").html(toutlesensDialogsController.setPopupMenuNodeInfoContent());
+                        $("#nodeInfoMenuDiv").html(str);
 
                     }
                     else {
@@ -448,6 +452,8 @@ var toutlesensController = (function () {
 
         }
 
+
+
         else if (action == "removeNode") {
             if (id) {
                 visjsGraph.removeNode(id);
@@ -457,9 +463,7 @@ var toutlesensController = (function () {
 
 
         else if (action == 'relationInfos') {
-            var str = textOutputs.getRelationAttrsInfo();
-            /*  $("#nodeInfoDiv").html(str);
-              $("#nodeInfoDiv").show();*/
+            $("#graphPopup").html(toutlesensDialogsController.setPopupMenuRelationInfoContent());
 
         }
         else if (action == 'expandNode') {
@@ -504,13 +508,12 @@ var toutlesensController = (function () {
             self.currentRelationData.targetNode = targetNode;
             var links = [];
             var allowedRelTypes = Schema.getPermittedRelTypes(toutlesensController.currentRelationData.sourceNode.labelNeo, toutlesensController.currentRelationData.targetNode.labelNeo, true);
-            if (allowedRelTypes.length == 0) {
-                return alert("relation not permitted)");
-            }
 
             //  allowedRelTypes.splice(0, 0, "");
             $("#dialog").load("htmlSnippets/relationsForm.html", function () {
-                common.fillSelectOptionsWithStringArray(relations_relTypeSelect, allowedRelTypes)
+                common.fillSelectOptionsWithStringArray(relations_relTypeSelect, allowedRelTypes);
+                self.initLabels(relationsFormNewRelationStartLabelSelect);
+                self.initLabels(relationsFormNewRelationEndLabelSelect);
                 $("#dialog").dialog("option", "title", "Relation");
 
             })
@@ -520,18 +523,18 @@ var toutlesensController = (function () {
         } else if (action == "modifyNode") {
             if (Gparams.readOnly == false) {
 
-
-                $("#dialog").dialog({modal: true});
+                var label = currentObject.labelNeo;
+                $("#dialog").dialog({modal: false});
                 $("#dialog").dialog("option", "title", " node " + label);
 
 
                 $("#dialog").load("htmlSnippets/nodeForm.html", function () {
-                    var label = currentObject.labelNeo;
+
                     var attrObject = Schema.schema.properties[label];
                     infoGenericDisplay.selectedNodeData = currentObject;
                     infoGenericDisplay.selectedNodeData.neoId = currentObject.id
                     infoGenericDisplay.setAttributesValue(label, attrObject, currentObject.neoAttrs);
-                    infoGenericDisplay.drawAttributes(attrObject, "nodeInfosDiv");
+                    infoGenericDisplay.drawAttributes(attrObject, "nodeFormDiv");
                     // self.setRightPanelAppearance();
 
                 })
@@ -540,12 +543,19 @@ var toutlesensController = (function () {
             }
 
 
+        }   else if (action == "deleteRelation") {
+           infoGenericDisplay.deleteRelationById(currentObject.neoId,function(err, result){
+               if(err){
+                   return console.log(err);
+               }
+               visjsGraph.deleteRelation(currentObject.id)
+           })
         }
         else if (action == "addNode") {
             currentObject = {}
 
             if (Gparams.readOnly == false) {
-                $("#dialog").dialog({modal: true});
+                $("#dialog").dialog({modal: false});
                 $("#dialog").dialog("option", "title", "New node");
 
 
@@ -558,6 +568,52 @@ var toutlesensController = (function () {
 
             }
 
+        }
+
+        else if (action == "createNewLabel") {
+            var newLabel = prompt("new label name");
+            if (newLabel && newLabel.length > 0) {
+                if (!/^[\w]+$/.test(newLabel)) {
+                    return alert("label names only allow ascii characters")
+                }
+
+                Schema.schema.labels[newLabel] = { "color": "#FFD900"};
+                Schema.schema.properties[newLabel] = {
+                    "name": {
+                        "type": "text"
+                    },
+                    "subGraph": {
+                        "type": "text"
+                    }
+                }
+                Schema.save(subGraph);
+                self.initLabels(nodeFormLabelSelect);
+                var attrObject = Schema.schema.properties[newLabel];
+                infoGenericDisplay.selectedNodeData = null;
+                infoGenericDisplay.setAttributesValue(newLabel, attrObject, {});
+                infoGenericDisplay.drawAttributes(attrObject, "nodeFormDiv");
+            }
+        }
+
+        else if (action == "createNewRelationType") {
+            $('#relationsFormNewRelationDiv').css('visibility', 'visible');
+            var startLabel = $("#relationsFormNewRelationStartLabelSelect").val();
+            var endLabel = $("#relationsFormNewRelationEndLabelSelect").val();
+            var newRelation = $("#relationsFormNewRelationNameInput").val();
+            if (newRelation && newRelation.length > 0) {
+                if (!/^[\w]+$/.test(newRelation)) {
+                    return alert("relation names only allow ascii characters")
+                }
+
+                Schema.schema.relations[newRelation] = {
+                    "startLabel": startLabel,
+                    "endLabel": endLabel,
+                    "type": newRelation
+                }
+                Schema.save(subGraph);
+                var allowedRelTypes = Schema.getPermittedRelTypes(toutlesensController.currentRelationData.sourceNode.labelNeo, toutlesensController.currentRelationData.targetNode.labelNeo, true);
+                common.fillSelectOptionsWithStringArray(relations_relTypeSelect, allowedRelTypes);
+            }
         }
 
 
@@ -581,7 +637,7 @@ var toutlesensController = (function () {
         else if (action == "showSchemaConfigDialog") {
 
             $("#dialogLarge").load("htmlSnippets/schemaConfig.html", function () {
-                if(options && options.create )
+                if (options && options.create)
                     $("#schemaConfig_createSchemaDiv").css("visibility", "visible");
                 else
                     $("#schemaConfig_configSchemaDiv").css("visibility", "visible");
@@ -598,7 +654,7 @@ var toutlesensController = (function () {
         else if (action == "showParamsConfigDialog") {
 
             $("#dialogLarge").load("htmlSnippets/paramsConfig.html", function () {
-                if(options && options.create )
+                if (options && options.create)
                     $("#schemaConfig_createSchemaDiv").css("visibility", "visible");
                 else
                     $("#schemaConfig_configSchemaDiv").css("visibility", "visible");
@@ -627,12 +683,6 @@ var toutlesensController = (function () {
         }
 
 
-
-
-
-
-
-
     }
 
 
@@ -645,8 +695,6 @@ var toutlesensController = (function () {
     self.restorePopupMenuNodeInfo = function () {
         $("#nodeInfoMenuDiv").html(popupMenuNodeInfoCache);
     }
-
-
 
 
     /**
@@ -687,10 +735,8 @@ var toutlesensController = (function () {
     }
 
 
-
-
     self.afterGraphInit = function () {
-      //  paramsController.loadParams();
+        //  paramsController.loadParams();
         var tabsanalyzePanelDisabledOptions = [];
         tabsanalyzePanelDisabledOptions.push(1);//filters
         tabsanalyzePanelDisabledOptions.push(2);//highlight
@@ -700,8 +746,6 @@ var toutlesensController = (function () {
 
         $("#nextMenuButton").css("visibility", "hidden")
         $("#previousMenuButton").css("visibility", "hidden")
-
-
 
 
         if (Gparams.showRelationNames) {
@@ -739,13 +783,13 @@ var toutlesensController = (function () {
         });
 
         $("#graphOptionsDiv").load("htmlSnippets/visjsGraphDisplayMenu.html", function () {
-            var layout=Gparams.graphDefaultLayout;
-            if(layout.indexOf("hierarchical")>-1){
-                ($("#graphLayoutDirectionDir").css("visibility","visible"));
-            }else{
-                ($("#graphLayoutDirectionDir").css("visibility","hidden"));
+            var layout = Gparams.graphDefaultLayout;
+            if (layout.indexOf("hierarchical") > -1) {
+                ($("#graphLayoutDirectionDir").css("visibility", "visible"));
+            } else {
+                ($("#graphLayoutDirectionDir").css("visibility", "hidden"));
             }
-            $("#graphLayoutSelect") .val(layout);
+            $("#graphLayoutSelect").val(layout);
         });
 
 
@@ -754,11 +798,8 @@ var toutlesensController = (function () {
 
         $(".graphDisplayed").css("visibility", "hidden");
 
-        if (!canModify)
+        if (infoGenericDisplay.userRole != "write")
             $(".canModify").css("visibility", "hidden");
-
-
-
 
 
     }
@@ -819,6 +860,7 @@ var toutlesensController = (function () {
 
     self.initLabels = function (select) {
         var labels = Schema.getAllLabelNames()
+        labels.splice(0,0,"")
         common.fillSelectOptionsWithStringArray(select, labels);
     }
 
@@ -912,9 +954,6 @@ var toutlesensController = (function () {
 
 
     }
-
-
-
 
 
     return self;

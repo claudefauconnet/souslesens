@@ -66,23 +66,23 @@ var visjsGraph = (function () {
             },
             nodes: {
                 shape: 'dot',
-               size: 10,
+                size: 10,
                 font: {size: 14},
-              /*  scaling: {
-                    label: {
-                        min: 10,
-                        max: 10
-                    },
+                /*  scaling: {
+                      label: {
+                          min: 10,
+                          max: 10
+                      },
 
 
-                }*/
+                  }*/
             },
             edges:
                 {
                     smooth: true,
                     font:
                         {
-                            size:8
+                            size: 8
                         }
                     //font: { "font-style":'italic'}
                 }
@@ -137,9 +137,9 @@ var visjsGraph = (function () {
         });
 
         network.on("doubleClick", function (params) {
-            var nodeId = params.nodes[0];
+    /*        var nodeId = params.nodes[0];
             currentObject = self.nodesMap[nodeId];
-            toutlesensController.generateGraph(nodeId, {applyFilters: false});//NO !!! minus sign to search on m (see toutlesensData 148)
+            toutlesensController.generateGraph(nodeId, {applyFilters: false});//NO !!! minus sign to search on m (see toutlesensData 148)*/
         })
         //stop animation
         network.on("click", function (params) {
@@ -168,11 +168,19 @@ var visjsGraph = (function () {
                 }
 
                 var point = params.pointer.DOM;
-
                 toutlesensController.dispatchAction("nodeInfos", nodeId);
                 toutlesensController.showPopupMenu(point.x, point.y, "nodeInfo");
 
 
+            }
+            else if (params.edges.length == 1) {
+                var edgeId = params.edges[0];
+                currentObject = self.edges._data[edgeId];
+                currentObject.fromNode = self.nodes._data[currentObject.from]
+                currentObject.toNode = self.nodes._data[currentObject.to]
+                toutlesensController.dispatchAction("relationInfos", nodeId);
+                var point = params.pointer.DOM;
+                toutlesensController.showPopupMenu(point.x, point.y, "relationInfos");
             }
         });
 
@@ -571,7 +579,7 @@ var visjsGraph = (function () {
 
             var str = "";
             var properties = node.neoAttrs;
-            var color = nodeColors[node.neoLabel];
+            var color = nodeColors[node.labelNeo];
             var connections = node.connections
             str += "<br>" + "[" + node.labelNeo + "]" + JSON.stringify(properties)
             str += "<ul>"
@@ -711,8 +719,8 @@ var visjsGraph = (function () {
 
     self.previousGraph = function () {
         self.previousGraphs.index -= 1;
-        if(  self.previousGraphs.index<0)
-            self.previousGraphs.index=0;
+        if (self.previousGraphs.index < 0)
+            self.previousGraphs.index = 0;
         self.reloadGraph(self.previousGraphs.index);
         self.setPreviousNextButtons();
     }
@@ -783,18 +791,32 @@ var visjsGraph = (function () {
         self.nodes.remove({id: id})
     }
 
+    self.updateNode = function (obj) {
+        var node = self.nodes._data[obj.id];
+        node.label = (obj[Schema.getNameProperty()])
+        self.nodes.update(node);
+    }
+
     self.addNode = function (node) {
-        if (self.nodes.length == 0) {
-            //init empty Graph
-            self.draw("graphDiv", {nodes: [], edges: []});
-            $("#graphPopup").html(toutlesensDialogsController.getNodeInfoButtons());
+        function exeAdd() {
+            node.x = -100;
+            node.y = -100;
+            node.color = nodeColors[node.labelNeo]
+
+            self.nodes.add(node);
         }
 
-        node.x = -100;
-        node.y = -100;
-        node.color = nodeColors[node.neoLabel]
+        if (self.nodes.length == 0) {
+            //init empty Graph
 
-        self.nodes.add(node);
+            self.draw("graphDiv", {nodes: [], edges: []});
+            $("#graphLayoutSelect").val("random");
+            $("#graphPopup").html(toutlesensDialogsController.getNodeInfoButtons());
+            setTimeout(exeAdd, 1000);
+        } else
+            exeAdd();
+
+
     }
 
     self.addRelation = function (edge) {
@@ -805,6 +827,10 @@ var visjsGraph = (function () {
 
         }
         self.edges.add(edge);
+    }
+
+    self.deleteRelation = function (edgeId) {
+        self.edges.remove(edgeId);
     }
 
 

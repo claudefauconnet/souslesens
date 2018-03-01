@@ -7,6 +7,20 @@
 <body>
 
 relation Type<select id="relations_relTypeSelect"></select>
-<button onclick="toutlesensData.saveRelation(visjsGraph.addRelation)">Save</button>
+&nbsp;<br><button onclick="toutlesensData.saveRelation(visjsGraph.addRelation)">Save relation</button>
+
+&nbsp;<button onclick="$('#relationsFormNewRelationDiv').css('visibility','visible');">new relation type</button>
+
+<div id="relationsFormNewRelationDiv" style="visibility: hidden">
+    relation name<input  id="relationsFormNewRelationNameInput"></input><br>
+startLabel<select id="relationsFormNewRelationStartLabelSelect"></select><br>
+    endLabel<select id="relationsFormNewRelationEndLabelSelect"></select><br>
+
+<button onclick="toutlesensController.dispatchAction('createNewRelationType')">add relation type</button>
+
+</div>
+
+
+
 </body>
 </html>
