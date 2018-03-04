@@ -49,15 +49,21 @@
         </td>
     </tr>
 
+<tr>
+    <td>
+        shape
+    </td>
+    <td>
+    <select id="graphLayoutShapeSelect"  onchange="visjsGraph.setShapeOption($(this).val())">
+        <option value="dot">circle</option>
+        <option value="box">box</option>
+        <option value="square">square</option>
+        <option value="text">text</option>
 
-    <!--   <tr>
-           <td>
-               <button onclick=" visjsGraph.saveGraph();$('#dialog').dialog('close');">ExportGraph</button>
-               <button onclick=" visjsGraph.reloadGraph();$('#dialog').dialog('close');">ImportGraph</button>
-           </td>
-       </tr>-->
+    </select>
 
-
+    </td>
+</tr>
 </table>
 <script>
     $("#graphForceDistanceSlider").slider({

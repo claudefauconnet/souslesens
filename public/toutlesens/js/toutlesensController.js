@@ -681,6 +681,13 @@ var toutlesensController = (function () {
             })
 
         }
+        else if (action == "drawSchema") {
+            $("#dialogLarge").dialog("close");
+           var data=connectors.toutlesensSchemaToVisjs(Schema.schema);
+           self.setRightPanelAppearance(false);
+            visjsGraph.draw("graphDiv", data);
+        }
+
 
 
     }

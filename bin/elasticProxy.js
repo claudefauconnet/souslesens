@@ -60,6 +60,7 @@ var client = null;
 
 var elasticProxy = {
 
+
     getSchema: function () {
         if (!elasticSchema) {
             var str = fs.readFileSync(path.resolve(__dirname, "../config/search/elasticSchema.json"));

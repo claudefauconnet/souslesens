@@ -225,6 +225,18 @@ var visjsGraph = (function () {
     }
 
 
+    self.setShapeOption = function (shape) {
+        var nodes=[];
+        for (var key in self.nodes._data) {
+            nodes.push(key)
+        }
+        self.paintNodes(nodes, null, null, null,shape)
+
+    }
+
+
+
+
     self.setLayoutOption = function (selectLayout, selectDirection, apply) {
 
         var layoutArray = $(selectLayout).val().split(" ");
@@ -329,8 +341,10 @@ var visjsGraph = (function () {
     }
 
 
-    self.paintNodes = function (nodeIds, color, otherNodesColor, radius) {
-        var nodes = []
+    self.paintNodes = function (nodeIds, color, otherNodesColor, radius,shape) {
+        var nodes = [];
+        if(!shape)
+            shape="star";
         /* for(var i=0;i< nodeIds.length;i++) {
          var node = self.nodes._data[nodeIds[i]];
          node.color = {background: color};
@@ -339,8 +353,11 @@ var visjsGraph = (function () {
         for (var key in  self.nodes._data) {
             var node = self.nodes._data[key];
             if (nodeIds.indexOf(key) > -1) {
-                node.shape = "star";
+                if(shape)
+                node.shape = shape;
+                if(color)
                 node.color = color
+                if(radius)
                 node.size = radius * 2;
                 /* node.color = {background: color};
                 // node.color = {color: color};

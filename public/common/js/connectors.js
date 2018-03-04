@@ -14,15 +14,15 @@ var connectors = (function () {
         var uniqueRels = [];
         for (var i = 0; i < resultArray.length; i++) {
             var rels = resultArray[i].rels;
-            if(!rels)
-                rels=[];
+            if (!rels)
+                rels = [];
             var nodes = resultArray[i].nodes;
-            if(!nodes)
-                nodes=[];
+            if (!nodes)
+                nodes = [];
             var relProperties = resultArray[i].relProperties;
-            if(!relProperties)
-                relProperties=[];
-            var startLabels=resultArray[i].startLabels;
+            if (!relProperties)
+                relProperties = [];
+            var startLabels = resultArray[i].startLabels;
 
 
             var ids = resultArray[i].ids;
@@ -35,13 +35,13 @@ var connectors = (function () {
 
                     var labels = nodes[j].labels;
 
-                    var labelVisjs=nodeNeo[Gparams.defaultNodeNameProperty];
-                    if(labelVisjs &&  labelVisjs.length>Gparams.nodeMaxTextLength)
-                        labelVisjs=labelVisjs.substring(0,Gparams.nodeMaxTextLength)+"...";
+                    var labelVisjs = nodeNeo[Gparams.defaultNodeNameProperty];
+                    if (labelVisjs && labelVisjs.length > Gparams.nodeMaxTextLength)
+                        labelVisjs = labelVisjs.substring(0, Gparams.nodeMaxTextLength) + "...";
 
-                    var color =nodeColors[nodes[j].labels[0]]
+                    var color = nodeColors[nodes[j].labels[0]]
                     var nodeObj = {
-                        label:labelVisjs ,
+                        label: labelVisjs,
                         labelNeo: labels[0],// because visjs where label is the node name
                         color: color,
                         myId: nodeNeo.id,
@@ -57,13 +57,13 @@ var connectors = (function () {
                     }
                     if (nodes[j].outline) {
 
-                            nodeObj.font = {
-                                size: 18,
-                                color: Gparams.outlineTextColor,
-                                strokeWidth: 3,
-                                strokeColor: '#ffffff'
-                            }
-                            nodeObj.size = 25;
+                        nodeObj.font = {
+                            size: 18,
+                            color: Gparams.outlineTextColor,
+                            strokeWidth: 3,
+                            strokeColor: '#ffffff'
+                        }
+                        nodeObj.size = 25;
 
                     }
 
@@ -97,26 +97,26 @@ var connectors = (function () {
 
 
                     }
-                   // console.log(JSON.stringify(nodes[j]));
+                    // console.log(JSON.stringify(nodes[j]));
 
-                    if(nodes[j].isSource){
-                        nodeObj.isSource=true;
+                    if (nodes[j].isSource) {
+                        nodeObj.isSource = true;
                     }
-                    if(nodes[j].isTarget){
-                        nodeObj.isTarget=true;
+                    if (nodes[j].isTarget) {
+                        nodeObj.isTarget = true;
                     }
 
-                    if(nodes[j].isPathSource){
-                        nodeObj.shape ="star";
-                        nodeObj.color="red";
-                        nodeObj.x=-500;
-                        nodeObj.y=-500;
+                    if (nodes[j].isPathSource) {
+                        nodeObj.shape = "star";
+                        nodeObj.color = "red";
+                        nodeObj.x = -500;
+                        nodeObj.y = -500;
                     }
-                    if(nodes[j].isPathTarget){
-                        nodeObj.shape ="star";
-                        nodeObj.color="red";
-                        nodeObj.x=500;
-                        nodeObj.y=500;
+                    if (nodes[j].isPathTarget) {
+                        nodeObj.shape = "star";
+                        nodeObj.color = "red";
+                        nodeObj.x = 500;
+                        nodeObj.y = 500;
                     }
 
                     visjsData.nodes.push(nodeObj);
@@ -132,21 +132,21 @@ var connectors = (function () {
 
             for (var j = 0; j < rels.length; j++) {
 
-                var startLabel= startLabels[j][0];
-                var from,to,queryId;
-                if(startLabel!=labels[j]){
-                    from=ids[j];
-                    to=ids[j+1];
-                    queryId=ids[j+1];
-                }else {
-                    from=ids[j+1];
-                    to=ids[j];
-                    queryId=ids[j+1];
+                var startLabel = startLabels[j][0];
+                var from, to, queryId;
+                if (startLabel != labels[j]) {
+                    from = ids[j];
+                    to = ids[j + 1];
+                    queryId = ids[j + 1];
+                } else {
+                    from = ids[j + 1];
+                    to = ids[j];
+                    queryId = ids[j + 1];
                 }
 
 
                 var rel = rels[j];
-                var color ="#99d";//linkColors[rel];
+                var color = "#99d";//linkColors[rel];
                 var relObj = {
                     from: from,
                     to: to,
@@ -154,17 +154,17 @@ var connectors = (function () {
                     neoId: relProperties[j]._id,
                     neoAttrs: relProperties[j].properties,
                     color: color,
-                    width:1
+                    width: 1
                     // font:{background:color},
                 }
 
-                if(toutlesensData.queriesIds.indexOf(queryId)>-1) {
+                if (toutlesensData.queriesIds.indexOf(queryId) > -1) {
                     relObj.width = Gparams.outlineEdgeWidth;
-                    relObj.color=Gparams.outlineColor;
+                    relObj.color = Gparams.outlineColor;
                 }
 
                 if (resultArray[i].outlineRel) {
-                    relObj.width= 3;
+                    relObj.width = 3;
                     relObj.font = {size: 18, color: 'red', strokeWidth: 3, strokeColor: '#ffffff'}
                 }
 
@@ -177,7 +177,7 @@ var connectors = (function () {
 
                 if (Gparams.showRelationNames == true) {
                     relObj.label = relObj.type;
-                    relObj.arrows={to:{scaleFactor:0.5}}
+                    relObj.arrows = {to: {scaleFactor: 0.5}}
                 }
 
 
@@ -250,6 +250,47 @@ var connectors = (function () {
             }
         }
         return visjsData;//testData;
+    }
+    
+    self.toutlesensSchemaToVisjs = function (schema, id) {
+        function makeNode(label) {
+            var visNode = {
+                label: label,
+                labelNeo: "label",// because visjs where label is the node name
+                color: "blue",
+                myId: id,
+                id: id++,
+                children: [],
+                neoAttrs: {},
+                endRel: 0
+            }
+            nodesMap[label] = visNode;
+            visjsData.nodes.push(visNode);
+        }
+
+        visjsData = {nodes: [], edges: [], labels: []};
+        var nodesMap = {}
+        var id = 0;
+        for (var key in schema.relations) {
+            var relation = schema.relations[key];
+            if (!nodesMap[relation.startLabel])
+                makeNode(relation.startLabel)
+            if (!nodesMap[relation.endLabel])
+                makeNode(relation.endLabel)
+
+            var relObj = {
+                from: nodesMap[relation.startLabel].id,
+                to: nodesMap[relation.endLabel].id,
+                type: "relation",
+                neoId: id++,
+                neoAttrs: {},
+                color: "green",
+                // font:{background:color},
+            }
+            visjsData.edges.push(relObj);
+        }
+
+        return visjsData;
     }
 
 
