@@ -220,9 +220,12 @@ var toutlesensController = (function () {
     self.displayGraph = function (json, output, callback) {
         d3NodesSelection = [];
         $("#textDiv").html("");
-
+        if (!json)
+            json = connectors.neoResultsToVisjs(toutlesensData.cachedResultArray);
+        else
+            json=  connectors.neoResultsToVisjs(json);
         if (currentDisplayType == "VISJS-NETWORK") {
-            visjsGraph.draw("graphDiv", connectors.neoResultsToVisjs(toutlesensData.cachedResultArray));
+            visjsGraph.draw("graphDiv", json);
             visjsGraph.drawLegend(filters.currentLabels);
 
         }
@@ -233,6 +236,8 @@ var toutlesensController = (function () {
 
 
     }
+
+
 
 
     /**
@@ -453,7 +458,6 @@ var toutlesensController = (function () {
         }
 
 
-
         else if (action == "removeNode") {
             if (id) {
                 visjsGraph.removeNode(id);
@@ -543,13 +547,13 @@ var toutlesensController = (function () {
             }
 
 
-        }   else if (action == "deleteRelation") {
-           infoGenericDisplay.deleteRelationById(currentObject.neoId,function(err, result){
-               if(err){
-                   return console.log(err);
-               }
-               visjsGraph.deleteRelation(currentObject.id)
-           })
+        } else if (action == "deleteRelation") {
+            infoGenericDisplay.deleteRelationById(currentObject.neoId, function (err, result) {
+                if (err) {
+                    return console.log(err);
+                }
+                visjsGraph.deleteRelation(currentObject.id)
+            })
         }
         else if (action == "addNode") {
             currentObject = {}
@@ -577,7 +581,7 @@ var toutlesensController = (function () {
                     return alert("label names only allow ascii characters")
                 }
 
-                Schema.schema.labels[newLabel] = { "color": "#FFD900"};
+                Schema.schema.labels[newLabel] = {"color": "#FFD900"};
                 Schema.schema.properties[newLabel] = {
                     "name": {
                         "type": "text"
@@ -683,11 +687,10 @@ var toutlesensController = (function () {
         }
         else if (action == "drawSchema") {
             $("#dialogLarge").dialog("close");
-           var data=connectors.toutlesensSchemaToVisjs(Schema.schema);
-           self.setRightPanelAppearance(false);
+            var data = connectors.toutlesensSchemaToVisjs(Schema.schema);
+            self.setRightPanelAppearance(false);
             visjsGraph.draw("graphDiv", data);
         }
-
 
 
     }
@@ -748,7 +751,7 @@ var toutlesensController = (function () {
         tabsanalyzePanelDisabledOptions.push(1);//filters
         tabsanalyzePanelDisabledOptions.push(2);//highlight
         var tabsFindPanelDisabledOptions = [];
-        tabsFindPanelDisabledOptions.push(3)
+        // tabsFindPanelDisabledOptions.push(3)
 
 
         $("#nextMenuButton").css("visibility", "hidden")
@@ -799,6 +802,14 @@ var toutlesensController = (function () {
             $("#graphLayoutSelect").val(layout);
         });
 
+
+        $("#similarsDiv").load("htmlSnippets/similarsDialog.html", function () {
+
+        });
+        $("#pivotsDiv").load("htmlSnippets/pivotsDialog.html", function () {
+            self.initLabels(pivotsDialogSourceLabelsSelect,true);
+
+        });
 
         $("#tabs-analyzePanel").tabs("option", "disabled", tabsanalyzePanelDisabledOptions);
         $("#findTabs").tabs("option", "disabled", tabsFindPanelDisabledOptions);
@@ -867,7 +878,7 @@ var toutlesensController = (function () {
 
     self.initLabels = function (select) {
         var labels = Schema.getAllLabelNames()
-        labels.splice(0,0,"")
+        labels.splice(0, 0, "")
         common.fillSelectOptionsWithStringArray(select, labels);
     }
 
@@ -961,7 +972,6 @@ var toutlesensController = (function () {
 
 
     }
-
 
     return self;
 })

@@ -177,7 +177,7 @@ var connectors = (function () {
 
                 if (Gparams.showRelationNames == true) {
                     relObj.label = relObj.type;
-                    relObj.arrows = {to: {scaleFactor: 0.5}}
+                    relObj.arrows = {from: {scaleFactor: 0.5}}
                 }
 
 
@@ -251,7 +251,8 @@ var connectors = (function () {
         }
         return visjsData;//testData;
     }
-    
+
+
     self.toutlesensSchemaToVisjs = function (schema, id) {
         function makeNode(label) {
             var visNode = {

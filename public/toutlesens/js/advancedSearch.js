@@ -1,17 +1,18 @@
 var advancedSearch = (function () {
 
     var self = {};
+    self.neo4jProxyUrl = "../../.." + Gparams.neo4jProxyUrl;
 
     self.showDialog = function () {
         var filterMovableDiv = $("#filterMovableDiv").detach();
         $("#dialog").append(filterMovableDiv);
-       // toutlesensController.initLabels(advancedSearchDialog_LabelSelect);
-        $("#filterActionDiv").html( " <button id=\"advancedSearchDialog_searchButton\" onclick=\"advancedSearch.searchNodes()\">Search</button>");
+        // toutlesensController.initLabels(advancedSearchDialog_LabelSelect);
+        $("#filterActionDiv").html(" <button id=\"advancedSearchDialog_searchButton\" onclick=\"advancedSearch.searchNodes()\">Search</button>");
 
-      /*  $("#dialog").load("htmlSnippets/advancedSearchMenu.html", function () {*/
-            $("#dialog").dialog("option", "title", "Advanced search");
-            $("#dialog").dialog("open");
-            filters.init();
+        /*  $("#dialog").load("htmlSnippets/advancedSearchMenu.html", function () {*/
+        $("#dialog").dialog("option", "title", "Advanced search");
+        $("#dialog").dialog("open");
+        filters.init();
         /*    toutlesensController.initLabels(advancedSearchDialog_LabelSelect);
             filters.initLabelProperty("",advancedSearchDialog__propsSelect)
             $("#advancedSearchDialog__propsSelect").val(Schema.getNameProperty())
@@ -19,33 +20,30 @@ var advancedSearch = (function () {
         })*/
     }
     self.searchNodes = function () {
-        currentObject.id=null;
+        currentObject.id = null;
         $("#waitImg").css("visibility", "visible")
         var searchObj = {};
 
 
-
         var objectType = $("#propertiesSelectionDialog_ObjectTypeInput").val();
-        if(objectType=="node")
-        searchObj.label = $("#propertiesSelectionDialog_ObjectNameInput").val();
-        if(objectType=="relation")
-        searchObj.relType = $("#propertiesSelectionDialog_ObjectNameInput").val();
-        searchObj.property =  $("#propertiesSelectionDialog_propsSelect").val();
+        if (objectType == "node")
+            searchObj.label = $("#propertiesSelectionDialog_ObjectNameInput").val();
+        if (objectType == "relation")
+            searchObj.relType = $("#propertiesSelectionDialog_ObjectNameInput").val();
+        searchObj.property = $("#propertiesSelectionDialog_propsSelect").val();
         searchObj.operator = $("#propertiesSelectionDialog_operatorSelect").val();
-       searchObj.value =  $("#propertiesSelectionDialog_valueInput").val();
-
-
+        searchObj.value = $("#propertiesSelectionDialog_valueInput").val();
 
 
         if (searchObj.property == "") {
-            if( searchObj.value==""){// only  search on label or type
-                toutlesensData.searchNodes(subGraph, searchObj.label, null, "matchStr", Gparams.jsTreeMaxChildNodes, 0,function(err,result){
-                    infoGenericDisplay.loadSearchResultIntree(err,result);
-                    setTimeout(function(){
+            if (searchObj.value == "") {// only  search on label or type
+                toutlesensData.searchNodes(subGraph, searchObj.label, null, "matchStr", Gparams.jsTreeMaxChildNodes, 0, function (err, result) {
+                    infoGenericDisplay.loadSearchResultIntree(err, result);
+                    setTimeout(function () {
                         toutlesensController.setRightPanelAppearance(true);
                         infoGenericDisplay.expandAll("treeContainer");
                         $("#dialog").dialog("close");
-                    },500)
+                    }, 500)
 
 
                 })
@@ -58,8 +56,8 @@ var advancedSearch = (function () {
             $("#propertiesSelectionDialog_propsSelect option").each(function () {
                 var property = $(this).val();
 
-                if (property != ""){
-                    var value=property+":~ "+searchObj.value;
+                if (property != "") {
+                    var value = property + ":~ " + searchObj.value;
                     toutlesensData.searchNodes(subGraph, searchObj.label, value, "list", Gparams.jsTreeMaxChildNodes, 0, function (err, result) {
                         index += 1;
                         for (var i = 0; i < result.length; i++) {
@@ -68,23 +66,23 @@ var advancedSearch = (function () {
                         if (index >= countOptions) {
                             infoGenericDisplay.loadTreeFromNeoResult("#", data);
                         }
-                        setTimeout(function(){
+                        setTimeout(function () {
                             toutlesensController.setRightPanelAppearance(true);
                             infoGenericDisplay.expandAll("treeContainer");
-                        },500)
+                        }, 500)
 
                     })
                 }
             });
 
-        }else {
-            var value= searchObj.property +":~ "+searchObj.value;
-            toutlesensData.searchNodes(subGraph, searchObj.label, value, "matchStr", Gparams.jsTreeMaxChildNodes, 0,function(err,result){
-                infoGenericDisplay.loadSearchResultIntree(err,result);
-                setTimeout(function(){
+        } else {
+            var value = searchObj.property + ":~ " + searchObj.value;
+            toutlesensData.searchNodes(subGraph, searchObj.label, value, "matchStr", Gparams.jsTreeMaxChildNodes, 0, function (err, result) {
+                infoGenericDisplay.loadSearchResultIntree(err, result);
+                setTimeout(function () {
                     toutlesensController.setRightPanelAppearance(true);
                     infoGenericDisplay.expandAll("treeContainer");
-                },500)
+                }, 500)
 
 
             })
@@ -92,11 +90,10 @@ var advancedSearch = (function () {
         $("#dialog").dialog("close");
 
 
-
     }
 
     /**
-    if @str simple word return regex of the word  for the property defaultNodeNameProperty
+     if @str simple word return regex of the word  for the property defaultNodeNameProperty
      else
      @str form property:operator value
 
@@ -143,8 +140,161 @@ var advancedSearch = (function () {
         return propStr;
 
     }
-    /*
 
+
+    self.searchSimilars = function (node) {
+        $("#similarsDialogSimilarsDiv").html();
+        var messageDivId = $("#similarsDialogMessageDiv");
+        if (!node)
+            return $(messageDivId).html("no node selected");
+        var label = node.label;
+        if (node.labelNeo)
+            label = node.labelNeo
+
+        var statement = "match(n:" + label + ")-->(r)<--(m:" + label + ")";
+        //  var statement = "match(n:" + label + ")-->(r)<--(m)";
+        statement += " where id(n)=" + node.id + " "
+        statement += " return n as sourceNode,m as similarNode, collect(labels(r)[0]) as similarLabels,collect(r) as similarNodes, count(*) as count order by count desc";
+        console.log(statement);
+        var payload = {match: statement};
+
+
+        $.ajax({
+            type: "POST",
+            url: self.neo4jProxyUrl,
+            data: payload,
+            dataType: "json",
+            success: function (data, textStatus, jqXHR) {
+
+
+                if (data.length == 0) {
+                    return $(messageDivId).html("nos similarities found");
+                }
+
+                toutlesensData.cachedResultArray = data;
+                var str = "<ul>";
+                var max = data[0].count;
+                for (var i = 0; i < data.length; i++) {
+
+
+                    var line = data[i]
+                    if (line.count == max) {
+                        var str2 = "<ul>";
+                        for (var j = 0; j < line.similarNodes.length; j++) {
+                            var linkstr2 = "javascript:toutlesensController.generateGraph(" + line.similarNodes[j]._id + ")";
+                            str2 += "<li>[" + line.similarLabels[j] + "]<a href='" + linkstr2 + "'>" + line.similarNodes[j].properties[Schema.getNameProperty()] + "</a> </li> "
+                        }
+                        str2 += "</ul>";
+                        var linkstr = "javascript:toutlesensController.generateGraph(" + line.similarNode._id + ")";
+                        str += "<li><a href='" + linkstr + "'>" + line.similarNode.properties[Schema.getNameProperty()] + " </a>: " + str2 + "</li>";
+                    }
+                }
+                str += "</ul>"
+                str = data[0].sourceNode.properties[Schema.getNameProperty()] + " :<b>Most similar nodes</b><br>" + str;
+                $("#similarsDialogSimilarsDiv").html(str);
+            },
+            error: function (err) {
+
+                console.log(err.responseText)
+            }
+        })
+
+
+    }
+
+
+    self.searchLabelsPivots = function (sourceLabel, pivotLabel, sourceNodeId, messageDivId) {
+        if (!sourceLabel ) {
+            return $(messageDivId).html("require source label");
+
+        }
+        var whereStatement = ""
+        if (sourceNodeId) {
+            whereStatement = " where Id(n)=" + sourceNodeId + " ";
+        }
+
+        var pivotLabelStr="";
+        if(pivotLabel &&pivotLabel!="")
+            pivotLabelStr=":" + pivotLabel ;
+        var statement = "match path=((n:" + sourceLabel + ")-->(r" + pivotLabelStr + ")<--(m:" + sourceLabel + ")) "
+        statement += whereStatement + toutlesensData.standardReturnStatement;
+        console.log(statement);
+        var payload = {match: statement};
+
+
+        $.ajax({
+            type: "POST",
+            url: self.neo4jProxyUrl,
+            data: payload,
+            dataType: "json",
+            success: function (data, textStatus, jqXHR) {
+
+
+                if (data.length == 0) {
+                    return $(messageDivId).html("no pivot values found");
+                }
+
+          /*      // delete lines where r is only present once
+                var pivotNodesFrequencies={}
+                for(var i=0;i<data.length;i++){
+                        var pivotNode=data[i].nodes[1];
+                    if(! pivotNodesFrequencies[pivotNode._id])
+                        pivotNodesFrequencies[pivotNode._id]={freq:0,node:pivotNode}
+                    pivotNodesFrequencies[pivotNode._id].freq+=1;
+
+                }
+
+for(var key in pivotNodesFrequencies){
+         if(pivotNodesFrequencies[key].freq>1)  {
+             var xx=3
+         }
+}*/
+
+                toutlesensData.cachedResultArray = data;
+                currentDisplayType = "VISJS-NETWORK";
+                //    var json = connectors.neoResultsToVisjs(data);
+
+                visjsGraph.setLayoutType("random", null);
+                toutlesensController.displayGraph(data, null, function (err, result) {
+                    visjsGraph.drawLegend([sourceLabel, pivotLabel]);
+
+                    var nodes=visjsGraph.nodes;
+                    var connections=[];
+                    for(var key in nodes._data){
+                        var node=nodes._data[key];
+                         node.nConnections=  visjsGraph.getConnectedNodes(node.id).length
+                        connections.push(node);
+
+
+                    }
+
+                    connections.sort(function(a,b){
+                        if(a.nConnections>b.nConnections)
+                            return -1;
+                        if(b.nConnections>a.nConnections)
+                            return 1;
+                        return 0
+
+
+                    });
+
+                    var sss=connections[0];
+                    visjsGraph.scaleNodes(nodes,"nConnections");
+
+
+                    toutlesensController.setRightPanelAppearance();
+
+                })
+
+
+            },
+            error: function (err) {
+                console.log(err.responseText)
+            }
+        })
+
+    }
+    /*
 
 
         self.buildCypherQuery = function (searchObj) {

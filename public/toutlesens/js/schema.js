@@ -358,6 +358,25 @@ var Schema = (function () {
     }
 
 
+    self.getPermittedLabels = function (startLabel,  inverseRelAlso) {
+        labels = [];
+        var relations = self.schema.relations;
+        for (var key in relations) {
+            var relation = relations[key];
+
+
+            if (relation.startLabel == startLabel )
+                if(labels.indexOf(relation.startLabel)<0)
+                labels.push(relation.endLabel);
+
+            if (inverseRelAlso  && relation.endLabel == startLabel)
+                if(labels.indexOf(relation.startLabel)<0)
+                labels.push(relation.startLabel);
+        }
+        return labels;
+    }
+
+
     self.getRelations = function (startLabel, endLabel, mongoCollection) {
         var matchingRels = []
         var relations = self.schema.relations;

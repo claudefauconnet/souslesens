@@ -1,0 +1,34 @@
+
+sourceLabel<select id="pivotsDialogSourceLabelsSelect" onchange="setAllowedLabels()"></select>
+
+<br>
+
+pivotLabel<select id="pivotsDialogPivotLabelsSelect"></select>
+
+
+<button onclick='advancedSearch.searchLabelsPivots($("#pivotsDialogSourceLabelsSelect").val(),$("#pivotsDialogPivotLabelsSelect").val(),null,pivotsDialogMessageDiv)' >search</button>
+
+<br>
+
+
+
+
+<button onclick='advancedSearch.searchLabelsPivots($("#pivotsDialogSourceLabelsSelect").val(),$("#pivotsDialogPivotLabelsSelect").val(),currentObject.id,pivotsDialogMessageDiv)' >
+    filter selectedNode
+</button>
+
+<div id="pivotsDialogMessageDiv"></div>
+<script>
+
+    function setAllowedLabels(){
+        var label=$("#pivotsDialogSourceLabelsSelect").val();
+var pivotLabels=[];
+        if( label!=""){
+            var labels=Schema.getPermittedLabels(label)
+            common.fillSelectOptionsWithStringArray(pivotsDialogPivotLabelsSelect,labels)
+        }
+
+
+
+    }
+</script>

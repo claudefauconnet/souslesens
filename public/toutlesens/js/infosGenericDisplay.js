@@ -835,9 +835,9 @@ var infoGenericDisplay = (function () {
                 node = ids[parentJstreeId];
                 $("#tabs-radarRight").tabs("enable", 2);
                 self.showNodeData(node);
-                toutlesensController.addToHistory = true;
+             //   toutlesensController.addToHistory = true;
                 toutlesensController.generateGraph(parentId, {});
-                $("#tabs-analyzePanel").tabs("option", "active", 3);
+               $("#tabs-analyzePanel").tabs("option", "active", 3);
                 return;
             } else if (toutlesensController.currentActionObj.type == 'findShortestPath') {
                 traversalMenu.setTraversalNode(toutlesensController.currentActionObj.stage, node.data);

@@ -42,6 +42,17 @@ var toutlesensData = (function () {
     self.queriesIds = [];
 
 
+    self.standardReturnStatement=" RETURN EXTRACT(rel IN relationships(path) | type(rel)) as rels," +
+        "EXTRACT(rel IN relationships(path) | rel)  as relProperties," +
+        "nodes(path) as nodes," +//   !!!!!!!!!!!!!!!!!!!!! a voir pour alléger les données transmises
+        //   "EXTRACT(node IN nodes(path) | node.subGraph) as nodes,"+   !!!!!!!!!!!!!!!!!!!!! a voir pour alléger les données transmises
+        " EXTRACT(node IN nodes(path) | ID(node)) as ids," +
+        " EXTRACT(node IN nodes(path) | labels(node)) as labels "
+        + ", EXTRACT(rel IN relationships(path) | labels(startNode(rel))) as startLabels";
+
+
+
+
     self.executeNeoQuery = function (queryType, str, successFunction) {
         currentQueryType = queryType;
         if (str.indexOf("DELETE") < 0 && str.toLowerCase().indexOf("limit ") < 0) {
@@ -139,7 +150,7 @@ var toutlesensData = (function () {
 
             var subGraphWhere;
             if (subGraph)
-                subGraphWhere = "  node1.subGraph=\"" + subGraph + "\" "
+                subGraphWhere = "  n.subGraph=\"" + subGraph + "\" "
             // http://graphaware.com/graphaware/2015/05/19/neo4j-cypher-variable-length-relationships-by-example.html
 
 
@@ -156,9 +167,9 @@ var toutlesensData = (function () {
 
             var whereStatement = "";
             if (id) {
-                /*  whereStatement = " WHERE ((ID(node1)=" + id + "))";// OR (ID(m)=" + (id)+"))"*/
+                /*  whereStatement = " WHERE ((ID(n)=" + id + "))";// OR (ID(m)=" + (id)+"))"*/
                 if (id > 0) {
-                    whereStatement = " WHERE (ID(node1)=" + id + ")";//+" OR  ID(m)="+id+")"
+                    whereStatement = " WHERE (ID(n)=" + id + ")";//+" OR  ID(m)="+id+")"
                     hasMclause = false;
                 }
                 else {
@@ -190,13 +201,7 @@ var toutlesensData = (function () {
             returnStatement = " RETURN count(r) as nRels, COLLECT( distinct EXTRACT( rel IN relationships(path) |  type(rel))) as rels,EXTRACT( node IN nodes(path) | labels(node)) as labels"
         }
         else {
-            returnStatement = " RETURN EXTRACT(rel IN relationships(path) | type(rel)) as rels," +
-                "EXTRACT(rel IN relationships(path) | rel)  as relProperties," +
-                "nodes(path) as nodes," +//   !!!!!!!!!!!!!!!!!!!!! a voir pour alléger les données transmises
-                //   "EXTRACT(node IN nodes(path) | node.subGraph) as nodes,"+   !!!!!!!!!!!!!!!!!!!!! a voir pour alléger les données transmises
-                " EXTRACT(node IN nodes(path) | ID(node)) as ids," +
-                " EXTRACT(node IN nodes(path) | labels(node)) as labels "
-                + ", EXTRACT(rel IN relationships(path) | labels(startNode(rel))) as startLabels";
+            returnStatement = self.standardReturnStatement;
         }
 
         var node1Label = "";
@@ -212,7 +217,7 @@ var toutlesensData = (function () {
             statement = self.matchStatement;
         else {
 
-            statement = "MATCH path=(node1" + node1Label
+            statement = "MATCH path=(n" + node1Label
                 + ")-[r"
                 + toutlesensData.queryRelTypeFilters
                 + relCardinalityStr
@@ -231,7 +236,7 @@ var toutlesensData = (function () {
 
 
         if (Gparams.allowOrphanNodesInGraphQuery && hasMclause == false)
-            graphQueryUnionStatement = " MATCH path=(node1" + node1Label + ") "// for nodes without relations
+            graphQueryUnionStatement = " MATCH path=(n" + node1Label + ") "// for nodes without relations
                 + whereStatement
                 + graphQueryTargetFilter
                 + toutlesensData.queryNodeLabelFilters
@@ -329,9 +334,9 @@ var toutlesensData = (function () {
         else
             ids = idsList;
 
-        var query = "node1." + property + " in ["
+        var query = "n." + property + " in ["
         if (property == "_id")
-            query = "ID(node1) in ["
+            query = "ID(n) in ["
 
         for (var i = 0; i < ids.length; i++) {
             if (i > 0 && i < ids.length)

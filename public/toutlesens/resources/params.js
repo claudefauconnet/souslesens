@@ -63,7 +63,7 @@ var Gparams = {
     graphMaxDataLengthToDisplayGraphDirectly:1000,
 
     shortestPathMaxDistanceTest:8,
-    graphDefaultLayout:"hierarchical directed",
+    graphDefaultLayout:"random",
 
 
     //urls************************

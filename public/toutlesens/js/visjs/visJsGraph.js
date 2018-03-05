@@ -4,6 +4,7 @@
 var visjsGraph = (function () {
     var self = {};
     var network;
+
     self.nodes = [];
     self.edges = [];
     self.physicsOn = true;
@@ -90,6 +91,13 @@ var visjsGraph = (function () {
             interaction: {
                 // navigationButtons: true,
                 keyboard: true
+            },
+            scaling: {
+                customScalingFunction: function (min,max,total,value) {
+                    return value/total;
+                },
+                min:5,
+                max:150
             }
 
 
@@ -404,6 +412,20 @@ var visjsGraph = (function () {
         network.selectNodes(ids, true);
 
     }
+
+
+    self.scaleNodes = function (nodes, valueProp) {
+        var newNodes=[]
+        for (var key in nodes._data){
+            newNodes.push({id:nodes._data[key].id,value:nodes._data[key][valueProp]})
+          //  nodes[i]._data.value= nodes[i]._data[valueProp];
+
+        }
+        self.nodes.update(newNodes);
+
+    }
+
+
     self.paintEdges = function (relIds, color, otherRelColor, radius) {
         var edges = []
         /* for(var i=0;i< nodeIds.length;i++) {
@@ -683,6 +705,15 @@ var visjsGraph = (function () {
         //  network = new vis.Network(container, data, {});
 
     }
+
+
+
+    self.getConnectedNodes = function (nodeId) {
+
+        return network.getConnectedNodes(nodeId);
+
+    }
+
     /**
      *
      * when a node is dragged and toutlesensData.queriesIds.length>=2  moves the connected nodes
@@ -849,6 +880,14 @@ var visjsGraph = (function () {
     self.deleteRelation = function (edgeId) {
         self.edges.remove(edgeId);
     }
+
+    self.setLayoutType =function(type,option){
+        $("#graphLayoutSelect").val(type);
+        self.setLayoutOption (graphLayoutSelect);
+        if(option)
+            $("#graphLayoutDirectionDir").val(option)
+    }
+
 
 
     return self;

@@ -321,6 +321,10 @@
                         toutlesensController.currentActionObj.mode = "graph";
                     }
 
+                    if (index == 4) {
+                        advancedSearch.searchSimilars(currentObject);
+                    }
+
 
                 }
             });
@@ -554,6 +558,7 @@
                 <li><a href="#nodeDiv"><span id='lang_60'>Node  </span></a></li>
                 <li><a href="#relationDiv"><span id='lang_60'>Relation </span></a></li>
                 <li><a href="#pathDiv"><span id='lang_60'>Pathes </span></a></li>
+                <li><a href="#pivotsDiv"><span id='lang_60'>Pivots </span></a></li>
                 <!--  <li><a href="#requestDiv"><span id='lang_60'>Request </span></a></li>-->
 
 
@@ -692,6 +697,9 @@
 
             </div>
 
+            <div id="pivotsDiv"></div>
+            </div>
+
             <!--    <div id="requestDiv">
 
                 </div>-->
@@ -706,6 +714,8 @@
             <li><a href="#filterDiv"><span id='lang_60'>Filter </span></a></li>
             <li><a href="#highlightDiv"><span id='lang_60'>Highlight </span></a></li>
             <li><a href="#graphOptionsDiv"><span id='lang_60'>Graph </span></a></li>
+            <li><a href="#similarsDiv"><span id='lang_60'>Similars </span></a></li>
+
 
         </ul>
         <div id="infosDiv">
@@ -722,6 +732,11 @@
         <div id="graphOptionsDiv">
 
         </div>
+        <div id="similarsDiv">
+
+        </div>
+
+
 
 
     </div>
