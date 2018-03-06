@@ -1,10 +1,22 @@
 
     <div id="infosHeaderDiv">
-        &nbsp;&nbsp;<button onclick="infoGenericDisplay.saveNode(visjsGraph.addNode)">Save</button>
+        &nbsp;&nbsp;<button onclick="infoGenericDisplay.saveNode(visjsGraph.addNode);toutlesensController.dispatchAction('addNode')">Save</button>
         &nbsp;&nbsp;<button onclick="infoGenericDisplay.deleteNode()">Delete</button>
        <br> NodeLabel<select id="nodeFormLabelSelect"
                          onchange="infoGenericDisplay.setNewNodeProperties(this)"></select>
-        &nbsp;&nbsp;<button onclick="toutlesensController.dispatchAction('createNewLabel')">+</button>
+        &nbsp;&nbsp;&nbsp; &nbsp;<button onclick="$('#nodeFormNewLabelDiv').css('visibility','visible')">+</button>
+      <!--  <button onclick="toutlesensController.dispatchAction('createNewLabel')">+</button>-->
+        <div id="nodeFormNewLabelDiv" style="visibility: hidden;top: 2px;position: absolute;background-color: #aebcd6" >
+            new label<br>
+            label name<input  id="nodeFormNewLabelName"></input><br>
+            label color<select  id="nodeFormNewLabelColor"></select><br>
+            <button onclick="toutlesensController.dispatchAction('createNewLabelAttr')">Add property</button>
+
+
+            <button  onclick="toutlesensController.dispatchAction('createNewLabel');;$('#nodeFormNewLabelDiv').css('visibility','hidden')">save new label</button>
+            <button onclick="$('#nodeFormNewLabelDiv').css('visibility','hidden')">cancel</button>
+        </div>
+
 
 
     </div>

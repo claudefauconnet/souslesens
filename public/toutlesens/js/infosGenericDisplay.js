@@ -37,7 +37,8 @@ var infoGenericDisplay = (function () {
     self.jsTreeDivId = "treeContainer";
     var ids = {};
     self.subGraph;
-    self.userRole = "write";
+    self.ignoredFields=['subGraph','id','color']
+   // self.userRole = "write";
     var currentNameProperty;
     var currentMenuData;
     self.selectedNodeData;
@@ -1171,6 +1172,8 @@ var infoGenericDisplay = (function () {
         var strHidden = "";
 
         for (var key in attrObject) {
+            if(self.ignoredFields.indexOf(key)>-1)
+                continue;
 
             var strVal = attrObject[key].value;
 

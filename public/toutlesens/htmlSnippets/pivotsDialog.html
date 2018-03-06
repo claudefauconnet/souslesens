@@ -24,7 +24,8 @@ pivotLabel<select id="pivotsDialogPivotLabelsSelect"></select>
         var label=$("#pivotsDialogSourceLabelsSelect").val();
 var pivotLabels=[];
         if( label!=""){
-            var labels=Schema.getPermittedLabels(label)
+            var labels=Schema.getPermittedLabels(label,true);
+            labels.splice(0,0,"")
             common.fillSelectOptionsWithStringArray(pivotsDialogPivotLabelsSelect,labels)
         }
 

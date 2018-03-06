@@ -223,7 +223,7 @@ var toutlesensController = (function () {
         if (!json)
             json = connectors.neoResultsToVisjs(toutlesensData.cachedResultArray);
         else
-            json=  connectors.neoResultsToVisjs(json);
+            json = connectors.neoResultsToVisjs(json);
         if (currentDisplayType == "VISJS-NETWORK") {
             visjsGraph.draw("graphDiv", json);
             visjsGraph.drawLegend(filters.currentLabels);
@@ -236,8 +236,6 @@ var toutlesensController = (function () {
 
 
     }
-
-
 
 
     /**
@@ -566,6 +564,16 @@ var toutlesensController = (function () {
                 $("#dialog").load("htmlSnippets/nodeForm.html", function () {
                     self.initLabels(nodeFormLabelSelect);
                     self.setRightPanelAppearance();
+                    for (var i = 0; i < Gparams.palette.length; i++) {
+                        $("#nodeFormNewLabelColor").append($('<option>', {
+                                value: Gparams.palette[i],
+                                text: Gparams.palette[i],
+
+                            }).css("background-color", Gparams.palette[i])
+                        );
+
+
+                    }
 
                 })
                 $("#dialog").dialog("open");
@@ -575,20 +583,23 @@ var toutlesensController = (function () {
         }
 
         else if (action == "createNewLabel") {
-            var newLabel = prompt("new label name");
+            /*   var newLabel = prompt("new label name");*/
+            var newLabel = $("#nodeFormNewLabelName").val()
+            var newLabelColor = $("#nodeFormNewLabelColor").val()
             if (newLabel && newLabel.length > 0) {
                 if (!/^[\w]+$/.test(newLabel)) {
                     return alert("label names only allow ascii characters")
+                    var color = "#FFD900"
                 }
+                if (newLabelColor && newLabelColor.length > 0)
+                    color = newLabelColor;
 
-                Schema.schema.labels[newLabel] = {"color": "#FFD900"};
+                Schema.schema.labels[newLabel] = {"color": color};
                 Schema.schema.properties[newLabel] = {
                     "name": {
                         "type": "text"
                     },
-                    "subGraph": {
-                        "type": "text"
-                    }
+
                 }
                 Schema.save(subGraph);
                 self.initLabels(nodeFormLabelSelect);
@@ -807,7 +818,7 @@ var toutlesensController = (function () {
 
         });
         $("#pivotsDiv").load("htmlSnippets/pivotsDialog.html", function () {
-            self.initLabels(pivotsDialogSourceLabelsSelect,true);
+            self.initLabels(pivotsDialogSourceLabelsSelect, true);
 
         });
 

@@ -156,7 +156,7 @@ self.getNodeInfoButtons=function(){
        if(currentObject.neoAttrs)
            name= currentObject.neoAttrs[Schema.schema.defaultNodeNameProperty]
        else
-           name= currentObject[Schema.defaultNodeNameProperty]
+           name= currentObject[Schema.schema.defaultNodeNameProperty]
  name=textOutputs.formatNode(name+"<br>");
 
 

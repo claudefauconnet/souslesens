@@ -145,8 +145,9 @@ var advancedSearch = (function () {
     self.searchSimilars = function (node) {
         $("#similarsDialogSimilarsDiv").html();
         var messageDivId = $("#similarsDialogMessageDiv");
+        messageDivId.html("");
         if (!node)
-            return $(messageDivId).html("no node selected");
+            return messageDivId.html("no node selected");
         var label = node.label;
         if (node.labelNeo)
             label = node.labelNeo
@@ -168,7 +169,7 @@ var advancedSearch = (function () {
 
 
                 if (data.length == 0) {
-                    return $(messageDivId).html("nos similarities found");
+                    return messageDivId.html("nos similarities found");
                 }
 
                 toutlesensData.cachedResultArray = data;
@@ -212,11 +213,18 @@ var advancedSearch = (function () {
         if (sourceNodeId) {
             whereStatement = " where Id(n)=" + sourceNodeId + " ";
         }
-
+var inverseRel=false;
         var pivotLabelStr="";
-        if(pivotLabel &&pivotLabel!="")
-            pivotLabelStr=":" + pivotLabel ;
-        var statement = "match path=((n:" + sourceLabel + ")-->(r" + pivotLabelStr + ")<--(m:" + sourceLabel + ")) "
+        if(pivotLabel &&pivotLabel!="") {
+            if(pivotLabel.indexOf("-")==0){
+                inverseRel=true;
+                pivotLabel=pivotLabel.substring(1);
+            }
+
+            pivotLabelStr = ":" + pivotLabel;
+
+        }
+        var statement = "match path=((n:" + sourceLabel + ")--(r" + pivotLabelStr + ")--(m:" + sourceLabel + ")) "
         statement += whereStatement + toutlesensData.standardReturnStatement;
         console.log(statement);
         var payload = {match: statement};
@@ -232,6 +240,7 @@ var advancedSearch = (function () {
 
                 if (data.length == 0) {
                     return $(messageDivId).html("no pivot values found");
+                    $("#graphDiv").html("no pivot values found");
                 }
 
           /*      // delete lines where r is only present once
@@ -256,14 +265,25 @@ for(var key in pivotNodesFrequencies){
 
                 visjsGraph.setLayoutType("random", null);
                 toutlesensController.displayGraph(data, null, function (err, result) {
-                    visjsGraph.drawLegend([sourceLabel, pivotLabel]);
+
 
                     var nodes=visjsGraph.nodes;
                     var connections=[];
+                    var distinctLabels=[]
                     for(var key in nodes._data){
+
                         var node=nodes._data[key];
-                         node.nConnections=  visjsGraph.getConnectedNodes(node.id).length
-                        connections.push(node);
+                        if(distinctLabels.indexOf(node.labelNeo)<0)
+                            distinctLabels.push(node.labelNeo);
+
+                        if( node.labelNeo!=sourceLabel) {
+                            node.nConnections = visjsGraph.getConnectedNodes(node.id).length
+                            connections.push(node);
+                        }
+                    /*   if(inverseRel ==true && node.labelNeo==sourceLabel) {
+                            node.nConnections = visjsGraph.getConnectedNodes(node.id).length
+                            connections.push(node);
+                        }*/
 
 
                     }
@@ -281,7 +301,7 @@ for(var key in pivotNodesFrequencies){
                     var sss=connections[0];
                     visjsGraph.scaleNodes(nodes,"nConnections");
 
-
+                    visjsGraph.drawLegend(distinctLabels);
                     toutlesensController.setRightPanelAppearance();
 
                 })

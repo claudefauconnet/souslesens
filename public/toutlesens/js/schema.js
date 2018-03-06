@@ -371,7 +371,7 @@ var Schema = (function () {
 
             if (inverseRelAlso  && relation.endLabel == startLabel)
                 if(labels.indexOf(relation.startLabel)<0)
-                labels.push(relation.startLabel);
+                labels.push("-"+relation.startLabel);
         }
         return labels;
     }
@@ -460,7 +460,7 @@ var Schema = (function () {
 
         //      console.log(JSON.stringify(self.schema, undefined, 4));
 
-        if (confirm("save new Schema ?")) {
+        if (true){//confirm("save new Schema ?")) {
             self.schema.relations = relationsNewModel;
             self.save(self.subGraph, self.schema)
 
