@@ -10,7 +10,16 @@
     <tr>
         <td colspan="3">
             <input type="checkbox" id="showRelationTypesCbx"
-                   onchange="visjsGraph.displayRelationNames()">nom des relations
+                   onchange="visjsGraph.displayRelationNames()">relations names
+
+
+        </td>
+    </tr>
+
+    <tr>
+        <td colspan="3">
+            <input type="checkbox" id="hideNodesWithoutRelationsCbx"
+                   onchange="toutlesensController.generateGraph()">hideNodes without relations
 
 
         </td>
@@ -20,7 +29,7 @@
     <tr>
         <td  colspan="3">
             layout
-            <select id="graphLayoutSelect" onchange="visjsGraph.setLayoutOption(this,graphLayoutDirectionSelect,true)">
+            <select id="graphLayoutSelect" onchange="visjsGraph.setLayoutType($(this).val(),true)">
                 <option>random</option>
                 <option>hierarchical directed</option>
                 <option>hierarchical hubsize</option>
@@ -35,7 +44,7 @@
         <td  colspan="3">
             <div id="graphLayoutDirectionDir" style="visibility: hidden">
                 direction
-                <select id="graphLayoutDirectionSelect"  onchange="visjsGraph.setLayoutOption(graphLayoutSelect,this,true)">
+                <select id="graphLayoutDirectionSelect"  onchange="visjsGraph.setLayoutDirection($(this).val(),true)">
                     <option value="UD">Up-Down</option>
                     <option value="DU">Down-Up</option>
                     <option value="LR">Left-Right</option>
@@ -110,8 +119,9 @@
         range: "min",
         value: 1,
         slide: function (event, ui) {
-            $("#depth").val(ui.value);
-            toutlesensController.generateGraph(null, {applyFilters: true}, true);
+            var depth=ui.value
+            $("#depth").val(depth);
+            toutlesensController.generateGraph(null, {applyFilters: true,relationDepth:ui.value}, true);
         }
     });
 

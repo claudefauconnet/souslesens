@@ -205,7 +205,7 @@ var advancedSearch = (function () {
 
 
     self.searchLabelsPivots = function (sourceLabel, pivotLabel, sourceNodeId, messageDivId) {
-        if (!sourceLabel ) {
+        if (!sourceLabel) {
             return $(messageDivId).html("require source label");
 
         }
@@ -213,12 +213,12 @@ var advancedSearch = (function () {
         if (sourceNodeId) {
             whereStatement = " where Id(n)=" + sourceNodeId + " ";
         }
-var inverseRel=false;
-        var pivotLabelStr="";
-        if(pivotLabel &&pivotLabel!="") {
-            if(pivotLabel.indexOf("-")==0){
-                inverseRel=true;
-                pivotLabel=pivotLabel.substring(1);
+        var inverseRel = false;
+        var pivotLabelStr = "";
+        if (pivotLabel && pivotLabel != "") {
+            if (pivotLabel.indexOf("-") == 0) {
+                inverseRel = true;
+                pivotLabel = pivotLabel.substring(1);
             }
 
             pivotLabelStr = ":" + pivotLabel;
@@ -243,66 +243,83 @@ var inverseRel=false;
                     $("#graphDiv").html("no pivot values found");
                 }
 
-          /*      // delete lines where r is only present once
-                var pivotNodesFrequencies={}
-                for(var i=0;i<data.length;i++){
-                        var pivotNode=data[i].nodes[1];
-                    if(! pivotNodesFrequencies[pivotNode._id])
-                        pivotNodesFrequencies[pivotNode._id]={freq:0,node:pivotNode}
-                    pivotNodesFrequencies[pivotNode._id].freq+=1;
-
-                }
-
-for(var key in pivotNodesFrequencies){
-         if(pivotNodesFrequencies[key].freq>1)  {
-             var xx=3
-         }
-}*/
-
                 toutlesensData.cachedResultArray = data;
                 currentDisplayType = "VISJS-NETWORK";
-                //    var json = connectors.neoResultsToVisjs(data);
 
                 visjsGraph.setLayoutType("random", null);
                 toutlesensController.displayGraph(data, null, function (err, result) {
 
 
-                    var nodes=visjsGraph.nodes;
-                    var connections=[];
-                    var distinctLabels=[]
-                    for(var key in nodes._data){
+                    var nodes = visjsGraph.nodes;
+                    var pivotNodes = [];
+                    var distinctLabels = []
+                    var distinctSourceNodes = {}
 
-                        var node=nodes._data[key];
-                        if(distinctLabels.indexOf(node.labelNeo)<0)
+                    for (var key in nodes._data) {
+
+                        var node = nodes._data[key];
+                        if (node.labelNeo == sourceLabel && !distinctSourceNodes[node.label])
+                            distinctSourceNodes[node.label] = node
+
+
+                        if (distinctLabels.indexOf(node.labelNeo) < 0)
                             distinctLabels.push(node.labelNeo);
 
-                        if( node.labelNeo!=sourceLabel) {
+                        if (node.labelNeo != sourceLabel) {
                             node.nConnections = visjsGraph.getConnectedNodes(node.id).length
-                            connections.push(node);
+                            pivotNodes.push(node);
+
+
                         }
-                    /*   if(inverseRel ==true && node.labelNeo==sourceLabel) {
-                            node.nConnections = visjsGraph.getConnectedNodes(node.id).length
-                            connections.push(node);
-                        }*/
 
 
                     }
 
-                    connections.sort(function(a,b){
-                        if(a.nConnections>b.nConnections)
+                    pivotNodes.sort(function (a, b) {
+                        if (a.nConnections > b.nConnections)
                             return -1;
-                        if(b.nConnections>a.nConnections)
+                        if (b.nConnections > a.nConnections)
                             return 1;
                         return 0
 
 
                     });
 
-                    var sss=connections[0];
-                    visjsGraph.scaleNodes(nodes,"nConnections");
+                //outline best pivots
+                    var distinctPivotBetterNodes = []
+                    for (var i = 0; i < pivotNodes.length; i++) {
+                        if (i > (pivotNodes.length / 3))
+                            break;
+                        distinctPivotBetterNodes.push({id: pivotNodes[i].id, shape: "triangle"})
+                    }
+                    visjsGraph.updateNodes(distinctPivotBetterNodes)
+                    if(sourceNodeId){
+                        visjsGraph.updateNodes({id:sourceNodeId,shape:"star",size:50})
+                    }
+
+
+
+                    // var sss = pivotNodes[0];
+                    visjsGraph.scaleNodes(nodes, "nConnections");
 
                     visjsGraph.drawLegend(distinctLabels);
                     toutlesensController.setRightPanelAppearance();
+
+                    var distinctSourceNodesArray = [];
+                    for (var key in distinctSourceNodes) {
+                        distinctSourceNodesArray.push(distinctSourceNodes[key])
+                    }
+                    distinctSourceNodesArray.sort(function (a, b) {
+                        if (a.label > b.label)
+                            return 1;
+                        if (a.label > b.label)
+                            return -1;
+                        return 0
+                    })
+
+                    distinctSourceNodesArray.splice(0, 0, "");
+                    common.fillSelectOptions(pivotsDialogSourceNodeSelect, distinctSourceNodesArray, "label", "id");
+
 
                 })
 

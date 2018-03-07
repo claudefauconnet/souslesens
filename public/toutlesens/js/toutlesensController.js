@@ -67,11 +67,7 @@ var toutlesensController = (function () {
     self.generateGraph = function (id, options, callback) {
         if (!options)
             options = {};
-        var addToPreviousQuery = false;
-        if (options.addToPreviousQuery == true)
-            addToPreviousQuery = true;
 
-        options.applyFilters = true;
 
         d3.select("#graphDiv").selectAll("svg").remove();
         $("#graphDiv").html("");
@@ -125,7 +121,7 @@ var toutlesensController = (function () {
 
 
         currentObject.id = id;
-        var output = currentDisplayType;
+
 
         if (options && options.applyFilters) {
             //   filters.setQueryFilters();
@@ -144,9 +140,26 @@ var toutlesensController = (function () {
         }
 
 
+//**************** options
+        var addToPreviousQuery = false;
+        if (options.addToPreviousQuery == true)
+            addToPreviousQuery = true;
+
+        options.applyFilters = true;
+
+        if ($("#hideNodesWithoutRelationsCbx").prop("checked"))
+            options.hideNodesWithoutRelations = true;
+
+        var relationDepth = $("#depth").val();
+        if (relationDepth === undefined)
+            options.relationDepth = Gparams.defaultQueryDepth;
+        else
+            options.relationDepth = parseInt(relationDepth);
+
+        options.output = currentDisplayType;
         /*----------------------------------------------------------------------------------------------------*/
         $("#waitImg").css("visibility", "visible")
-        toutlesensData.getNodeAllRelations(id, output, addToPreviousQuery, function (err, data) {
+        toutlesensData.getNodeAllRelations(id, options, function (err, data) {
             toutlesensData.whereFilter = "";
             if (err) {
                 console.log(err);
@@ -193,7 +206,7 @@ var toutlesensController = (function () {
                 $("#mainButtons").css("visibility", "visible");
                 $("#waitImg").css("visibility", "hidden");
                 $(".graphDisplayed").css("visibility", "visible");
-                toutlesensController.displayGraph(data, currentDisplayType);
+                toutlesensController.displayGraph(data, options);
                 if (callback)
                     return callback(null, data);
 
@@ -217,15 +230,30 @@ var toutlesensController = (function () {
      */
 
 
-    self.displayGraph = function (json, output, callback) {
+    self.displayGraph = function (json, options, callback) {
+        if(!options)
+            options={}
         d3NodesSelection = [];
         $("#textDiv").html("");
-        if (!json)
-            json = connectors.neoResultsToVisjs(toutlesensData.cachedResultArray);
-        else
-            json = connectors.neoResultsToVisjs(json);
+
         if (currentDisplayType == "VISJS-NETWORK") {
-            visjsGraph.draw("graphDiv", json);
+
+            if (json.length > Gparams.limitToOptimeGraphOptions) {
+                options.showNodesLabel = false,
+                    options.showRelationsType = false,
+                    options.smooth = false;
+            } else {
+                options.showNodesLabel = true,
+                    //  options.showRelationsType = false,
+                    options.smooth = true;
+            }
+            if (!json)
+                json = connectors.neoResultsToVisjs(toutlesensData.cachedResultArray, options);
+            else
+                json = connectors.neoResultsToVisjs(json, options);
+
+
+            visjsGraph.draw("graphDiv", json, options);
             visjsGraph.drawLegend(filters.currentLabels);
 
         }
@@ -686,7 +714,11 @@ var toutlesensController = (function () {
         else if (action == "showAll") {
             currentObject.id = null;
             currentLabel = null;
-            currentDisplayType = "SIMPLE_FORCE_GRAPH"
+            currentDisplayType = "SIMPLE_FORCE_GRAPH";
+            // $("#showRelationTypesCbx").remove("checked");
+            //  visjsGraph.displayRelationNames({show:false})
+            Gparams.showRelationNames = false;
+
             self.generateGraph(null, {applyFilters: true});
         }
 
@@ -701,6 +733,24 @@ var toutlesensController = (function () {
             var data = connectors.toutlesensSchemaToVisjs(Schema.schema);
             self.setRightPanelAppearance(false);
             visjsGraph.draw("graphDiv", data);
+        }
+
+
+        else if (action == "displaySettings") {
+            $("#dialog").load("htmlSnippets/visjsGraphDisplayMenu.html", function () {
+                var layout = Gparams.graphDefaultLayout;
+                if (layout.indexOf("hierarchical") > -1) {
+                    ($("#graphLayoutDirectionDir").css("visibility", "visible"));
+                } else {
+                    ($("#graphLayoutDirectionDir").css("visibility", "hidden"));
+                }
+                $("#graphLayoutSelect").val(layout);
+                $("#dialog").dialog({modal: false});
+                $("#dialog").css("position", "absolute");
+
+                $("#dialog").dialog("option", "title", "display settings");
+                $("#dialog").dialog("open");
+            });
         }
 
 
@@ -801,16 +851,6 @@ var toutlesensController = (function () {
         $("#requestDiv").load("htmlSnippets/currentQueries.html", function () {
             self.initLabels(currentQueriesDialogSourceLabelSelect);
             self.initLabels(currentQueriesDialogTargetLabelSelect);
-        });
-
-        $("#graphOptionsDiv").load("htmlSnippets/visjsGraphDisplayMenu.html", function () {
-            var layout = Gparams.graphDefaultLayout;
-            if (layout.indexOf("hierarchical") > -1) {
-                ($("#graphLayoutDirectionDir").css("visibility", "visible"));
-            } else {
-                ($("#graphLayoutDirectionDir").css("visibility", "hidden"));
-            }
-            $("#graphLayoutSelect").val(layout);
         });
 
 
@@ -925,7 +965,7 @@ var toutlesensController = (function () {
 
         $("#graphDiv").width(totalWidth - rightPanelWidth).height(totalHeight - 0)
 
-        $("#graphLegendDiv").width(400).height(40).css("position", "relative").css("top", -20).css("left", (totalWidth - rightPanelWidth) - 420).css("background-color", "#eee")
+        $("#graphLegendDiv").width(400).height(40).css("position", "relative").css("top", -20).css("left", (totalWidth - rightPanelWidth) - 450).css("background-color", "#eee")
 
 
         $("#treeContainer").width(rightPanelWidth - 15);
@@ -950,12 +990,24 @@ var toutlesensController = (function () {
         //   $("#mainButtons").width(rightPanelWidth).height(50).css("position", "absolute").css("left", $("#graphDiv").width() - 200).css("top", 50).css("visibility", "hidden");
         $("#mainButtons").width(250).height(50).css("position", "absolute").css("left", 20).css("top", 10);//.css("visibility", "hidden");
 
-
+        $("#fullScreenButton").css("position", "absolute").css("top", 5).css("left", (totalWidth - rightPanelWidth) - 10);
         $(".objAttrInput").width(rightPanelWidth - 100);
 
         self.setRightPanelAppearance(true);
 
     }
+
+    self.switchanalyzePanelDisplay = function () {
+        self.hasRightPanel = !self.hasRightPanel
+
+        if (!self.hasRightPanel)
+            toutlesensController.setResponsiveDimensions(0);
+        else
+            toutlesensController.setResponsiveDimensions(rightPanelWidth);
+        $("#mainButtons").css("visibility", "visible");
+
+    }
+
 
     /**
      *

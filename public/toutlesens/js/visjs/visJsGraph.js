@@ -13,6 +13,8 @@ var visjsGraph = (function () {
 
     self.previousGraphs = []
     self.previousGraphs.index = -1;
+    self.currentLayoutType="random";
+    self.currentLayoutDirection="";
 
 
     var stopPhysicsTimeout = 5000;
@@ -23,7 +25,7 @@ var visjsGraph = (function () {
     var options = {};
 
 
-    self.draw = function (divId, visjsData) {
+    self.draw = function (divId, visjsData, options) {
 
 
         var t0 = new Date();
@@ -33,6 +35,9 @@ var visjsGraph = (function () {
 
         }
 
+        smoothRelLine=true;
+        if(options && !options.smooth)
+            smoothRelLine=false;
 
         var container = document.getElementById(divId);
         self.nodes = new vis.DataSet(visjsData.nodes);
@@ -42,7 +47,7 @@ var visjsGraph = (function () {
         var x = (Math.log(self.edges.length * 2) * Math.LOG10E) + 1;
 
         stopPhysicsTimeout = Math.pow(10, x);
-        console.log("x" + x + " stopPhysicsTimeout: " + self.edges.length + " time " + stopPhysicsTimeout)
+     //   console.log("x" + x + " stopPhysicsTimeout: " + self.edges.length + " time " + stopPhysicsTimeout)
         data = {
             nodes: self.nodes,
             edges: self.edges
@@ -69,6 +74,13 @@ var visjsGraph = (function () {
                 shape: 'dot',
                 size: 10,
                 font: {size: 14},
+                scaling: {
+                    customScalingFunction: function (min,max,total,value) {
+                        return value/total;
+                    },
+                    min:5,
+                    max:150
+                }
                 /*  scaling: {
                       label: {
                           min: 10,
@@ -80,7 +92,7 @@ var visjsGraph = (function () {
             },
             edges:
                 {
-                    smooth: true,
+                    smooth: smoothRelLine,
                     font:
                         {
                             size: 8
@@ -89,31 +101,19 @@ var visjsGraph = (function () {
                 }
             ,
             interaction: {
-                // navigationButtons: true,
+
                 keyboard: true
-            },
-            scaling: {
-                customScalingFunction: function (min,max,total,value) {
-                    return value/total;
-                },
-                min:5,
-                max:150
             }
+
 
 
         };
 
 
-        options.manipulation = true;
+        options.manipulation = false;
 
 
-        if (graphLayoutSelect) {// not loaded at the beginning
-            var layoutObj = self.setLayoutOption(graphLayoutSelect, graphLayoutDirectionSelect)
-            for (var key in layoutObj) {
-                options[key] = layoutObj[key]
 
-            }
-        }
 
         if (data.edges.length > 1000)
             options.layout = {improvedLayout: false}
@@ -242,36 +242,45 @@ var visjsGraph = (function () {
 
     }
 
-
-
-
-    self.setLayoutOption = function (selectLayout, selectDirection, apply) {
-
-        var layoutArray = $(selectLayout).val().split(" ");
-        var direction = $(selectDirection).val();
+    self.setLayoutType = function (layoutStr,apply){
+        var layoutArray = layoutStr.split(" ");
         var layoutType = layoutArray[0];
-        var param = "";
+        var sortMethod = "";
         if (layoutArray.length > 1)
-            param = layoutArray[1];
-
+            sortMethod = layoutArray[1];
+        self.currentLayoutType=layoutType;
         if (layoutType == "hierarchical") {
             ($("#graphLayoutDirectionDir").css("visibility", "visible"))
-            options.layout = {hierarchical: {sortMethod: param, direction: direction}}
+            options.layout = {hierarchical: {sortMethod: sortMethod, direction: self.currentLayoutDirection}}
         }
         if (layoutType == "random") {
             ($("#graphLayoutDirectionDir").css("visibility", "hidden"))
             options.layout = {hierarchical: false, randomSeed: 2}
         }
         if (apply) {
+            network.setOptions(options)
+        }
+        return (options)
+    }
+    self.setLayoutDirection = function (direction,apply){
+        self.currentLayoutDirection=direction;
+
+        if (self.currentLayoutType == "hierarchical") {
+            options.layout = {hierarchical: { direction: direction}}
+        }
+
+        if (apply) {
             // var xx=network.layoutEngine.options;
             network.setOptions(options)
         }
         return (options)
-
     }
-    self.clusterByLabel = function () {
-        var label = paint.currentLabel;
-        if (!label || !nodeColors[label])
+
+
+
+    self.clusterByLabel = function (label) {
+
+        if (!label )
             return;
         var clusterOptionsByData = {
             joinCondition: function (childOptions) {
@@ -413,6 +422,11 @@ var visjsGraph = (function () {
 
     }
 
+    self.updateNodes = function (nodes) {
+        self.nodes.update(nodes);
+
+    }
+
 
     self.scaleNodes = function (nodes, valueProp) {
         var newNodes=[]
@@ -464,8 +478,11 @@ var visjsGraph = (function () {
 
     }
 
-    self.displayRelationNames = function () {
-        var show = $("#showRelationTypesCbx").prop("checked");
+    self.displayRelationNames = function (option) {
+        var show
+        if(option )
+            show=option.show
+         show = $("#showRelationTypesCbx").prop("checked");
         Gparams.showRelationNames = show;
 
         for (var key in self.edges._data) {
@@ -881,12 +898,7 @@ var visjsGraph = (function () {
         self.edges.remove(edgeId);
     }
 
-    self.setLayoutType =function(type,option){
-        $("#graphLayoutSelect").val(type);
-        self.setLayoutOption (graphLayoutSelect);
-        if(option)
-            $("#graphLayoutDirectionDir").val(option)
-    }
+
 
 
 

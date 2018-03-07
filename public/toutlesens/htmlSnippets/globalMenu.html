@@ -2,10 +2,10 @@
     <tr>
 
 
-    <tr>
+ <!--   <tr>
         <td >
             control panel
-            <select onchange="switchanalyzePanelDisplay(this)">
+            <select onchange="toutlesensController.switchanalyzePanelDisplay(this)">
                 <option></option>
                 <option>show</option>
                 <option>hide</option>
@@ -13,7 +13,7 @@
 
 
         </td>
-    </tr>
+    </tr>-->
 
 
     <tr>
@@ -59,16 +59,3 @@
 </table>
 
 
-    <script>
-        function switchanalyzePanelDisplay(select) {
-            var val = $(select).val();
-            if (val == "hide")
-                toutlesensController.setResponsiveDimensions(0);
-            else
-                toutlesensController.setResponsiveDimensions(rightPanelWidth);
-            $("#mainButtons").css("visibility", "visible");
-
-        }
-
-
-    </script>

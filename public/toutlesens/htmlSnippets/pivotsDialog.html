@@ -1,21 +1,25 @@
+<div style="background-color: #ddd;color:#0000cc;font-style: italic">
+Pivot analyze allows to outline nodes (pivot nodes) that are  most connected to  nodes having a certain label(source nodes label)
+    <ul>
+        <li>A label can be precised for the pivot nodes</li>
+        <li>After the first analysis run it is possible to zoom on a a specific source node( filter source node)
 
-sourceLabel<select id="pivotsDialogSourceLabelsSelect" onchange="setAllowedLabels()"></select>
+</div>
+source nodes Label<select id="pivotsDialogSourceLabelsSelect" onchange="setAllowedLabels()"></select>
 
 <br>
 
-pivotLabel<select id="pivotsDialogPivotLabelsSelect"></select>
+pivot nodes Label<select id="pivotsDialogPivotLabelsSelect"></select>
 
 
 <button onclick='advancedSearch.searchLabelsPivots($("#pivotsDialogSourceLabelsSelect").val(),$("#pivotsDialogPivotLabelsSelect").val(),null,pivotsDialogMessageDiv)' >search</button>
 
 <br>
+filter source node
+<select id="pivotsDialogSourceNodeSelect" onchange='advancedSearch.searchLabelsPivots($("#pivotsDialogSourceLabelsSelect").val(),$("#pivotsDialogPivotLabelsSelect").val(),$(this).val(),pivotsDialogMessageDiv)'></select>
 
 
 
-
-<button onclick='advancedSearch.searchLabelsPivots($("#pivotsDialogSourceLabelsSelect").val(),$("#pivotsDialogPivotLabelsSelect").val(),currentObject.id,pivotsDialogMessageDiv)' >
-    filter selectedNode
-</button>
 
 <div id="pivotsDialogMessageDiv"></div>
 <script>

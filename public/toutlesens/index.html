@@ -225,6 +225,10 @@
             font-weight: bold;
         }
 
+        #dialog{
+            background-color: #aebcd6;
+        }
+
 
     </style>
 
@@ -317,11 +321,8 @@
                         });
 
                     }
-                    if (index == 3) {
-                        toutlesensController.currentActionObj.mode = "graph";
-                    }
 
-                    if (index == 4) {
+                    if (index == 3) {
                         advancedSearch.searchSimilars(currentObject);
                     }
 
@@ -409,7 +410,10 @@
                 autoOpen: false,
                 height: Gparams.smallDialogSize.h,
                 width: Gparams.smallDialogSize.w,
-                modal: true
+
+                modal: true,
+                position: { my: "left top", at: "left bottom", of: $("#mainButtons") }
+
 
             });
 
@@ -529,11 +533,14 @@
 
 <div id="mainButtons">
 
+
+    <input type="image" title="display settings" height="20px" onclick="toutlesensController.dispatchAction('displaySettings')"
+           id="displaySettingButton" src="images/display.png"/></td>
+    &nbsp;<input type="image" title="Display all nodes" height="20px" onclick="toutlesensController.dispatchAction('showAll')"
+                 id="searchAllButton" src="images/all.png"/></td>
     <input type="image" title="Graph menu" height="20px"
            onclick="toutlesensController.dispatchAction('showGlobalMenu');" id="parametersMenuButton"
            src="images/parameters.png"/>
-    &nbsp;<input type="image" title="Display all nodes" height="20px" onclick="toutlesensController.dispatchAction('showAll')"
-                 id="searchAllButton" src="images/all.png"/></td>
     <input type="image" title="Export to text" height="20px"
            onclick="toutlesensController.dispatchAction('showGraphText')" id="toTextMenuButton" src="images/text.png"
            class="graphDisplayed"/>
@@ -713,7 +720,7 @@
             <li><a href="#infosDiv"><span id='lang_60'>Infos  </span></a></li>
             <li><a href="#filterDiv"><span id='lang_60'>Filter </span></a></li>
             <li><a href="#highlightDiv"><span id='lang_60'>Highlight </span></a></li>
-            <li><a href="#graphOptionsDiv"><span id='lang_60'>Graph </span></a></li>
+          <!--  <li><a href="#graphOptionsDiv"><span id='lang_60'>Graph </span></a></li>-->
             <li><a href="#similarsDiv"><span id='lang_60'>Similars </span></a></li>
 
 
@@ -729,9 +736,9 @@
 
         </div>
 
-        <div id="graphOptionsDiv">
+     <!--   <div id="graphOptionsDiv">
 
-        </div>
+        </div>-->
         <div id="similarsDiv">
 
         </div>
@@ -752,7 +759,12 @@
 
 <div id="dialog" title="dialog"></div>
 <div id="dialogLarge"></div>
-
+<div id="controlPanelShowHide">
+    <button onclick="">
+        <input type="image" title="Graph menu" height="20px"
+               onclick="toutlesensController.switchanalyzePanelDisplay();" id="fullScreenButton"
+               src="images/fullScreen.png"/>
+</div>
 
 <div id="filterMovableDiv">
     object<select id="propertiesSelectionDialog_ObjectTypeInput" onchange="filters.setLabelsOrTypes(this)">

@@ -133,8 +133,8 @@ var toutlesensData = (function () {
 
     }
 
-    self.getNodeAllRelations = function (id, output, addToPreviousQuery, callback) {
-        if (!addToPreviousQuery) {
+    self.getNodeAllRelations = function (id,options , callback) {
+        if (!options.addToPreviousQuery) {
             self.queriesIds = [];
             self.cachedResultArray=[];
         }
@@ -154,16 +154,17 @@ var toutlesensData = (function () {
             // http://graphaware.com/graphaware/2015/05/19/neo4j-cypher-variable-length-relationships-by-example.html
 
 
-            var numberOfLevelsVal = $("#depth").val();
-            if (numberOfLevelsVal === undefined)
-                numberOfLevelsVal = Gparams.defaultQueryDepth;
-            else
-                numberOfLevelsVal = parseInt(numberOfLevelsVal);
+
             var relCardinalityStr = "";
-            if (numberOfLevelsVal > 1)
-                relCardinalityStr = "*.." + numberOfLevelsVal;
-         else
+            if (options.relationDepth && options.relationDepth > 1)
+                relCardinalityStr = "*.." + options.relationDepth;
+         else {
+             if(options.hideNodesWithoutRelations)
+                 relCardinalityStr = "*..1" ;
+             else
                 relCardinalityStr = "*0..1" ;
+
+            }
 
             var whereStatement = "";
             if (id) {
@@ -197,7 +198,7 @@ var toutlesensData = (function () {
 
 
         var returnStatement;
-        if (output == "filtersDescription") {
+        if (options.output == "filtersDescription") {
             returnStatement = " RETURN count(r) as nRels, COLLECT( distinct EXTRACT( rel IN relationships(path) |  type(rel))) as rels,EXTRACT( node IN nodes(path) | labels(node)) as labels"
         }
         else {
@@ -275,7 +276,7 @@ var toutlesensData = (function () {
                         return callback(null, []);
                     }
                     if (id > -1)// we retry with inverse relation
-                        self.getNodeAllRelations(-id, output, addToPreviousQuery, callback);
+                        self.getNodeAllRelations(-id,  options, callback);
                     else {
                         id = -id;
                         return callback(null, []);
@@ -283,7 +284,7 @@ var toutlesensData = (function () {
 
                 }
 
-                if (output == "filtersDescription") {
+                if (options.output == "filtersDescription") {
 
                     return callback(null, data);
 

@@ -2,7 +2,7 @@ var connectors = (function () {
     var self = {};
 
 
-    self.neoResultsToVisjs = function (resultArray) {
+    self.neoResultsToVisjs = function (resultArray,options) {
 
 
         visjsData = {nodes: [], edges: [], labels: []};
@@ -41,7 +41,7 @@ var connectors = (function () {
 
                     var color = nodeColors[nodes[j].labels[0]]
                     var nodeObj = {
-                        label: labelVisjs,
+
                         labelNeo: labels[0],// because visjs where label is the node name
                         color: color,
                         myId: nodeNeo.id,
@@ -55,6 +55,8 @@ var connectors = (function () {
 
 
                     }
+                    if((options && options.showNodesLabel ) || !options)
+                        nodeObj.label=labelVisjs;
                     if (nodes[j].outline) {
 
                         nodeObj.font = {
@@ -175,7 +177,7 @@ var connectors = (function () {
                 else
                     uniqueRels.push(relUniqueId);
 
-                if (Gparams.showRelationNames == true) {
+                if ((options && options.showRelationsType==true ) && Gparams.showRelationNames == true) {
                     relObj.label = relObj.type;
                     relObj.arrows = {from: {scaleFactor: 0.5}}
                 }

@@ -47,6 +47,7 @@ var Gparams = {
     searchInputKeyDelay:500,
     searchInputMinLength:2,
     showRelationNames:true,
+    limitToOptimeGraphOptions:1000,
 
 
 
@@ -55,10 +56,10 @@ var Gparams = {
     neoQueryLimit:20000,
     listDisplayLimitMax:500,
     jsTreeMaxChildNodes:500,
-    graphDisplayLimitMax: 5000,
+    graphDisplayLimitMax: 10000,
     maxDepthExplorationAroundNode: 3,
     bulkGraphViewMaxNodesToDrawLinks:1000,
-    bulkGraphDisplayLimit:5000,
+    bulkGraphDisplayLimit:10000,
     maxNodesForRelNamesOnGraph:100,
     graphMaxDataLengthToDisplayGraphDirectly:1000,
 
