@@ -47,7 +47,7 @@ var Gparams = {
     searchInputKeyDelay:500,
     searchInputMinLength:2,
     showRelationNames:true,
-    limitToOptimeGraphOptions:1000,
+    limitToOptimizeGraphOptions:1000,
 
 
 

@@ -1,10 +1,5 @@
-<div style="background-color: #ddd;color:#0000cc;font-style: italic">
-Pivot analyze allows to outline nodes (pivot nodes) that are  most connected to  nodes having a certain label(source nodes label)
-    <ul>
-        <li>A label can be precised for the pivot nodes</li>
-        <li>After the first analysis run it is possible to zoom on a a specific source node( filter source node)
 
-</div>
+<input type="image" onclick='$("#pivotsDialogPivotInfosDiv").css("visibility","visible")' width="20px" src="images/infos.png">
 source nodes Label<select id="pivotsDialogSourceLabelsSelect" onchange="setAllowedLabels()"></select>
 
 <br>
@@ -22,6 +17,14 @@ filter source node
 
 
 <div id="pivotsDialogMessageDiv"></div>
+<div id="pivotsDialogPivotInfosDiv" style="background-color: #ddd;color:#0000cc;font-style: italic;visibility: hidden" >
+    Pivot analyze allows to outline nodes (pivot nodes) that are are most connected to  nodes having a certain label(source nodes label)
+    <ul>
+        <li>A label can be precised for the pivot nodes</li>
+        <li>After the first analysis run it is possible to zoom on a a specific source node( filter source node)
+        </li>
+    </ul>
+</div>
 <script>
 
     function setAllowedLabels(){

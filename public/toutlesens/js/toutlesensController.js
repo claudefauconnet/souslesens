@@ -158,7 +158,7 @@ var toutlesensController = (function () {
 
         options.output = currentDisplayType;
         /*----------------------------------------------------------------------------------------------------*/
-        $("#waitImg").css("visibility", "visible")
+        $("#waitImg").css("visibility", "visible");
         toutlesensData.getNodeAllRelations(id, options, function (err, data) {
             toutlesensData.whereFilter = "";
             if (err) {
@@ -238,7 +238,7 @@ var toutlesensController = (function () {
 
         if (currentDisplayType == "VISJS-NETWORK") {
 
-            if (json.length > Gparams.limitToOptimeGraphOptions) {
+            if (json.length > Gparams.limitToOptimizeGraphOptions) {
                 options.showNodesLabel = false,
                     options.showRelationsType = false,
                     options.smooth = false;

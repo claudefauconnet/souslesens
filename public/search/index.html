@@ -20,7 +20,7 @@
             justify-content: center;
         }
 
-        em,.em {
+        em, .em {
             background-color: #dad55e;
         }
 
@@ -64,7 +64,7 @@
 
         #centerPanel {
             width: 600px;
-         //   float: left;
+        / / float: left;
             display: table;
             overflow-y: auto;
             font-size: 12px;
@@ -96,7 +96,7 @@
 
         #top {
             font-size: 14px;
-            font-weight: bold;
+            font-weight: normal;
 
         }
 
@@ -161,7 +161,8 @@
         li {
             margin-left: 10px;
         }
-        .subQuerySpan,.searchInput{
+
+        .subQuerySpan, .searchInput {
             margin: 5px;
         }
 
@@ -219,6 +220,7 @@
             $("#dialog").css("left", ((totalWidth) / 2) - 400)
             $("#slopSpan").css("visibility", "hidden");
             $("#showMongoFormInput").css("visibility", "hidden");
+            $("#resultDiv").height(totalHeight - 150).css("overflow", "auto");
 
             $("#subQuerySpan").css("visibility", "hidden")
             $("#searchInput").focus();
@@ -258,11 +260,11 @@
                 var val = $(this).val()
                 if (val.indexOf(" ") > 0) {
                     $("#slopSpan").css("visibility", "visible")
-                   $("#slopInput").val("5")
-              $("#slopInput").css("visibility","visible");
+                    $("#slopInput").val("3")
+                    $("#slopInput").css("visibility", "visible");
                 }
                 else {
-                    $("#slopInput").css("visibility","hidden");
+                    $("#slopInput").css("visibility", "hidden");
                     $("#slopInput").val("")
                     $("#slopSpan").css("visibility", "hidden")
                 }
@@ -323,8 +325,6 @@
         function search(_from, pageIncrement, page, callback) {
 
 
-
-
             var from;
             if (!_from) {
                 from = 0;
@@ -341,8 +341,7 @@
             $("#dialog").css("visibility", "hidden")
 
             $("#subQuerySpan").css("visibility", "visible")
-            $("#addWordInput").val("");
-
+            //  $("#addWordInput").val("");
 
 
             $("#conceptDiv").html("");
@@ -351,13 +350,16 @@
             $("#associatedWordsDiv").html("");
 
 
-
-
             var index = $("#indexInput").val();
             var word = $("#searchInput").val().trim();
 
 
+            var addWordInput = $("#addWordInput").val();
+            if (addWordInput && addWordInput.length > 0) {
+                addAssociatedWord(addWordInput, true);
 
+            }
+            $("#addWordInput").val("")
 
             if (word != oldWord) {
                 associatedWords = []
@@ -365,7 +367,7 @@
             oldWord = word;
             var slop = $("#slopInput").val();
 
-            if(slop!="" && word.indexOf(" ")>0 && word.indexOf("*")>0 ){
+            if (slop != "" && word.indexOf(" ") > 0 && word.indexOf("*") > 0) {
 
                 $("#resultDiv").html("Impossible to have a query with this pattern : xxx(*) yyy(*) and a distance between the two words. remove *");
                 return;
@@ -380,22 +382,34 @@
             }
             var payload = {
                 findDocuments: 1,
-                from: from,
-                size: size,
-                indexName: index,
-
-                word: word
+                options: {
+                    from: from,
+                    size: size,
+                    indexName: index,
+                    word: word,
+                    getAssociatedWords: {
+                        indexName: index,
+                        word: word,
+                        size: 100,
+                        options: {
+                            iterations: 5,
+                            classifierSource: classifierSourceStr
+                        }
+                    }
+                }
             };
             if (currentType)
-                payload.type = currentType
+                payload.options.type = currentType
             if (slop != "")
-                payload.slop = parseInt(slop);
+                payload.options.slop = parseInt(slop);
             if (associatedWords.length > 0)
-                payload.andWords = associatedWords;
+                payload.options.andWords = associatedWords;
 
             var queryField = $("#queryFieldSelect").val();
             if (queryField != "") {
-                payload.queryField = queryField;
+                payload.options.queryField = queryField;
+            } else {
+                $("#queryFieldSpan").css("visibility", "hidden")
             }
 
             $.ajax({
@@ -417,6 +431,11 @@
                     } else {
                         showResults(data.docs);
                         showPageControls(data.total);
+                        if(associatedWords){
+                            showAssociatedWords(data.associatedWords.buckets);
+                            showTypes(data.associatedWords.types);
+                            showClassifier(data.associatedWords.classifier);
+                        }
                     }
 
                 }
@@ -428,8 +447,8 @@
                 }
 
             });
-            if (queryAssociatedWords)
-                getAssociatedWords();
+         //   if (queryAssociatedWords)
+               // getAssociatedWords();
             /*----------------associated words********************************/
 
         }
@@ -504,13 +523,12 @@
 
         function showResults(data) {
 
-            if(data.length==0){
-$("#resultDiv").html(" No result   Try to add an * (wildcard) at the end of the word")
+            if (data.length == 0) {
+                $("#resultDiv").html(" No result   Try to add an * (wildcard) at the end of the word")
 
                 return;
             }
             var html = "<table>";
-
 
 
             for (var i = 0; i < data.length; i++) {
@@ -619,6 +637,8 @@ $("#resultDiv").html(" No result   Try to add an * (wildcard) at the end of the 
                 str += "<span class=title>" + obj[0] + "</span>"
 
             if (obj.date) {
+                if (obj.date.length > 10)
+                    obj.date = obj.date.substring(0, 10);
                 str += "&nbsp;&nbsp;" + obj.date + "&nbsp;&nbsp;";
             }
             if (obj.path) {
@@ -634,8 +654,12 @@ $("#resultDiv").html(" No result   Try to add an * (wildcard) at the end of the 
 
             str += "<ul>";
             for (var i = 0; i < obj.highlights.length; i++) {
-
-                str += "<li><span class=highlight>" + obj.highlights[i] + "</span></li>";
+                if (i % 2 == 0)
+                    str += "<li><span class=highlight>" + obj.highlights[i] + "</span>";
+                else {
+                    str += " .... <span class=highlight>" + obj.highlights[i] + "</span>";
+                    str += "</li>"
+                }
 
             }
             str += "</ul>";
@@ -643,30 +667,30 @@ $("#resultDiv").html(" No result   Try to add an * (wildcard) at the end of the 
             return str;
         }
 
-       function  addWordToQuery(){
+        /* function addWordToQuery() {
 
-            var word=$("#addWordInput").val();
-            if(word.length>0)
+             var word = $("#addWordInput").val();
+             if (word.length > 0)
 
-           $("#slopInput").val("")
-            if($("#booleanSearchMode").val()=="and"){
-                addAssociatedWord(word);
+                 $("#slopInput").val("")
+             if ($("#booleanSearchMode").val() == "and") {
+                 addAssociatedWord(word);
 
-            }
-            else{
-                $("#searchInput").val(  $("#searchInput").val() +" "+word)
-                $("#slopInput").val("")
-                $("#slopInput").css("visibility","hidden")
-                search();
-            }
-        }
+             }
+             else {
+                 $("#searchInput").val($("#searchInput").val() + " " + word)
+                 $("#slopInput").val("")
+                 $("#slopInput").css("visibility", "hidden")
+                 search();
+             }
+         }*/
 
 
-
-        function addAssociatedWord(word) {
+        function addAssociatedWord(word, dontSearch) {
             associatedWords.push(word);
             showAssociatedWordsBreadcrumb();
-            search();
+            if (!dontSearch)
+                search();
 
 
         }
@@ -1085,10 +1109,10 @@ $("#resultDiv").html(" No result   Try to add an * (wildcard) at the end of the 
 
             if (z > h)
                 z -= h;
-         /*   if(z<h)
-                z=h;*/
+            /*   if(z<h)
+                   z=h;*/
 
-            z=dialogContentDivScroll+(z*amount);
+            z = dialogContentDivScroll + (z * amount);
             console.log(z);
             $("#dialogContentDiv").animate({scrollTop: (z)}, 500);
             dialogContentDivScroll = z
@@ -1121,25 +1145,41 @@ $("#resultDiv").html(" No result   Try to add an * (wildcard) at the end of the 
     </div>
     <div id="centerPanel">
         <div id="top">
-            <select id="queryFieldSelect">
+            <table>
 
-            </select>
-            <input type="hidden" id="indexInput" value="jfm" size="6">&nbsp;
-            <input id="searchInput" fetchSize="40" onkeydown="if (event.keyCode == 13)
+                <tr>
+
+                    <td>
+                        <input type="hidden" id="indexInput" value="jfm" size="6">
+                        <span id="queryFieldSpan"><select id="queryFieldSelect"></select></span>
+                    </td>
+                    <td>
+                        <input id="searchInput" fetchSize="40" onkeydown="if (event.keyCode == 13)
                         document.getElementById('searchButton').click()">
-            &nbsp;
-            <button id="searchButton" onclick="search()">Search</button>
+                        &nbsp;
+                        <button id="searchButton" onclick="search()">Search</button>
+                    </td>
+                </tr>
+                <tr>
 
-            <span id="slopSpan"> &nbsp; distance <input id="slopInput" size="2"></span>
-            <button id="showMongoFormInput" onclick="showMongoForm()">Create</button>
+                    <td>
+
+                    </td>
+                    <td>
+                        <span id="subQuerySpan">  And &nbsp; <input id="addWordInput"></span>&nbsp;
+                        <span id="slopSpan"> &nbsp; distance <input id="slopInput" size="2"></span>
+                        <button id="showMongoFormInput" onclick="showMongoForm()">Create</button>
+                    </td>
+                </tr>
+
+            </table>
 
         </div>
         <br>
         <div id="infos" style="visibility: hidden"><span id="countDiv"></span><span id="pages"></span> <img
                 title='export csv' onclick='toCsv()' src='./icons/csv.png' width='20px'> </a></div>
         <br>
-        <span id="subQuerySpan"> &nbsp; <input id="addWordInput">
-       &nbsp; <select id="booleanSearchMode"><option>and</option><option>or</option></select><button onclick="addWordToQuery().val()">+</button></span>
+
 
         <div id="associatedWordsBreadcrumbDiv"></div>
 
@@ -1192,8 +1232,7 @@ $("#resultDiv").html(" No result   Try to add an * (wildcard) at the end of the 
                     &nbsp;<b><span class="em">passages pertinents</span></b>
                     <button onclick='scrollToHighlight(+1)'> ></button>
                     <!--  <button onclick='scrollToHighlight(-1)'> </button>-->
-                     <!-- <button onclick='nexHighlight()'> >></button>-->
-                    <br>
+                    <!-- <button onclick='nexHighlight()'> >></button>-->
                 </td>
 
 

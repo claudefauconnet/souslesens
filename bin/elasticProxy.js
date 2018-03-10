@@ -215,7 +215,13 @@ var elasticProxy = {
 
         console.log(JSON.stringify(payload, null, 2));
         request(options, function (error, response, body) {
-            elasticProxy.processSearchResult(error, index, body, callback);
+            var options = {
+                error: error,
+                index: index,
+                body: body,
+                callback: callback
+            }
+            elasticProxy.processSearchResult(options);
 
         });
     },
@@ -286,7 +292,17 @@ var elasticProxy = {
     },
 
 
-    findDocuments: function (index, type, word, queryField, from, size, slop, resultFields, andWords, callback) {
+    // findDocuments: function (index, type, word, queryField, from, size, slop, resultFields, andWords, callback) {
+    findDocuments: function (options, callback) {
+        var index = options.indexName;
+        var type = options.type;
+        var word = options.word;
+        var queryField = options.queryField;
+        var from = options.from;
+        var size = options.size;
+        var slop = options.slop;
+        var resultFields = options.resultFields;
+        var andWords = options.andWords;
         var match = {"content": word};
         if (!queryField)
             queryField = "content"
@@ -301,13 +317,12 @@ var elasticProxy = {
         if (size)
             size = parseInt("" + size)
         var query = "";
-        if (!slop || slop < 2) {
-            query = {
-                "match": match
-            }
-        } else {
-            query = {
 
+        if (word == null || word == "*" || word == "")//all
+            query = {"match_all": {}}
+
+        if (slop || slop > 2) {// match_phrase
+            query = {
                 "match_phrase": {}
             }
             query.match_phrase[queryField] = {
@@ -315,48 +330,101 @@ var elasticProxy = {
                 "slop": util.convertNumStringToNumber(slop)
             }
         }
+        var shouldQuery = null;
+        if (word.indexOf(" ") > -1) {//or
+            var words = word.split(" ");
+            var shouldQueries = [];
+            for (var i = 0; i < words.length; i++) {
+                var word = words[i];
+                if (word == "")
+                    continue;
 
-
-        if (word == null || word == "*" || word == "")
-            query = {"match_all": {}}
-
-        if (word.indexOf("*") > -1) {
-            query = {
-                "wildcard": {}
+                var aShouldQuery = {};
+                if (word.indexOf("*") > -1) {
+                    aShouldQuery = {
+                        "wildcard": {"content": word}
+                    }
+                } else {
+                    aShouldQuery = {"match": {}};
+                    aShouldQuery.match[queryField] = word;
+                }
+                shouldQueries.push(aShouldQuery);
             }
-            query.wildcard[queryField] = word;
+            shouldQuery =
+                {
+                    "bool": {
+                        "should": [
+                            shouldQueries
+                        ]
+                    }
+                }
+
+
         }
 
 
-        if (andWords && andWords.length > 0) {
-
-
-            query =
+        var mustQuery = null;
+        if (andWords && andWords.length > 0) {//must
+            mustQuery =
                 {
                     "bool": {
                         "must": [
                             query
-
                         ]
                     }
                 }
 
             for (var i = 0; i < andWords.length; i++) {
+                var andWord = andWords[i];
+                if (andWord == "")
+                    continue;
 
                 var queryAndWords = {};
-                if (word.indexOf("*") > -1) {
+                if (andWord.indexOf("*") > -1) {
                     queryAndWords = {
-                        "wildcard": {"content": word}
+                        "wildcard": {"content": andWord}
                     }
                 } else {
                     var queryAndWords = {"match": {}};
-                    queryAndWords.match[queryField] = andWords[i]
+                    queryAndWords.match[queryField] = andWord;
                 }
 
 
-                query.bool.must.push(queryAndWords);
+                mustQuery.bool.must.push(queryAndWords);
 
             }
+
+        }
+
+        if (mustQuery && shouldQuery) {
+            query =
+                {
+                    "bool": {
+                        "must": [
+                            mustQuery, shouldQuery
+                        ]
+                    }
+                }
+        } else if (mustQuery) {
+            query = mustQuery;
+        }
+        else if (shouldQuery) {
+            query = shouldQuery;
+        } else {
+
+            if (word.indexOf("*") > -1) {
+                query = {
+                    "wildcard": {}
+                }
+                query.wildcard[queryField] = word;
+            }
+            else {
+                query = {
+                    "match": {}
+                }
+                query.match[queryField] = word;
+            }
+
 
         }
 
@@ -381,20 +449,35 @@ var elasticProxy = {
         else
             type = "/" + type;
 
-        var options = {
+        var httpOptions = {
             method: 'POST',
             json: payload,
             url: baseUrl + index + type + "/_search"
         };
 
         console.log(JSON.stringify(payload, null, 2));
-        request(options, function (error, response, body) {
+        request(httpOptions, function (error, response, body) {
 
-            elasticProxy.processSearchResult(error, index, body, callback);
+            var processSearchResultOptions = {
+                error: error,
+                index: index,
+                body: body,
+                callback: callback
+            }
+            if (options.getAssociatedWords) {
+                processSearchResultOptions.getAssociatedWords = options.getAssociatedWords;
+                processSearchResultOptions.getAssociatedWords.query=query;
+            }
+
+            elasticProxy.processSearchResult(processSearchResultOptions);
 
         });
     },
-    processSearchResult: function (error, index, body, callback) {
+    processSearchResult: function (options) {
+        var error = options.error;
+        var index = options.index;
+        var body = options.body;
+        var callback = options.callback
 
         if (error) {
             console.log(error);
@@ -462,7 +545,6 @@ var elasticProxy = {
             docs.push(obj);
         }
 
-
         var result = {
             docs: docs,
 
@@ -473,12 +555,34 @@ var elasticProxy = {
 
         }
 
-        return callback(null, result);
+
+        if (options.getAssociatedWords) {
+            var index = options.getAssociatedWords.indexName;
+            var size = options.getAssociatedWords.size;
+            var options = options.getAssociatedWords;
+            word=null;
+
+            elasticProxy.getAssociatedWords(index, word, size, options, function (err, result2) {
+                if (err) {
+                    result.associatedWords = {};
+                }
+                result.associatedWords = result2
+
+                return callback(null, result);
+
+            })
+        }else{
+            return callback(null, result);
+        }
+
+
+
 
 
     }
     ,
     getAssociatedWords: function (index, word, size, options, callback) {
+
         //   getAssociatedWords: function (index, word, size, slop, andWords, stopWords, classifierSource, iterations, callback) {
 
         if (!options) {
@@ -490,65 +594,72 @@ var elasticProxy = {
         else
             options.iterations = 0
 
-        if (typeof word === "object" && word.ids) {
-            query = {
-                "bool": {
-                    "must": [
-                        {
-                            "ids": {
-                                "values": word.ids
-                            }
-                        }
-                    ]
 
-                }
-            }
+        if (options && options.query) {
+            query = options.query;
         }
-        else if (options.andWords && options.andWords.length > 0) {
-            query =
-                {
+        else {
+
+            if (typeof word === "object" && word.ids) {
+                query = {
                     "bool": {
                         "must": [
-                            {"match": {"content": word}}
-
+                            {
+                                "ids": {
+                                    "values": word.ids
+                                }
+                            }
                         ]
+
+                    }
+                }
+            }
+            else if (options.andWords && options.andWords.length > 0) {
+                query =
+                    {
+                        "bool": {
+                            "must": [
+                                {"match": {"content": word}}
+
+                            ]
+                        }
+                    }
+
+                for (var i = 0; i < options.andWords.length; i++) {
+                    query.bool.must.push({"match": {"content": options.andWords[i]}})
+                }
+            }
+            else {// word simple
+                var match;
+                if (word == null || word == "*" || word == "")
+                    match = {"match_all": {}}
+                else if (word.indexOf("*") > -1) {
+                    query = {
+                        "wildcard": {"content": word}
                     }
                 }
 
-            for (var i = 0; i < options.andWords.length; i++) {
-                query.bool.must.push({"match": {"content": options.andWords[i]}})
-            }
-        }
-        else {// word simple
-            var match;
-            if (word == null || word == "*" || word == "")
-                match = {"match_all": {}}
-            else if (word.indexOf("*") > -1) {
-                query = {
-                    "wildcard": {"content": word}
-                }
-            }
-
-            else
-                match = {"match": {"content": word}};
+                else
+                    match = {"match": {"content": word}};
 
 
-            var query = "";
-            if (!options.slop || options.slop < 2) {
-                query = match;
-            } else {
-                query = {
+                var query = "";
+                if (!options.slop || options.slop < 2) {
+                    query = match;
+                } else {
+                    query = {
 
-                    "match_phrase": {
-                        "content": {
-                            "query": word,
-                            "slop": util.convertNumStringToNumber(slop)
+                        "match_phrase": {
+                            "content": {
+                                "query": word,
+                                "slop": util.convertNumStringToNumber(slop)
+                            }
                         }
                     }
                 }
+
+
             }
-
-
         }
         var wordBlacklist = elasticProxy.getWordBlacklist();
         var payload = {
@@ -736,7 +847,8 @@ var elasticProxy = {
             //  console.log(JSON.stringify(allLemmes))
             return callback(null, lemmes)
         })
-    },
+    }
+    ,
 
     extractWordNetNouns: function (_buckets, words, callback) {
         var buckets = _buckets;
@@ -768,8 +880,9 @@ var elasticProxy = {
             return callback(null, validBuckets)
         })
 
-    },
-    //******************************************************************JSON OBJECTs**********************************************************
+    }
+    ,
+//******************************************************************JSON OBJECTs**********************************************************
 //****************************************************************************************************************************
 //****************************************************************************************************************************
 
@@ -809,7 +922,8 @@ var elasticProxy = {
 
         });
 
-    },
+    }
+    ,
     /**
      * only two levels objects by now !!!!!!!!!!!!!!!!!!!
 
@@ -852,7 +966,8 @@ var elasticProxy = {
             }
         );
 
-    },
+    }
+    ,
 
 
 //******************************************************************INDEXING**********************************************************
@@ -989,11 +1104,11 @@ var elasticProxy = {
     indexJsonArray: function (indexName, type, _array, callback) {
         var array = _array;
         elasticPayload = [];
-        var startId =Math.round( Math.random()*100000000);
+        var startId = Math.round(Math.random() * 100000000);
         var partitions = [];
         var index = 0;
 
-        var subArray=[];
+        var subArray = [];
         for (var i = 0; i < array.length; i++) {
 
 
@@ -1009,8 +1124,8 @@ var elasticProxy = {
         async.eachSeries(partitions, function (array, callbackSeries) {
                 for (var i = 0; i < array.length; i++) {
                     elasticPayload.push({index: {_index: indexName, _type: type, _id: "_" + (startId++)}})
-                   // var payload = {"content": array[i]};
-                    var payload=array[i]
+                    // var payload = {"content": array[i]};
+                    var payload = array[i]
                     elasticPayload.push(payload);
                 }
 
@@ -1024,7 +1139,7 @@ var elasticProxy = {
                         return callbackSeries(err)
 
                     } else {
-                        if(errors){
+                        if (errors) {
                             return callback(errors);
                         }
                         console.log("partition " + (partitionIndex++))
@@ -1036,7 +1151,7 @@ var elasticProxy = {
             function (err) {
                 if (err)
                     return callback(err);
-                callback(null,"done");
+                callback(null, "done");
 
             }
         )
@@ -1467,7 +1582,7 @@ var elasticProxy = {
                         newObj.title = newObj.path.substring(p + 1);
 
                     // we inject the title and date in the content
-                    newObj.content= newObj.title+"\n"+newObj.date+"\n"+newObj.content;
+                    newObj.content = newObj.title + "\n" + newObj.date + "\n" + newObj.content;
 
 
                 }
@@ -1698,7 +1813,8 @@ var elasticProxy = {
 
         return fields;
 
-    },
+    }
+    ,
 
     getOriginalDocument: function (docRemotePath, callback) {
         docRemotePath = decodeURIComponent(docRemotePath);
@@ -1716,7 +1832,8 @@ var elasticProxy = {
 
 
         })
-    },
+    }
+    ,
 }
 
 

@@ -229,7 +229,7 @@ var advancedSearch = (function () {
         console.log(statement);
         var payload = {match: statement};
 
-
+        $("#waitImg").css("visibility", "visible");
         $.ajax({
             type: "POST",
             url: self.neo4jProxyUrl,
@@ -319,6 +319,7 @@ var advancedSearch = (function () {
 
                     distinctSourceNodesArray.splice(0, 0, "");
                     common.fillSelectOptions(pivotsDialogSourceNodeSelect, distinctSourceNodesArray, "label", "id");
+                    $("#waitImg").css("visibility", "hidden");
 
 
                 })
@@ -326,7 +327,8 @@ var advancedSearch = (function () {
 
             },
             error: function (err) {
-                console.log(err.responseText)
+                console.log(err.responseText);
+                $("#waitImg").css("visibility", "hidden");
             }
         })
 
