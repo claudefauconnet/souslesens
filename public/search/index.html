@@ -213,7 +213,8 @@
         $(function () {
             totalWidth = $(window).width();
             totalHeight = $(window).height();
-            $("#centerPanel").width(Math.max(totalWidth - 500, 500));
+            // $("#centerPanel").width(Math.max(totalWidth - 500, 500));
+
             $("#centerPanel").height(totalHeight);
             $("#leftPanel").height(totalHeight);
             $("#rightPanel").height(totalHeight);
@@ -245,9 +246,13 @@
                     data: payload,
                     dataType: "json",
                     success: function (data, textStatus, jqXHR) {
-
-                        data.splice(0, 0, "");
-                        common.fillSelectOptionsWithStringArray(queryFieldSelect, data);
+                        if (data.length > 0) {
+                            data.splice(0, 0, "");
+                            common.fillSelectOptionsWithStringArray(queryFieldSelect, data);
+                            $("#queryFieldSpan").css("visibility", "visible")
+                        } else {
+                            $("#queryFieldSpan").css("visibility", "hidden")
+                        }
 
                     }
                 })
@@ -257,8 +262,12 @@
             }
 
             $("#searchInput").keyup(function () {
-                var val = $(this).val()
-                if (val.indexOf(" ") > 0) {
+                var val = $(this).val();
+                if(val.length>2)
+                    $("#plusSpan").css("visibility", "visible")
+
+                var p = val.indexOf(" ");
+                if (p > 0 && p < (val.length - 1) && val.indexOf("*") < 0) {
                     $("#slopSpan").css("visibility", "visible")
                     $("#slopInput").val("3")
                     $("#slopInput").css("visibility", "visible");
@@ -352,14 +361,17 @@
 
             var index = $("#indexInput").val();
             var word = $("#searchInput").val().trim();
-
+            var booleanSearchMode = $("#booleanSearchSelect").val();
 
             var addWordInput = $("#addWordInput").val();
+
             if (addWordInput && addWordInput.length > 0) {
                 addAssociatedWord(addWordInput, true);
 
+                //  associatedWords.push(addWordInput);
+
             }
-            $("#addWordInput").val("")
+            //   $("#addWordInput").val("")
 
             if (word != oldWord) {
                 associatedWords = []
@@ -369,7 +381,7 @@
 
             if (slop != "" && word.indexOf(" ") > 0 && word.indexOf("*") > 0) {
 
-                $("#resultDiv").html("Impossible to have a query with this pattern : xxx(*) yyy(*) and a distance between the two words. remove *");
+                $("#resultDiv").html("Impossible to have a query with this pattern : xxx* yyy and a distance between the two words. remove * or set distance to 0");
                 return;
             }
 
@@ -387,9 +399,10 @@
                     size: size,
                     indexName: index,
                     word: word,
+                    booleanSearchMode: booleanSearchMode,
                     getAssociatedWords: {
                         indexName: index,
-                        word: word,
+                        word: associatedWords,
                         size: 100,
                         options: {
                             iterations: 5,
@@ -409,7 +422,7 @@
             if (queryField != "") {
                 payload.options.queryField = queryField;
             } else {
-                $("#queryFieldSpan").css("visibility", "hidden")
+                $("#queryFieldSpan").css("visibility", "hidden");
             }
 
             $.ajax({
@@ -418,7 +431,10 @@
                 data: payload,
                 dataType: "json",
                 success: function (data, textStatus, jqXHR) {
-                    $("#infos").css("visibility", "visible")
+                    $("#infos").css("visibility", "visible");
+                    $("#rightPanel").css("visibility", "visible");
+                    $("#clearSearchInputsImg").css("visibility", "visible");
+
                     if (callback) {
                         return callback(null, data)
                     }
@@ -431,7 +447,7 @@
                     } else {
                         showResults(data.docs);
                         showPageControls(data.total);
-                        if(associatedWords){
+                        if (associatedWords) {
                             showAssociatedWords(data.associatedWords.buckets);
                             showTypes(data.associatedWords.types);
                             showClassifier(data.associatedWords.classifier);
@@ -447,79 +463,9 @@
                 }
 
             });
-         //   if (queryAssociatedWords)
-               // getAssociatedWords();
-            /*----------------associated words********************************/
 
         }
 
-        function getAssociatedWords() {
-            var index = $("#indexInput").val();
-            var word = $("#searchInput").val().trim();
-            if (word != oldWord) {
-                associatedWords = []
-            }
-            oldWord = word;
-            var slop = $("#slopInput").val();
-            var classifierSourceStr = $("#classifierSource").val();
-            var payload = {
-                getAssociatedWords: 1,
-
-                indexName: index,
-                word: word,
-                size: 100,
-                options: {
-                    iterations: 5,
-                    classifierSource: classifierSourceStr
-                }
-            };
-            options: {
-                //  stopWords: stopWords
-            }
-
-            var associatedWordsFilter = $("#associatedWordsFilter").val()
-
-            if (associatedWordsFilter == "allwords") {
-                ;
-            }
-            else if (associatedWordsFilter == "lemmes") {
-                payload.options.lemmeFilter = true;
-            }
-            else if (associatedWordsFilter == "wordnetEntities") {
-                payload.options.wordNetEntitiesFilter = true;
-            }
-            else if (associatedWordsFilter == "googleEntities") {
-                ;//processed after result
-            }
-
-            if (currentType)
-                payload.type = currentType;
-
-            currentType = null;
-
-            if (slop != "")
-                payload.slop = parseInt(slop);
-            if (associatedWords.length > 0)
-                payload.andWords = associatedWords;
-
-            $.ajax({
-                type: "POST",
-                url: elasticUrl,
-                data: payload,
-                dataType: "json",
-                success: function (data, textStatus, jqXHR) {
-                    var xxx = data;
-                    showAssociatedWords(data.buckets);
-                    showTypes(data.types);
-                    showClassifier(data.classifier);
-
-                }
-                , error: function (xhr, err, msg) {
-                    return (err);
-                }
-
-            });
-        }
 
         function showResults(data) {
 
@@ -706,7 +652,9 @@
         }
 
         function removeAssociatedWord(index) {
-
+            if (associatedWords[index] == $("#addWordInput").val()) {
+                $("#addWordInput").val("")
+            }
             associatedWords.splice(index, 1);
             showAssociatedWordsBreadcrumb();
             search();
@@ -1120,6 +1068,20 @@
 
         }
 
+        function clearSearchInputs() {
+            associatedWords = [];
+            $("#searchInput").val("");
+            $("#associatedWordsBreadcrumbDiv").val("");
+            $("#associatedWordsDiv").html("");
+            $("#leftPanel").css("visibility", "hidden")
+            $("#infos").html("");
+            $("#resultDiv").html("");
+            $("#typesDiv").html("");
+            $("#classifiersDiv").html("");
+
+
+        }
+
 
     </script>
 
@@ -1127,7 +1089,7 @@
 </head>
 <body>
 
-<div id="panels" style="margin-top: 30px;   ">
+<div id="panels" style="margin-top: 30px;  display: flex ">
 
 
     <div id="leftPanel" style="visibility: hidden">
@@ -1143,21 +1105,32 @@
         <div id="associatedWordsDiv"></div>
 
     </div>
-    <div id="centerPanel">
+    <div id="centerPanel" style="max-width: 500px;min-width: 300px">
         <div id="top">
             <table>
 
                 <tr>
 
-                    <td>
+                    <td valign="middle">
                         <input type="hidden" id="indexInput" value="jfm" size="6">
-                        <span id="queryFieldSpan"><select id="queryFieldSelect"></select></span>
+                        <span id="queryFieldSpan" style="visibility:hidden"><select
+                                id="queryFieldSelect"></select></span>
                     </td>
-                    <td>
+                    <td valign="middle">
                         <input id="searchInput" fetchSize="40" onkeydown="if (event.keyCode == 13)
                         document.getElementById('searchButton').click()">
                         &nbsp;
                         <button id="searchButton" onclick="search()">Search</button>
+                        <!--  <input type="image" title="search" height="30px"
+                                 onclick="search();" id="searchInputsImg"
+                                 src="icons/search.png"/>-->
+                        <input style="visibility: hidden;" type="image" align="middle" title="erase" height="20px"
+                               onclick="clearSearchInputs();" id="clearSearchInputsImg"
+                               src="icons/erase.png"/>
+                    </td>
+                    <td valign="middle">
+
+
                     </td>
                 </tr>
                 <tr>
@@ -1166,8 +1139,25 @@
 
                     </td>
                     <td>
-                        <span id="subQuerySpan">  And &nbsp; <input id="addWordInput"></span>&nbsp;
-                        <span id="slopSpan"> &nbsp; distance <input id="slopInput" size="2"></span>
+                        <span id="plusSpan" style="visibility: hidden;" >
+                               <input  type="image" align="middle" title="erase" height="20px"
+                                      onclick="$('#subQuerySpan').css('visibility','visible');  $('#plusSpan').css('visibility', 'hidden')" id="plusImg"
+                                      src="icons/plus.png"/>
+
+
+                        </span>
+                        <span id="subQuerySpan">
+                            <select id="booleanSearchSelect">
+                            <option value="and">And</option>
+                             <option value="or">Or</option>
+                        </select> &nbsp;
+
+                            <input id="addWordInput" onkeydown="if (event.keyCode == 13)
+                        document.getElementById('searchButton').click()">
+                        </span>&nbsp;
+
+                        <span id="slopSpan"> &nbsp; words proximity <input id="slopInput" size="5"></span>
+
                         <button id="showMongoFormInput" onclick="showMongoForm()">Create</button>
                     </td>
                 </tr>
@@ -1183,8 +1173,6 @@
 
         <div id="associatedWordsBreadcrumbDiv"></div>
 
-        <hr>
-
 
         <div id="resultDiv"></div>
         <div id="graphDiv"></div>
@@ -1192,26 +1180,36 @@
     </div>
 
 
-    <div id="rightPanel"><br><br><br><br><br>
-        types
-        <div id="typesDiv"></div>
-        <!--  sources
-          <div id="sourcesDiv"></div>-->
-        <br><br>
-        <div id="classifiersDiv">
-            classifierSource <select id="classifierSource" onchange="search()">
-            <option></option>
-            <option>custom</option>
-            <option>BNF</option>
-            <option>DBPEDIA</option>
-            <option>GoogleNLP</option>
+    <div id="rightPanel" style="visibility: hidden;">
+        <table>
+            <tr>
+                <td>
+                    types<br>
+                    <div id="typesDiv"></div>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <div id="classifiersDiv">
+                        classifierSource <select id="classifierSource" onchange="search()">
+                        <option></option>
+                        <option>custom</option>
+                        <option>BNF</option>
+                        <option>DBPEDIA</option>
+                        <option>GoogleNLP</option>
 
-            <option>unesco</option>
-            <option>PLM</option>
-        </select>
+                        <option>unesco</option>
+                        <option>PLM</option>
+                    </select>
 
-            <div id="conceptDiv"></div>
-        </div>
+                        <div id="conceptDiv"></div>
+                    </div>
+                </td>
+            </tr>
+
+        </table>
+
+
     </div>
     <div id="dialog"><br>
         <table>
@@ -1230,7 +1228,7 @@
 
                 <td>
                     &nbsp;<b><span class="em">passages pertinents</span></b>
-                    <button onclick='scrollToHighlight(+1)'> ></button>
+                    <button onclick='scrollToHighlight(+1)'></button>
                     <!--  <button onclick='scrollToHighlight(-1)'> </button>-->
                     <!-- <button onclick='nexHighlight()'> >></button>-->
                 </td>
@@ -1252,8 +1250,9 @@
 </div>
 <div id="loginDiv" style="position: absolute;top:200px;left: 200px;visibility: hidden">
     login<input id="loginInput">
-    password<input type="password" id="passwordInput">
-    <button onclick="doLogin()">OK</button>
+    password<input type="password" id="passwordInput" onkeydown="if (event.keyCode == 13)
+                        document.getElementById('loginButton').click()">
+    <button id="loginButton" onclick="doLogin()">OK</button>
     <div id="loginMessage"></div>
 </div>
 

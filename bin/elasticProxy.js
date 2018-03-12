@@ -303,7 +303,17 @@ var elasticProxy = {
         var slop = options.slop;
         var resultFields = options.resultFields;
         var andWords = options.andWords;
+        var booleanSearchMode=options.booleanSearchMode;
+        if(!booleanSearchMode)
+            booleanSearchMode="and";
+        if( slop && slop!="")
+            slop=parseInt(slop);
+        else
+            slop=0;
+
+
         var match = {"content": word};
+
         if (!queryField)
             queryField = "content"
         else
@@ -321,17 +331,10 @@ var elasticProxy = {
         if (word == null || word == "*" || word == "")//all
             query = {"match_all": {}}
 
-        if (slop || slop > 2) {// match_phrase
-            query = {
-                "match_phrase": {}
-            }
-            query.match_phrase[queryField] = {
-                "query": word,
-                "slop": util.convertNumStringToNumber(slop)
-            }
-        }
         var shouldQuery = null;
-        if (word.indexOf(" ") > -1) {//or
+
+
+        if (word.indexOf(" ") > -1 && slop==0) {//or
             var words = word.split(" ");
             var shouldQueries = [];
             for (var i = 0; i < words.length; i++) {
@@ -365,6 +368,8 @@ var elasticProxy = {
 
         var mustQuery = null;
         if (andWords && andWords.length > 0) {//must
+
+
             mustQuery =
                 {
                     "bool": {
@@ -373,6 +378,7 @@ var elasticProxy = {
                         ]
                     }
                 }
+
 
             for (var i = 0; i < andWords.length; i++) {
                 var andWord = andWords[i];
@@ -397,22 +403,43 @@ var elasticProxy = {
         }
 
         if (mustQuery && shouldQuery) {
-            query =
-                {
-                    "bool": {
-                        "must": [
-                            mustQuery, shouldQuery
-                        ]
+            if(booleanSearchMode=="and") {
+                query =
+                    {
+                        "bool": {
+                            "must": [
+                                mustQuery, shouldQuery
+                            ]
+                        }
                     }
-                }
+            }
+            else{
+                query =
+                    {
+                        "bool": {
+                            "should": [
+                                mustQuery, shouldQuery
+                            ]
+                        }
+                    }
+            }
         } else if (mustQuery) {
             query = mustQuery;
         }
         else if (shouldQuery) {
             query = shouldQuery;
         } else {
+                if (slop || slop > 2) {// match_phrase
+                query = {
+                    "match_phrase": {}
+                }
+                query.match_phrase[queryField] = {
+                    "query": word,
+                    "slop": util.convertNumStringToNumber(slop)
+                }
+            }
 
-            if (word.indexOf("*") > -1) {
+           else if (word.indexOf("*") > -1) {
                 query = {
                     "wildcard": {}
                 }
@@ -456,7 +483,7 @@ var elasticProxy = {
         };
 
         console.log(JSON.stringify(payload, null, 2));
-        request(httpOptions, function (error, response, body) {
+            request(httpOptions, function (error, response, body) {
 
             var processSearchResultOptions = {
                 error: error,
