@@ -279,7 +279,8 @@ var skos = {
 
                 rdfProxy.getOntologyTriples(ontology, word, payload, lang, false, 500, function (err, json) {
                     if (err) {
-                        return console.log(err)
+
+                        console.log(err)
                         return callback(err);
                     }
                     if (!skos.words[word])
@@ -316,6 +317,9 @@ var skos = {
 
                                     if (!skos.broaderNodes[relLabelValue])
                                         skos.broaderNodes[relLabelValue] = []
+                                    else
+                                        var xx="a"
+
                                     if (skos.broaderNodes[relLabelValue].indexOf(word) < 0)
                                         skos.broaderNodes[relLabelValue].push(word);
 

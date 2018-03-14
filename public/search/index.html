@@ -24,6 +24,10 @@
             background-color: #dad55e;
         }
 
+        .wordEm {
+            background-color: #f8893f;
+        }
+
         em2 {
             background-color: #777620;
         }
@@ -205,10 +209,13 @@
         var fetchSize = 10;
         var maxCsvSize = 10000;
         var currentDocHighlightIndex = 0;
+        var currentDocFindWordIndex = 0
         var dialogContentDivScroll = 0
 
         var queryAssociatedWords = true;
         var showClassifiersDiv = false;
+        var currentFindWord = {str:"",p:0};
+
 
         $(function () {
             totalWidth = $(window).width();
@@ -263,7 +270,7 @@
 
             $("#searchInput").keyup(function () {
                 var val = $(this).val();
-                if(val.length>2)
+                if (val.length > 2)
                     $("#plusSpan").css("visibility", "visible")
 
                 var p = val.indexOf(" ");
@@ -349,7 +356,7 @@
 
             $("#dialog").css("visibility", "hidden")
 
-            $("#subQuerySpan").css("visibility", "visible")
+            //  $("#subQuerySpan").css("visibility", "visible")
             //  $("#addWordInput").val("");
 
 
@@ -713,6 +720,7 @@
 
         function visualizeDocContent(id) {
             $("#dialogLeftDiv").html("");
+
             currentDocId = id;
             var index = $("#indexInput").val();
             var words = associatedWords;
@@ -734,11 +742,14 @@
                 data: payload,
                 dataType: "json",
                 success: function (data, textStatus, jqXHR) {
-
+                    currentDocHighlightIndex = 0;
+                    currentDocFindWordIndex = 100;
+                    dialogContentDivScroll = 0;
+                    $("#scrollToHighlightUpButton").css("visibility", "hidden");
                     words.pop(word);
                     if (data.docs && data.docs.length > 0) {
                         var doc = data.docs[0];
-                        currentDocHighlightIndex = -1;
+
 
                         for (var i = 0; i < doc.highlights.length; i++) {
                             var highlight = doc.highlights[i];
@@ -1049,19 +1060,71 @@
 
 
         function scrollToHighlight(amount) {
-
-
             currentDocHighlightIndex += amount;
+            if (currentDocHighlightIndex > 0)
+                $("#scrollToHighlightUpButton").css("visibility", "visible");
+            else
+                $("#scrollToHighlightUpButton").css("visibility", "hidden");
             var h = $("#dialogContentDiv").height() / 2
-            var z = $("#em_" + currentDocHighlightIndex).offset().top;
+            var z = $("#em_" + (currentDocHighlightIndex - 1)).offset().top;
+            z -= h;
+            z = dialogContentDivScroll + (z);
+            $("#dialogContentDiv").animate({scrollTop: (z)}, 500);
+            dialogContentDivScroll = z
 
-            if (z > h)
-                z -= h;
-            /*   if(z<h)
-                   z=h;*/
+        }
 
-            z = dialogContentDivScroll + (z * amount);
-            console.log(z);
+        function scrollToFindWord(word, amount) {
+
+            if (currentDocFindWordIndex > 100)
+                $("#scrollToWordUpButton").css("visibility", "visible");
+            else
+                $("#scrollToWordUpButton").css("visibility", "hidden");
+
+            var text = $("#dialogContentDiv").html();
+
+
+
+            // remove selected word em
+            var text = $("#dialogContentDiv").html();
+        //    text = text.replace(/wordEmSelected/gm, "wordEm");
+          //  var p = text.indexOf("wordEmSelected");
+
+
+            // remove all word em if change word
+            var strEm = '<em class="wordEm">';
+            if (word != currentFindWord.str) {
+
+
+                text = text.replace(/<em.* class="wordEm">.*<\/em>/, currentFindWord.str);
+                text = text.replace(/<\/em>/, "");
+                currentFindWord.str=word;
+                currentFindWord.p=0;
+                //set new word ems
+                var regex = new RegExp(word, "gmi");
+                var text = text.replace(regex, strEm + word + "</em>");
+
+            }
+
+            $("#dialogContentDiv").html(text);
+
+
+
+         // set selected em
+            var p = text.indexOf("wordEmSelected",  currentFindWord.p);
+            if (p < 0)
+                p=0;
+            p =  currentFindWord.p+p + strEm.length;
+            currentFindWord.p=p;
+            var strEmSelected = '<em class="wordEm wordEmSelected">' + word + "</em>";
+            text = text.substring(0, p) + strEmSelected + text.substring(p + strEmSelected.length)
+            $("#dialogContentDiv").html(text);
+
+
+            var z = $(".wordEmSelected").offset().top;
+            var h = $("#dialogContentDiv").height() / 2
+            z -= h;
+            z = dialogContentDivScroll + (z);
             $("#dialogContentDiv").animate({scrollTop: (z)}, 500);
             dialogContentDivScroll = z
 
@@ -1139,9 +1202,10 @@
 
                     </td>
                     <td>
-                        <span id="plusSpan" style="visibility: hidden;" >
-                               <input  type="image" align="middle" title="erase" height="20px"
-                                      onclick="$('#subQuerySpan').css('visibility','visible');  $('#plusSpan').css('visibility', 'hidden')" id="plusImg"
+                        <span id="plusSpan" style="visibility: hidden;">
+                               <input type="image" align="middle" title="erase" height="20px"
+                                      onclick="$('#subQuerySpan').css('visibility','visible');  $('#plusSpan').css('visibility', 'hidden')"
+                                      id="plusImg"
                                       src="icons/plus.png"/>
 
 
@@ -1227,11 +1291,36 @@
                    </td>-->
 
                 <td>
-                    &nbsp;<b><span class="em">passages pertinents</span></b>
-                    <button onclick='scrollToHighlight(+1)'></button>
-                    <!--  <button onclick='scrollToHighlight(-1)'> </button>-->
-                    <!-- <button onclick='nexHighlight()'> >></button>-->
+                    &nbsp;
+                    <button onclick='scrollToHighlight(-1)' id="scrollToHighlightUpButton" style="visibility: hidden">
+                        <
+                    </button>
+                    <b><span class="em">relevant passages</span></b>
+
+
+                    <button onclick='scrollToHighlight(+1)'> ></button>
+
+
                 </td>
+           <!--     <td>
+                    &nbsp; &nbsp;
+
+
+                    <button onclick='scrollToFindWord($("#searchWordInPrevisuButton").val(),-1)'
+                            id="scrollToWordUpButton" style="visibility: hidden"> <
+                    </button>
+
+                    <span class="wordEm">find word</span> <input id="searchWordInPrevisuButton" onkeydown="if (event.keyCode == 13)
+                        document.getElementById('scrollToWordDownButton').click()">
+
+
+                    <button onclick='scrollToFindWord($("#searchWordInPrevisuButton").val(),+1)'
+                            id="scrollToWordDownButton"> >
+                    </button>
+
+                    <!-- -->
+                    <!-- <button onclick='nexHighlight()'> >></button>-->
+                </td>-->
 
 
                 <td>

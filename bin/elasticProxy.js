@@ -39,7 +39,7 @@ var mime = require('mime');
 var classifierManager = require("./rdf/classifierManager.js");
 
 var elasticCustom = require("./elasticCustom.js");
-
+var fileInfos = require('./fileInfos..js');
 var socket = require('../routes/socket.js');
 
 
@@ -117,6 +117,7 @@ var elasticProxy = {
     }
 
     ,
+
     search: function (index, type, query, callback) {
 
         getClient().search({
@@ -303,13 +304,13 @@ var elasticProxy = {
         var slop = options.slop;
         var resultFields = options.resultFields;
         var andWords = options.andWords;
-        var booleanSearchMode=options.booleanSearchMode;
-        if(!booleanSearchMode)
-            booleanSearchMode="and";
-        if( slop && slop!="")
-            slop=parseInt(slop);
+        var booleanSearchMode = options.booleanSearchMode;
+        if (!booleanSearchMode)
+            booleanSearchMode = "and";
+        if (slop && slop != "")
+            slop = parseInt(slop);
         else
-            slop=0;
+            slop = 0;
 
 
         var match = {"content": word};
@@ -334,7 +335,7 @@ var elasticProxy = {
         var shouldQuery = null;
 
 
-        if (word.indexOf(" ") > -1 && slop==0) {//or
+        if (word.indexOf(" ") > -1 && slop == 0) {//or
             var words = word.split(" ");
             var shouldQueries = [];
             for (var i = 0; i < words.length; i++) {
@@ -403,7 +404,7 @@ var elasticProxy = {
         }
 
         if (mustQuery && shouldQuery) {
-            if(booleanSearchMode=="and") {
+            if (booleanSearchMode == "and") {
                 query =
                     {
                         "bool": {
@@ -413,7 +414,7 @@ var elasticProxy = {
                         }
                     }
             }
-            else{
+            else {
                 query =
                     {
                         "bool": {
@@ -429,7 +430,7 @@ var elasticProxy = {
         else if (shouldQuery) {
             query = shouldQuery;
         } else {
-                if (slop || slop > 2) {// match_phrase
+            if (slop || slop > 2) {// match_phrase
                 query = {
                     "match_phrase": {}
                 }
@@ -439,7 +440,7 @@ var elasticProxy = {
                 }
             }
 
-           else if (word.indexOf("*") > -1) {
+            else if (word.indexOf("*") > -1) {
                 query = {
                     "wildcard": {}
                 }
@@ -483,7 +484,7 @@ var elasticProxy = {
         };
 
         console.log(JSON.stringify(payload, null, 2));
-            request(httpOptions, function (error, response, body) {
+        request(httpOptions, function (error, response, body) {
 
             var processSearchResultOptions = {
                 error: error,
@@ -493,7 +494,7 @@ var elasticProxy = {
             }
             if (options.getAssociatedWords) {
                 processSearchResultOptions.getAssociatedWords = options.getAssociatedWords;
-                processSearchResultOptions.getAssociatedWords.query=query;
+                processSearchResultOptions.getAssociatedWords.query = query;
             }
 
             elasticProxy.processSearchResult(processSearchResultOptions);
@@ -587,7 +588,7 @@ var elasticProxy = {
             var index = options.getAssociatedWords.indexName;
             var size = options.getAssociatedWords.size;
             var options = options.getAssociatedWords;
-            word=null;
+            word = null;
 
             elasticProxy.getAssociatedWords(index, word, size, options, function (err, result2) {
                 if (err) {
@@ -598,12 +599,9 @@ var elasticProxy = {
                 return callback(null, result);
 
             })
-        }else{
+        } else {
             return callback(null, result);
         }
-
-
-
 
 
     }
@@ -1050,10 +1048,13 @@ var elasticProxy = {
             dir = path.normalize(dir);
             if (dir.charAt(dir.length - 1) != path.sep)
                 dir += path.sep;
+
+
             var files = fs.readdirSync(dir);
             for (var i = 0; i < files.length; i++) {
                 var fileName = dir + files[i];
                 var stats = fs.statSync(fileName);
+                var infos = {lastModified: stats.mtimeMs, hash: fileInfos.getStringHash(fileName)};//fileInfos.getDirInfos(dir);
 
                 if (stats.isDirectory()) {
                     getFilesRecursive(fileName)
@@ -1075,7 +1076,8 @@ var elasticProxy = {
                         continue;
 
                     }
-                    indexedFiles.push(fileName);
+                  //  var infos = filesInfos[fileName]
+                    indexedFiles.push({fileName: fileName, infos: infos});
                 }
             }
 
@@ -1083,10 +1085,13 @@ var elasticProxy = {
 
         getFilesRecursive(dir);
 
-        indexedFiles.sort();
+        //  indexedFiles.sort();
+        var base64Extensions = ["doc", "docx", "xls", "xslx", "pdf", "ppt", "pptx", "ods", "odt"];
         var t0 = new Date().getTime();
-        async.eachSeries(indexedFiles, function (fileName, callbackInner) {
-                var base64Extensions = ["doc", "docx", "xls", "xslx", "pdf", "ppt", "pptx", "ods", "odt"];
+        async.eachSeries(indexedFiles, function (file, callbackInner) {
+
+                var fileName = file.fileName;
+
                 var p = fileName.lastIndexOf(".");
                 if (p < 0)
                     callback("no extension for file " + fileName);
@@ -1099,7 +1104,7 @@ var elasticProxy = {
 
                 }
                 var t1 = new Date().getTime();
-                elasticProxy.indexDocumentFile(fileName, index, type, base64, function (err, result) {
+                elasticProxy.indexDocumentFile(fileName, index, type, base64, file.infos, function (err, result) {
                     if (err) {
                         logger.error(err)
                         return callbackInner(err)
@@ -1492,6 +1497,7 @@ var elasticProxy = {
                             }
                         }
                     }
+
                     request(options, function (error, response, body) {
                         if (error)
                             return callback(error);
@@ -1506,8 +1512,12 @@ var elasticProxy = {
 
     }
     ,
-    indexDocumentFile: function (_file, index, type, base64, callback) {
-        var id = "R" + Math.round(Math.random() * 1000000000)
+    indexDocumentFile: function (_file, index, type, base64, infos, callback) {
+        var id;
+        if (infos && infos.hash)
+            id = infos.hash;
+        else
+            id = "R" + Math.round(Math.random() * 1000000000)
         //  var file = "./search/testDocx.doc";
         //  var file = "./search/testPDF.pdf";
         var fileContent;
@@ -1527,7 +1537,8 @@ var elasticProxy = {
                 json: {
                     "data": fileContent,
                     "path": encodeURIComponent(file),
-                    "title": title
+                    "title": title,
+                    "lastModified": infos.lastModified
                 }
             }
         }
@@ -1540,7 +1551,8 @@ var elasticProxy = {
                 json: {
                     "content": fileContent,
                     "path": encodeURIComponent(file),
-                    "title": title
+                    "title": title,
+                    "lastModified": infos.lastModified
                 }
             }
         }
@@ -1601,8 +1613,11 @@ var elasticProxy = {
                 var objElastic = hits[i]._source;
                 var newObj = {};
                 if (objElastic.attachment) {
+                    newObj.lastModified=objElastic.lastModified;
                     newObj = objElastic.attachment;
                     newObj.path = objElastic.path;
+                    newObj.id=hits[i]._id;
+
                     var p = newObj.path.lastIndexOf(encodeURIComponent(path.sep));
                     newObj.title = newObj.path;
                     if (p > -1)
@@ -1623,7 +1638,12 @@ var elasticProxy = {
                 newObjs.push(newObj);
             }
             async.eachSeries(newObjs, function (newObj, callbackInner) {
-                var id = "R" + Math.round(Math.random() * 1000000000)
+                var id;
+                if(newObj.id){
+                    id=newObj.id;
+                }
+               else
+                   id = "R" + Math.round(Math.random() * 1000000000)
                 options.url = baseUrl + newIndex + "/" + type + "/" + id;
                 options.json = newObj;
                 request(options, function (error, response, body) {

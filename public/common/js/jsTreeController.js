@@ -7,8 +7,8 @@ var jsTreeController = (function () {
     self.nodesData = {};
     self.addtionalMenuItems = {};
     self.tree;
-    self.getCustomMenu = function () {
-    };
+   /* self.getCustomMenu = function () {
+    };*/
     self.types = {}
     self.load = function (data, divId, callback) {
         self.tree = $('#' + divId);
@@ -82,8 +82,8 @@ var jsTreeController = (function () {
                     "separator_after": false,
                     "label": "Create",
                     "action": function (obj) {
-                        $node = self.tree.jstree('create_node', $node);
-                        jsTreeController.tree.jstree('edit', $node);
+                        $node2 = self.tree.jstree('create_node', $node);
+                        jsTreeController.tree.jstree('edit', $node2);
                     }
                 },
                 "Rename": {
