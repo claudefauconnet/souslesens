@@ -117,7 +117,7 @@ router.post(serverParams.routesRootUrl + '/elastic', function (req, response) {
         });
 
     else if (req.body && req.body.findDocuments)
-        elasticProxy.findDocuments( req.body.options, function (error, result) {
+        elasticProxy.findDocuments(req.body.options, function (error, result) {
             processResponse(response, error, result)
         });
     else if (req.body && req.body.findDocumentsById)
@@ -191,7 +191,7 @@ router.post(serverParams.routesRootUrl + '/elasticIndexJson', function (req, res
         var dataStr = "" + req.file.buffer;
         try {
             var data = JSON.parse(dataStr);
-        }catch(e){
+        } catch (e) {
             processResponse(response, e, null);
         }
         elasticProxy.indexJsonArray(req.body.jsonIndexName, req.body.jsonType, data, function (error, result) {
@@ -437,6 +437,11 @@ router.post(serverParams.routesRootUrl + '/jsonFileStorage', function (req, resp
         jsonFileStorage.retrieve(req.body.path, function (error, result) {
             processResponse(response, error, result)
         });
+    if (req.body.delete)
+        jsonFileStorage.delete(req.body.path, function (error, result) {
+            processResponse(response, error, result)
+        });
+
 });
 
 router.post(serverParams.routesRootUrl + '/authentication', function (req, response) {

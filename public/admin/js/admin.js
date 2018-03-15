@@ -30,6 +30,12 @@ var neoApiUrl = "../exportMongoToNeo";
 var currentRequests;
 var importType = "LINK";
 var currentCsvObject;
+var subGraph;
+var nodeColors={};
+var toutlesensData=null;
+var currentObject=null;
+var toutlesensController=null;
+var messageDivId=null;
 var help = {
 
     mongoField: "field that will give its name attribute to the created node in Neo",
@@ -54,7 +60,7 @@ var help = {
 
 $(function () {
 
-    loadSubgraphs("hist-antiq");
+   // loadSubgraphs("hist-antiq");
     $("#importSourceType").val("");
 
     $('form[name=new_post]').submit(function () {
@@ -536,6 +542,8 @@ function loadLabels(subGraphName) {
             }
             labels.splice(0, 0, "");
             common.fillSelectOptionsWithStringArray(labelsSelect, labels)
+
+            drawVisjsGraph()
 
         }
     });
@@ -1091,6 +1099,7 @@ function deleteLabel() {
 
     if (confirm("delete all nodes and relations  with selected label?")) {
         var whereSubGraph="";
+        var subGraphName=$("#subGraphSelect").val()
         if(subGraphName!="")
             whereSubGraph=" where n.subGraph='" + subGraphName +"'"
         var match = "Match (n) " +whereSubGraph
@@ -1099,6 +1108,7 @@ function deleteLabel() {
         callNeoMatch(match, null, function (data) {
             $("#message").html("nodes with label=" + label + "deleted");
             $("#message").css("color", "green");
+            drawVisjsGraph();
 
         });
     }
@@ -1117,6 +1127,7 @@ function addSubGraph() {
     }));
 
     $("#subGraphSelect").val(newSubGraph);
+    drawVisjsGraph();
 }
 
 function clearInputs(name) {
@@ -1190,4 +1201,15 @@ function setCsvImportFields(json) {
     onCollSelect();
 
 
+}
+
+function drawVisjsGraph(){
+
+    subGraph = $("#subGraphSelect").val();
+    Schema.createSchema(function(err, result){
+   // Schema.load(subGraph, function(err, result) {
+        var data = connectors.toutlesensSchemaToVisjs(Schema.schema);
+
+        visjsGraph.draw("graphDiv", data);
+    });
 }

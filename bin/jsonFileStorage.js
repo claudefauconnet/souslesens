@@ -58,6 +58,11 @@ var jsonFileStorage = {
             callback(e)
         }
     }
+,
+    delete: function (filePath, callback) {
+
+     fs.unlink(filePath,callback)
+    }
 
 
 }

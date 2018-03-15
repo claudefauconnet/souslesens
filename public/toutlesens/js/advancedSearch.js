@@ -209,9 +209,12 @@ var advancedSearch = (function () {
             return $(messageDivId).html("require source label");
 
         }
-        var whereStatement = ""
+        var whereStatement = "" ;
+        if( subGraph){
+            whereStatement= " where n.subGraph='"+subGraph+"' "
+        }
         if (sourceNodeId) {
-            whereStatement = " where Id(n)=" + sourceNodeId + " ";
+            whereStatement = " and Id(n)=" + sourceNodeId + " ";
         }
         var inverseRel = false;
         var pivotLabelStr = "";

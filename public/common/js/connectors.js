@@ -2,7 +2,7 @@ var connectors = (function () {
     var self = {};
 
 
-    self.neoResultsToVisjs = function (resultArray,options) {
+    self.neoResultsToVisjs = function (resultArray, options) {
 
 
         visjsData = {nodes: [], edges: [], labels: []};
@@ -55,8 +55,8 @@ var connectors = (function () {
 
 
                     }
-                    if((options && options.showNodesLabel ) || !options)
-                        nodeObj.label=labelVisjs;
+                    if ((options && options.showNodesLabel) || !options)
+                        nodeObj.label = labelVisjs;
                     if (nodes[j].outline) {
 
                         nodeObj.font = {
@@ -177,7 +177,7 @@ var connectors = (function () {
                 else
                     uniqueRels.push(relUniqueId);
 
-                if ((options && options.showRelationsType==true ) && Gparams.showRelationNames == true) {
+                if ((options && options.showRelationsType == true) && Gparams.showRelationNames == true) {
                     relObj.label = relObj.type;
                     relObj.arrows = {from: {scaleFactor: 0.5}}
                 }
@@ -257,18 +257,23 @@ var connectors = (function () {
 
     self.toutlesensSchemaToVisjs = function (schema, id) {
         function makeNode(label) {
+
             var visNode = {
                 label: label,
+                neoAttrs:schema.labels[label],
                 labelNeo: "label",// because visjs where label is the node name
-                color: "blue",
+                color: "lightBlue",
                 myId: id,
+                shape: "box",
                 id: id++,
                 children: [],
                 neoAttrs: {},
+                font:{ stroke:"black","font-size":"14px"},
                 endRel: 0
             }
             nodesMap[label] = visNode;
             visjsData.nodes.push(visNode);
+
         }
 
         visjsData = {nodes: [], edges: [], labels: []};
@@ -288,11 +293,18 @@ var connectors = (function () {
                 neoId: id++,
                 neoAttrs: {},
                 color: "green",
+                label: relation.type,
+                arrows: {from: {scaleFactor: 0.5}}
                 // font:{background:color},
             }
             visjsData.edges.push(relObj);
         }
-
+//nodes without relations
+        for (var key in schema.labels) {
+            if (!nodesMap[key]) {
+                makeNode(key);
+            }
+        }
         return visjsData;
     }
 

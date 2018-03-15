@@ -26,10 +26,11 @@
  ******************************************************************************/
 var dataModel = (function () {
     var self = {};
+    //self.neo4jProxyUrl="../../.."+Gparams.neo4jProxyUrl;
+   // self.mongoProxyUrl="../../.."+Gparams.mongoProxyUrl;
+  //  self.neo4jProxyUrl=window.location.host+Gparams.neo4jProxyUrl;
+  //  self.mongoProxyUrl=window.location.host+Gparams.mongoProxyUrl;
     self.neo4jProxyUrl="../../.."+Gparams.neo4jProxyUrl;
-    self.mongoProxyUrl="../../.."+Gparams.mongoProxyUrl;
-
-
     self.labels = {};
     self.labelsRelations = {};
     self.relations = {};

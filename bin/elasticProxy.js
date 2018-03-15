@@ -369,7 +369,14 @@ var elasticProxy = {
 
         var mustQuery = null;
         if (andWords && andWords.length > 0) {//must
-
+            if (word.indexOf("*") > -1) {
+                query = {
+                    "wildcard": {"content": word}
+                }
+            } else {
+                query = {"match": {}};
+                query.match[queryField] = word;
+            }
 
             mustQuery =
                 {
@@ -1076,7 +1083,7 @@ var elasticProxy = {
                         continue;
 
                     }
-                  //  var infos = filesInfos[fileName]
+                    //  var infos = filesInfos[fileName]
                     indexedFiles.push({fileName: fileName, infos: infos});
                 }
             }
@@ -1613,10 +1620,10 @@ var elasticProxy = {
                 var objElastic = hits[i]._source;
                 var newObj = {};
                 if (objElastic.attachment) {
-                    newObj.lastModified=objElastic.lastModified;
+                    newObj.lastModified = objElastic.lastModified;
                     newObj = objElastic.attachment;
                     newObj.path = objElastic.path;
-                    newObj.id=hits[i]._id;
+                    newObj.id = hits[i]._id;
 
                     var p = newObj.path.lastIndexOf(encodeURIComponent(path.sep));
                     newObj.title = newObj.path;
@@ -1639,11 +1646,11 @@ var elasticProxy = {
             }
             async.eachSeries(newObjs, function (newObj, callbackInner) {
                 var id;
-                if(newObj.id){
-                    id=newObj.id;
+                if (newObj.id) {
+                    id = newObj.id;
                 }
-               else
-                   id = "R" + Math.round(Math.random() * 1000000000)
+                else
+                    id = "R" + Math.round(Math.random() * 1000000000)
                 options.url = baseUrl + newIndex + "/" + type + "/" + id;
                 options.json = newObj;
                 request(options, function (error, response, body) {

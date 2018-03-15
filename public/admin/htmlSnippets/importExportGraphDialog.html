@@ -1,0 +1,52 @@
+<div id="exportCypherDivTab">
+    <table>
+        <tr>
+            <td>Import</td>
+            <td>
+                <form enctype="multipart/form-data" action="../uploadToNeo/" method="post"
+                      target="votar">
+                    <input type="file" name="cypher" class='exportNeo' onblur='onFileButton()' ;>
+                    <input type="submit" value="upload" name="submit" class='exportNeo'/>
+                </form>
+            </td>
+
+        </tr>
+        <tr>
+            <td>Export</td>
+            <td>
+                sourceSubGraph
+                <select class='exportNeo' id="subGraphExportSelect"
+                        onchange="onSubGraphExportSelect()"></select> targetSubGraph
+                <input class='exportNeo' id="targetSubGraph">limit<input class='exportNeo'
+                                                                         #tabs-center
+                                                                         id="limit" value="100000">
+
+
+                <button onclick="downloadNodeJson('cypher',showResult)">download
+                    Nodes
+                </button>
+                <button onclick="downloadRelJson('cypher',showResult)">download
+                    Rels
+                </button>
+            </td>
+        </tr>
+
+    </table>
+
+
+    <br>
+    <table>
+        <tr>
+            <td>
+
+                <div id="labelsDiv"></div>
+            </td>
+
+        </tr>
+
+
+    </table>
+
+
+
+</div>

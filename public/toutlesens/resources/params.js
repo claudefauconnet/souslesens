@@ -56,10 +56,10 @@ var Gparams = {
     neoQueryLimit:20000,
     listDisplayLimitMax:500,
     jsTreeMaxChildNodes:500,
-    graphDisplayLimitMax: 10000,
+    graphDisplayLimitMax: 30000,
     maxDepthExplorationAroundNode: 3,
     bulkGraphViewMaxNodesToDrawLinks:1000,
-    bulkGraphDisplayLimit:10000,
+    bulkGraphDisplayLimit:30000,
     maxNodesForRelNamesOnGraph:100,
     graphMaxDataLengthToDisplayGraphDirectly:1000,
 

@@ -176,8 +176,13 @@ var visjsGraph = (function () {
                 }
 
                 var point = params.pointer.DOM;
-                toutlesensController.dispatchAction("nodeInfos", nodeId);
-                toutlesensController.showPopupMenu(point.x, point.y, "nodeInfo");
+                if(toutlesensController) {
+                    toutlesensController.dispatchAction("nodeInfos", nodeId);
+                    toutlesensController.showPopupMenu(point.x, point.y, "nodeInfo");
+                }
+                else if(admin){
+                    admin.showPopupMenu(point.x, point.y);
+                }
 
 
             }
@@ -740,7 +745,7 @@ var visjsGraph = (function () {
      */
 
     self.dragConnectedNodes = function (nodeId, offset) {
-        if (toutlesensData.queriesIds.length < 2)
+        if (toutlesensData && toutlesensData.queriesIds.length < 2)
             return;
         var connectedNodes = network.getConnectedNodes(nodeId);
         var connectedEdges = network.getConnectedEdges(nodeId);
@@ -750,7 +755,7 @@ var visjsGraph = (function () {
         for (var i = 0; i < connectedNodes.length; i++) {
             var connectedId = connectedNodes[i];
 
-            if (toutlesensData.queriesIds.indexOf(connectedId) < 0) {
+            if (toutlesensData && toutlesensData.queriesIds.indexOf(connectedId) < 0) {
                 var node = self.nodes._data["" + connectedId];
                 node.x = positions[connectedId].x + offset.x;
                 node.y = positions[connectedId].y + offset.y;

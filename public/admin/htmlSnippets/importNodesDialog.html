@@ -1,0 +1,75 @@
+<div id="export2NeoNodes">
+    <input type="hidden" name="nodeInput" id="mongoIdField" value="">
+    <input type="hidden" name="nodeInput" id="mongoCollectionNode">
+
+    <table>
+
+        <tr>
+            <td align="right">Node name field</td>
+            <td>
+                <button class="source" onclick="setMongoField()">Set</button>
+                <input disabled="disabled" name="nodeInput" id="mongoField"></td>
+            <td>
+                <button onclick="showHelp('mongoField')">?</button>
+            </td>
+
+        </tr>
+
+        <tr>
+            <td align="right">Node key field</td>
+            <td>
+                <button class="source" onclick="setMongoKey()">Set</button>
+                <input disabled="disabled" name="nodeInput" id="mongoKey"></td>
+            <td>
+                <button onclick="showHelp('mongoKey')">?</button>
+            </td>
+
+        </tr>
+
+        <tr>
+            <td align="right">Node attribute fields</td>
+            <td>
+                <button class="source" onclick="addToExportedFields()">Add</button>
+                <input name="nodeInput" id="exportedFields" value="none">
+                <button onclick='$("#exportedFields").val("all")'>All</button>
+            </td>
+            <td>
+                <button onclick="showHelp('exportedFields')">?</button>
+            </td>
+        </tr>
+        <tr class="source0">
+            <td align="right">distinct values</td>
+            <td align="left"><input type="checkbox" id="distinctValues" checked="checked"></td>
+            <td>
+                <button onclick="showHelp('distinctValues')">?</button>
+            </td>
+        </tr>
+        <tr class="neoTarget0">
+            <td align="right">label
+
+            </td>
+            <td><input name="nodeInput" id="label">
+
+            </td>
+            <td>
+                <button onclick="showHelp('label')">?</button>
+            </td>
+        </tr>
+        <tr class="source0">
+            <td align="right">Query</td>
+            <td><input name="nodeInput" id="mongoQuery" value="{}"></td>
+            <td>
+                <button onclick="showHelp('mongoQuery')">?</button>
+            </td>
+        </tr>
+
+
+    </table>
+    <br>
+
+    <button onclick="exportNeoNodes(true,true)">Export</button>
+    <button onclick="exportNeoNodes(false,true)">Save request</button>
+    <button onclick="clearInputs('nodeInput')">clear fields</button>
+    <div class="message" id="exportMessageNodes"></div>
+
+</div>
