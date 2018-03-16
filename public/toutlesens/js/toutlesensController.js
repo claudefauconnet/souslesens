@@ -74,6 +74,7 @@ var toutlesensController = (function () {
         //  $("#mainButtons").css("visibility", "hidden");
         $("#graphMessage").html("");
         $("#relInfoDiv").html("");
+        $("#graphCommentDiv").html("");
 
 
         if ($("#keepFiltersCbx").prop("checked"))
@@ -134,7 +135,7 @@ var toutlesensController = (function () {
             // $(".paintIcon").css("visibility","visible")
         }
         else {
-            self.setGraphMessage("Too many relations to display the graph<br>filter by  relation or label types")
+          //  self.setGraphMessage("Too many relations to display the graph<br>filter by  relation or label types")
             //  output = "filtersDescription";
             $(".paintIcon").css("visibility", "hidden")
         }
@@ -178,11 +179,14 @@ var toutlesensController = (function () {
                 return;
             }
 
+            $("#graphCommentDiv").append( data.length +"  displayed ");
+            if (data.length >= Gparams.maxResultSupported && currentDisplayType != "SIMPLE_FORCE_GRAPH_BULK") {
 
-            if (data.length >= Gparams.graphDisplayLimitMax && currentDisplayType != "SIMPLE_FORCE_GRAPH_BULK") {
-                self.setGraphMessage("Maximum size of data exceeded:" + data.length + " > maximum " + Gparams.graphDisplayLimitMax, "stop");
-                $("#waitImg").css("visibility", "hidden")
-                return;
+                self.setGraphMessage("Maximum size of data exceeded:" + data.length + " > maximum " + Gparams.maxResultSupported, "stop");
+                $("#waitImg").css("visibility", "hidden");
+
+                Gparams.maxResultSupported=Gparams.maxResultSupported;
+             //   return;
 
             }
 
@@ -719,7 +723,7 @@ var toutlesensController = (function () {
             //  visjsGraph.displayRelationNames({show:false})
             Gparams.showRelationNames = false;
 
-            self.generateGraph(null, {applyFilters: true});
+            self.generateGraph(null, {applyFilters: true,hideNodesWithoutRelations:true});
         }
 
         else if (action == "onLinkClick") {
@@ -989,6 +993,8 @@ var toutlesensController = (function () {
 
         //   $("#mainButtons").width(rightPanelWidth).height(50).css("position", "absolute").css("left", $("#graphDiv").width() - 200).css("top", 50).css("visibility", "hidden");
         $("#mainButtons").width(250).height(50).css("position", "absolute").css("left", 20).css("top", 10);//.css("visibility", "hidden");
+        $("#graphCommentDiv").css("max-width","500").css("position", "absolute").css("left", 20).css("top", totalHeight-50);
+
 
         $("#fullScreenButton").css("position", "absolute").css("top", 5).css("left", (totalWidth - rightPanelWidth) - 10);
         $(".objAttrInput").width(rightPanelWidth - 100);

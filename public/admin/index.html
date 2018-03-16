@@ -211,6 +211,7 @@
 
     <script>
         processDataBeforeDrawingCallback = null;
+       var  messageDivId=null ;
         $(function () {
             var url = window.location.href;
             var p = url.indexOf('/admin');
@@ -247,9 +248,9 @@
             $("#left").width(split).height(totalHeight - 10);
 
             $("#graphPanel").css("left", split+accordionWidth).width((totalWidth - (split + accordionWidth))).height(totalHeight - 10);
-            $("#graphDiv").width((totalWidth - (split + accordionWidth+50))).height(totalHeight/2);
+            $("#graphDiv").width((totalWidth - (split + accordionWidth+50))).height(totalHeight/3*2);
 
-            $("#accordionPanel").css("left",split).width((accordionWidth)).height(totalHeight - 10);
+            $("#accordionPanel").css("left",split).width((accordionWidth)).height(totalHeight/3*2);
 
             ;
 
@@ -257,7 +258,7 @@
             $(".splitter_panel").width(totalWidth - split).height(totalHeight - 10);
           ///  $("#graphLegendDiv").width(totalWidth - split).height(50);
 
-            $("#graphDiv").width(split + accordionWidth).height(totalHeight - 10);
+          //  $("#graphDiv").width(split + accordionWidth).height(totalHeight - 10);
 
             $('#main').width("100%").height("100%").split({
                 orientation: 'vertical',
@@ -276,7 +277,7 @@
             var bcsTreeDiv = "#bcsTreeDiv";
             var radarDiv = "#radarDiv";
             var attrsIFrame = "#attrsIframe";
-            messageDivId= message
+
 
 
 
@@ -401,23 +402,23 @@
         <div id="accordion">
             <h3>Neo4j</h3>
             <div>
-                <div id="neoDbDiv" style="height:400px"></div>
+                <div id="neoDbDiv" style="height:450px"></div>
             </div>
             <h3>ImportNodes</h3>
             <div>
-                <div id="importNodesDiv" style="height:400px"></div>
+                <div id="importNodesDiv" style="height:450px"></div>
             </div>
             <h3>ImportRelations</h3>
             <div>
-                <div id="importRelationsDiv" style="height:400px"></div>
+                <div id="importRelationsDiv" style="height:450px"></div>
             </div>
             <h3>import-Export Neo</h3>
             <div>
-                <div id="importExportGraphDiv" style="height:400px"></div>
+                <div id="importExportGraphDiv" style="height:450px"></div>
             </div>
             <h3>saved Queries</h3>
             <div>
-                <div id="savedQueriesDiv" style="height:400px"></div>
+                <div id="savedQueriesDiv" style="height:450px"></div>
             </div>
 
 

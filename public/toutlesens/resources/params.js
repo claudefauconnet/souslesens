@@ -53,15 +53,14 @@ var Gparams = {
 
 
 //limits************************************
-    neoQueryLimit:20000,
+    maxResultSupported:5000,
+    graphMaxDataLengthToDisplayGraphDirectly:1000,
+    bulkGraphViewMaxNodesToDrawLinks:1000,
     listDisplayLimitMax:500,
     jsTreeMaxChildNodes:500,
-    graphDisplayLimitMax: 30000,
     maxDepthExplorationAroundNode: 3,
-    bulkGraphViewMaxNodesToDrawLinks:1000,
-    bulkGraphDisplayLimit:30000,
     maxNodesForRelNamesOnGraph:100,
-    graphMaxDataLengthToDisplayGraphDirectly:1000,
+
 
     shortestPathMaxDistanceTest:8,
     graphDefaultLayout:"random",

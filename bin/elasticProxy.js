@@ -1920,7 +1920,7 @@ function indexJsonFile(filePath, ealasticUrl) {
 
 
 module.exports = elasticProxy;
-elasticProxy.getSchema();
+//elasticProxy.getSchema();
 
 //**********************************************Command Line args***********************************
 const args = process.argv;

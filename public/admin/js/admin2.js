@@ -1,12 +1,13 @@
 var admin = (function () {
 
     var self = {};
-
+self.labels=[];
 
 
 
 
     self.onPageLoaded=function(){
+        messageDivId= message;
         $("#importNodesDiv").load("htmlSnippets/importNodesDialog.html", function () {
 
         })
@@ -25,6 +26,21 @@ var admin = (function () {
         $("#importExportGraphDiv").load("htmlSnippets/importExportGraphDialog.html", function () {
 
         })
+
+    }
+
+    self.initImportDialogSelects=function(columnNames){
+        columnNames.splice(0,0,"");
+        common.fillSelectOptionsWithStringArray(mongoKey,columnNames);
+        common.fillSelectOptionsWithStringArray(mongoField,columnNames);
+
+        common.fillSelectOptionsWithStringArray(mongoSourceField,columnNames);
+        common.fillSelectOptionsWithStringArray(mongoTargetField,columnNames);
+
+        common.fillSelectOptionsWithStringArray(neoSourceLabel,self.labels);
+        common.fillSelectOptionsWithStringArray(neoTargetLabel,self.labels);
+
+      //  common.fillSelectOptionsWithStringArray(mongoKey,columnNames);
 
     }
 
@@ -51,6 +67,25 @@ var admin = (function () {
 
     }
 
+    self.setNeoKey=function(select,targetSelect,columnSelect){
+        var label=$(select).val();
+        var column=$(columnSelect).val();
+
+
+        var properties=[];
+        for(var prop in Schema.schema.properties[label]){
+            properties.push(prop);
+        }
+        properties.splice(0,0,"");
+        common.fillSelectOptionsWithStringArray(targetSelect,properties);
+        if(properties.indexOf(column)<0){
+            alert ("choose the property corresponding to the column 'id' ")
+        }else{
+            $(targetSelect).val(column);
+        }
+
+
+    }
 
     return self;
 

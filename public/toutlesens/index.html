@@ -229,6 +229,15 @@
             background-color: #aebcd6;
         }
 
+        #graphCommentDiv{
+            font-size: 14px;
+            font-family: verdana, sans-serif;
+            font-weight: bold;
+        }
+        .importantMessage{
+            color:#f8893f;
+        }
+
 
     </style>
 
@@ -295,13 +304,16 @@
 
             $("#tabs-analyzePanel").tabs({
 
+
+
                 activate: function (event, ui) {
 
                     var index = ui.newTab.index();
 
                     if (index == 0) {
                         toutlesensController.currentActionObj.mode = "infos";
-                    }
+
+                        }
                     if (index == 1) {
                         toutlesensController.currentActionObj.mode = "filter";
                         var filterMovableDiv = $("#filterMovableDiv").detach();
@@ -330,6 +342,9 @@
                 }
             });
             $("#findTabs").tabs({
+                load:function(event, ui) {
+
+                },
                 activate: function (event, ui) {
                     toutlesensController.setRightPanelAppearance(true);
                     var index = ui.newTab.index();
@@ -557,6 +572,7 @@
 
     <div id="graphLegendDiv"></div>
 </div>
+<div id="graphCommentDiv" style="position: absolute;background-color: white;margin: 2px;padding: 2px"></div>
 
 <div id="findDiv">
     <div id="findDivInner">
@@ -753,9 +769,7 @@
 
 
 
-<div id="graphPopup" style="visibility: hidden;position: absolute;background-color: white;margin: 2px;padding: 2px">
-
-</div>
+<div id="graphPopup" style="visibility: hidden;position: absolute;background-color: white;margin: 2px;padding: 2px"></div>
 
 <div id="dialog" title="dialog"></div>
 <div id="dialogLarge"></div>

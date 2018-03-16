@@ -217,6 +217,7 @@ function onDBselect() {
     var type = $("#importSourceType").val();
     if (type == "CSV") {
         loadRequests();
+
         return;
     }
     callMongo("", {listCollections: 1, dbName: dbName}, function (data) {
@@ -312,21 +313,13 @@ function getRelLabelForField(fieldName) {// arevoir
     return "";
 }
 function setMongoSourceField() {
-    var field = $("#fieldSelect").val();
-    $("#mongoSourceField").val(field);
-    $("#neoSourceKey").val(field);
-    loadLabels();
-    label = getRelLabelForField(field);
-    $("#neoSourceLabel").val(label);
+
+    $("#neoSourceKey").val( $("#neoSourceField").val());
 
 }
 
 function setMongoTargetField() {
-    var field = $("#fieldSelect").val();
-    $("#mongoTargetField").val(field);
-    $("#neoTargetKey").val(field);
-    label = getRelLabelForField(field);
-    $("#neoTargetLabel").val(label);
+    $("#neoTargetKey").val( $("#neoTargetField").val());
 }
 function setNeoRelAttributeField() {
     var fieldSelect = $("#fieldSelect").val();
@@ -542,7 +535,7 @@ function loadLabels(subGraphName) {
             }
             labels.splice(0, 0, "");
             common.fillSelectOptionsWithStringArray(labelsSelect, labels)
-
+            admin.labels=labels;
             drawVisjsGraph()
 
         }
@@ -560,6 +553,7 @@ function loadSubgraphs(defaultSubGraph) {
                 subgraphs.push(value);
             }
             subgraphs.splice(0, 0, "");
+
             common.fillSelectOptionsWithStringArray(subGraphSelect, subgraphs);
             if (subGraphSelect)
                 common.fillSelectOptionsWithStringArray(subGraphExportSelect, subgraphs)
@@ -767,7 +761,7 @@ function loadRequests() {
                  obj.request=JSON.parse( obj.request);
                  currentRequests.push(obj);
                  }*/
-                fillSelectOptions(requests, currentRequests, "name", "name");
+             //   fillSelectOptions(requests, currentRequests, "name", "name");
                 setRequestSubGraphFilterOptions();
             },
 
@@ -815,6 +809,7 @@ function loadRequests() {
 }
 
 function setRequestSubGraphFilterOptions() {
+    loadLabels();
     var requestSubGraphs = [];
     for (var i = 0; i < currentRequests.length; i++) {
         if (currentRequests[i].request) {
@@ -1190,6 +1185,11 @@ function setCsvImportFields(json) {
     currentCsvObject = json;
 
     common.fillSelectOptionsWithStringArray(fieldSelect, json.header);
+
+    admin.initImportDialogSelects(json.header)
+
+
+
     common.fillSelectOptionsWithStringArray(collSelect,[json.name]);
     $("#collSelect").val(json.name);
     $("#mongoCollectionRel").val(json.name);

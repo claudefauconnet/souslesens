@@ -25,11 +25,52 @@
  *
  ******************************************************************************/
 var neo4j = require('neo4j');
+//var neo4jD = require('neo4j-driver').v1;
+
 var request = require("request");
 var serverParams = require("./serverParams.js");
 
 
 neo4jProxy = {
+    driver: null,
+    getDriver: function () {
+        if (!neo4jProxy.driver)
+            neo4jProxy.driver = neo4jD.driver("bolt://localhost", neo4j.auth.basic("neo4j", "souslesens"));
+        return neo4jProxy.driver;
+    }
+
+    ,
+
+    matchCypher: function (matchStr, callback) {
+        var path = "/db/data/cypher";
+        var payload = {
+            "query": matchStr
+        }
+        neo4jProxy.cypher(null, path, payload, callback);
+
+
+    },
+    matchDriver: function (matchStr, callback) {
+        var session = neo4jProxy.getDriver().session();
+
+// Run a Cypher statement, reading the result in a streaming manner as records arrive:
+        session
+            .run(matchStr)
+            .subscribe({
+                onNext: function (record) {
+                    console.log(JSON.stringify(record,null,2));
+                    var x=1;
+
+                },
+                onCompleted: function () {
+                    session.close();
+                },
+                onError: function (error) {
+                    console.log(error);
+                    session.close();
+                }
+            });
+    },
 
     match: function (matchStr, callback) {
         var neo4jUrl = serverParams.neo4jUrl;
@@ -37,12 +78,16 @@ neo4jProxy = {
         var obj = {
             query: matchStr
         };
-        db.cypher(obj, function (err, results) {
-            if (err)
-                callback(err);
-            else
-                callback(null, results)
-        });
+        try {
+            db.cypher(obj, function (err, results) {
+                if (err)
+                    callback(err);
+                else
+                    callback(null, results)
+            });
+        } catch (e) {
+            console.log(e);
+        }
     }
 
     , cypher: function (url, path, payload, callback) {
@@ -50,8 +95,8 @@ neo4jProxy = {
         var neo4jUrl = serverParams.neo4jUrl;
         var uri = neo4jUrl + path;
 
-       if( typeof payload ==='string')
-            payload=JSON.parse(payload);
+        if (typeof payload === 'string')
+            payload = JSON.parse(payload);
         request({
                 url: uri,
                 json: payload,

@@ -51,7 +51,7 @@ var graphTraversalQueries = (function () {
                     return callback("No result")
                     $("#waitImg").css("visibility", "hidden");
                 }
-                if (data.length > Gparams.graphDisplayLimitMax) {
+                if (data.length > Gparams.maxResultSupported) {
 
                     return callback("trop de resultats "
                         + data.length

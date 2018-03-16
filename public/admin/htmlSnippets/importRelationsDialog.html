@@ -9,28 +9,22 @@
         </tr>
 
         <tr>
-            <td align="right"> Source Key</td>
+            <td align="right"> ID column</td>
             <td>
-                <button class="source" onclick="setMongoSourceField()">Set</button>
-                <input disabled="disabled" name="linkInput" id="mongoSourceField"></td>
-            <td>
-                <button onclick="showHelp('mongoSourceField')">?</button>
-            </td>
+                <select id="mongoSourceField"></select></td>
         </tr>
 
-        <tr>
-            <td align="right">Neo Key</td>
-            <td><input name="linkInput" id="neoSourceKey"></td>
 
-        </tr>
         <tr>
             <td align="right">Neo Label</td>
-            <td><input disabled="disabled" name="linkInput" id="neoSourceLabel">
-                <button class="neoTarget" onclick="setNeoSourceLabel()">Set</button>
+            <td><select  onchange="admin.setNeoKey(this,neoSourceKey,mongoSourceField)"  id="neoSourceLabel" ></select>
+
             </td>
-            <td>
-                <button onclick="showHelp('neoSourceLabel')">?</button>
-            </td>
+        </tr>
+        <tr >
+            <td align="right">Neo id property</td>
+            <td><select  id="neoSourceKey"></select></td>
+
         </tr>
 
 
@@ -40,29 +34,25 @@
             <td></td>
         </tr>
         <tr>
-            <td align="right"> Source Key</td>
+            <td align="right"> ID column</td>
             <td>
-                <button class="source" onclick="setMongoTargetField()">Set</button>
-                <input disabled="disabled" name="linkInput" id="mongoTargetField"></td>
 
-            <td>
-                <button onclick="showHelp('mongoTargetField')">?</button>
-            </td>
-        </tr>
-        <tr>
-            <td align="right">Neo Key</td>
-            <td><input name="linkInput" id="neoTargetKey"></td>
+                <select   id="mongoTargetField"></select></td>
+
 
         </tr>
+
         <tr>
             <td align="right">Neo Label</td>
-            <td><input disabled="disabled" name="linkInput" id="neoTargetLabel">
+            <td><select  onchange="admin.setNeoKey(this,neoTargetKey,mongoTargetField)" id="neoTargetLabel"></select>
 
-                <button class="neoTarget" onclick="setNeoTargetLabel()">Set</button>
             </td>
-            <td>
-                <button onclick="showHelp('neoTargetLabel')">?</button>
-            </td>
+
+        </tr>
+        <tr>
+            <td align="right">Neo id property/td>
+            <td><select  id="neoTargetKey"></select></td>
+
         </tr>
         <tr class="source0">
             <td colspan="3" class="title">Relation</td>
@@ -73,9 +63,7 @@
         <tr>
             <td align="right">Neo type</td>
             <td><input name="linkInput" id="relationType"></td>
-            <td>
-                <button onclick="showHelp('relationType')">?</button>
-            </td>
+
         </tr>
         <tr>
 
@@ -84,9 +72,7 @@
             </td>
             <td><input name="linkInput" id="neoRelAttributeField"></td>
 
-            <td>
-                <button onclick="showHelp('neoRelAttributeField')">?</button>
-            </td>
+
         </tr>
 
 
@@ -94,9 +80,7 @@
             <td align="right">Query</td>
             <td><input name="linkInput" id="mongoQueryR" value="{}"></td>
 
-            <td>
-                <button onclick="showHelp('mongoQueryR')">?</button>
-            </td>
+
         </tr>
 
     </table>

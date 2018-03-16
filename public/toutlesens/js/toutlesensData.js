@@ -27,7 +27,7 @@
 
 var toutlesensData = (function () {
     var self = {};
-    self.neo4jProxyUrl="../../.."+Gparams.neo4jProxyUrl;
+    self.neo4jProxyUrl = "../../.." + Gparams.neo4jProxyUrl;
 
     var navigationPath = [];
     self.cachedResultArray = null;
@@ -42,15 +42,13 @@ var toutlesensData = (function () {
     self.queriesIds = [];
 
 
-    self.standardReturnStatement=" RETURN EXTRACT(rel IN relationships(path) | type(rel)) as rels," +
+    self.standardReturnStatement = " RETURN EXTRACT(rel IN relationships(path) | type(rel)) as rels," +
         "EXTRACT(rel IN relationships(path) | rel)  as relProperties," +
         "nodes(path) as nodes," +//   !!!!!!!!!!!!!!!!!!!!! a voir pour alléger les données transmises
         //   "EXTRACT(node IN nodes(path) | node.subGraph) as nodes,"+   !!!!!!!!!!!!!!!!!!!!! a voir pour alléger les données transmises
         " EXTRACT(node IN nodes(path) | ID(node)) as ids," +
         " EXTRACT(node IN nodes(path) | labels(node)) as labels "
         + ", EXTRACT(rel IN relationships(path) | labels(startNode(rel))) as startLabels";
-
-
 
 
     self.executeNeoQuery = function (queryType, str, successFunction) {
@@ -133,10 +131,10 @@ var toutlesensData = (function () {
 
     }
 
-    self.getNodeAllRelations = function (id,options , callback) {
+    self.getNodeAllRelations = function (id, options, callback) {
         if (!options.addToPreviousQuery) {
             self.queriesIds = [];
-            self.cachedResultArray=[];
+            self.cachedResultArray = [];
         }
         self.queriesIds.push(id)
 
@@ -154,15 +152,14 @@ var toutlesensData = (function () {
             // http://graphaware.com/graphaware/2015/05/19/neo4j-cypher-variable-length-relationships-by-example.html
 
 
-
             var relCardinalityStr = "";
             if (options.relationDepth && options.relationDepth > 1)
                 relCardinalityStr = "*.." + options.relationDepth;
-         else {
-             if(options.hideNodesWithoutRelations)
-                 relCardinalityStr = "*..1" ;
-             else
-                relCardinalityStr = "*0..1" ;
+            else {
+                if (options.hideNodesWithoutRelations)
+                    relCardinalityStr = "*..1";
+                else
+                    relCardinalityStr = "*0..1";
 
             }
 
@@ -213,16 +210,17 @@ var toutlesensData = (function () {
         if (currentLabel)
             node2Label = ":" + currentLabel;
 
-        var statement;
+
+        var statementBase;
         if (self.matchStatement)
-            statement = self.matchStatement;
+            statementBase = self.matchStatement;
         else {
 
-            statement = "MATCH path=(n" + node1Label
+            statementBase = "MATCH path=(n" + node1Label
                 + ")-[r"
                 + toutlesensData.queryRelTypeFilters
                 + relCardinalityStr
-                + "]-(m"+node2Label+") "
+                + "]-(m" + node2Label + ") "
                 + whereStatement
                 + graphQueryTargetFilter
                 + toutlesensData.queryNodeLabelFilters
@@ -230,10 +228,9 @@ var toutlesensData = (function () {
                 + toutlesensData.queryExcludeRelFilters
 
         }
-        statement += returnStatement;
-        if(toutlesensController.currentActionObj.mode == "filter" || statement.indexOf("-(m)")>-1)
+        var statement = statementBase + returnStatement;
+        if (toutlesensController.currentActionObj.mode == "filter" || statement.indexOf("-(m)") > -1)
             hasMclause = true;
-
 
 
         if (Gparams.allowOrphanNodesInGraphQuery && hasMclause == false)
@@ -249,7 +246,7 @@ var toutlesensData = (function () {
             statement += " UNION " + graphQueryUnionStatement + returnStatement.replace("count(r)", 0);
 
 
-        statement += " limit " + Gparams.neoQueryLimit;
+        statement += " limit " + Gparams.maxResultSupported;
         if (Gparams.logLevel > 0)
             console.log(statement);
         $("#neoQueriesTextArea").val(statement);
@@ -276,13 +273,31 @@ var toutlesensData = (function () {
                         return callback(null, []);
                     }
                     if (id > -1)// we retry with inverse relation
-                        self.getNodeAllRelations(-id,  options, callback);
+                        self.getNodeAllRelations(-id, options, callback);
                     else {
                         id = -id;
                         return callback(null, []);
                     }
 
                 }
+                if (data.length >= Gparams.maxResultSupported) {// query too get the real number of relations
+                    var payload = {
+                        match: statementBase + "return count(r) as countRel;"
+                    }
+
+
+                    $.ajax({
+                        type: "POST",
+                        url: self.neo4jProxyUrl,
+                        data: payload,
+                        dataType: "json",
+                        success: function (data, textStatus, jqXHR) {
+                            var xx = data;
+                            $("#graphCommentDiv").append("<span class='importantMessage'>" + data[0].countRel + "  relations in the graph</span> ");
+                        }
+                    })
+                }
+
 
                 if (options.output == "filtersDescription") {
 
@@ -294,18 +309,18 @@ var toutlesensData = (function () {
                 currentDataStructure = "flat";
                 var resultArray = data;
                 // data.log(JSON.stringify(resultArray))
-                if ( true || addToPreviousQuery && self.cachedResultArray) {
+                if (true || addToPreviousQuery && self.cachedResultArray) {
                     for (var i = 0; i < resultArray.length; i++) {
                         for (var j = 0; j < resultArray[i].nodes.length; j++) {
-                            var id=resultArray[i].nodes[j]._id;
-                            if( self.queriesIds.indexOf(id)>-1)
+                            var id = resultArray[i].nodes[j]._id;
+                            if (self.queriesIds.indexOf(id) > -1)
                                 resultArray[i].nodes[j].outline = true;
 
-                          /* var relTargetId=resultArray[i].ids[resultArray[i].rels.length-1];
-                            var relSourceId=resultArray[i].ids[0];
-                            if( self.queriesIds.indexOf(relSourceId)>-1){
-                                resultArray[i].outlineRel = true;
-                            }*/
+                            /* var relTargetId=resultArray[i].ids[resultArray[i].rels.length-1];
+                              var relSourceId=resultArray[i].ids[0];
+                              if( self.queriesIds.indexOf(relSourceId)>-1){
+                                  resultArray[i].outlineRel = true;
+                              }*/
 
                         }
 
@@ -375,7 +390,7 @@ var toutlesensData = (function () {
                     $("#waitImg").css("visibility", "hidden");
                     return callback("No result")
                 }
-                if (data.length > Gparams.graphDisplayLimitMax) {
+                if (data.length > Gparams.maxResultSupported) {
 
                     return callback("trop de resultats "
                         + data.length
@@ -460,18 +475,13 @@ var toutlesensData = (function () {
     }
     self.prepareRawData = function (resultArray, addToPreviousQuery, output, callback) {
         totalNodesToDraw = resultArray.length;
-        if (currentDisplayType != "SIMPLE_FORCE_GRAPH_BULK" && totalNodesToDraw >= Gparams.graphDisplayLimitMax) {
-            toutlesensController.setGraphMessage("trop de resultats pour dessiner le graphe.Modifiez les parametres : > maximum "
-                + Gparams.graphDisplayLimitMax, "stop");
-            return;
+        /*   if (currentDisplayType != "SIMPLE_FORCE_GRAPH_BULK" && totalNodesToDraw >= Gparams.maxResultSupported) {
+               toutlesensController.setGraphMessage("trop de resultats pour dessiner le graphe.Modifiez les parametres : > maximum "
+                   + Gparams.maxResultSupported, "stop");
+               return;
 
-        }
-        if (currentDisplayType == "SIMPLE_FORCE_GRAPH_BULK" && totalNodesToDraw >= Gparams.bulkGraphDisplayLimit) {
-            toutlesensController.setGraphMessage("trop de resultats pour dessiner le graphe.Modifiez les parametres : > maximum "
-                + Gparams.bulkGraphDisplayLimit, "stop");
-            return;
+           }*/
 
-        }
 
         var labels = [];
         var relations = [];
@@ -996,14 +1006,6 @@ var toutlesensData = (function () {
     }
 
 
-
-
-
-
-
-
-
-
     self.formatTreeToCsv = function (json) {
         self.recursiveSetParent = function (node) {
             if (!node.children || node.children.length == 0) {
@@ -1164,7 +1166,31 @@ var toutlesensData = (function () {
 
 
     }
+
+
     self.searchNodes = function (subGraph, label, word, resultType, limit, from, callback) {
+        var options = {
+            subGraph: subGraph,
+            label: label,
+            word: word,
+            resultType: resultType,
+            limit: limit,
+            from: from
+        }
+        self.searchNodesWithOption(options, callback);
+    }
+
+
+    self.searchNodesWithOption = function (options, callback) {
+
+        var subGraph = options.subGraph;
+        var label = options.label;
+        var word = options.word;
+        var resultType = options.resultType;
+        var limit = options.limit;
+        var from = options.from;
+        var additionalWhere=options.additionalWhere;
+
         currentQueryParams = {
             subGraph: subGraph, label: label, word: word, resultType: resultType, limit: limit, from: from
         }
@@ -1193,12 +1219,20 @@ var toutlesensData = (function () {
         if (whereStr.length > 0)
             whereStr = " WHERE " + whereStr;
 
+        if(additionalWhere && additionalWhere!=""){
+            if (whereStr.length == 0)
+                whereStr += " where " +additionalWhere+ " ";
+            else
+                whereStr += " and " +additionalWhere+ " ";
+        }
+
         if (subGraph) {
             if (whereStr.length == 0)
                 subGraphWhere += " where  n.subGraph='" + subGraph + "' ";
             else
                 subGraphWhere += " and  n.subGraph='" + subGraph + "' ";
         }
+
 
         str = "MATCH (n" + labelStr + ") " + whereStr + subGraphWhere + returnStr;
         console.log(str)
@@ -1244,8 +1278,6 @@ var toutlesensData = (function () {
                     alert("too many result : " + data.length + "> Max :" + Gparams.listDisplayLimitMax)
                     return;
                 }
-
-
 
 
             },
@@ -1322,19 +1354,17 @@ var toutlesensData = (function () {
             }
             $("#message").html("relation saved");
             $("#dialog").dialog("close");
-            if(callback){
-                var edge=result[0].r.properties;
-                edge.from=result[0].r._fromId;
-                edge.to=result[0].r._toId;
-                edge.id=result[0].r._id;
-                edge.type=result[0].r.type;
+            if (callback) {
+                var edge = result[0].r.properties;
+                edge.from = result[0].r._fromId;
+                edge.to = result[0].r._toId;
+                edge.id = result[0].r._id;
+                edge.type = result[0].r.type;
                 callback(edge);
             }
 
 
-
         })
-
 
 
     }

@@ -44,7 +44,7 @@ var rdfController=(function(){
             word: word,
             contains: contains,
             relations: relations,
-            limit: Gparams.neoQueryLimit
+            limit: Gparams.maxResultSupported
         }
         $.ajax({
             type: "POST",

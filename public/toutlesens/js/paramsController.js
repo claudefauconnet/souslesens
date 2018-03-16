@@ -21,7 +21,7 @@ var paramsController = (function () {
 
     self.resetParams = function () {
         localStorage.removeItem('toutlesensParams');
-        loadParams();
+        self.loadParams();
     }
 
 
