@@ -27,10 +27,10 @@
 var dataModel = (function () {
     var self = {};
     //self.neo4jProxyUrl="../../.."+Gparams.neo4jProxyUrl;
-   // self.mongoProxyUrl="../../.."+Gparams.mongoProxyUrl;
-  //  self.neo4jProxyUrl=window.location.host+Gparams.neo4jProxyUrl;
-  //  self.mongoProxyUrl=window.location.host+Gparams.mongoProxyUrl;
-    self.neo4jProxyUrl="../../.."+Gparams.neo4jProxyUrl;
+    // self.mongoProxyUrl="../../.."+Gparams.mongoProxyUrl;
+    //  self.neo4jProxyUrl=window.location.host+Gparams.neo4jProxyUrl;
+    //  self.mongoProxyUrl=window.location.host+Gparams.mongoProxyUrl;
+    self.neo4jProxyUrl = "../../.." + Gparams.neo4jProxyUrl;
     self.labels = {};
     self.labelsRelations = {};
     self.relations = {};
@@ -38,6 +38,64 @@ var dataModel = (function () {
     self.allProperties = [""];
     self.allRelationsArray = [""];
     self.allLabels = [""];
+    self.DBstats = null;
+
+
+    self.getDBstats = function (subGraph, callback) {
+        var where = ""
+        if (subGraph)
+            where = " where n.subGraph='" + subGraph + "' ";
+        var countRelsMatch = " MATCH (n)-[r]->(m) " + where + " RETURN type(r) as relType, labels(n)[0] as startLabel,labels(m)[0] as endLabel, count(r) as countRel";
+        var countNodesMatch = "  MATCH (n) " + where + "  RETURN Labels(n)[0] as label , count(*) as countNodes";
+
+        var payload = {
+            match: countNodesMatch
+        }
+
+        $.ajax({// count nodes
+            type: "POST",
+            url: self.neo4jProxyUrl,
+            data: payload,
+            dataType: "json",
+            success: function (dataLabels, textStatus, jqXHR) {
+                var payload = {
+                    match: countRelsMatch
+                }
+                $.ajax({// counRels
+                    type: "POST",
+                    url: self.neo4jProxyUrl,
+                    data: payload,
+                    dataType: "json",
+                    success: function (dataRels, textStatus, jqXHR) {
+                        var nodes = {};
+                        for (var i = 0; i < dataLabels.length; i++) {
+                            nodes[dataLabels[i].label] = dataLabels[i].countNodes;
+                        }
+                        var relations = {};
+                        for (var i = 0; i < dataRels.length; i++) {
+                            relations[dataRels[i].relType] = dataRels[i];
+                        }
+                        var output = {
+                                nodes: nodes,
+                                relations: relations,
+                            }
+                        ;
+                        self.DBstats = output;
+                        if (callback)
+                            return callback(null, output);
+
+                    }, error: function (err) {
+                        if (callback)
+                            callback(err);
+                    }
+                })
+            }, error: function (err) {
+                if (callback)
+                    callback(err);
+            }
+        });
+
+    }
 
 
     self.initNeoModel = function (subGraph, callback) {
@@ -53,7 +111,7 @@ var dataModel = (function () {
             where = " where n.subGraph='" + subGraph + "'";
 
 
-     //   var query = "MATCH (n) OPTIONAL MATCH(n)-[r]-(m) "
+        //   var query = "MATCH (n) OPTIONAL MATCH(n)-[r]-(m) "
         var query = "MATCH(n)-[r]-(m) "
             + where
             + " RETURN distinct labels(n) as labels_n, type(r) as type_r,labels(m)[0] as label_m, labels(startNode(r))[0] as label_startNode,count(n) as count_n,count(r) as count_r,count(m) as count_m";
@@ -68,7 +126,7 @@ var dataModel = (function () {
             data: payload,
             dataType: "json",
             success: function (data, textStatus, jqXHR) {
-                if( data.length==0)
+                if (data.length == 0)
                     callback(null, dataModel);
 
                 //	var data = data.results[0].data;
@@ -163,23 +221,23 @@ var dataModel = (function () {
                         dataModel.allProperties.sort();
                         dataModel.allLabels.sort();
 
-                      /*  if (dataModel.allProperties.indexOf("subGraph") < 0) {
-                            var queryParamsSubGraph = "";
-                            if (queryParams.subGraph)
-                                queryParamsSubGraph = queryParams.subGraph;
-                            $("#dialog").dialog("option", "title", "result");
-                            var str = "Souslesens needs a property called subGraph on each node to allow different subsets in the same Neo4j database";
-                            str += "<br>set subGraph property <input id='subGraphName' value='" + queryParamsSubGraph + "'><br><button onclick='dataModel.generateSubGraphPropertyOnAllNodes()'>Apply and continue</button> ";
-                            str += "<br><button onclick='window.close();  $(\"#dialog\").dialog(\"close\")')>Quit souslesens</button>"
-                            $("#dialog").html(str);
-                            $("#dialog").dialog("open");//.position({my: 'center', at: 'center', of: '#tabs-analyzePanel'});
+                        /*  if (dataModel.allProperties.indexOf("subGraph") < 0) {
+                              var queryParamsSubGraph = "";
+                              if (queryParams.subGraph)
+                                  queryParamsSubGraph = queryParams.subGraph;
+                              $("#dialog").dialog("option", "title", "result");
+                              var str = "Souslesens needs a property called subGraph on each node to allow different subsets in the same Neo4j database";
+                              str += "<br>set subGraph property <input id='subGraphName' value='" + queryParamsSubGraph + "'><br><button onclick='dataModel.generateSubGraphPropertyOnAllNodes()'>Apply and continue</button> ";
+                              str += "<br><button onclick='window.close();  $(\"#dialog\").dialog(\"close\")')>Quit souslesens</button>"
+                              $("#dialog").html(str);
+                              $("#dialog").dialog("open");//.position({my: 'center', at: 'center', of: '#tabs-analyzePanel'});
 
 
-                        }*/
+                          }*/
 
 
                         //relation Properties
-                       query=" match(n)-[r]-(m)"+ where +" return distinct type(r)as relType,labels(n)[0] as startLabel,labels(m)[0] as endLabel,  keys(r) as relProperties"
+                        query = " match(n)-[r]-(m)" + where + " return distinct type(r)as relType,labels(n)[0] as startLabel,labels(m)[0] as endLabel,  keys(r) as relProperties"
                         payload = {match: query};
 
 
@@ -194,7 +252,7 @@ var dataModel = (function () {
 
                                     var relPropsObj = data[i];
                                     var relationObjs = dataModel.allRelations[relPropsObj.relType];
-                                    for(var j=0;j<relationObjs.length;j++) {
+                                    for (var j = 0; j < relationObjs.length; j++) {
                                         var relationObj = relationObjs[j];
 
                                         if (relationObj && relationObj.direction == "normal" && relationObj.startLabel == relPropsObj.startLabel && relationObj.endLabel == relPropsObj.endLabel) {
@@ -216,7 +274,6 @@ var dataModel = (function () {
                                 toutlesensController.onErrorInfo(xhr)
                             }
                         })
-
 
 
                     }

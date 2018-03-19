@@ -179,11 +179,8 @@ var toutlesensController = (function () {
                 return;
             }
 
-            $("#graphCommentDiv").append( data.length +"  displayed ");
+            $("#graphCommentDiv").append( data.length +" nodes and relations displayed ");
             if (data.length >= Gparams.maxResultSupported && currentDisplayType != "SIMPLE_FORCE_GRAPH_BULK") {
-
-                self.setGraphMessage("Maximum size of data exceeded:" + data.length + " > maximum " + Gparams.maxResultSupported, "stop");
-                $("#waitImg").css("visibility", "hidden");
 
                 Gparams.maxResultSupported=Gparams.maxResultSupported;
              //   return;
@@ -247,7 +244,8 @@ var toutlesensController = (function () {
                     options.showRelationsType = false,
                     options.smooth = false;
             } else {
-                options.showNodesLabel = true,
+                if(options.showNodesLabel!=false )
+                options.showNodesLabel = true;
                     //  options.showRelationsType = false,
                     options.smooth = true;
             }
@@ -726,6 +724,15 @@ var toutlesensController = (function () {
             self.generateGraph(null, {applyFilters: true,hideNodesWithoutRelations:true});
         }
 
+        else if (action == "zoomOnNode") {
+            var expression=prompt("find node with name ?");
+            if( expression && expression.length>0){
+                visjsGraph.zoomOnNode(expression);
+
+            }
+
+        }
+
         else if (action == "onLinkClick") {
             self.generateGraph(objectId, {applyFilters: true}, function () {
 
@@ -811,6 +818,16 @@ var toutlesensController = (function () {
 
 
     self.afterGraphInit = function () {
+
+        dataModel.getDBstats(subGraph,function (err,result){
+            var data = connectors.toutlesensSchemaToVisjs(Schema.schema);
+            self.setRightPanelAppearance(false);
+            visjsGraph.draw("graphDiv", data);
+            $("#graphCommentDiv").append( "Graph model");
+        })
+
+
+
         //  paramsController.loadParams();
         var tabsanalyzePanelDisabledOptions = [];
         tabsanalyzePanelDisabledOptions.push(1);//filters
@@ -865,6 +882,12 @@ var toutlesensController = (function () {
             self.initLabels(pivotsDialogSourceLabelsSelect, true);
 
         });
+        $("#transitiveRelationsDiv").load("htmlSnippets/transitiveRelationsDialog.html", function () {
+            toutlesensController.initLabels(transitiveRelations_labelsSelect,true);
+
+        });
+
+
 
         $("#tabs-analyzePanel").tabs("option", "disabled", tabsanalyzePanelDisabledOptions);
         $("#findTabs").tabs("option", "disabled", tabsFindPanelDisabledOptions);
@@ -931,8 +954,9 @@ var toutlesensController = (function () {
 
     }
 
-    self.initLabels = function (select) {
-        var labels = Schema.getAllLabelNames()
+    self.initLabels = function (select,withEmptyOption) {
+        var labels = Schema.getAllLabelNames();
+        if(withEmptyOption)
         labels.splice(0, 0, "")
         common.fillSelectOptionsWithStringArray(select, labels);
     }
@@ -969,7 +993,7 @@ var toutlesensController = (function () {
 
         $("#graphDiv").width(totalWidth - rightPanelWidth).height(totalHeight - 0)
 
-        $("#graphLegendDiv").width(400).height(40).css("position", "relative").css("top", -20).css("left", (totalWidth - rightPanelWidth) - 450).css("background-color", "#eee")
+        $("#graphLegendDiv").width(400).height(40).css("position", "absolute").css("top", 0).css("left", (totalWidth - rightPanelWidth) - 450).css("background-color", "#eee")
 
 
         $("#treeContainer").width(rightPanelWidth - 15);
@@ -1040,6 +1064,12 @@ var toutlesensController = (function () {
         $("#tabs-analyzePanel").tabs("enable", 2);
 
 
+    }
+    self.increaseGraphLimit=function(){
+        var increase=prompt("Enter new graph display limit");
+        if( increase && increase!=""){
+            Gparams.maxResultSupported=parseInt(increase);
+        }
     }
 
     return self;

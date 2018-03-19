@@ -8,13 +8,13 @@ var visjsGraph = (function () {
     self.nodes = [];
     self.edges = [];
     self.physicsOn = true;
-
+    self.network = null;
     self.layout = "physics";
 
     self.previousGraphs = []
     self.previousGraphs.index = -1;
-    self.currentLayoutType="random";
-    self.currentLayoutDirection="";
+    self.currentLayoutType = "random";
+    self.currentLayoutDirection = "";
 
 
     var stopPhysicsTimeout = 5000;
@@ -25,8 +25,15 @@ var visjsGraph = (function () {
     var options = {};
 
 
-    self.draw = function (divId, visjsData, options) {
+    self.draw = function (divId, visjsData, _options) {
+        if (!_options)
+            _options = {};
 
+        if (!_options.solver) {
+            _options.solver = "barnesHut";
+            //  _options.solver="forceAtlas2Based";
+
+        }
 
         var t0 = new Date();
         if (false && visjsData.nodes.length == 0) {
@@ -35,9 +42,9 @@ var visjsGraph = (function () {
 
         }
 
-        smoothRelLine=true;
-        if(options && !options.smooth)
-            smoothRelLine=false;
+        smoothRelLine = true;
+        if (_options && !_options.smooth)
+            smoothRelLine = false;
 
         var container = document.getElementById(divId);
         self.nodes = new vis.DataSet(visjsData.nodes);
@@ -46,8 +53,11 @@ var visjsGraph = (function () {
         //   var x = Math.log10(self.edges.length * 2) + 1;
         var x = (Math.log(self.edges.length * 2) * Math.LOG10E) + 1;
 
-        stopPhysicsTimeout = Math.pow(10, x);
-     //   console.log("x" + x + " stopPhysicsTimeout: " + self.edges.length + " time " + stopPhysicsTimeout)
+        if (_options.stopPhysicsTimeout)
+            stopPhysicsTimeout = _options.stopPhysicsTimeout;
+        else
+            stopPhysicsTimeout = Math.pow(10, x);
+        //   console.log("x" + x + " stopPhysicsTimeout: " + self.edges.length + " time " + stopPhysicsTimeout)
         data = {
             nodes: self.nodes,
             edges: self.edges
@@ -59,27 +69,76 @@ var visjsGraph = (function () {
 
             //   interaction: {hover: true},
             manipulation: {
-                enabled: true
+                enabled: false
             },
             physics: {
+
                 stabilization: false,
-                timestep: 0.46,
+                timestep: 0.46
+
                 /*  barnesHut: {
                  gravitationalConstant: -80000,
                  springConstant: 0.001,
                  springLength: 200
-                 }*/
+                 }
+
+            stabilization: false,
+               barnesHut: {
+                    gravitationalConstant: -2000,
+                    centralGravity: 0.3,
+                    springLength: 95,
+                    springConstant: 0.04,
+                    damping: 0.09,
+                    avoidOverlap: 0
+                },
+                forceAtlas2Based: {
+                    gravitationalConstant: -50,
+                    centralGravity: 0.01,
+                    springConstant: 0.08,
+                    springLength: 100,
+                    damping: 0.4,
+                    avoidOverlap: 0
+                },
+                repulsion: {
+                    centralGravity: 0.2,
+                    springLength: 200,
+                    springConstant: 0.05,
+                    nodeDistance: 100,
+                    damping: 0.09
+                },
+                hierarchicalRepulsion: {
+                    centralGravity: 0.0,
+                    springLength: 100,
+                    springConstant: 0.01,
+                    nodeDistance: 120,
+                    damping: 0.09
+                },*/
+                // solver: _options.solver,
+                /*    stabilization: false,
+                    timestep: 0.46,
+
+                    maxVelocity: 50,
+                    minVelocity: 0.1,
+                  //
+                    stabilization: {
+                        enabled: true,
+                        iterations: 1000,
+                        updateInterval: 100,
+                        onlyDynamicEdges: false,
+                        fit: true
+                    },*/
+
             },
             nodes: {
                 shape: 'dot',
                 size: 10,
                 font: {size: 14},
                 scaling: {
-                    customScalingFunction: function (min,max,total,value) {
-                        return value/total;
+                    customScalingFunction: function (min, max, total, value) {
+                        return value / total;
                     },
-                    min:5,
-                    max:150
+                    min: 5,
+                    max: 150
                 }
                 /*  scaling: {
                       label: {
@@ -102,17 +161,14 @@ var visjsGraph = (function () {
             ,
             interaction: {
 
-                keyboard: true
+                keyboard: false
             }
 
 
-
         };
-
-
+        if (_options.scale)
+            options.scale = _options.scale;
         options.manipulation = false;
-
-
 
 
         if (data.edges.length > 1000)
@@ -125,13 +181,28 @@ var visjsGraph = (function () {
         if (firstNode && firstNode.x)
             self.physicsOn = false;
         network = new vis.Network(container, data, options);
+        self.network = network;
+
+        if(_options.clusterByLabels){
+            network.cluster({
+                joinCondition:function(childOptions) {
+                    return (_options.clusterByLabels.indexOf(childOptions.labelNeo)>-1);
+                },
+                clusterNodeProperties: {id:'cidCluster', borderWidth:3, shape:'database'}
+        })
+        }
+
         window.setTimeout(function () {
             network.setOptions({
                 physics: {enabled: false},
 
             });
-            network.fit();
-
+            if (!_options.scale)
+                network.fit();
+            if (_options.onFinishDraw) {
+                var fn = _options["onFinishDraw"];
+                fn();
+            }
 
         }, stopPhysicsTimeout);
 
@@ -145,9 +216,9 @@ var visjsGraph = (function () {
         });
 
         network.on("doubleClick", function (params) {
-    /*        var nodeId = params.nodes[0];
-            currentObject = self.nodesMap[nodeId];
-            toutlesensController.generateGraph(nodeId, {applyFilters: false});//NO !!! minus sign to search on m (see toutlesensData 148)*/
+            /*        var nodeId = params.nodes[0];
+                    currentObject = self.nodesMap[nodeId];
+                    toutlesensController.generateGraph(nodeId, {applyFilters: false});//NO !!! minus sign to search on m (see toutlesensData 148)*/
         })
         //stop animation
         network.on("click", function (params) {
@@ -157,7 +228,15 @@ var visjsGraph = (function () {
                 network.setOptions({
                     physics: {enabled: self.physicsOn}
                 });
-                network.fit()
+
+                if (_options.onFinishDraw) {
+                    var fn = _options["onFinishDraw"];
+                    fn();
+                }
+                else {
+                    network.fit()
+                }
+
 
             }
             else if (params.nodes.length == 1) {
@@ -176,11 +255,11 @@ var visjsGraph = (function () {
                 }
 
                 var point = params.pointer.DOM;
-                if(toutlesensController) {
+                if (toutlesensController) {
                     toutlesensController.dispatchAction("nodeInfos", nodeId);
                     toutlesensController.showPopupMenu(point.x, point.y, "nodeInfo");
                 }
-                else if(admin){
+                else if (admin) {
                     admin.showPopupMenu(point.x, point.y);
                 }
 
@@ -239,21 +318,21 @@ var visjsGraph = (function () {
 
 
     self.setShapeOption = function (shape) {
-        var nodes=[];
+        var nodes = [];
         for (var key in self.nodes._data) {
             nodes.push(key)
         }
-        self.paintNodes(nodes, null, null, null,shape)
+        self.paintNodes(nodes, null, null, null, shape)
 
     }
 
-    self.setLayoutType = function (layoutStr,apply){
+    self.setLayoutType = function (layoutStr, apply) {
         var layoutArray = layoutStr.split(" ");
         var layoutType = layoutArray[0];
         var sortMethod = "";
         if (layoutArray.length > 1)
             sortMethod = layoutArray[1];
-        self.currentLayoutType=layoutType;
+        self.currentLayoutType = layoutType;
         if (layoutType == "hierarchical") {
             ($("#graphLayoutDirectionDir").css("visibility", "visible"))
             options.layout = {hierarchical: {sortMethod: sortMethod, direction: self.currentLayoutDirection}}
@@ -267,11 +346,11 @@ var visjsGraph = (function () {
         }
         return (options)
     }
-    self.setLayoutDirection = function (direction,apply){
-        self.currentLayoutDirection=direction;
+    self.setLayoutDirection = function (direction, apply) {
+        self.currentLayoutDirection = direction;
 
         if (self.currentLayoutType == "hierarchical") {
-            options.layout = {hierarchical: { direction: direction}}
+            options.layout = {hierarchical: {direction: direction}}
         }
 
         if (apply) {
@@ -282,10 +361,9 @@ var visjsGraph = (function () {
     }
 
 
-
     self.clusterByLabel = function (label) {
 
-        if (!label )
+        if (!label)
             return;
         var clusterOptionsByData = {
             joinCondition: function (childOptions) {
@@ -363,10 +441,10 @@ var visjsGraph = (function () {
     }
 
 
-    self.paintNodes = function (nodeIds, color, otherNodesColor, radius,shape) {
+    self.paintNodes = function (nodeIds, color, otherNodesColor, radius, shape) {
         var nodes = [];
-        if(!shape)
-            shape="star";
+        if (!shape)
+            shape = "star";
         /* for(var i=0;i< nodeIds.length;i++) {
          var node = self.nodes._data[nodeIds[i]];
          node.color = {background: color};
@@ -375,12 +453,12 @@ var visjsGraph = (function () {
         for (var key in  self.nodes._data) {
             var node = self.nodes._data[key];
             if (nodeIds.indexOf(key) > -1) {
-                if(shape)
-                node.shape = shape;
-                if(color)
-                node.color = color
-                if(radius)
-                node.size = radius * 2;
+                if (shape)
+                    node.shape = shape;
+                if (color)
+                    node.color = color
+                if (radius)
+                    node.size = radius * 2;
                 /* node.color = {background: color};
                 // node.color = {color: color};
                 // node.size =Math.min(node.size*1.5,radius*2);
@@ -434,10 +512,10 @@ var visjsGraph = (function () {
 
 
     self.scaleNodes = function (nodes, valueProp) {
-        var newNodes=[]
-        for (var key in nodes._data){
-            newNodes.push({id:nodes._data[key].id,value:nodes._data[key][valueProp]})
-          //  nodes[i]._data.value= nodes[i]._data[valueProp];
+        var newNodes = []
+        for (var key in nodes._data) {
+            newNodes.push({id: nodes._data[key].id, value: nodes._data[key][valueProp]})
+            //  nodes[i]._data.value= nodes[i]._data[valueProp];
 
         }
         self.nodes.update(newNodes);
@@ -485,9 +563,9 @@ var visjsGraph = (function () {
 
     self.displayRelationNames = function (option) {
         var show
-        if(option )
-            show=option.show
-         show = $("#showRelationTypesCbx").prop("checked");
+        if (option)
+            show = option.show
+        show = $("#showRelationTypesCbx").prop("checked");
         Gparams.showRelationNames = show;
 
         for (var key in self.edges._data) {
@@ -550,6 +628,38 @@ var visjsGraph = (function () {
         }
         network.setOptions(options);
         network.fit()
+    }
+
+    self.fitToPage = function () {
+        network.fit({
+            animation: {
+                scale: 1.0,
+                animation: {
+                    duration: 1000,
+                }
+            }
+        })
+    }
+    self.zoomOnNode = function (expression) {
+        var regex = new RegExp(".*" + expression + ".*", 'i');
+        var nodes = [];
+        for (var key in  self.nodes._data) {
+            var node = self.nodes._data[key];
+            var str = node.label;
+            if (!str)
+                str = node.neoAttrs[Schema.getNameProperty()]
+            if (str.match(regex)) {
+                self.nodes.update({id: node.id, shape: "star", label: Schema.getNameProperty()});
+                network.focus(node.id,
+                    {
+                        scale: 1.0,
+                        animation: {
+                            duration: 1000,
+                        }
+                    });
+            }
+
+        }
     }
 
     self.findNode = function (expression, color, radius) {
@@ -729,7 +839,6 @@ var visjsGraph = (function () {
     }
 
 
-
     self.getConnectedNodes = function (nodeId) {
 
         return network.getConnectedNodes(nodeId);
@@ -902,9 +1011,6 @@ var visjsGraph = (function () {
     self.deleteRelation = function (edgeId) {
         self.edges.remove(edgeId);
     }
-
-
-
 
 
     return self;

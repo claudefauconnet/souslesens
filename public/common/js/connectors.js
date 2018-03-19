@@ -256,6 +256,10 @@ var connectors = (function () {
 
 
     self.toutlesensSchemaToVisjs = function (schema, id) {
+
+
+
+
         function makeNode(label) {
 
             var visNode = {
@@ -294,7 +298,8 @@ var connectors = (function () {
                 neoAttrs: {},
                 color: "green",
                 label: relation.type,
-                arrows: {from: {scaleFactor: 0.5}}
+                font:{ stroke:"black","font-size":"14px"},
+                arrows: {to: {scaleFactor: 0.5}}
                 // font:{background:color},
             }
             visjsData.edges.push(relObj);
@@ -305,8 +310,27 @@ var connectors = (function () {
                 makeNode(key);
             }
         }
+
+        if(dataModel.DBstats){
+            for(var i=0;i<visjsData.nodes.length;i++){
+                var countNodes=dataModel.DBstats.nodes[ visjsData.nodes[i].label];
+                visjsData.nodes[i].value=countNodes;
+                visjsData.nodes[i].label+=" ("+countNodes+")";
+
+            }
+            for(var i=0;i<visjsData.edges.length;i++){
+                var countRels=dataModel.DBstats.relations[ visjsData.edges[i].label].countRel;
+              //  visjsData.edges[i].value=countRels;
+                visjsData.edges[i].label+=" ("+countRels+")";
+
+            }
+
+
+        }
         return visjsData;
+
     }
+
 
 
     return self;

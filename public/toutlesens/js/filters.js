@@ -74,7 +74,9 @@ var filters = (function () {
             self.currentRelTypes.splice(0, 0, "");
         }
 
-        common.fillSelectOptionsWithStringArray(propertiesSelectionDialog_ObjectNameInput, self.currentLabels);
+
+            var select = document.getElementById("propertiesSelectionDialog_propsSelect")
+        common.fillSelectOptionsWithStringArray(select, self.currentLabels);
 
 
         filters.initLabelProperty("", propertiesSelectionDialog_propsSelect);
@@ -195,6 +197,7 @@ var filters = (function () {
         if (!selectId)
             selectId = document.getElementById("propertiesSelectionDialog_propsSelect")
         common.fillSelectOptionsWithStringArray(selectId, propertiesArray)
+        $("#propertiesSelectionDialog_propsSelect").val(Schema.getNameProperty())
 
     }
 

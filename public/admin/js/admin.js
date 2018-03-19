@@ -536,7 +536,7 @@ function loadLabels(subGraphName) {
             labels.splice(0, 0, "");
             common.fillSelectOptionsWithStringArray(labelsSelect, labels)
             admin.labels=labels;
-            drawVisjsGraph()
+            admin.drawVisjsGraph()
 
         }
     });
@@ -1103,7 +1103,7 @@ function deleteLabel() {
         callNeoMatch(match, null, function (data) {
             $("#message").html("nodes with label=" + label + "deleted");
             $("#message").css("color", "green");
-            drawVisjsGraph();
+            admin.drawVisjsGraph();
 
         });
     }
@@ -1122,7 +1122,7 @@ function addSubGraph() {
     }));
 
     $("#subGraphSelect").val(newSubGraph);
-    drawVisjsGraph();
+    admin.drawVisjsGraph();
 }
 
 function clearInputs(name) {
@@ -1201,15 +1201,4 @@ function setCsvImportFields(json) {
     onCollSelect();
 
 
-}
-
-function drawVisjsGraph(){
-
-    subGraph = $("#subGraphSelect").val();
-    Schema.createSchema(function(err, result){
-   // Schema.load(subGraph, function(err, result) {
-        var data = connectors.toutlesensSchemaToVisjs(Schema.schema);
-
-        visjsGraph.draw("graphDiv", data);
-    });
 }

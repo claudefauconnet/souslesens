@@ -201,6 +201,8 @@ var toutlesensData = (function () {
         else {
             returnStatement = self.standardReturnStatement;
         }
+        if(options.additionnalReturnStatement)
+            returnStatement+= ", "+options.additionnalReturnStatement;
 
         var node1Label = "";
         if (false && currentLabel)
@@ -233,28 +235,34 @@ var toutlesensData = (function () {
             hasMclause = true;
 
 
-        if (Gparams.allowOrphanNodesInGraphQuery && hasMclause == false)
-            graphQueryUnionStatement = " MATCH path=(n" + node1Label + ") "// for nodes without relations
-                + whereStatement
-                + graphQueryTargetFilter
-                + toutlesensData.queryNodeLabelFilters
-                + toutlesensData.queryExcludeNodeFilters
-                + toutlesensData.queryExcludeRelFilters;
+        /*  if (Gparams.allowOrphanNodesInGraphQuery && hasMclause == false)
+              graphQueryUnionStatement = " MATCH path=(n" + node1Label + ") "// for nodes without relations
+                  + whereStatement
+                  + graphQueryTargetFilter
+                  + toutlesensData.queryNodeLabelFilters
+                  + toutlesensData.queryExcludeNodeFilters
+                  + toutlesensData.queryExcludeRelFilters;
 
 
-        if (graphQueryUnionStatement)
-            statement += " UNION " + graphQueryUnionStatement + returnStatement.replace("count(r)", 0);
+          if (graphQueryUnionStatement)
+              statement += " UNION " + graphQueryUnionStatement + returnStatement.replace("count(r)", 0);*/
 
+        var limit = Gparams.maxResultSupported;
+        if (options.limit)
+            limit = options.limit;
+        statement += " limit " + limit;
+        if (Gparams.logLevel > 0) {
+            if (statement.length > 100)
+                console.log(statement.substring(0, 100));
+            else
+                console.log(statement);
+        }
 
-        statement += " limit " + Gparams.maxResultSupported;
-        if (Gparams.logLevel > 0)
-            console.log(statement);
-        $("#neoQueriesTextArea").val(statement);
-        $("#neoQueriesHistoryId").prepend(statement + "<br><br>");
         toutlesensData.queryNodeLabelFilters = "";
         toutlesensData.queryRelTypeFilters = "";
         toutlesensData.queryExcludeNodeFilters = "";
         toutlesensData.queryExcludeRelFilters = "";
+        toutlesensData.matchStatement = ""
         graphQueryUnionStatement = "";
 
         var payload = {match: statement};
@@ -292,8 +300,11 @@ var toutlesensData = (function () {
                         data: payload,
                         dataType: "json",
                         success: function (data, textStatus, jqXHR) {
-                            var xx = data;
-                            $("#graphCommentDiv").append("<span class='importantMessage'>" + data[0].countRel + "  relations in the graph</span> ");
+                            var message = "<br><span class='importantMessage'>" + data[0].countRel + "  relations in the graph</span> "
+                            message += "<a href='javascript:toutlesensController.increaseGraphLimit()'>increase Graph display limit</a> (display wil be slower)";
+                            message += "<br> <a href='javascript:advancedSearch.showDialog()'>or set a filter on nodes or relations</a>";
+
+                            $("#graphCommentDiv").append(message);
                         }
                     })
                 }
@@ -422,6 +433,7 @@ var toutlesensData = (function () {
         });
 
     }
+
 
     self.collapseResult = function (resultArray) {
         //   toutlesensController.collapseTargetLabels=[]//["cote"];
@@ -1189,7 +1201,7 @@ var toutlesensData = (function () {
         var resultType = options.resultType;
         var limit = options.limit;
         var from = options.from;
-        var additionalWhere=options.additionalWhere;
+        var additionalWhere = options.additionalWhere;
 
         currentQueryParams = {
             subGraph: subGraph, label: label, word: word, resultType: resultType, limit: limit, from: from
@@ -1219,11 +1231,11 @@ var toutlesensData = (function () {
         if (whereStr.length > 0)
             whereStr = " WHERE " + whereStr;
 
-        if(additionalWhere && additionalWhere!=""){
+        if (additionalWhere && additionalWhere != "") {
             if (whereStr.length == 0)
-                whereStr += " where " +additionalWhere+ " ";
+                whereStr += " where " + additionalWhere + " ";
             else
-                whereStr += " and " +additionalWhere+ " ";
+                whereStr += " and " + additionalWhere + " ";
         }
 
         if (subGraph) {

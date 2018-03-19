@@ -3,7 +3,36 @@ var admin = (function () {
     var self = {};
 self.labels=[];
 
+self.drawVisjsGraph= function (){
 
+        subGraph = $("#subGraphSelect").val();
+        Schema.createSchema(function(err, result){
+            admin.setNeoKey(neoSourceLabel,neoSourceKey,mongoSourceField);
+            admin.setNeoKey(neoTargetLabel,neoTargetKey,mongoTargetField);
+
+            // Schema.load(subGraph, function(err, result) {
+            dataModel.getDBstats();
+            var data = connectors.toutlesensSchemaToVisjs(Schema.schema);
+
+            visjsGraph.draw("graphDiv", data,{scale:2});
+         /*   setTimeout(function(){
+
+                var options = {
+                    position: {x:positionx,y:positiony},
+                    scale: scale,
+                    offset: {x:offsetx,y:offsety},
+                    animation: {
+                        duration: duration,
+                        easingFunction: easingFunction
+                    }
+                };
+                statusUpdateSpan.innerHTML = 'Doing Animation.';
+                finishMessage = 'Animation finished.';
+                visjsGraph.network.moveTo(options);
+            },1000)*/
+
+        });
+    }
 
 
     self.onPageLoaded=function(){
@@ -78,7 +107,10 @@ self.labels=[];
         }
         properties.splice(0,0,"");
         common.fillSelectOptionsWithStringArray(targetSelect,properties);
-        if(properties.indexOf(column)<0){
+        if(!column || column==""){
+            return;
+        }
+        else if(properties.indexOf(column)<0){
             alert ("choose the property corresponding to the column 'id' ")
         }else{
             $(targetSelect).val(column);

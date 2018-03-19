@@ -225,17 +225,18 @@
             font-weight: bold;
         }
 
-        #dialog{
+        #dialog {
             background-color: #aebcd6;
         }
 
-        #graphCommentDiv{
-            font-size: 14px;
+        #graphCommentDiv {
+            font-size: 12px;
             font-family: verdana, sans-serif;
-            font-weight: bold;
+            font-weight: normal;
         }
-        .importantMessage{
-            color:#f8893f;
+
+        .importantMessage {
+            color: #f8893f;
         }
 
 
@@ -300,20 +301,29 @@
 
             //   $("#nodeInfosDiv").height(totalHeight - 200).width(totalWidth - 650)
 
-
+            $("#advancedQueriesAccordion").accordion(
+                {active: false,
+                    collapsible: true,
+                    activate:function(event, ui){
+                        $("#dialog").dialog("close");
+                        $("#graphPopup").css("visibility", "hidden");
+                    }
+                });
+            ;
 
             $("#tabs-analyzePanel").tabs({
 
 
-
                 activate: function (event, ui) {
+                    $("#dialog").dialog("close");
+                    $("#graphPopup").css("visibility", "hidden");
 
                     var index = ui.newTab.index();
 
                     if (index == 0) {
                         toutlesensController.currentActionObj.mode = "infos";
 
-                        }
+                    }
                     if (index == 1) {
                         toutlesensController.currentActionObj.mode = "filter";
                         var filterMovableDiv = $("#filterMovableDiv").detach();
@@ -342,10 +352,12 @@
                 }
             });
             $("#findTabs").tabs({
-                load:function(event, ui) {
+                load: function (event, ui) {
 
                 },
                 activate: function (event, ui) {
+                    $("#dialog").dialog("close");
+                    $("#graphPopup").css("visibility", "hidden");
                     toutlesensController.setRightPanelAppearance(true);
                     var index = ui.newTab.index();
                     if (index == 0) {
@@ -368,35 +380,34 @@
 
 
             $("#table_Graph").tabs();
-            $("#linkNodesDivAccordion").accordion({
-                heightStyle: "content"
-            });
+            /*  $("#linkNodesDivAccordion").accordion({
+                  heightStyle: "content"
+              });
 
 
-            $("#accordionModifyPanel").accordion();
+              $("#accordionModifyPanel").accordion();
 
-            $("#accordionRepresentation").accordion({
-                active: function (eee) {
-                    return -1
-                }
-                ,
+              $("#accordionRepresentation").accordion({
+                  active: function (eee) {
+                      return -1
+                  }
+                  ,
 
-                beforeActivate: function (event, ui) {
-                    var panel = ui.newPanel[0].id;
+                  beforeActivate: function (event, ui) {
+                      var panel = ui.newPanel[0].id;
 
-                    h = totalHeight / 2;
-                    $(".accordionLeft .ui-accordion-content").height(h);
-                },
-                activate: function (event, ui) {
+                      h = totalHeight / 2;
+                      $(".accordionLeft .ui-accordion-content").height(h);
+                  },
+                  activate: function (event, ui) {
 
-                    var panel = ui.newPanel[0].id;
-                    $(".accordionLeft .ui-accordion-content").height($("#" + panel).height());
-
-
-                }
+                      var panel = ui.newPanel[0].id;
+                      $(".accordionLeft .ui-accordion-content").height($("#" + panel).height());
 
 
-            });
+                  }
+
+        });*/
 
             $('#visJsSearchGraphButton').on('keypress', function (e) {
                 if (e.which === 13) {
@@ -427,7 +438,7 @@
                 width: Gparams.smallDialogSize.w,
 
                 modal: true,
-                position: { my: "left top", at: "left bottom", of: $("#mainButtons") }
+                position: {my: "left top", at: "left bottom", of: $("#mainButtons")}
 
 
             });
@@ -548,10 +559,13 @@
 
 <div id="mainButtons">
 
-
-    <input type="image" title="display settings" height="20px" onclick="toutlesensController.dispatchAction('displaySettings')"
+    <input type="image" alt="<span id='lang_XX'>search</span>" height="20px" onclick="advancedSearch.showDialog()"
+           id="searchButton2" src="images/advancedSearch2.png"/>
+    <input type="image" title="display settings" height="20px"
+           onclick="toutlesensController.dispatchAction('displaySettings')"
            id="displaySettingButton" src="images/display.png"/></td>
-    &nbsp;<input type="image" title="Display all nodes" height="20px" onclick="toutlesensController.dispatchAction('showAll')"
+    &nbsp;<input type="image" title="Display all nodes" height="20px"
+                 onclick="toutlesensController.dispatchAction('showAll')"
                  id="searchAllButton" src="images/all.png"/></td>
     <input type="image" title="Graph menu" height="20px"
            onclick="toutlesensController.dispatchAction('showGlobalMenu');" id="parametersMenuButton"
@@ -559,6 +573,10 @@
     <input type="image" title="Export to text" height="20px"
            onclick="toutlesensController.dispatchAction('showGraphText')" id="toTextMenuButton" src="images/text.png"
            class="graphDisplayed"/>
+    <input type="image" title="Zoom on node" height="20px" onclick="toutlesensController.dispatchAction('zoomOnNode')" id="zoomOnNodeMenuButton"
+           src="images/zoom.png" class="graphDisplayed"/>
+    <input type="image" title="Fit to page" height="20px" onclick="visjsGraph.fitToPage()" id="fitMenuButton"
+           src="images/fit.png" class="graphDisplayed"/>
     <input type="image" title="Take a snapshot" height="20px" onclick="visjsGraph.saveGraph()" id="snapShotMenuButton"
            src="images/snapshot.png" class="graphDisplayed"/>
 
@@ -581,7 +599,7 @@
                 <li><a href="#nodeDiv"><span id='lang_60'>Node  </span></a></li>
                 <li><a href="#relationDiv"><span id='lang_60'>Relation </span></a></li>
                 <li><a href="#pathDiv"><span id='lang_60'>Pathes </span></a></li>
-                <li><a href="#pivotsDiv"><span id='lang_60'>Pivots </span></a></li>
+                <li><a href="#advancedQueriesDiv"><span id='lang_60'>Advanced </span></a></li>
                 <!--  <li><a href="#requestDiv"><span id='lang_60'>Request </span></a></li>-->
 
 
@@ -720,7 +738,23 @@
 
             </div>
 
-            <div id="pivotsDiv"></div>
+            <div id="advancedQueriesDiv">
+                <div id="advancedQueriesAccordion">
+                    <h3>Pivots nodes</h3>
+                    <div>
+                        <div id="pivotsDiv" style="height:450px"></div>
+                    </div>
+                    <h3>Count by label</h3>
+                    <div>
+                        <div id="countByLabelDiv" style="height:450px"></div>
+                    </div>
+                    <h3>transitive relations</h3>
+                    <div id="transitiveRelationsDiv" style="height:450px"></div>
+                    <h3>Cypher query</h3>
+
+                    <div id="cypherQueryDiv" style="height:450px"></div>
+
+                </div>
             </div>
 
             <!--    <div id="requestDiv">
@@ -736,7 +770,7 @@
             <li><a href="#infosDiv"><span id='lang_60'>Infos  </span></a></li>
             <li><a href="#filterDiv"><span id='lang_60'>Filter </span></a></li>
             <li><a href="#highlightDiv"><span id='lang_60'>Highlight </span></a></li>
-          <!--  <li><a href="#graphOptionsDiv"><span id='lang_60'>Graph </span></a></li>-->
+            <!--  <li><a href="#graphOptionsDiv"><span id='lang_60'>Graph </span></a></li>-->
             <li><a href="#similarsDiv"><span id='lang_60'>Similars </span></a></li>
 
 
@@ -752,14 +786,12 @@
 
         </div>
 
-     <!--   <div id="graphOptionsDiv">
+        <!--   <div id="graphOptionsDiv">
 
-        </div>-->
+           </div>-->
         <div id="similarsDiv">
 
         </div>
-
-
 
 
     </div>
@@ -767,9 +799,8 @@
 </div>
 
 
-
-
-<div id="graphPopup" style="visibility: hidden;position: absolute;background-color: white;margin: 2px;padding: 2px"></div>
+<div id="graphPopup"
+     style="visibility: hidden;position: absolute;background-color: white;margin: 2px;padding: 2px"></div>
 
 <div id="dialog" title="dialog"></div>
 <div id="dialogLarge"></div>
@@ -780,7 +811,7 @@
                src="images/fullScreen.png"/>
 </div>
 
-<div id="filterMovableDiv" >
+<div id="filterMovableDiv">
     object<select id="propertiesSelectionDialog_ObjectTypeInput" onchange="filters.setLabelsOrTypes(this)">
     <option selected="selected">node</option>
     <option>relation</option>

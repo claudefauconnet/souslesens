@@ -6,12 +6,12 @@ source nodes Label<select id="pivotsDialogSourceLabelsSelect" onchange="setAllow
 
 pivot nodes Label<select id="pivotsDialogPivotLabelsSelect"></select>
 
-
-<button onclick='advancedSearch.searchLabelsPivots($("#pivotsDialogSourceLabelsSelect").val(),$("#pivotsDialogPivotLabelsSelect").val(),null,pivotsDialogMessageDiv)' >search</button>
+<br>
+number of pivots<input id="pivotsDialogPivotNodesNumber" value="20" size="3"></input><button onclick='advancedSearch.searchLabelsPivots($("#pivotsDialogSourceLabelsSelect").val(),$("#pivotsDialogPivotLabelsSelect").val(),null,parseInt($("#pivotsDialogPivotNodesNumber").val()),pivotsDialogMessageDiv)' >search</button>
 
 <br>
 filter source node
-<select id="pivotsDialogSourceNodeSelect" onchange='advancedSearch.searchLabelsPivots($("#pivotsDialogSourceLabelsSelect").val(),$("#pivotsDialogPivotLabelsSelect").val(),$(this).val(),pivotsDialogMessageDiv)'></select>
+<select id="pivotsDialogSourceNodeSelect" onchange='advancedSearch.searchLabelsPivots($("#pivotsDialogSourceLabelsSelect").val(),$("#pivotsDialogPivotLabelsSelect").val(),$(this).val(),parseInt($("#pivotsDialogPivotNodesNumber").val()),pivotsDialogMessageDiv)'></select>
 
 
 

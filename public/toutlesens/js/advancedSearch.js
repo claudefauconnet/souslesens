@@ -17,17 +17,21 @@ var advancedSearch = (function () {
         var filterMovableDiv = $("#filterMovableDiv").detach();
         $("#dialog").append(filterMovableDiv);
 
-        var str = " <button id=\"advancedSearchDialog_searchButton\" onclick=\"advancedSearch.searchNodes()\">Search</button>";
-        str += ' <button id="advancedSearchDialog_searchAndGraphButton" onclick="advancedSearch.searchNodes(advancedSearch.nodesQueryToGraph)">search and Graph</button>';
-        str += labelsCxbs;
+        var str = "";
 
+        str += labelsCxbs;
+        str += " <button id=\"advancedSearchDialog_searchButton\" onclick=\"advancedSearch.searchNodes()\">List</button>";
+        str += ' <button id="advancedSearchDialog_searchAndGraphButton" onclick="advancedSearch.searchNodes(advancedSearch.nodesQueryToGraph)">Graph</button>';
 
         $("#filterActionDiv").html(str);
 
         /*  $("#dialog").load("htmlSnippets/advancedSearchMenu.html", function () {*/
         $("#dialog").dialog("option", "title", "Advanced search");
+        $("#dialog").dialog({modal: false});
         $("#dialog").dialog("open");
-        filters.init();
+        var objectNameInput = $("#propertiesSelectionDialog_ObjectNameInput").val();
+        if (!objectNameInput || objectNameInput == "")
+            filters.init();
         /*    toutlesensController.initLabels(advancedSearchDialog_LabelSelect);
             filters.initLabelProperty("",advancedSearchDialog__propsSelect)
             $("#advancedSearchDialog__propsSelect").val(Schema.getNameProperty())
@@ -283,7 +287,7 @@ var advancedSearch = (function () {
     }
 
 
-    self.searchLabelsPivots = function (sourceLabel, pivotLabel, sourceNodeId, messageDivId) {
+    self.searchLabelsPivots = function (sourceLabel, pivotLabel, sourceNodeId, pivotNumber, messageDivId) {
         if (!sourceLabel) {
             return $(messageDivId).html("require source label");
 
@@ -306,112 +310,250 @@ var advancedSearch = (function () {
             pivotLabelStr = ":" + pivotLabel;
 
         }
-        var statement = "match path=((n:" + sourceLabel + ")--(r" + pivotLabelStr + ")--(m:" + sourceLabel + ")) "
-        statement += whereStatement + toutlesensData.standardReturnStatement;
-        console.log(statement);
-        var payload = {match: statement};
 
-        $("#waitImg").css("visibility", "visible");
+        var strWhere = "";
+        var limit = pivotNumber;
+        if (sourceNodeId)
+            strWhere = ' where id(n)=' + sourceNodeId + ' ';
+        if (subGraph) {
+            if (strWhere == "")
+                strWhere = ' where n.subGraph="' + subGraph + '" ';
+            else
+                strWhere += ' and n.subGraph="' + subGraph + '" ';
+        }
+        var statement = "Match path=((n:" + sourceLabel + ")-[r]-(p" + pivotLabelStr + ")--(m:" + sourceLabel + ")) " + strWhere + " RETURN distinct p, count(p) as countR order by countR desc limit " + limit;
+        console.log(statement);
         $.ajax({
             type: "POST",
             url: self.neo4jProxyUrl,
-            data: payload,
+            data: {match: statement},
             dataType: "json",
-            success: function (data, textStatus, jqXHR) {
-
-
-                if (data.length == 0) {
-                    return $(messageDivId).html("no pivot values found");
-                    $("#graphDiv").html("no pivot values found");
+            success: function (pivotIds, textStatus, jqXHR) {
+                var idsWhere = " where ID(m) in["
+                for (var i = 0; i < pivotIds.length; i++) {
+                    if (i > 0)
+                        idsWhere += ","
+                    idsWhere += pivotIds[i].p._id;
                 }
+                idsWhere += "] ";
 
-                toutlesensData.cachedResultArray = data;
-                currentDisplayType = "VISJS-NETWORK";
+                var where2 = "";
+                if (sourceNodeId)
+                    where2 = ' and id(n)=' + sourceNodeId + ' ';
+                if (subGraph)
+                    where2 += ' and n.subGraph="' + subGraph + '" ';
 
-                visjsGraph.setLayoutType("random", null);
-                toutlesensController.displayGraph(data, null, function (err, result) {
+                    var statement = "match path=((n:" + sourceLabel + ")--(m" + pivotLabelStr + "))";//--(m:" + sourceLabel + ")) "
+                    statement += idsWhere + where2+toutlesensData.standardReturnStatement + " limit " + Gparams.maxResultSupported;
+
+                    var payload = {match: statement};
+
+                    $("#waitImg").css("visibility", "visible");
+                    $.ajax({
+                        type: "POST",
+                        url: self.neo4jProxyUrl,
+                        data: payload,
+                        dataType: "json",
+                        success: function (data, textStatus, jqXHR) {
+
+                            if (data.length == 0) {
+                                return $(messageDivId).html("no pivot values found");
+                                $("#graphDiv").html("no pivot values found");
+
+                            }
+                            var distinctSourceNodesArray = [];
+                            var sourceNodesArray = [];
+                            for (var i = 0; i < data.length; i++) {
+                                var name = data[i].nodes[0].properties[Schema.getNameProperty()];
+                                if (distinctSourceNodesArray.indexOf(name) < 0) {
+                                    sourceNodesArray.push({name: name, id: data[i].nodes[0]._id});
+                                    distinctSourceNodesArray.push(name);
+                                }
+
+                            }
+                            sourceNodesArray.sort(function (a, b) {
+                                if (a > b)
+                                    return 1;
+                                if (a < b)
+                                    return -1;
+                                return 0;
+                            });
+                            sourceNodesArray.splice(0, 0, "");
+                            common.fillSelectOptions(pivotsDialogSourceNodeSelect, sourceNodesArray, "name", "id");
+
+                            var setPivotsLayout = function () {
+                                var updatedNodes = [];
+                                var offsetX = 0;
+                                offsetX = $("#graphDiv").width();
+                                var offsetY = 0;
+                                offsetY = $("#graphDiv").height();
+                                var offsetX = (offsetX) - 200;
+                                var offsety = (offsetY / 2) + 20;
+                                var count0 = pivotIds[0].countR;
+                                for (var i = 0; i < Math.min(pivotIds.length, 20); i++) {
+                                    var node = {id: pivotIds[i].p._id, shape: "star", size: 18}
+                                    if (i == 0 || count0 == pivotIds[i].countR) {
+                                        node.size = 20;
+                                    }
+                                    node.x = -offsetX;//+(i*50);
+                                    node.y = -(offsetY / 2) + (i * 60);
+                                    node.label = pivotIds[i].p.properties[Schema.getNameProperty()];//+ " (" + pivotIds[i].countR + " relations)";
+
+                                    updatedNodes.push(node)
+                                }
+
+                                visjsGraph.nodes.update(updatedNodes);
+
+                                var node = pivotIds[(Math.round(pivotNumber / 2)) - 2].p._id
+                                visjsGraph.network.focus(node,
+                                    {
+                                        scale: 0.7,
+                                        animation: {
+                                            duration: 1000,
+                                        }
+                                    });
+                                //  visjsGraph.network.fit()
+                            }
+                            toutlesensData.cachedResultArray = data;
+                            currentDisplayType = "VISJS-NETWORK";
+
+                            visjsGraph.setLayoutType("random", null);
+
+                            var options = {
+                                showNodesLabel: false,
+                                stopPhysicsTimeout: 1000,
+                                onFinishDraw: setPivotsLayout,
+                                // clusterByLabels:["document"]
+                            }
+                            toutlesensController.displayGraph(data, options, function (err, result) {
 
 
-                    var nodes = visjsGraph.nodes;
-                    var pivotNodes = [];
-                    var distinctLabels = []
-                    var distinctSourceNodes = {}
-
-                    for (var key in nodes._data) {
-
-                        var node = nodes._data[key];
-                        if (node.labelNeo == sourceLabel && !distinctSourceNodes[node.label])
-                            distinctSourceNodes[node.label] = node
+                                $("#filtersDiv").html("");
+                                $("#graphMessage").html("");
 
 
-                        if (distinctLabels.indexOf(node.labelNeo) < 0)
-                            distinctLabels.push(node.labelNeo);
+                            });
 
-                        if (node.labelNeo != sourceLabel) {
-                            node.nConnections = visjsGraph.getConnectedNodes(node.id).length
-                            pivotNodes.push(node);
+
+                        },
+                        error: function (err) {
+                            return console.log(err);
+                        }
+                    });
+                }
+            ,
+                error: function (err) {
+                    return console.log(err);
+                }
+            });
+
+
+        /*    var statement = "match path=((n:" + sourceLabel + ")--(r" + pivotLabelStr + ")--(m:" + sourceLabel + ")) "
+            statement += whereStatement + toutlesensData.standardReturnStatement + ", count(r) as countR order by countR desc limit 500";
+            console.log(statement);
+            var payload = {match: statement};
+
+            $("#waitImg").css("visibility", "visible");
+            $.ajax({
+                type: "POST",
+                url: self.neo4jProxyUrl,
+                data: payload,
+                dataType: "json",
+                success: function (data, textStatus, jqXHR) {
+
+
+                    if (data.length == 0) {
+                        return $(messageDivId).html("no pivot values found");
+                        $("#graphDiv").html("no pivot values found");
+                    }
+
+                    toutlesensData.cachedResultArray = data;
+                    currentDisplayType = "VISJS-NETWORK";
+
+                    visjsGraph.setLayoutType("random", null);
+                    toutlesensController.displayGraph(data, null, function (err, result) {
+
+
+                        var nodes = visjsGraph.nodes;
+                        var pivotNodes = [];
+                        var distinctLabels = []
+                        var distinctSourceNodes = {}
+
+                        for (var key in nodes._data) {
+
+                            var node = nodes._data[key];
+                            if (node.labelNeo == sourceLabel && !distinctSourceNodes[node.label])
+                                distinctSourceNodes[node.label] = node
+
+
+                            if (distinctLabels.indexOf(node.labelNeo) < 0)
+                                distinctLabels.push(node.labelNeo);
+
+                            if (node.labelNeo != sourceLabel) {
+                                node.nConnections = visjsGraph.getConnectedNodes(node.id).length
+                                pivotNodes.push(node);
+
+
+                            }
 
 
                         }
 
-
-                    }
-
-                    pivotNodes.sort(function (a, b) {
-                        if (a.nConnections > b.nConnections)
-                            return -1;
-                        if (b.nConnections > a.nConnections)
-                            return 1;
-                        return 0
+                        pivotNodes.sort(function (a, b) {
+                            if (a.nConnections > b.nConnections)
+                                return -1;
+                            if (b.nConnections > a.nConnections)
+                                return 1;
+                            return 0
 
 
-                    });
+                        });
 
-                    //outline best pivots
-                    var distinctPivotBetterNodes = []
-                    for (var i = 0; i < pivotNodes.length; i++) {
-                        if (i > (pivotNodes.length / 3))
-                            break;
-                        distinctPivotBetterNodes.push({id: pivotNodes[i].id, shape: "triangle"})
-                    }
-                    visjsGraph.updateNodes(distinctPivotBetterNodes)
-                    if (sourceNodeId) {
-                        visjsGraph.updateNodes({id: sourceNodeId, shape: "star", size: 50})
-                    }
+                        //outline best pivots
+                        var distinctPivotBetterNodes = []
+                        for (var i = 0; i < pivotNodes.length; i++) {
+                            if (i > (pivotNodes.length / 3))
+                                break;
+                            distinctPivotBetterNodes.push({id: pivotNodes[i].id, shape: "triangle"})
+                        }
+                        visjsGraph.updateNodes(distinctPivotBetterNodes)
+                        if (sourceNodeId) {
+                            visjsGraph.updateNodes({id: sourceNodeId, shape: "star", size: 50})
+                        }
 
 
-                    // var sss = pivotNodes[0];
-                    visjsGraph.scaleNodes(nodes, "nConnections");
+                        // var sss = pivotNodes[0];
+                        visjsGraph.scaleNodes(nodes, "nConnections");
 
-                    visjsGraph.drawLegend(distinctLabels);
-                    toutlesensController.setRightPanelAppearance();
+                        visjsGraph.drawLegend(distinctLabels);
+                        toutlesensController.setRightPanelAppearance();
 
-                    var distinctSourceNodesArray = [];
-                    for (var key in distinctSourceNodes) {
-                        distinctSourceNodesArray.push(distinctSourceNodes[key])
-                    }
-                    distinctSourceNodesArray.sort(function (a, b) {
-                        if (a.label > b.label)
-                            return 1;
-                        if (a.label > b.label)
-                            return -1;
-                        return 0
+                        var distinctSourceNodesArray = [];
+                        for (var key in distinctSourceNodes) {
+                            distinctSourceNodesArray.push(distinctSourceNodes[key])
+                        }
+                        distinctSourceNodesArray.sort(function (a, b) {
+                            if (a.label > b.label)
+                                return 1;
+                            if (a.label > b.label)
+                                return -1;
+                            return 0
+                        })
+
+                        distinctSourceNodesArray.splice(0, 0, "");
+                        common.fillSelectOptions(pivotsDialogSourceNodeSelect, distinctSourceNodesArray, "label", "id");
+                        $("#waitImg").css("visibility", "hidden");
+
+
                     })
 
-                    distinctSourceNodesArray.splice(0, 0, "");
-                    common.fillSelectOptions(pivotsDialogSourceNodeSelect, distinctSourceNodesArray, "label", "id");
+
+                },
+                error: function (err) {
+                    console.log(err.responseText);
                     $("#waitImg").css("visibility", "hidden");
-
-
-                })
-
-
-            },
-            error: function (err) {
-                console.log(err.responseText);
-                $("#waitImg").css("visibility", "hidden");
-            }
-        })
+                }
+            })*/
 
     }
     /**
@@ -454,64 +596,65 @@ var advancedSearch = (function () {
 
 
     }
-    /*
+    self.transitiveRelationsAction = function (action) {
+        if (action == "add") {
+            var label = $("#transitiveRelations_labelsSelect").val();
+            $('#transitiveRelations_selectedLabels').append($('<option>', {
+                value: label,
+                text: label
 
+            }));
 
-        self.buildCypherQuery = function (searchObj) {
+            $("#transitiveRelations_labelsSelect option").remove();
+            var getPermittedLabels = Schema.getPermittedLabels(label);
+            getPermittedLabels.splice(0, 0, "");
+            for (var i = 0; i < getPermittedLabels.length; i++) {
+                var label2 = getPermittedLabels[i];//.replace("-","");
+                if (label2 != label)
 
-            var maxDistance = searchObj.maxDistance;
-            var str = ""
+                    $('#transitiveRelations_labelsSelect').append($('<option>', {
+                        value: label2,
+                        text: label2
 
-            var matchStr = "(n"
-            if (searchObj.graphPathSourceNode.label)
-
-                matchStr += ":" + searchObj.graphPathSourceNode.label;
-            matchStr += ")-[r" + "*.."
-                + maxDistance
-                + "]-(m";
-            if (searchObj.graphPathTargetNode && searchObj.graphPathTargetNode.label)
-                matchStr += ":" + searchObj.graphPathTargetNode.label;
-            matchStr += ")";
-
-            var whereStr = ""
-            if (searchObj.graphPathSourceNode.property)
-                self.getWhereProperty(searchObj.graphPathSourceNode.property, "n");
-
-            if (searchObj.graphPathTargetNode && searchObj.graphPathTargetNode.property) {
-                if (whereStr.length > 0)
-                    whereStr += "  and ";
-                self.getWhereProperty(searchObj.graphPathTargetNode.property, "m");
+                    }));
             }
-            if (searchObj.graphPathSourceNode.nodeId) {
-                if (whereStr.length > 0)
-                    whereStr += "  and ";
-                whereStr += "ID(n)=" + searchObj.graphPathSourceNode.nodeId;
-            }
-
-            if (searchObj.graphPathTargetNode && searchObj.graphPathTargetNode.nodeId) {
-                if (whereStr.length > 0)
-                    whereStr += "  and ";
-                whereStr += "ID(m)=" + searchObj.graphPathTargetNode.nodeId;
-            }
-            if (toutlesensData.queryExcludeNodeFilters)
-                whereStr += toutlesensData.queryExcludeNodeFilters;
-
-
-            var query = "Match path=" + matchStr;
-            if (whereStr.length > 0)
-                query += " WHERE " + whereStr;
-
-
-
-
-            query += " RETURN  " + returnStr;
-
-            query += " LIMIT " + limit;
-            console.log(query);
-
-            self.executeCypherAndDisplayGraph(query, searchObj);
         }
-    */
+
+        else if (action == "removeOption") {
+
+            value = $("#transitiveRelations_selectedLabels").val();
+            $('#transitiveRelations_selectedLabels').find('option[value="' + value + '"]').remove();
+
+
+        }
+        else if (action == "reset") {
+            $("#transitiveRelations_selectedLabels option").remove();
+            toutlesensController.initLabels(transitiveRelations_labelsSelect, true);
+
+
+        }
+        else if (action == "draw") {
+            var match = "MATCH path=";
+            var size = $('#transitiveRelations_selectedLabels option').size();
+            $("#transitiveRelations_selectedLabels option").each(function (index, value) {
+                var label = this.value;
+                if (index == 0)
+                    match += "(n:" + label + ")-[r]";
+                else if (index >= (size - 1))
+                    match += "->(m:" + label + ")";
+                else
+                    match += "->(:" + label + ")-[]";
+
+            })
+            toutlesensData.matchStatement = match;
+
+            toutlesensController.generateGraph(null);
+
+
+        }
+
+
+    }
 
     return self;
 
