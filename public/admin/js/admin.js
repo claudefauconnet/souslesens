@@ -108,7 +108,8 @@ function callMongo(urlSuffix, payload, callback) {
 
 
 function callExportToNeo(type, data, callback) {
-    $("#message").val("");
+    $("#message").val("Processing Import ...");
+    $("#waitImg").css("visibility","visible");
     var subGraph = $("#subGraphSelect").val();
     var db = $("#dbSelect").val();
     var importSourceType = $("#importSourceType").val();
@@ -134,12 +135,13 @@ function callExportToNeo(type, data, callback) {
             var xx = data;
             $("#message").html(data.result);
             $("#message").css("color", "green");
+            $("#waitImg").css("visibility","hidden");
             if (callback)
                 callback(null, data);
         },
         error: function (xhr, err, msg) {
 
-
+            $("#waitImg").css("visibility","hidden");
             console.log(xhr);
             console.log(err);
             console.log(msg);
@@ -159,6 +161,8 @@ function callExportToNeo(type, data, callback) {
 
 }
 function callNeoMatch(match, url, callback) {
+    $("#message").val("Processing  ...");
+    $("#waitImg").css("visibility","visible");
     payload = {
         match: match
     };
@@ -172,9 +176,10 @@ function callNeoMatch(match, url, callback) {
         dataType: "json",
         success: function (data, textStatus, jqXHR) {
             callback(data);
+            $("#waitImg").css("visibility","hidden");
         },
         error: function (xhr, err, msg) {
-
+            $("#waitImg").css("visibility","hidden");
             console.log(xhr);
             console.log(err);
             console.log(msg);
@@ -415,7 +420,10 @@ function exportNeoNodes(execute, save) {
         saveRequest(JSON.stringify(data).replace(/,/, ",\n"));
     if (execute) {
         $("#exportResultDiv").html("");
-        callExportToNeo("node", data, loadLabels);
+        callExportToNeo("node", data, function(err, result){
+            loadLabels();
+            admin.drawVisjsGraph();
+        });
 
     }
 
@@ -496,7 +504,9 @@ function exportNeoLinks(execute, save) {
         saveRequest(JSON.stringify(data).replace(/,/, ",\n"));
     if (execute) {
         $("#exportResultDiv").html("");
-        callExportToNeo("relation", data);
+        callExportToNeo("relation", data,function(err, result){
+            admin.drawVisjsGraph();
+        });
 
     }
 
@@ -761,7 +771,7 @@ function loadRequests() {
                  obj.request=JSON.parse( obj.request);
                  currentRequests.push(obj);
                  }*/
-             //   fillSelectOptions(requests, currentRequests, "name", "name");
+             //   common.common.fillSelectOptions(requests, currentRequests, "name", "name");
                 setRequestSubGraphFilterOptions();
             },
 
@@ -798,7 +808,7 @@ function loadRequests() {
                 }
             }
 
-            fillSelectOptions(requests, currentRequests, "name", "name");
+            common.common.fillSelectOptions(requests, currentRequests, "name", "name");
             setRequestSubGraphFilterOptions();
 
 
@@ -833,7 +843,7 @@ function filterRequests(select) {
             filteredRequests.push(currentRequests[i]);
         }
     }
-    fillSelectOptions(requests, filteredRequests, "name", "name");
+    common.fillSelectOptions(requests, filteredRequests, "name", "name");
 }
 
 function loadRequest(requestName, changeTab) {
@@ -867,11 +877,11 @@ function loadRequest(requestName, changeTab) {
 
             }
             if (changeTab && requestName.startsWith("Node"))
-                $("#tabs-center").tabs({
+                $("#accordionPanel").tabs({
                     active: 1
                 });
             else if (changeTab && requestName.startsWith("Rel"))
-                $("#tabs-center").tabs({
+                $("#accordionPanel").tabs({
                     active: 2
                 });
 
@@ -881,7 +891,7 @@ function loadRequest(requestName, changeTab) {
 }
 
 
-function eraseNeoSubgraph(subGraph) {
+function deleteNeoSubgraph(subGraph) {
     if (!subGraph)
         subGraph = $("#subGraphSelect").val();
     var ok = confirm("Voulez vous vraiment effacer le subGraph " + subGraph);
@@ -904,6 +914,7 @@ function eraseNeoSubgraph(subGraph) {
                 .end()
 
         });
+        Schema.delete(subGraph);
     });
 }
 
@@ -1069,7 +1080,8 @@ function onSubGraphSelect(select, showgraph) {
     loadLabels($('#subGraphSelect').val());
     var subGraph = $("#subGraphSelect").val();
     if (showgraph) {
-        drawNeoModel(subGraph);
+        admin.drawVisjsGraph()
+     //   drawNeoModel(subGraph);
         $("#tabs-center").tabs({
             active: 3
         });

@@ -6,30 +6,23 @@ self.labels=[];
 self.drawVisjsGraph= function (){
 
         subGraph = $("#subGraphSelect").val();
+        if(subGraph==""){
+            return alert("select a Neo4j subGraph first")
+        }
         Schema.createSchema(function(err, result){
-            admin.setNeoKey(neoSourceLabel,neoSourceKey,mongoSourceField);
-            admin.setNeoKey(neoTargetLabel,neoTargetKey,mongoTargetField);
+            Schema.save(subGraph);
+            self.labels=Schema.getAllLabelNames().sort();
+            self.labels.splice(0,0,"");
+            common.fillSelectOptionsWithStringArray(neoSourceLabel,self.labels);
+            common.fillSelectOptionsWithStringArray(neoTargetLabel,self.labels);
 
-            // Schema.load(subGraph, function(err, result) {
-            dataModel.getDBstats();
-            var data = connectors.toutlesensSchemaToVisjs(Schema.schema);
+            dataModel.getDBstats(subGraph,function(err,result){
+                var data = connectors.toutlesensSchemaToVisjs(Schema.schema);
 
-            visjsGraph.draw("graphDiv", data,{scale:2});
-         /*   setTimeout(function(){
+                visjsGraph.draw("graphDiv", data,{scale:2});
+            });
 
-                var options = {
-                    position: {x:positionx,y:positiony},
-                    scale: scale,
-                    offset: {x:offsetx,y:offsety},
-                    animation: {
-                        duration: duration,
-                        easingFunction: easingFunction
-                    }
-                };
-                statusUpdateSpan.innerHTML = 'Doing Animation.';
-                finishMessage = 'Animation finished.';
-                visjsGraph.network.moveTo(options);
-            },1000)*/
+
 
         });
     }
@@ -52,8 +45,11 @@ self.drawVisjsGraph= function (){
             loadSubgraphs();
         })
 
-        $("#importExportGraphDiv").load("htmlSnippets/importExportGraphDialog.html", function () {
+        $("#importGraphDbDiv").load("htmlSnippets/importGraphDbDialog.html", function () {
 
+        })
+        $("#exportGraphDbDiv").load("htmlSnippets/exportGraphDbDialog.html", function () {
+            loadSubgraphs();
         })
 
     }

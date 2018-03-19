@@ -123,6 +123,32 @@ var Schema = (function () {
                 }
             })
         }
+        self.delete = function (confirmation) {
+            if (confirmation && confirm("delete  this schema ?")) {
+                var payload = {
+                    delete: 1,
+                    path: serverDir + subGraph + ".json",
+
+                }
+                $.ajax(self.serverRootUrl + '/jsonFileStorage', {
+                    data: payload,
+                    dataType: "json",
+                    type: 'POST',
+
+
+                    error: function (error, ajaxOptions, thrownError) {
+                        return console.log("error while deleting file :" + error);
+
+                    },
+                    success: function (result) {
+                        return console.log("file" + serverDir + subGraph + ".json  : DELETED");
+
+
+                    }
+                })
+            }
+
+        }
 
         self.resetSchema = function () {
             if (confirm("delete  this schema and recreate one from graph database ?")) {
@@ -384,7 +410,7 @@ var Schema = (function () {
         }
 
 
-        self.getPermittedLabels = function (startLabel, inverseRelAlso) {
+        self.getPermittedLabels = function (startLabel, inverseRelAlso,withoutInverseSign) {
             labels = [];
             var relations = self.schema.relations;
             for (var key in relations) {
@@ -392,12 +418,17 @@ var Schema = (function () {
 
 
                 if (relation.startLabel == startLabel)
-                    if (labels.indexOf(relation.startLabel) < 0)
+                    if (labels.indexOf(relation.endLabel) < 0)
                         labels.push(relation.endLabel);
 
                 if (inverseRelAlso && relation.endLabel == startLabel)
-                    if (labels.indexOf(relation.startLabel) < 0)
-                        labels.push("-" + relation.startLabel);
+                    if (labels.indexOf(relation.startLabel) < 0){
+                        if(withoutInverseSign)
+                            labels.push(relation.startLabel);
+                        else
+                            labels.push("-" + relation.startLabel);
+                    }
+
             }
             return labels;
         }

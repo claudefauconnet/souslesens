@@ -1,0 +1,40 @@
+<div id="exportCypherDivTab">
+
+        <tr>
+            <td>Export</td>
+            <td>
+                sourceSubGraph
+                <select class='exportNeo' id="subGraphExportSelect"
+                        onchange="onSubGraphExportSelect()"></select>
+               <!-- targetSubGraph <input class='exportNeo' id="targetSubGraph">-->
+                limit<input class='exportNeo'  id="limit" value="100000">
+
+
+                <button onclick="downloadNodeJson('cypher',showResult)">download
+                    Nodes
+                </button>
+                <button onclick="downloadRelJson('cypher',showResult)">download
+                    Rels
+                </button>
+            </td>
+        </tr>
+
+    </table>
+
+
+    <br>
+    <table>
+        <tr>
+            <td>
+
+                <div id="labelsDiv"></div>
+            </td>
+
+        </tr>
+
+
+    </table>
+
+
+
+</div>

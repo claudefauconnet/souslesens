@@ -283,7 +283,7 @@ var toutlesensController = (function () {
             toutlesensData.queryRelTypeFilters = ":" + type;
             currentObject.id = null;
             currentDisplayType = "VISJS-NETWORK";
-            self.generateGraph();
+            self.generateGraph(null,{hideNodesWithoutRelations:true});
         }
 
 
@@ -457,6 +457,18 @@ var toutlesensController = (function () {
 
         if (action == "nodeInfos") {
             if (id) {
+
+
+                if(currentActionObj.graphType=="schema"){
+                    var str ="<a href='javascript:toutlesensController.dispatchAction(\"setAsGraphStartNode\"'>StartNode</a>"
+                    str +="&nbsp;<a href='javascript:toutlesensController.dispatchAction(\"setAsDraphEndNode\"'>EndNode</a>"
+                    $("#graphPopup").html(str);
+                    $("#nodeInfoMenuDiv").html(str);
+
+
+
+                    return;
+                }
                 toutlesensData.getNodeInfos(id, function (obj) {
                     var $currentObj = currentObject;
                     if (self.hasRightPanel) {
@@ -721,7 +733,7 @@ var toutlesensController = (function () {
             //  visjsGraph.displayRelationNames({show:false})
             Gparams.showRelationNames = false;
 
-            self.generateGraph(null, {applyFilters: true,hideNodesWithoutRelations:true});
+            self.generateGraph(null, {applyFilters: true,hideNodesWithoutRelations:false});
         }
 
         else if (action == "zoomOnNode") {
@@ -740,7 +752,9 @@ var toutlesensController = (function () {
 
         }
         else if (action == "drawSchema") {
+            currentActionObj.graphType="schema";
             $("#dialogLarge").dialog("close");
+            dataModel.getDBstats();
             var data = connectors.toutlesensSchemaToVisjs(Schema.schema);
             self.setRightPanelAppearance(false);
             visjsGraph.draw("graphDiv", data);
@@ -763,6 +777,11 @@ var toutlesensController = (function () {
                 $("#dialog").dialog("open");
             });
         }
+        else if (action == "searchCypher") {
+           toutlesensData.matchStatement="MATCH path="+$("#cypherDialog_matchInput").val();
+           self.generateGraph();
+        }
+
 
 
     }
@@ -820,6 +839,7 @@ var toutlesensController = (function () {
     self.afterGraphInit = function () {
 
         dataModel.getDBstats(subGraph,function (err,result){
+            currentActionObj={graphType:"schema"};
             var data = connectors.toutlesensSchemaToVisjs(Schema.schema);
             self.setRightPanelAppearance(false);
             visjsGraph.draw("graphDiv", data);
@@ -886,6 +906,10 @@ var toutlesensController = (function () {
             toutlesensController.initLabels(transitiveRelations_labelsSelect,true);
 
         });
+        $("#cypherQueryDiv").load("htmlSnippets/cypherDialog.html", function () {
+
+
+        });
 
 
 
@@ -897,7 +921,7 @@ var toutlesensController = (function () {
         if (infoGenericDisplay.userRole != "write")
             $(".canModify").css("visibility", "hidden");
 
-
+        filters.setLabelsOrTypes("node");
     }
 
     /**

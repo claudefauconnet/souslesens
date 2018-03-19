@@ -39,12 +39,14 @@
 
 
     </div>
-    <div id="schemaConfig_editDiv" style="visibility: hidden;margin:20px">
 
+    <div id="schemaConfig_editDiv" style="visibility: hidden;margin:20px">
+        <select id="schemaConfig_colorPalette"></select>
         <button onclick="Schema.save(subGraph,editor.get())">Save Schema</button>
         <div id="jsoneditor" style="height:600px"></div>
 
         <script>
+            common.setColorPaletteSelect(schemaConfig_colorPalette);
             var container = document.getElementById("jsoneditor");
             var options = {
                 mode: 'code'

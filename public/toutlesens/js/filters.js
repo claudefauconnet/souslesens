@@ -75,8 +75,9 @@ var filters = (function () {
         }
 
 
-            var select = document.getElementById("propertiesSelectionDialog_propsSelect")
-        common.fillSelectOptionsWithStringArray(select, self.currentLabels);
+        var select = document.getElementById("propertiesSelectionDialog_propsSelect")
+        if (select)
+            common.fillSelectOptionsWithStringArray(select, self.currentLabels);
 
 
         filters.initLabelProperty("", propertiesSelectionDialog_propsSelect);
@@ -91,8 +92,12 @@ var filters = (function () {
      * @param select
      */
 
-    self.setLabelsOrTypes = function (select) {
-        var type = $(select).val();
+    self.setLabelsOrTypes = function (type) {
+        // var type = $(select).val();
+        if (self.currentLabels.length == 0) {
+            self.currentLabels = Schema.getAllLabelNames();
+            self.currentLabels.splice(0, 0, "");
+        }
         if (type == "node")
             common.fillSelectOptionsWithStringArray(propertiesSelectionDialog_ObjectNameInput, self.currentLabels);
         else if (type == "relation")

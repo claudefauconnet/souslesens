@@ -96,11 +96,10 @@
         }
 
         button {
-            color: white;
+            color: #261803;
             font-size: 12px;
             font-family: verdana, sans-serif;
-            background-color: #e78f08;
-            background-color: #ca842e;
+          //  background-color: #ca842e;
             margin: 4px;
             padding: 4px;
         }
@@ -123,7 +122,7 @@
         .help {
             font-style: italic;
             font-stretch: semi-condensed;
-            color: olive;
+         //   color: olive;
         }
 
         #tabs-left input {
@@ -174,14 +173,15 @@
         }
 
         .source {
-            background-color: tan;
+         //   background-color: tan;
+            background-color: #CCCCCC;
             opacity: 0.9;
             color: black;
 
         }
 
         .neoTarget {
-            background-color: #7f9f7f;
+          //  background-color: #7f9f7f;
             opacity: 0.9;
             color: black;
 
@@ -211,7 +211,7 @@
 
     <script>
         processDataBeforeDrawingCallback = null;
-       var  messageDivId=null ;
+       var  messageDivId="message" ;
         $(function () {
             var url = window.location.href;
             var p = url.indexOf('/admin');
@@ -267,7 +267,16 @@
             });
 
 
-            $("#accordion").accordion().width(accordionWidth-50);
+            $("#accordion").accordion(
+                {
+                    activate: function (event, ui) {
+
+                        var index = ui.newPanel.index();
+                        if (index == 7)//savedRequests
+                            loadRequests();
+                    }
+                }
+            ).width(accordionWidth-50 );
 
 
             var queryParams = common.getQueryParams(document.location.search);
@@ -376,7 +385,9 @@
     </div>
 
     <div id="graphPanel" style="position: absolute">
+        <img id="waitImg" src="images/waitAnimated.gif" width="20px" style="visibility: hidden;">
         <div id="message"></div>
+
         <button onclick="admin.drawVisjsGraph()">draw schema</button>
         </button>
         <div id="graphDiv" style="width:300px;height: 400px">
@@ -412,14 +423,20 @@
             <div>
                 <div id="importRelationsDiv" style="height:450px"></div>
             </div>
-            <h3>import-Export Neo</h3>
-            <div>
-                <div id="importExportGraphDiv" style="height:450px"></div>
-            </div>
             <h3>saved Queries</h3>
             <div>
                 <div id="savedQueriesDiv" style="height:450px"></div>
             </div>
+            <h3>Export Neo database</h3>
+            <div>
+                <div id="exportGraphDbDiv" style="height:450px"></div>
+            </div>
+            <h3>Import Neo database</h3>
+            <div>
+                <div id="importGraphDbDiv" style="height:450px"></div>
+            </div>
+
+
 
 
         </div>

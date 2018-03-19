@@ -6,20 +6,13 @@ var advancedSearch = (function () {
 
     self.showDialog = function () {
 
-        var labelsCxbs = "<br><b>Show nodes with label </b><ul>";
-        var labels = Schema.getAllLabelNames()
-        for (var i = 0; i < labels.length; i++) {
-            labelsCxbs += "<li><input type='checkbox' checked='checked' name='advancedSearchDialog_LabelsCbx' value='" + labels[i] + "'>" + labels[i] + "</li>"
-        }
-        labelsCxbs += "<ul>";
-
 
         var filterMovableDiv = $("#filterMovableDiv").detach();
-        $("#dialog").append(filterMovableDiv);
+        $("#dialog").html(filterMovableDiv);
 
         var str = "";
 
-        str += labelsCxbs;
+        //str += labelsCxbs;
         str += " <button id=\"advancedSearchDialog_searchButton\" onclick=\"advancedSearch.searchNodes()\">List</button>";
         str += ' <button id="advancedSearchDialog_searchAndGraphButton" onclick="advancedSearch.searchNodes(advancedSearch.nodesQueryToGraph)">Graph</button>';
 
@@ -30,13 +23,30 @@ var advancedSearch = (function () {
         $("#dialog").dialog({modal: false});
         $("#dialog").dialog("open");
         var objectNameInput = $("#propertiesSelectionDialog_ObjectNameInput").val();
-        if (!objectNameInput || objectNameInput == "")
+        if (!objectNameInput || objectNameInput == "") {
             filters.init();
+        }
+        $("#filterOptionsDiv").html("");
         /*    toutlesensController.initLabels(advancedSearchDialog_LabelSelect);
             filters.initLabelProperty("",advancedSearchDialog__propsSelect)
             $("#advancedSearchDialog__propsSelect").val(Schema.getNameProperty())
 
         })*/
+    }
+
+    self.onChangeObjectName = function (value) {
+        self.setPermittedLabelsCbxs(value);
+        filters.initProperty(null, value, propertiesSelectionDialog_propsSelect)
+    }
+    self.setPermittedLabelsCbxs = function (label) {
+        var labelsCxbs = "<br><b>Show nodes with label </b><ul>";
+        var labels = Schema.getPermittedLabels(label,true,true);
+        for (var i = 0; i < labels.length; i++) {
+            var label2=labels[i];//.replace(/^-/,"");
+            labelsCxbs += "<li><input type='checkbox' checked='checked' name='advancedSearchDialog_LabelsCbx' value='" + label2 + "'>" + label2 + "</li>"
+        }
+        labelsCxbs += "<ul>";
+        $("#filterOptionsDiv").html(labelsCxbs);
     }
     self.searchNodes = function (callback) {
 
@@ -343,109 +353,109 @@ var advancedSearch = (function () {
                 if (subGraph)
                     where2 += ' and n.subGraph="' + subGraph + '" ';
 
-                    var statement = "match path=((n:" + sourceLabel + ")--(m" + pivotLabelStr + "))";//--(m:" + sourceLabel + ")) "
-                    statement += idsWhere + where2+toutlesensData.standardReturnStatement + " limit " + Gparams.maxResultSupported;
+                var statement = "match path=((n:" + sourceLabel + ")--(m" + pivotLabelStr + "))";//--(m:" + sourceLabel + ")) "
+                statement += idsWhere + where2 + toutlesensData.standardReturnStatement + " limit " + Gparams.maxResultSupported;
 
-                    var payload = {match: statement};
+                var payload = {match: statement};
 
-                    $("#waitImg").css("visibility", "visible");
-                    $.ajax({
-                        type: "POST",
-                        url: self.neo4jProxyUrl,
-                        data: payload,
-                        dataType: "json",
-                        success: function (data, textStatus, jqXHR) {
+                $("#waitImg").css("visibility", "visible");
+                $.ajax({
+                    type: "POST",
+                    url: self.neo4jProxyUrl,
+                    data: payload,
+                    dataType: "json",
+                    success: function (data, textStatus, jqXHR) {
 
-                            if (data.length == 0) {
-                                return $(messageDivId).html("no pivot values found");
-                                $("#graphDiv").html("no pivot values found");
+                        if (data.length == 0) {
+                            return $(messageDivId).html("no pivot values found");
+                            $("#graphDiv").html("no pivot values found");
 
-                            }
-                            var distinctSourceNodesArray = [];
-                            var sourceNodesArray = [];
-                            for (var i = 0; i < data.length; i++) {
-                                var name = data[i].nodes[0].properties[Schema.getNameProperty()];
-                                if (distinctSourceNodesArray.indexOf(name) < 0) {
-                                    sourceNodesArray.push({name: name, id: data[i].nodes[0]._id});
-                                    distinctSourceNodesArray.push(name);
-                                }
-
-                            }
-                            sourceNodesArray.sort(function (a, b) {
-                                if (a > b)
-                                    return 1;
-                                if (a < b)
-                                    return -1;
-                                return 0;
-                            });
-                            sourceNodesArray.splice(0, 0, "");
-                            common.fillSelectOptions(pivotsDialogSourceNodeSelect, sourceNodesArray, "name", "id");
-
-                            var setPivotsLayout = function () {
-                                var updatedNodes = [];
-                                var offsetX = 0;
-                                offsetX = $("#graphDiv").width();
-                                var offsetY = 0;
-                                offsetY = $("#graphDiv").height();
-                                var offsetX = (offsetX) - 200;
-                                var offsety = (offsetY / 2) + 20;
-                                var count0 = pivotIds[0].countR;
-                                for (var i = 0; i < Math.min(pivotIds.length, 20); i++) {
-                                    var node = {id: pivotIds[i].p._id, shape: "star", size: 18}
-                                    if (i == 0 || count0 == pivotIds[i].countR) {
-                                        node.size = 20;
-                                    }
-                                    node.x = -offsetX;//+(i*50);
-                                    node.y = -(offsetY / 2) + (i * 60);
-                                    node.label = pivotIds[i].p.properties[Schema.getNameProperty()];//+ " (" + pivotIds[i].countR + " relations)";
-
-                                    updatedNodes.push(node)
-                                }
-
-                                visjsGraph.nodes.update(updatedNodes);
-
-                                var node = pivotIds[(Math.round(pivotNumber / 2)) - 2].p._id
-                                visjsGraph.network.focus(node,
-                                    {
-                                        scale: 0.7,
-                                        animation: {
-                                            duration: 1000,
-                                        }
-                                    });
-                                //  visjsGraph.network.fit()
-                            }
-                            toutlesensData.cachedResultArray = data;
-                            currentDisplayType = "VISJS-NETWORK";
-
-                            visjsGraph.setLayoutType("random", null);
-
-                            var options = {
-                                showNodesLabel: false,
-                                stopPhysicsTimeout: 1000,
-                                onFinishDraw: setPivotsLayout,
-                                // clusterByLabels:["document"]
-                            }
-                            toutlesensController.displayGraph(data, options, function (err, result) {
-
-
-                                $("#filtersDiv").html("");
-                                $("#graphMessage").html("");
-
-
-                            });
-
-
-                        },
-                        error: function (err) {
-                            return console.log(err);
                         }
-                    });
-                }
+                        var distinctSourceNodesArray = [];
+                        var sourceNodesArray = [];
+                        for (var i = 0; i < data.length; i++) {
+                            var name = data[i].nodes[0].properties[Schema.getNameProperty()];
+                            if (distinctSourceNodesArray.indexOf(name) < 0) {
+                                sourceNodesArray.push({name: name, id: data[i].nodes[0]._id});
+                                distinctSourceNodesArray.push(name);
+                            }
+
+                        }
+                        sourceNodesArray.sort(function (a, b) {
+                            if (a > b)
+                                return 1;
+                            if (a < b)
+                                return -1;
+                            return 0;
+                        });
+                        sourceNodesArray.splice(0, 0, "");
+                        common.fillSelectOptions(pivotsDialogSourceNodeSelect, sourceNodesArray, "name", "id");
+
+                        var setPivotsLayout = function () {
+                            var updatedNodes = [];
+                            var offsetX = 0;
+                            offsetX = $("#graphDiv").width();
+                            var offsetY = 0;
+                            offsetY = $("#graphDiv").height();
+                            var offsetX = (offsetX) - 200;
+                            var offsety = (offsetY / 2) + 20;
+                            var count0 = pivotIds[0].countR;
+                            for (var i = 0; i < Math.min(pivotIds.length, 20); i++) {
+                                var node = {id: pivotIds[i].p._id, shape: "star", size: 18}
+                                if (i == 0 || count0 == pivotIds[i].countR) {
+                                    node.size = 20;
+                                }
+                                node.x = -offsetX;//+(i*50);
+                                node.y = -(offsetY / 2) + (i * 60);
+                                node.label = pivotIds[i].p.properties[Schema.getNameProperty()];//+ " (" + pivotIds[i].countR + " relations)";
+
+                                updatedNodes.push(node)
+                            }
+
+                            visjsGraph.nodes.update(updatedNodes);
+
+                            var node = pivotIds[(Math.round(pivotNumber / 2)) - 2].p._id
+                            visjsGraph.network.focus(node,
+                                {
+                                    scale: 0.7,
+                                    animation: {
+                                        duration: 1000,
+                                    }
+                                });
+                            //  visjsGraph.network.fit()
+                        }
+                        toutlesensData.cachedResultArray = data;
+                        currentDisplayType = "VISJS-NETWORK";
+
+                        visjsGraph.setLayoutType("random", null);
+
+                        var options = {
+                            showNodesLabel: false,
+                            stopPhysicsTimeout: 1000,
+                            onFinishDraw: setPivotsLayout,
+                            // clusterByLabels:["document"]
+                        }
+                        toutlesensController.displayGraph(data, options, function (err, result) {
+
+
+                            $("#filtersDiv").html("");
+                            $("#graphMessage").html("");
+
+
+                        });
+
+
+                    },
+                    error: function (err) {
+                        return console.log(err);
+                    }
+                });
+            }
             ,
-                error: function (err) {
-                    return console.log(err);
-                }
-            });
+            error: function (err) {
+                return console.log(err);
+            }
+        });
 
 
         /*    var statement = "match path=((n:" + sourceLabel + ")--(r" + pivotLabelStr + ")--(m:" + sourceLabel + ")) "

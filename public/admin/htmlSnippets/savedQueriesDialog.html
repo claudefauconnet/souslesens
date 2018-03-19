@@ -1,0 +1,46 @@
+<div id="savedQueries">
+
+    <table>
+
+
+        <tr valign="top">
+            <td align="left">
+                <br>Filter subgraph <select id="requestsFilter" onchange="filterRequests(this)">
+      <option>----------</option>
+            </select>
+                <br>
+                Saved Requests <select size="15" id="requests" onchange="loadRequest(null,false)"
+                        ondblclick="loadRequest(null,true)">
+                    <option>----------</option>
+                </select>
+
+
+                <br>
+                <button onclick="deleteRequest()">Delete request</button>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <button onclick="initBatchNeoRefresh('Nodes');">Refresh
+                    Neo4j Nodes
+                </button>
+                <button onclick="initBatchNeoRefresh('Rels');">Refresh
+                    Neo4j Relations
+                </button>
+                <br>
+
+                <div id="exportNamesDiv"></div>
+
+
+                <button id="refreshNeoButton" onclick="refreshNeo()">Start Refresh</button>
+            </td>
+
+
+        </tr>
+
+
+    </table>
+    <br>
+    <div id="exportResultDiv"></div>
+
+</div>

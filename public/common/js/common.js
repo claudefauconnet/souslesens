@@ -297,9 +297,9 @@ var common = (function () {
 
     self.setMessage=function(message, color,_messageDivId) {
         if(!_messageDivId)
-            _messageDivId=messageDivId;
+            _messageDivId=messageDivId.id;
 
-        $("#"+_messageDivId).html(message);
+        $("#message").html(message);
 
         if (!color)
             color = "black";
@@ -319,6 +319,26 @@ var common = (function () {
     }
     self.isFloat=function(value) {
         return /-?[0-9]+[.,]+[0-9]?/.test("" + value);
+
+    }
+
+    self.frenchDateStringToDate=function (str){
+    var array=/(\d{2})\/(\d{2})\/(\d{4}) (\d{2}):(\d{2})/.exec(str);
+    if( array.length!=5)
+        return "error on date format, accept : 03/07/2017 14:19"
+    var str2=""+array[1]+"-"+array[0]+"-"+""+array[2]+" "+""+array[3]+":"+array[4]+":00"
+        return new Date(str2);
+    }
+
+
+    self.setColorPaletteSelect=function(select,callback){
+        var colors=Gparams.palette;
+        colors.splice(0,0,"");
+      common.fillSelectOptionsWithStringArray(select,colors);
+
+       $("#"+select.id+" option").each(function(index,value){
+          $(this).css("background-color",this.label)
+       })
 
     }
 

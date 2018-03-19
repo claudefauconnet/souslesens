@@ -827,9 +827,6 @@ var infoGenericDisplay = (function () {
         var parentId = node.data.neoId;
 
 
-        toutlesensController.checkMaxNumberOfNodeRelations(parentId, Gparams.jsTreeMaxChildNodes, function () {
-            currentObject = node.data;
-            currentObject.id = parentId;
 
 
             if (toutlesensController.currentActionObj.type == "findNode") {
@@ -844,6 +841,9 @@ var infoGenericDisplay = (function () {
                 traversalMenu.setTraversalNode(toutlesensController.currentActionObj.stage, node.data);
                 return;
             }
+        toutlesensController.checkMaxNumberOfNodeRelations(parentId, Gparams.jsTreeMaxChildNodes, function () {
+            currentObject = node.data;
+            currentObject.id = parentId;
 
             /*   if (node.data.label)
              var label = node.data.label;*/

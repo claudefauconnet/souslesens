@@ -166,8 +166,8 @@ var visjsGraph = (function () {
 
 
         };
-        if (_options.scale)
-            options.scale = _options.scale;
+       /* if (_options.scale)
+            options.scale = _options.scale;*/
         options.manipulation = false;
 
 

@@ -754,6 +754,7 @@
 
                     <div id="cypherQueryDiv" style="height:450px"></div>
 
+
                 </div>
             </div>
 
@@ -818,7 +819,7 @@
 </select>
 
     <select id="propertiesSelectionDialog_ObjectNameInput"
-            onchange="filters.initProperty(null,$(this).val(),propertiesSelectionDialog_propsSelect)"></select>
+            onchange="advancedSearch.onChangeObjectName($(this).val())"></select>
     <br>
     Property
 
@@ -848,11 +849,9 @@
             </td>
         </tr>
     </table>
-    <div id="filterActionDiv">
 
-
-    </div>
-
+    <div id="filterActionDiv"></div>
+    <div id="filterOptionsDiv"></div>
 </div>
 
 </body>
