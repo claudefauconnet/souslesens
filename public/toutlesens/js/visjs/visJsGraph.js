@@ -133,21 +133,24 @@ var visjsGraph = (function () {
                 shape: 'dot',
                 size: 10,
                 font: {size: 14},
-                scaling: {
-                    customScalingFunction: function (min, max, total, value) {
-                        return value / total;
-                    },
-                    min: 5,
-                    max: 150
-                }
                 /*  scaling: {
-                      label: {
-                          min: 10,
-                          max: 10
+                      customScalingFunction: function (min, max, total, value) {
+                          return value / total;
                       },
+                      min: 5,
+                      max: 150
+                  },*/
+                scaling: {
+                    min: 8,
+                    max: 20,
+                 /*   label: {
+                        min: 10,
+                        max: 16,
+                        drawThreshold: 10,
+                        maxVisible: 16
+                    }*/
 
-
-                  }*/
+                }
             },
             edges:
                 {
@@ -166,8 +169,8 @@ var visjsGraph = (function () {
 
 
         };
-       /* if (_options.scale)
-            options.scale = _options.scale;*/
+        /* if (_options.scale)
+             options.scale = _options.scale;*/
         options.manipulation = false;
 
 
@@ -183,13 +186,13 @@ var visjsGraph = (function () {
         network = new vis.Network(container, data, options);
         self.network = network;
 
-        if(_options.clusterByLabels){
+        if (_options.clusterByLabels) {
             network.cluster({
-                joinCondition:function(childOptions) {
-                    return (_options.clusterByLabels.indexOf(childOptions.labelNeo)>-1);
+                joinCondition: function (childOptions) {
+                    return (_options.clusterByLabels.indexOf(childOptions.labelNeo) > -1);
                 },
-                clusterNodeProperties: {id:'cidCluster', borderWidth:3, shape:'database'}
-        })
+                clusterNodeProperties: {id: 'cidCluster', borderWidth: 3, shape: 'database'}
+            })
         }
 
         window.setTimeout(function () {
@@ -206,7 +209,9 @@ var visjsGraph = (function () {
 
         }, stopPhysicsTimeout);
 
-
+        network.on("zoom", function (params) {
+            $("#graphInfosSpan").html(" scale " + Math.round((network.getScale() * 100))+"%");
+        });
         network.on("configChange", function () {
             // this will immediately fix the height of the configuration
             // wrapper to prevent unecessary scrolls in chrome.
@@ -389,7 +394,26 @@ var visjsGraph = (function () {
         network.cluster(clusterOptionsByData);
 
     }
+    self.clusterByCentralNodes = function (clusterObj) {
+        var clusterOptions = {
+            joinCondition: function (childOptions) {
+                if (clusterObj.children.length == 0)
+                    return false;
+                if (clusterObj.children.indexOf(childOptions.id) > -1)
+                    return true;
+                return false;
+                //  return childOptions.labelNeo == label; // the color is fully defined in the node.
+            },
+            clusterNodeProperties: {
+                id: clusterObj.id,
+                label: clusterObj.name + "Nodes : " + clusterObj.children.length,
+                color: "blue",
+                shape: "database"
+            }
+        }
 
+        network.cluster(clusterOptions);
+    }
 
     self.drawLegend = function (labels, relTypes) {
         var nodes = [];
@@ -489,7 +513,7 @@ var visjsGraph = (function () {
 
                 }
                 else {
-                    node.shape = null;
+                    // node.shape = null;
                     node.size = 15;
                 }
             }

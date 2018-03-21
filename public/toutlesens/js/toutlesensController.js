@@ -135,7 +135,7 @@ var toutlesensController = (function () {
             // $(".paintIcon").css("visibility","visible")
         }
         else {
-          //  self.setGraphMessage("Too many relations to display the graph<br>filter by  relation or label types")
+            //  self.setGraphMessage("Too many relations to display the graph<br>filter by  relation or label types")
             //  output = "filtersDescription";
             $(".paintIcon").css("visibility", "hidden")
         }
@@ -179,11 +179,11 @@ var toutlesensController = (function () {
                 return;
             }
 
-            $("#graphCommentDiv").append( data.length +" nodes and relations displayed ");
+            $("#graphCommentDiv").append(data.length + " nodes and relations displayed ");
             if (data.length >= Gparams.maxResultSupported && currentDisplayType != "SIMPLE_FORCE_GRAPH_BULK") {
 
-                Gparams.maxResultSupported=Gparams.maxResultSupported;
-             //   return;
+                Gparams.maxResultSupported = Gparams.maxResultSupported;
+                //   return;
 
             }
 
@@ -232,22 +232,22 @@ var toutlesensController = (function () {
 
 
     self.displayGraph = function (json, options, callback) {
-        if(!options)
-            options={}
+        if (!options)
+            options = {}
         d3NodesSelection = [];
         $("#textDiv").html("");
 
         if (currentDisplayType == "VISJS-NETWORK") {
 
             if (json.length > Gparams.limitToOptimizeGraphOptions) {
-                options.showNodesLabel = false,
+               // options.showNodesLabel = false,
                     options.showRelationsType = false,
                     options.smooth = false;
             } else {
-                if(options.showNodesLabel!=false )
-                options.showNodesLabel = true;
-                    //  options.showRelationsType = false,
-                    options.smooth = true;
+                if (options.showNodesLabel != false)
+                    options.showNodesLabel = true;
+                //  options.showRelationsType = false,
+                options.smooth = true;
             }
             if (!json)
                 json = connectors.neoResultsToVisjs(toutlesensData.cachedResultArray, options);
@@ -283,7 +283,7 @@ var toutlesensController = (function () {
             toutlesensData.queryRelTypeFilters = ":" + type;
             currentObject.id = null;
             currentDisplayType = "VISJS-NETWORK";
-            self.generateGraph(null,{hideNodesWithoutRelations:true});
+            self.generateGraph(null, {hideNodesWithoutRelations: true});
         }
 
 
@@ -459,12 +459,19 @@ var toutlesensController = (function () {
             if (id) {
 
 
-                if(currentActionObj.graphType=="schema"){
-                    var str ="<a href='javascript:toutlesensController.dispatchAction(\"setAsGraphStartNode\"'>StartNode</a>"
-                    str +="&nbsp;<a href='javascript:toutlesensController.dispatchAction(\"setAsDraphEndNode\"'>EndNode</a>"
+                if (currentObject.type && currentObject.type == "schema") {
+                    var str = "Label " + currentObject.label + "<br><table>"
+                    if (currentObject.count < Gparams.jsTreeMaxChildNodes)
+                        str += "<tr><td><a href='javascript:graphicController.dispatchAction(\"list\")'>List all nodes</a></td></tr>"
+                        str += "<tr><td><a href='javascript:graphicController.dispatchAction(\"search\")'>Search nodes</a>"
+                    str += "<tr><td><a href='javascript:graphicController.dispatchAction(\"graph\")'>Graph all nodes</a>"
+                    str += "<tr><td><a href='javascript:graphicController.dispatchAction(\"startLabel\")'>Query start</a></td></tr>"
+                    if(graphicController.startLabel &&graphicController.startLabel.label) {
+                        str += "<tr><td><a href='javascript:graphicController.dispatchAction(\"endLabel\")'>Query end</a></td></tr>"
+                        str += "<tr><td><a href='javascript:graphicController.dispatchAction(\"shortestPath\")'>Shortest Path</a></td></tr>"
+                    }
                     $("#graphPopup").html(str);
                     $("#nodeInfoMenuDiv").html(str);
-
 
 
                     return;
@@ -733,12 +740,12 @@ var toutlesensController = (function () {
             //  visjsGraph.displayRelationNames({show:false})
             Gparams.showRelationNames = false;
 
-            self.generateGraph(null, {applyFilters: true,hideNodesWithoutRelations:false});
+            self.generateGraph(null, {applyFilters: true, hideNodesWithoutRelations: false});
         }
 
         else if (action == "zoomOnNode") {
-            var expression=prompt("find node with name ?");
-            if( expression && expression.length>0){
+            var expression = prompt("find node with name ?");
+            if (expression && expression.length > 0) {
                 visjsGraph.zoomOnNode(expression);
 
             }
@@ -752,7 +759,7 @@ var toutlesensController = (function () {
 
         }
         else if (action == "drawSchema") {
-            currentActionObj.graphType="schema";
+            currentActionObj.graphType = "schema";
             $("#dialogLarge").dialog("close");
             dataModel.getDBstats();
             var data = connectors.toutlesensSchemaToVisjs(Schema.schema);
@@ -778,12 +785,35 @@ var toutlesensController = (function () {
             });
         }
         else if (action == "searchCypher") {
-           toutlesensData.matchStatement="MATCH path="+$("#cypherDialog_matchInput").val();
-           self.generateGraph();
+            toutlesensData.matchStatement = $("#cypherDialog_matchInput").val();
+            var where = $("#cypherDialog_whereInput").val();
+            toutlesensData.whereFilter = where;
+            currentObject.id = null;
+            self.generateGraph(null, {});
         }
 
+        else if (action == "clusterCentralNodes") {
+            var clusters = {};
+            for (var i = 0; i < toutlesensData.cachedResultArray.length; i++) {
+                var nodes = toutlesensData.cachedResultArray[i].nodes;
+                var nId = nodes[0]._id;
+                var name = nodes[0].properties[Schema.getNameProperty()];
+                if (!clusters[nId])
+                    clusters[nId] = {children: [], name: name, id: nId};
+                for (var j = 1; j < nodes.length - 1; j++) {
+                    clusters[nId].children.push(nodes[j]._id);
+                    //  toutlesensData.cachedResultArray[i].nodes[j].clusterId = "c_" + nId;
+                    //   visjsGraph.nodes._data[nodes[j]._id].clusterId= "c_" + nId;
+                    //  visjsGraph.nodes.update({id: nodes[j]._id, clusterId: "c_" + nId});
+
+                }
+            }
+            for (var key in clusters)
+                var clusterObj = clusters[key]
+            visjsGraph.clusterByCentralNodes(clusterObj);
 
 
+        }
     }
 
 
@@ -838,14 +868,13 @@ var toutlesensController = (function () {
 
     self.afterGraphInit = function () {
 
-        dataModel.getDBstats(subGraph,function (err,result){
-            currentActionObj={graphType:"schema"};
+        dataModel.getDBstats(subGraph, function (err, result) {
+            currentActionObj = {graphType: "schema"};
             var data = connectors.toutlesensSchemaToVisjs(Schema.schema);
             self.setRightPanelAppearance(false);
             visjsGraph.draw("graphDiv", data);
-            $("#graphCommentDiv").append( "Graph model");
+            $("#graphCommentDiv").append("Graph model");
         })
-
 
 
         //  paramsController.loadParams();
@@ -903,14 +932,13 @@ var toutlesensController = (function () {
 
         });
         $("#transitiveRelationsDiv").load("htmlSnippets/transitiveRelationsDialog.html", function () {
-            toutlesensController.initLabels(transitiveRelations_labelsSelect,true);
+            toutlesensController.initLabels(transitiveRelations_labelsSelect, true);
 
         });
         $("#cypherQueryDiv").load("htmlSnippets/cypherDialog.html", function () {
 
 
         });
-
 
 
         $("#tabs-analyzePanel").tabs("option", "disabled", tabsanalyzePanelDisabledOptions);
@@ -978,10 +1006,10 @@ var toutlesensController = (function () {
 
     }
 
-    self.initLabels = function (select,withEmptyOption) {
+    self.initLabels = function (select, withEmptyOption) {
         var labels = Schema.getAllLabelNames();
-        if(withEmptyOption)
-        labels.splice(0, 0, "")
+        if (withEmptyOption)
+            labels.splice(0, 0, "")
         common.fillSelectOptionsWithStringArray(select, labels);
     }
 
@@ -1040,8 +1068,8 @@ var toutlesensController = (function () {
 
 
         //   $("#mainButtons").width(rightPanelWidth).height(50).css("position", "absolute").css("left", $("#graphDiv").width() - 200).css("top", 50).css("visibility", "hidden");
-        $("#mainButtons").width(250).height(50).css("position", "absolute").css("left", 20).css("top", 10);//.css("visibility", "hidden");
-        $("#graphCommentDiv").css("max-width","500").css("position", "absolute").css("left", 20).css("top", totalHeight-50);
+        $("#mainButtons").css(".max-width",300).height(50).css("position", "absolute").css("left", 20).css("top", 10);//.css("visibility", "hidden");
+        $("#graphCommentDiv").css("max-width", "500").css("position", "absolute").css("left", 20).css("top", totalHeight - 50);
 
 
         $("#fullScreenButton").css("position", "absolute").css("top", 5).css("left", (totalWidth - rightPanelWidth) - 10);
@@ -1089,10 +1117,10 @@ var toutlesensController = (function () {
 
 
     }
-    self.increaseGraphLimit=function(){
-        var increase=prompt("Enter new graph display limit");
-        if( increase && increase!=""){
-            Gparams.maxResultSupported=parseInt(increase);
+    self.increaseGraphLimit = function () {
+        var increase = prompt("Enter new graph display limit");
+        if (increase && increase != "") {
+            Gparams.maxResultSupported = parseInt(increase);
         }
     }
 

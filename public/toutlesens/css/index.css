@@ -378,20 +378,7 @@ input {
 / / width: 900 px;
 }
 
-a:link, a:visited #infoPanel {
-    font-style: italic;
-    color: blue;
-    font-size: 12px;
-}
 
-a:link, a:visited .breadcrumb-item {
-    font-size: 12px;
-}
-
-a:link, a:visited .chronoSheet {
-    font-style: italic;
-    font-size: 12px;
-}
 
 #chronoParams {
     background-color: #eed;

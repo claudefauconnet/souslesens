@@ -32,6 +32,8 @@ var Schema = (function () {
         self.neo4jProxyUrl = "../../.." + Gparams.neo4jProxyUrl;
         self.serverRootUrl = "../../..";
 
+
+        self.allLabelsPaths = null;
         self.subGraph;
 
 
@@ -410,7 +412,7 @@ var Schema = (function () {
         }
 
 
-        self.getPermittedLabels = function (startLabel, inverseRelAlso,withoutInverseSign) {
+        self.getPermittedLabels = function (startLabel, inverseRelAlso, withoutInverseSign) {
             labels = [];
             var relations = self.schema.relations;
             for (var key in relations) {
@@ -422,8 +424,8 @@ var Schema = (function () {
                         labels.push(relation.endLabel);
 
                 if (inverseRelAlso && relation.endLabel == startLabel)
-                    if (labels.indexOf(relation.startLabel) < 0){
-                        if(withoutInverseSign)
+                    if (labels.indexOf(relation.startLabel) < 0) {
+                        if (withoutInverseSign)
                             labels.push(relation.startLabel);
                         else
                             labels.push("-" + relation.startLabel);
@@ -468,12 +470,55 @@ var Schema = (function () {
 
         }
 
+        self.getLabelsDistance = function (label1, label2) {
+            var relations = self.schema.relations;
+            var startLabels = {};
+            var endLabels = {};
+            for (var key in relations) {
+                if (!startLabels[relations[key].startLabel])
+                    startLabels[relations[key].startLabel] = []
+                startLabels[relations[key].startLabel].push(relations[key].endLabel);
+                if (!endLabels[relations[key].endLabel])
+                    endLabels[relations[key].endLabel] = []
+                endLabels[relations[key].endLabel].push(relations[key].startLabel);
+            }
 
-        /*
-         get the node property used as name  in UI (default "name")
+            var distance = 0;
+
+            var startLabel = [label1];
+
+            while (distance < 10) {
+                distance += 1
+                for (var i = 0; i < startLabel.length; i++) {
+                    var labelsS=[];
+                    var labelsE=[];
+                    console.log(startLabel[i])
+                    if (startLabels[startLabel[i]]) {
+                        console.log("***"+startLabel[i])
+                        if (startLabels[startLabel[i]].indexOf(label2) > -1) {
+                            return distance;
+                        }
+                        else
+                            labelsS = startLabels[startLabel[i]];
+                    }
+                    if (endLabels[startLabel[i]]) {
+                        console.log("!!*"+startLabel[i])
+                        if (endLabels[startLabel[i]].indexOf(label2) > -1) {
+                            return distance;
+                        }
+                        labelsE=endLabels[startLabel[i]]
+
+                    }
+                    startLabel = labelsS.concat( labelsE);
+                }
 
 
-         */
+            }
+            return -1;
+
+
+        }
+
         self.getNameProperty = function (label) {
             if (!self.schema)
                 return "name";

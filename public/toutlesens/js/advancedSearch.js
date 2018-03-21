@@ -4,17 +4,18 @@ var advancedSearch = (function () {
     self.filterLabelWhere = ""
     self.neo4jProxyUrl = "../../.." + Gparams.neo4jProxyUrl;
 
-    self.showDialog = function () {
+    self.showDialog = function (initialLabel) {
 
 
         var filterMovableDiv = $("#filterMovableDiv").detach();
         $("#dialog").html(filterMovableDiv);
+        advancedSearch.onChangeObjectName(currentObject.name);
 
         var str = "";
 
         //str += labelsCxbs;
-        str += " <button id=\"advancedSearchDialog_searchButton\" onclick=\"advancedSearch.searchNodes()\">List</button>";
-        str += ' <button id="advancedSearchDialog_searchAndGraphButton" onclick="advancedSearch.searchNodes(advancedSearch.nodesQueryToGraph)">Graph</button>';
+        str += " <button id=\"advancedSearchDialog_searchButton\" onclick=\"advancedSearch.searchNodes('matchStr')\">List</button>";
+        str += ' <button id="advancedSearchDialog_searchAndGraphButton" onclick="advancedSearch.searchNodes("matchStr",advancedSearch.nodesQueryToGraph)">Graph</button>';
 
         $("#filterActionDiv").html(str);
 
@@ -25,7 +26,13 @@ var advancedSearch = (function () {
         var objectNameInput = $("#propertiesSelectionDialog_ObjectNameInput").val();
         if (!objectNameInput || objectNameInput == "") {
             filters.init();
+
         }
+        $("#propertiesSelectionDialog_valueInput").focus();
+        if(initialLabel){
+            $("#propertiesSelectionDialog_ObjectNameInput").val(initialLabel)
+        }
+
         $("#filterOptionsDiv").html("");
         /*    toutlesensController.initLabels(advancedSearchDialog_LabelSelect);
             filters.initLabelProperty("",advancedSearchDialog__propsSelect)
@@ -48,9 +55,16 @@ var advancedSearch = (function () {
         labelsCxbs += "<ul>";
         $("#filterOptionsDiv").html(labelsCxbs);
     }
-    self.searchNodes = function (callback) {
 
 
+    /**
+     * 
+     * 
+     * @param resultType "string" or "object"
+     * @param callback
+     */
+
+    self.searchNodes = function (resultType,callback) {
         currentObject.id = null;
         $("#waitImg").css("visibility", "visible")
         var searchObj = {};
@@ -84,15 +98,22 @@ var advancedSearch = (function () {
 
         }
 
+
+        //if  no value consider that there is no property set
+        if (searchObj.value == "")
+            searchObj.property = "";
+
+
         if (searchObj.property == "") {
             if (searchObj.value == "") {// only  search on label or type
                 var options = {
                     subGraph: subGraph,
                     label: searchObj.label,
                     word: null,
-                    resultType: "matchStr",
+                    resultType: resultType,
                     limit: Gparams.jsTreeMaxChildNodes,
-                    from: 0
+                    from: 0,
+                    resultType:resultType
                 }
                 toutlesensData.searchNodesWithOption(options, function (err, result) {
                     //   toutlesensData.searchNodes(subGraph, searchObj.label, null, "matchStr", Gparams.jsTreeMaxChildNodes, 0, function (err, result) {
@@ -111,43 +132,46 @@ var advancedSearch = (function () {
                 return;
 
             }
-            var data = [];// stack all results and then draw tree
-            var index = 0;
-            var countOptions = $('#propertiesSelectionDialog_propsSelect').children('option').length - 1;
-            $("#propertiesSelectionDialog_propsSelect option").each(function () {
-                var property = $(this).val();
 
-                if (property != "") {
-                    var value = property + ":~ " + searchObj.value;
-                    var options = {
-                        subGraph: subGraph,
-                        label: searchObj.label,
-                        word: value,
-                        resultType: "list",
-                        limit: Gparams.jsTreeMaxChildNodes,
-                        from: 0
-                    }
-                    toutlesensData.searchNodesWithOption(options, function (err, result) {
-                        //  toutlesensData.searchNodes(subGraph, searchObj.label, value, "list", Gparams.jsTreeMaxChildNodes, 0, function (err, result) {
-                        index += 1;
-                        for (var i = 0; i < result.length; i++) {
-                            data.push(result[i])
+          /*  if(false) {
+                var data = [];// stack all results and then draw tree
+                var index = 0;
+                var countOptions = $('#propertiesSelectionDialog_propsSelect').children('option').length - 1;
+                $("#propertiesSelectionDialog_propsSelect option").each(function () {
+                    var property = $(this).val();
+
+                    if (property != "") {
+                        var value = property + ":~ " + searchObj.value;
+                        var options = {
+                            subGraph: subGraph,
+                            label: searchObj.label,
+                            word: value,
+                            resultType: "list",
+                            limit: Gparams.jsTreeMaxChildNodes,
+                            from: 0
                         }
-                        if (index >= countOptions) {
-                            if (callback) {
-                                return callback(data);
+                        toutlesensData.searchNodesWithOption(options, function (err, result) {
+                            //  toutlesensData.searchNodes(subGraph, searchObj.label, value, "list", Gparams.jsTreeMaxChildNodes, 0, function (err, result) {
+                            index += 1;
+                            for (var i = 0; i < result.length; i++) {
+                                data.push(result[i])
                             }
-                            infoGenericDisplay.loadTreeFromNeoResult("#", data);
-                        }
-                        setTimeout(function () {
+                            if (index >= countOptions) {
+                                if (callback) {
+                                    return callback(data);
+                                }
+                                infoGenericDisplay.loadTreeFromNeoResult("#", data);
+                            }
+                            setTimeout(function () {
 
-                            toutlesensController.setRightPanelAppearance(true);
-                            infoGenericDisplay.expandAll("treeContainer");
-                        }, 500)
+                                toutlesensController.setRightPanelAppearance(true);
+                                infoGenericDisplay.expandAll("treeContainer");
+                            }, 500)
 
-                    })
-                }
-            });
+                        })
+                    }
+                });
+            }*/
 
         } else {
             if (searchObj.operator == "contains")
@@ -157,7 +181,7 @@ var advancedSearch = (function () {
                 subGraph: subGraph,
                 label: searchObj.label,
                 word: value,
-                resultType: "matchStr",
+                resultType: resultType,
                 limit: Gparams.jsTreeMaxChildNodes,
                 from: 0
             }

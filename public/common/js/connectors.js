@@ -48,6 +48,7 @@ var connectors = (function () {
                         id: neoId,
                         children: [],
                         neoAttrs: nodeNeo,
+                        value:8,
                         //  font:{background:color},
 
 
@@ -55,24 +56,28 @@ var connectors = (function () {
 
 
                     }
+                    if(nodes[j].clusterId)
+                        nodeObj.clusterId=nodes[j].clusterId;
                     if ((options && options.showNodesLabel) || !options)
                         nodeObj.label = labelVisjs;
                     if (nodes[j].outline) {
 
                         nodeObj.font = {
-                            size: 18,
+                            value:8,
+                          //  size: 18,
                             color: Gparams.outlineTextColor,
                             strokeWidth: 3,
                             strokeColor: '#ffffff'
                         }
-                        nodeObj.size = 25;
+                    //    nodeObj.size = 25;
 
                     }
 
 
                     nodeObj.initialColor = nodeObj.color;
                     if (nodeObj.labelNeo == currentLabel) {
-                        nodeObj.size = 15;
+                        nodeObj.value = 30;
+                      //  nodeObj.size = 15;
 
                     }
 
@@ -264,6 +269,7 @@ var connectors = (function () {
 
             var visNode = {
                 label: label,
+                type:"schema",
                 neoAttrs:schema.labels[label],
                 labelNeo: "label",// because visjs where label is the node name
                 color: "lightBlue",
@@ -314,13 +320,16 @@ var connectors = (function () {
         if(dataModel.DBstats){
             for(var i=0;i<visjsData.nodes.length;i++){
                 var countNodes=dataModel.DBstats.nodes[ visjsData.nodes[i].label];
-                visjsData.nodes[i].value=countNodes;
+                visjsData.nodes[i].count=countNodes;
+                visjsData.nodes[i].name=visjsData.nodes[i].label;
                 visjsData.nodes[i].label+=" ("+countNodes+")";
 
             }
             for(var i=0;i<visjsData.edges.length;i++){
                 var countRels=dataModel.DBstats.relations[ visjsData.edges[i].label].countRel;
               //  visjsData.edges[i].value=countRels;
+                visjsData.edges[i].count=countRels;
+                visjsData.edges[i].name=visjsData.edges[i].label;
                 visjsData.edges[i].label+=" ("+countRels+")";
 
             }

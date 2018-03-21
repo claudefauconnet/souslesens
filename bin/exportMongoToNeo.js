@@ -585,6 +585,17 @@ function loadAndFetchDataToImport(params, importFn, _rootCallBack) {
         } catch (e) {
             callback(e)
         }
+        var query = params.mongoQuery;
+        var filterObj=null;
+      if(query && query!='{}'  && query!=''){
+          try {
+              filterObj = JSON.parse(query);
+          }
+            catch (error) {
+                callback(error);
+                return;
+            }
+        }
 
         var allData = JSON.parse("" + str);
         var dataSubsets = [];
@@ -593,6 +604,19 @@ function loadAndFetchDataToImport(params, importFn, _rootCallBack) {
         for (var i = 0; i < allData.length; i++) {
             var rawLine = allData[i];
             var importLine = {};
+
+
+            var ok=true;
+            if(filterObj){// filter with or
+                ok=false;
+            for(var key in filterObj){
+                if(rawLine[key] && rawLine[key]==filterObj[key]);
+                ok=true;//or
+            }}
+
+            if(!ok==true)
+                continue;
+
             if (params.fields) {
                 for (var key in params.fields) {
                     if (rawLine[key])

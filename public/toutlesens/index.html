@@ -70,6 +70,7 @@
     <script src="js/toutlesensController.js"></script>
     <script src="js/toutlesensData.js"></script>
     <script src="js/toutlesensDialogsController.js"></script>
+    <script src="js/graphicController.js"></script>
     <script src="js/filters.js"></script>
     <script src="js/paint.js"></script>
     <script src="js/traversalMenu.js"></script>
@@ -157,6 +158,29 @@
 
     <!-- test visjs---------------------------------------->
     <style>
+        a {
+            font-weight: bold;
+            font-style: italic;
+            color: #261803;
+            font-size: 12px;
+        }
+
+        a:link {
+            text-decoration: none;
+        }
+
+        a:visited {
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        a:active {
+            text-decoration: underline;
+        }
+
         #treeContainer {
             width: 500px;
             overflow: auto;
@@ -226,7 +250,7 @@
         }
 
         #dialog {
-            background-color: #aebcd6;
+            background-color: #cdd0d6;
         }
 
         #graphCommentDiv {
@@ -237,6 +261,13 @@
 
         .importantMessage {
             color: #f8893f;
+        }
+        #graphPopup{
+            border: #261803;
+            border-width: 1px;
+            border-radius: 5px;
+            border-style: solid;
+           background-color:  #cdd0d6
         }
 
 
@@ -302,9 +333,10 @@
             //   $("#nodeInfosDiv").height(totalHeight - 200).width(totalWidth - 650)
 
             $("#advancedQueriesAccordion").accordion(
-                {active: false,
+                {
+                    active: false,
                     collapsible: true,
-                    activate:function(event, ui){
+                    activate: function (event, ui) {
                         $("#dialog").dialog("close");
                         $("#graphPopup").css("visibility", "hidden");
                     }
@@ -558,7 +590,9 @@
 
 
 <div id="mainButtons">
-
+    <input type="image" alt="<span id='lang_XX'>schema</span>" height="20px"
+           onclick="toutlesensController.dispatchAction('drawSchema')"
+           id="schemaButton" src="images/cube.png"/>
     <input type="image" alt="<span id='lang_XX'>search</span>" height="20px" onclick="advancedSearch.showDialog()"
            id="searchButton2" src="images/advancedSearch2.png"/>
     <input type="image" title="display settings" height="20px"
@@ -573,7 +607,8 @@
     <input type="image" title="Export to text" height="20px"
            onclick="toutlesensController.dispatchAction('showGraphText')" id="toTextMenuButton" src="images/text.png"
            class="graphDisplayed"/>
-    <input type="image" title="Zoom on node" height="20px" onclick="toutlesensController.dispatchAction('zoomOnNode')" id="zoomOnNodeMenuButton"
+    <input type="image" title="Zoom on node" height="20px" onclick="toutlesensController.dispatchAction('zoomOnNode')"
+           id="zoomOnNodeMenuButton"
            src="images/zoom.png" class="graphDisplayed"/>
     <input type="image" title="Fit to page" height="20px" onclick="visjsGraph.fitToPage()" id="fitMenuButton"
            src="images/fit.png" class="graphDisplayed"/>
@@ -587,9 +622,10 @@
     <input type="image" title="Next display" height="20px" onclick="toutlesensController.dispatchAction('addNode')"
            class="canModify" ; id="newNodeButton" src="images/newNode.png"/>
     <img id="waitImg" src="images/waitAnimated.gif" width="20px" style="visibility: hidden;">
+<br><span id="graphInfosSpan" style="font-size:8px"></span>
 
-    <div id="graphLegendDiv"></div>
 </div>
+<div id="graphLegendDiv"></div>
 <div id="graphCommentDiv" style="position: absolute;background-color: white;margin: 2px;padding: 2px"></div>
 
 <div id="findDiv">

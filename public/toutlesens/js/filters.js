@@ -76,12 +76,11 @@ var filters = (function () {
 
 
         var select = document.getElementById("propertiesSelectionDialog_propsSelect")
-        if (select)
+        if (select) {
             common.fillSelectOptionsWithStringArray(select, self.currentLabels);
-
-
-        filters.initLabelProperty("", propertiesSelectionDialog_propsSelect);
-        $("#propertiesSelectionDialog_propsSelect").val(Schema.getNameProperty())
+            filters.initLabelProperty("", propertiesSelectionDialog_propsSelect);
+            $("#propertiesSelectionDialog_propsSelect").val(Schema.getNameProperty())
+        }
 
     }
 
