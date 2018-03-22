@@ -56,8 +56,8 @@ var Gparams = {
     maxResultSupported:5000,
     graphMaxDataLengthToDisplayGraphDirectly:1000,
     bulkGraphViewMaxNodesToDrawLinks:1000,
-    listDisplayLimitMax:500,
-    jsTreeMaxChildNodes:500,
+    listDisplayLimitMax:1500,
+    jsTreeMaxChildNodes:1500,
     maxDepthExplorationAroundNode: 3,
     maxNodesForRelNamesOnGraph:100,
 

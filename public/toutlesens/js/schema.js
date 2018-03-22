@@ -470,7 +470,72 @@ var Schema = (function () {
 
         }
 
-        self.getLabelsDistance = function (label1, label2) {
+        self.getLabelsDistance = function (startNode, endNode) {
+            var relations = self.schema.relations;
+            var nodes = {};
+
+            // nodes around each nodes
+            for (var key in relations) {
+                if (!nodes[relations[key].startLabel])
+                    nodes[relations[key].startLabel] = [];
+                if (nodes[relations[key].startLabel].indexOf(relations[key].endLabel) < 0)
+                    nodes[relations[key].startLabel].push(relations[key].endLabel);
+                if (!nodes[relations[key].endLabel])
+                    nodes[relations[key].endLabel] = []
+                if (nodes[relations[key].endLabel].indexOf(relations[key].startLabel) < 0)
+                    nodes[relations[key].endLabel].push(relations[key].startLabel);
+            }
+
+            // transfrom each neighbour node in object
+            for (var key in nodes) {
+                var labels2 = [];
+                for (var i = 0; i < nodes[key].length; i++) {
+
+                    var nodeObj = {name: nodes[key][i]};
+                    if (nodes[key][i] == startNode) {
+                        nodeObj.istartNode = true;
+                        nodeObj.isVisited = true;
+                    }
+                    if (nodes[key][i] == endNode)
+                        nodeObj.isendNode = true;
+                    labels2.push(nodeObj)
+                }
+                nodes[key] = labels2;
+            }
+
+
+            // start from startnode
+            var nodesSerie = []
+            var nodesSerieObj = {}
+            function recurse(parent) {
+
+
+                for (var i = 0; i < nodes[parent.name].length; i++) {
+                    var node = nodes[parent.name][i];
+                    if (!node.isVisited && nodesSerie.indexOf(node.name)<0) {
+                        nodesSerie.push(node.name);
+                        nodesSerieObj[node.name]=parent.level+1;
+                        nodes[parent.name][i].isVisited = true;
+                        recurse({name:node.name,level:parent.level+1})
+                    }
+                    else {
+
+                    }
+
+                }
+            }
+
+            recurse({name:startNode,level:0});
+
+
+          console.log(JSON.stringify(nodesSerieObj));
+
+          return nodesSerieObj[endNode];
+
+
+        }
+
+        self.getLabelsDistance0 = function (label1, label2) {
             var relations = self.schema.relations;
             var startLabels = {};
             var endLabels = {};
@@ -490,11 +555,11 @@ var Schema = (function () {
             while (distance < 10) {
                 distance += 1
                 for (var i = 0; i < startLabel.length; i++) {
-                    var labelsS=[];
-                    var labelsE=[];
+                    var labelsS = [];
+                    var labelsE = [];
                     console.log(startLabel[i])
                     if (startLabels[startLabel[i]]) {
-                        console.log("***"+startLabel[i])
+                        console.log("***" + startLabel[i])
                         if (startLabels[startLabel[i]].indexOf(label2) > -1) {
                             return distance;
                         }
@@ -502,14 +567,14 @@ var Schema = (function () {
                             labelsS = startLabels[startLabel[i]];
                     }
                     if (endLabels[startLabel[i]]) {
-                        console.log("!!*"+startLabel[i])
+                        console.log("!!*" + startLabel[i])
                         if (endLabels[startLabel[i]].indexOf(label2) > -1) {
                             return distance;
                         }
-                        labelsE=endLabels[startLabel[i]]
+                        labelsE = endLabels[startLabel[i]]
 
                     }
-                    startLabel = labelsS.concat( labelsE);
+                    startLabel = labelsS.concat(labelsE);
                 }
 
 

@@ -100,14 +100,25 @@ var graphicController = (function () {
             if(relCardinality<0)
                 return console.log("no cardinalyty found between "+self.startLabel.label+" and" +self.endLabel.label)
             toutlesensData.matchStatement = "(n:" + self.startLabel.label + ")-[r*" + relCardinality + "]-(m:" + self.endLabel.label + ")";
-            toutlesensData.whereFilter = self.startLabel.queryObj.where + " and " + self.startLabel.queryObj.where.replace(/n\./, "m.");
+            toutlesensData.whereFilter=self.startLabel.queryObj.where ;
+
+            if(self.endLabel.queryObj.where!=""){
+                if( toutlesensData.whereFilter!="")
+                    toutlesensData.whereFilter+= " and ";
+                toutlesensData.whereFilter+=   self.endLabel.queryObj.where.replace(/n\./, "m.");
+            }
+
+
             $("#cypherDialog_matchInput").val(toutlesensData.matchStatement);
             $("#cypherDialog_whereInput").val(toutlesensData.whereFilter);
             toutlesensController.setRightPanelAppearance(true)
-            $("#findTabs").tabs("option", "active", 3);
-            $("#advancedQueriesAccordion").tabs("option", "active", 4);
+         //   $("#findTabs").tabs("option", "active", 3);
+         //   $("#advancedQueriesAccordion").tabs("option", "active", 4);
 
-            toutlesensController.generateGraph();
+            var options={};
+          if(relCardinality>1)
+              options.clusterIntermediateNodes=true;
+            toutlesensController.generateGraph(null,options);
         })
     }
 

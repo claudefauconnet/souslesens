@@ -15,6 +15,7 @@ var visjsGraph = (function () {
     self.previousGraphs.index = -1;
     self.currentLayoutType = "random";
     self.currentLayoutDirection = "";
+    self.clusters=[]
 
 
     var stopPhysicsTimeout = 5000;
@@ -186,14 +187,20 @@ var visjsGraph = (function () {
         network = new vis.Network(container, data, options);
         self.network = network;
 
-        if (_options.clusterByLabels) {
-            network.cluster({
-                joinCondition: function (childOptions) {
-                    return (_options.clusterByLabels.indexOf(childOptions.labelNeo) > -1);
-                },
-                clusterNodeProperties: {id: 'cidCluster', borderWidth: 3, shape: 'database'}
-            })
-        }
+
+
+
+            for (var i = 0; i < self.clusters.length; i++) {
+
+                var clusterOptions = {
+                    joinCondition: function (childOptions) {
+                        return childOptions.cluster == self.clusters[i]; // the color is fully defined in the node.
+                    },
+                    clusterNodeProperties: {id: 'cluster:' + color, borderWidth: 3, shape: 'database', color:color, label:'color:' + color}
+                };
+                network.cluster(clusterOptions);
+            }
+
 
         window.setTimeout(function () {
             network.setOptions({
@@ -366,54 +373,7 @@ var visjsGraph = (function () {
     }
 
 
-    self.clusterByLabel = function (label) {
 
-        if (!label)
-            return;
-        var clusterOptionsByData = {
-            joinCondition: function (childOptions) {
-                return childOptions.labelNeo == label; // the color is fully defined in the node.
-            },
-            processProperties: function (clusterOptions, childNodes, childEdges) {
-                var totalMass = 0;
-                for (var i = 0; i < childNodes.length; i++) {
-                    totalMass += childNodes[i].mass;
-                }
-                clusterOptions.mass = totalMass;
-                return clusterOptions;
-            },
-            clusterNodeProperties: {
-                id: 'cluster:' + color,
-                borderWidth: 3,
-                shape: 'star',
-                color: color,
-                label: 'All ' + label,
-                size: 50
-            }
-        };
-        network.cluster(clusterOptionsByData);
-
-    }
-    self.clusterByCentralNodes = function (clusterObj) {
-        var clusterOptions = {
-            joinCondition: function (childOptions) {
-                if (clusterObj.children.length == 0)
-                    return false;
-                if (clusterObj.children.indexOf(childOptions.id) > -1)
-                    return true;
-                return false;
-                //  return childOptions.labelNeo == label; // the color is fully defined in the node.
-            },
-            clusterNodeProperties: {
-                id: clusterObj.id,
-                label: clusterObj.name + "Nodes : " + clusterObj.children.length,
-                color: "blue",
-                shape: "database"
-            }
-        }
-
-        network.cluster(clusterOptions);
-    }
 
     self.drawLegend = function (labels, relTypes) {
         var nodes = [];

@@ -468,7 +468,7 @@ var toutlesensController = (function () {
                     str += "<tr><td><a href='javascript:graphicController.dispatchAction(\"startLabel\")'>Query start</a></td></tr>"
                     if(graphicController.startLabel &&graphicController.startLabel.label) {
                         str += "<tr><td><a href='javascript:graphicController.dispatchAction(\"endLabel\")'>Query end</a></td></tr>"
-                        str += "<tr><td><a href='javascript:graphicController.dispatchAction(\"shortestPath\")'>Shortest Path</a></td></tr>"
+                    //    str += "<tr><td><a href='javascript:graphicController.dispatchAction(\"shortestPath\")'>Shortest Path</a></td></tr>"
                     }
                     $("#graphPopup").html(str);
                     $("#nodeInfoMenuDiv").html(str);
@@ -792,28 +792,10 @@ var toutlesensController = (function () {
             self.generateGraph(null, {});
         }
 
-        else if (action == "clusterCentralNodes") {
-            var clusters = {};
-            for (var i = 0; i < toutlesensData.cachedResultArray.length; i++) {
-                var nodes = toutlesensData.cachedResultArray[i].nodes;
-                var nId = nodes[0]._id;
-                var name = nodes[0].properties[Schema.getNameProperty()];
-                if (!clusters[nId])
-                    clusters[nId] = {children: [], name: name, id: nId};
-                for (var j = 1; j < nodes.length - 1; j++) {
-                    clusters[nId].children.push(nodes[j]._id);
-                    //  toutlesensData.cachedResultArray[i].nodes[j].clusterId = "c_" + nId;
-                    //   visjsGraph.nodes._data[nodes[j]._id].clusterId= "c_" + nId;
-                    //  visjsGraph.nodes.update({id: nodes[j]._id, clusterId: "c_" + nId});
-
-                }
-            }
-            for (var key in clusters)
-                var clusterObj = clusters[key]
-            visjsGraph.clusterByCentralNodes(clusterObj);
 
 
-        }
+
+
     }
 
 

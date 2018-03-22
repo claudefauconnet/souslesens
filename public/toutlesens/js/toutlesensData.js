@@ -1254,6 +1254,7 @@ var toutlesensData = (function () {
 
 
             console.log(str);
+            var whereStrRaw=whereStr;
             if (whereStr && whereStr.length > 0 && whereStr.toUpperCase().indexOf("WHERE")<0)
                 whereStr = " WHERE " + whereStr;
             str = "MATCH (n" + labelStr + ") " + whereStr + subGraphWhere + returnStr;
@@ -1263,7 +1264,7 @@ var toutlesensData = (function () {
             else if (resultType == "matchObject" && callback) {
                 var obj = {
                     nodelabel: label,
-                    where: whereStr + subGraphWhere
+                    where: whereStrRaw
                 }
                 return callback(null, obj);
             }
