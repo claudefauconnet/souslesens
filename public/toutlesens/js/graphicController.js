@@ -7,7 +7,8 @@ var graphicController = (function () {
     self.dispatchAction = function (action) {
         $("#graphPopup").css("visibility", "hidden");
 
-        visjsGraph.paintNodes([""+currentObject.id], "#af9d09",null,null,"box");
+      //  visjsGraph.paintNodes([""+currentObject.id], "#af9d09",null,null,"box");
+        visjsGraph.nodes.update([{id:""+currentObject.id,borderWidth:6}]);
 
         if (action == "list") {
             var options = {
@@ -51,8 +52,10 @@ var graphicController = (function () {
             var str = "";
             str += " <button id=\"advancedSearchDialog_searchButton\" onclick=\"graphicController.setStartLabelQuery()\">OK</button>";
             $("#propertiesSelectionDialog_valueInput").focus();
+            $("#propertiesSelectionDialog_valueInput").val("");
             $("#filterActionDiv").html(str);
             $("#propertiesSelectionDialog_ObjectNameInput").val(currentObject.name)
+
             advancedSearch.onChangeObjectName(currentObject.name);
             $("#dialog").dialog("option", "title", "Start node Query ");
             $("#dialog").dialog({modal: false});
@@ -66,8 +69,10 @@ var graphicController = (function () {
             $("#dialog").html(filterMovableDiv);
 
             var str = "";
-            str += " <button id=\"advancedSearchDialog_searchButton\" onclick=\"graphicController.setEndLabelQuery()\">Graph</button>";
+            str += " <button id=\"advancedSearchDialog_searchButton\" onclick=\"graphicController.setEndLabelQuery({clusterIntermediateNodes:1})\">Graph only start and end</button><br>";
+            str += " <button id=\"advancedSearchDialog_searchButton\" onclick=\"graphicController.setEndLabelQuery({})\">Graph all nodes</button>";
             $("#propertiesSelectionDialog_valueInput").focus();
+            $("#propertiesSelectionDialog_valueInput").val("");
             $("#filterActionDiv").html(str);
 
             $("#propertiesSelectionDialog_ObjectNameInput").val(currentObject.name)
@@ -88,10 +93,15 @@ var graphicController = (function () {
         advancedSearch.searchNodes("matchObject", function (queryObj) {
             self.startLabel.queryObj = queryObj;
             $("#dialog").dialog("close");
+
+            $("#waitImg").css("visibility","hidden")
         })
     }
 
-    self.setEndLabelQuery = function () {
+    self.setEndLabelQuery = function (options) {
+        if( !options){
+            options={};
+        }
         advancedSearch.searchNodes("matchObject", function (queryObj) {
             self.endLabel.queryObj = queryObj;
             $("#dialog").dialog("close");
@@ -115,10 +125,12 @@ var graphicController = (function () {
          //   $("#findTabs").tabs("option", "active", 3);
          //   $("#advancedQueriesAccordion").tabs("option", "active", 4);
 
-            var options={};
-          if(relCardinality>1)
-              options.clusterIntermediateNodes=true;
-            toutlesensController.generateGraph(null,options);
+            var _options={ dragConnectedNodes:true};
+          if(relCardinality>1 && options.clusterIntermediateNodes)
+              _options.clusterIntermediateNodes=true;
+
+
+            toutlesensController.generateGraph(null,_options);
         })
     }
 

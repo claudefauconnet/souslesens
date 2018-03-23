@@ -15,7 +15,7 @@ var visjsGraph = (function () {
     self.previousGraphs.index = -1;
     self.currentLayoutType = "random";
     self.currentLayoutDirection = "";
-    self.clusters=[]
+    self.clusters = []
 
 
     var stopPhysicsTimeout = 5000;
@@ -144,12 +144,12 @@ var visjsGraph = (function () {
                 scaling: {
                     min: 8,
                     max: 20,
-                 /*   label: {
-                        min: 10,
-                        max: 16,
-                        drawThreshold: 10,
-                        maxVisible: 16
-                    }*/
+                    /*   label: {
+                           min: 10,
+                           max: 16,
+                           drawThreshold: 10,
+                           maxVisible: 16
+                       }*/
 
                 }
             },
@@ -188,18 +188,22 @@ var visjsGraph = (function () {
         self.network = network;
 
 
+        for (var i = 0; i < self.clusters.length; i++) {
 
-
-            for (var i = 0; i < self.clusters.length; i++) {
-
-                var clusterOptions = {
-                    joinCondition: function (childOptions) {
-                        return childOptions.cluster == self.clusters[i]; // the color is fully defined in the node.
-                    },
-                    clusterNodeProperties: {id: 'cluster:' + color, borderWidth: 3, shape: 'database', color:color, label:'color:' + color}
-                };
-                network.cluster(clusterOptions);
-            }
+            var clusterOptions = {
+                joinCondition: function (childOptions) {
+                    return childOptions.cluster == self.clusters[i]; // the color is fully defined in the node.
+                },
+                clusterNodeProperties: {
+                    id: 'cluster:' + color,
+                    borderWidth: 3,
+                    shape: 'database',
+                    color: color,
+                    label: 'color:' + color
+                }
+            };
+            network.cluster(clusterOptions);
+        }
 
 
         window.setTimeout(function () {
@@ -217,7 +221,7 @@ var visjsGraph = (function () {
         }, stopPhysicsTimeout);
 
         network.on("zoom", function (params) {
-            $("#graphInfosSpan").html(" scale " + Math.round((network.getScale() * 100))+"%");
+            $("#graphInfosSpan").html(" scale " + Math.round((network.getScale() * 100)) + "%");
         });
         network.on("configChange", function () {
             // this will immediately fix the height of the configuration
@@ -298,10 +302,12 @@ var visjsGraph = (function () {
         network.on("dragEnd", function (params) {
 
             var dragEndPos = params.pointer.DOM;
-            self.dragConnectedNodes(params.nodes[0], {
-                x: dragEndPos.x - dragPosition.x,
-                y: dragEndPos.y - dragPosition.y
-            });
+            if (_options.dragConnectedNodes && params.event.srcEvent.ctrlKey) {
+                self.dragConnectedNodes(params.nodes[0], {
+                    x: dragEndPos.x - dragPosition.x,
+                    y: dragEndPos.y - dragPosition.y
+                });
+            }
 
         });
 
@@ -371,8 +377,6 @@ var visjsGraph = (function () {
         }
         return (options)
     }
-
-
 
 
     self.drawLegend = function (labels, relTypes) {
@@ -838,8 +842,7 @@ var visjsGraph = (function () {
      */
 
     self.dragConnectedNodes = function (nodeId, offset) {
-        if (toutlesensData && toutlesensData.queriesIds.length < 2)
-            return;
+
         var connectedNodes = network.getConnectedNodes(nodeId);
         var connectedEdges = network.getConnectedEdges(nodeId);
         var positions = network.getPositions()

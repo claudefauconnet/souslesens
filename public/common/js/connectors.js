@@ -4,7 +4,8 @@ var connectors = (function () {
 
     self.neoResultsToVisjs = function (resultArray, options) {
 
-
+if(!options)
+    options={};
         visjsData = {nodes: [], edges: [], labels: []};
         var nodesMap = {};
         var dataLabels = [];
@@ -143,11 +144,12 @@ var connectors = (function () {
 
 
             }
-
+    var rel = rels[j];
             if (options.clusterIntermediateNodes) {
                 //link first node to last
                 for (var j = 1; j < ids.length; j++) {
                     ids[j] = ids[ids.length - 1];
+                    rel="composite";
                 }
             }
 
@@ -175,7 +177,7 @@ var connectors = (function () {
                 }
 
 
-                var rel = rels[j];
+
                 var color = "#99d";//linkColors[rel];
                 var relObj = {
                     from: from,
@@ -298,7 +300,8 @@ var connectors = (function () {
                 type: "schema",
                 neoAttrs: schema.labels[label],
                 labelNeo: "label",// because visjs where label is the node name
-                color: "lightBlue",
+                // color: "lightBlue",
+                color:nodeColors[label],
                 myId: id,
                 shape: "box",
                 id: id++,

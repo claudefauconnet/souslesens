@@ -15,7 +15,7 @@ var advancedSearch = (function () {
 
         //str += labelsCxbs;
         str += " <button id=\"advancedSearchDialog_searchButton\" onclick=\"advancedSearch.searchNodes('matchStr')\">List</button>";
-        str += ' <button id="advancedSearchDialog_searchAndGraphButton" onclick="advancedSearch.searchNodes("matchStr",advancedSearch.nodesQueryToGraph)">Graph</button>';
+        str += ' <button id="advancedSearchDialog_searchAndGraphButton" onclick="advancedSearch.searchNodes(\'matchStr\',advancedSearch.nodesQueryToGraph)">Graph</button>';
 
         $("#filterActionDiv").html(str);
 
@@ -28,7 +28,8 @@ var advancedSearch = (function () {
             filters.init();
 
         }
-        $("#propertiesSelectionDialog_valueInput").focus();
+        $("#propertiesSelectionDialog_valueInput").val("")
+        $("#propertiesSelectionDialog_valueInput").focus()
         if(initialLabel){
             $("#propertiesSelectionDialog_ObjectNameInput").val(initialLabel)
         }
@@ -482,112 +483,7 @@ var advancedSearch = (function () {
         });
 
 
-        /*    var statement = "match path=((n:" + sourceLabel + ")--(r" + pivotLabelStr + ")--(m:" + sourceLabel + ")) "
-            statement += whereStatement + toutlesensData.standardReturnStatement + ", count(r) as countR order by countR desc limit 500";
-            console.log(statement);
-            var payload = {match: statement};
 
-            $("#waitImg").css("visibility", "visible");
-            $.ajax({
-                type: "POST",
-                url: self.neo4jProxyUrl,
-                data: payload,
-                dataType: "json",
-                success: function (data, textStatus, jqXHR) {
-
-
-                    if (data.length == 0) {
-                        return $(messageDivId).html("no pivot values found");
-                        $("#graphDiv").html("no pivot values found");
-                    }
-
-                    toutlesensData.cachedResultArray = data;
-                    currentDisplayType = "VISJS-NETWORK";
-
-                    visjsGraph.setLayoutType("random", null);
-                    toutlesensController.displayGraph(data, null, function (err, result) {
-
-
-                        var nodes = visjsGraph.nodes;
-                        var pivotNodes = [];
-                        var distinctLabels = []
-                        var distinctSourceNodes = {}
-
-                        for (var key in nodes._data) {
-
-                            var node = nodes._data[key];
-                            if (node.labelNeo == sourceLabel && !distinctSourceNodes[node.label])
-                                distinctSourceNodes[node.label] = node
-
-
-                            if (distinctLabels.indexOf(node.labelNeo) < 0)
-                                distinctLabels.push(node.labelNeo);
-
-                            if (node.labelNeo != sourceLabel) {
-                                node.nConnections = visjsGraph.getConnectedNodes(node.id).length
-                                pivotNodes.push(node);
-
-
-                            }
-
-
-                        }
-
-                        pivotNodes.sort(function (a, b) {
-                            if (a.nConnections > b.nConnections)
-                                return -1;
-                            if (b.nConnections > a.nConnections)
-                                return 1;
-                            return 0
-
-
-                        });
-
-                        //outline best pivots
-                        var distinctPivotBetterNodes = []
-                        for (var i = 0; i < pivotNodes.length; i++) {
-                            if (i > (pivotNodes.length / 3))
-                                break;
-                            distinctPivotBetterNodes.push({id: pivotNodes[i].id, shape: "triangle"})
-                        }
-                        visjsGraph.updateNodes(distinctPivotBetterNodes)
-                        if (sourceNodeId) {
-                            visjsGraph.updateNodes({id: sourceNodeId, shape: "star", size: 50})
-                        }
-
-
-                        // var sss = pivotNodes[0];
-                        visjsGraph.scaleNodes(nodes, "nConnections");
-
-                        visjsGraph.drawLegend(distinctLabels);
-                        toutlesensController.setRightPanelAppearance();
-
-                        var distinctSourceNodesArray = [];
-                        for (var key in distinctSourceNodes) {
-                            distinctSourceNodesArray.push(distinctSourceNodes[key])
-                        }
-                        distinctSourceNodesArray.sort(function (a, b) {
-                            if (a.label > b.label)
-                                return 1;
-                            if (a.label > b.label)
-                                return -1;
-                            return 0
-                        })
-
-                        distinctSourceNodesArray.splice(0, 0, "");
-                        common.fillSelectOptions(pivotsDialogSourceNodeSelect, distinctSourceNodesArray, "label", "id");
-                        $("#waitImg").css("visibility", "hidden");
-
-
-                    })
-
-
-                },
-                error: function (err) {
-                    console.log(err.responseText);
-                    $("#waitImg").css("visibility", "hidden");
-                }
-            })*/
 
     }
     /**
@@ -614,9 +510,13 @@ var advancedSearch = (function () {
                     ids.push(data[i].n._id)
                 }
 
+
                 toutlesensData.setSearchByPropertyListStatement("_id", ids, function (err, result) {
-                    toutlesensData.whereFilter += " and " + self.filterLabelWhere;
-                    toutlesensController.generateGraph(null, {applyFilters: true}, function () {
+                  /*  if(toutlesensData.whereFilter!="")
+                        toutlesensData.whereFilter+= " and " + self.filterLabelWhere;
+                    else*/
+                      //  toutlesensData.whereFilter =self.filterLabelWhere;
+                    toutlesensController.generateGraph(null, {applyFilters: true,  dragConnectedNodes:true}, function () {
 
                         $("#filtersDiv").html("");
                         $("#graphMessage").html("");

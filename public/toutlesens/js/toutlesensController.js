@@ -207,6 +207,9 @@ var toutlesensController = (function () {
                 $("#mainButtons").css("visibility", "visible");
                 $("#waitImg").css("visibility", "hidden");
                 $(".graphDisplayed").css("visibility", "visible");
+
+                if (toutlesensData && toutlesensData.queriesIds.length >1)
+                    options.dragConnectedNodes=true;
                 toutlesensController.displayGraph(data, options);
                 if (callback)
                     return callback(null, data);
@@ -240,8 +243,8 @@ var toutlesensController = (function () {
         if (currentDisplayType == "VISJS-NETWORK") {
 
             if (json.length > Gparams.limitToOptimizeGraphOptions) {
-               // options.showNodesLabel = false,
-                    options.showRelationsType = false,
+                // options.showNodesLabel = false,
+                options.showRelationsType = false,
                     options.smooth = false;
             } else {
                 if (options.showNodesLabel != false)
@@ -463,12 +466,13 @@ var toutlesensController = (function () {
                     var str = "Label " + currentObject.label + "<br><table>"
                     if (currentObject.count < Gparams.jsTreeMaxChildNodes)
                         str += "<tr><td><a href='javascript:graphicController.dispatchAction(\"list\")'>List all nodes</a></td></tr>"
-                        str += "<tr><td><a href='javascript:graphicController.dispatchAction(\"search\")'>Search nodes</a>"
-                    str += "<tr><td><a href='javascript:graphicController.dispatchAction(\"graph\")'>Graph all nodes</a>"
-                    str += "<tr><td><a href='javascript:graphicController.dispatchAction(\"startLabel\")'>Query start</a></td></tr>"
-                    if(graphicController.startLabel &&graphicController.startLabel.label) {
-                        str += "<tr><td><a href='javascript:graphicController.dispatchAction(\"endLabel\")'>Query end</a></td></tr>"
-                    //    str += "<tr><td><a href='javascript:graphicController.dispatchAction(\"shortestPath\")'>Shortest Path</a></td></tr>"
+                    str += "<tr><td><a href='javascript:graphicController.dispatchAction(\"graph\")'>Graph  all neighbours</a>"
+                    str += "<tr><td><a href='javascript:graphicController.dispatchAction(\"search\")'>Search nodes...</a>"
+
+                    str += "<tr><td><a href='javascript:graphicController.dispatchAction(\"startLabel\")'>Graph from...</a></td></tr>"
+                    if (graphicController.startLabel && graphicController.startLabel.label) {
+                        str += "<tr><td><a href='javascript:graphicController.dispatchAction(\"endLabel\")'>Graph to...</a></td></tr>"
+                        //    str += "<tr><td><a href='javascript:graphicController.dispatchAction(\"shortestPath\")'>Shortest Path</a></td></tr>"
                     }
                     $("#graphPopup").html(str);
                     $("#nodeInfoMenuDiv").html(str);
@@ -793,9 +797,6 @@ var toutlesensController = (function () {
         }
 
 
-
-
-
     }
 
 
@@ -1050,7 +1051,7 @@ var toutlesensController = (function () {
 
 
         //   $("#mainButtons").width(rightPanelWidth).height(50).css("position", "absolute").css("left", $("#graphDiv").width() - 200).css("top", 50).css("visibility", "hidden");
-        $("#mainButtons").css(".max-width",300).height(50).css("position", "absolute").css("left", 20).css("top", 10);//.css("visibility", "hidden");
+        $("#mainButtons").css(".max-width", 300).height(50).css("position", "absolute").css("left", 20).css("top", 10);//.css("visibility", "hidden");
         $("#graphCommentDiv").css("max-width", "500").css("position", "absolute").css("left", 20).css("top", totalHeight - 50);
 
 

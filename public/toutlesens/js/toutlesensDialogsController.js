@@ -139,10 +139,12 @@ self.getNodeInfoButtons=function(){
     self.setPopupMenuRelationInfoContent=function() {
 
        var str="";
-      str+= "relType :"+currentObject.label+"<br>";
-        str+= "["+currentObject.fromNode.labelNeo+"]"+currentObject.fromNode.label;
+      str+= "relType :"+currentObject.type+"<br>";
+        str+= "["+currentObject.fromNode.labelNeo+"]"+currentObject.fromNode.label+"<br>";
         str+= "--> ["+currentObject.toNode.labelNeo+"]"+currentObject.toNode.label;
         str+="<td> <input type='image' height='20px' alt='infos'  onclick='toutlesensController.dispatchAction(\"deleteRelation\")' src='images/trash.png'/></td>";
+        if(false && currentObject.type=="composite")
+        str+="<a href='javascript:toutlesensController.dispatchAction(\"showClusterIntermediateNodes\");'>show intermediateNodes</a>";
         return str;
     }
 

@@ -478,79 +478,93 @@ var exportMongoToNeo = {
     },
 
     copyRelations: function (data, callback) {
-        try {
-            var neoMappings = fs.readFileSync("./uploads/neoNodesMapping_cypher_copy.js");
-        }
-        catch (e) {
-            callback(e)
-        }
-        neoMappings = JSON.parse("" + neoMappings);
-        var path = "/db/data/batch";
-        var payload = [];
-        var subsets = [];
-        var aSubset = [];
-        for (var i = 0; i < data.length; i++) {
-            if (i % 200 == 0) {
-                subsets.push(aSubset);
-                aSubset = [];
+        /*   try {
+               var neoMappings = fs.readFileSync("./uploads/neoNodesMapping_cypher_copy.js");
+           }
+           catch (e) {
+               callback(e)
+           }
+           neoMappings = JSON.parse("" + neoMappings);*/
+
+        var sourceNodeMappingsStatement = "match (n) return n.id as sourceId, id(n) as neoId; "
+        neoProxy.match(sourceNodeMappingsStatement, function (err, result) {
+            if(err)
+                return callback(err);
+            var sourceNodeMappings = [];
+            var targetNodeMappings = [];
+            var neoMappings = {};
+            for (var i = 0; i < result.length; i++) {
+                neoMappings[result[i].sourceId] = result[i].neoId;
+
             }
-            if (!neoMappings[data[i].r._fromId]) {
-                console.log("non existing source  node :" + data[i]);
-                continue;
-            }
-            if (!neoMappings[data[i].r._toId]) {
-                console.log("non existing target  node :" + data[i]);
-                continue;
-            }
-            var neoObj = {
-                method: "POST",
-                to: "/node/" + neoMappings[data[i].r._fromId].newId + "/relationships",
-                id: 3,
-                body: {
-                    to: "" + neoMappings[data[i].r._toId].newId,
-                    data: data[i].r.properties,
-                    type: data[i].r.type
+
+            var path = "/db/data/batch";
+            var payload = [];
+            var subsets = [];
+            var aSubset = [];
+            for (var i = 0; i < data.length; i++) {
+                if (i % 200 == 0) {
+                    subsets.push(aSubset);
+                    aSubset = [];
                 }
-            }
-
-
-            aSubset.push(neoObj);
-
-        }
-        subsets.push(aSubset);
-        var totalImported = 0;
-        async.eachSeries(subsets, function (aSubset, callback) {
-                if (aSubset.length == 0)
-                    return callback(null);
-                var neo4jUrl = serverParams.neo4jUrl;
-                neoProxy.cypher(neo4jUrl, path, aSubset, function (err, result) {
-
-                    if (err) {
-                        callback(err);
+                if (!neoMappings[data[i].r._fromId]) {
+                    console.log("non existing source  node :" + data[i]);
+                    continue;
+                }
+                if (!neoMappings[data[i].r._toId]) {
+                    console.log("non existing target  node :" + data[i]);
+                    continue;
+                }
+                var neoObj = {
+                    method: "POST",
+                    to: "/node/" + neoMappings[data[i].r._fromId] + "/relationships",
+                    id: 3,
+                    body: {
+                        to: "" + neoMappings[data[i].r._toId],
+                        data: data[i].r.properties,
+                        type: data[i].r.type
                     }
+                }
+
+
+                aSubset.push(neoObj);
+
+            }
+            subsets.push(aSubset);
+            var totalImported = 0;
+            async.eachSeries(subsets, function (aSubset, callback) {
+                    if (aSubset.length == 0)
+                        return callback(null);
+                    var neo4jUrl = serverParams.neo4jUrl;
+                    neoProxy.cypher(neo4jUrl, path, aSubset, function (err, result) {
+
+                        if (err) {
+                            callback(err);
+                        }
+                        else {
+                            totalImported = totalImported + result.length;
+                            var message = " relations Imported :" + (result.length);
+                            console.log(message);
+                            if (socket)
+                                socket.message(message);
+                            callback(null, message);
+                        }
+                    })
+                }
+                , function (err, done) {
+
+                    if (err)
+                        callback(err)
                     else {
-                        totalImported = totalImported + result.length;
-                        var message = " relations Imported :" + (result.length);
-                        console.log(message);
-                        if (socket)
-                            socket.message(message);
+                        var message = " relations Imported :" + totalImported;
+                        socket.message(message);
                         callback(null, message);
+
                     }
+
+
                 })
-            }
-            , function (err, done) {
-
-                if (err)
-                    callback(err)
-                else {
-                    var message = " relations Imported :" + totalImported;
-                    socket.message(message);
-                    callback(null, message);
-
-                }
-
-
-            })
+        })
 
     },
 
@@ -586,11 +600,11 @@ function loadAndFetchDataToImport(params, importFn, _rootCallBack) {
             callback(e)
         }
         var query = params.mongoQuery;
-        var filterObj=null;
-      if(query && query!='{}'  && query!=''){
-          try {
-              filterObj = JSON.parse(query);
-          }
+        var filterObj = null;
+        if (query && query != '{}' && query != '') {
+            try {
+                filterObj = JSON.parse(query);
+            }
             catch (error) {
                 callback(error);
                 return;
@@ -606,15 +620,16 @@ function loadAndFetchDataToImport(params, importFn, _rootCallBack) {
             var importLine = {};
 
 
-            var ok=true;
-            if(filterObj){// filter with or
-                ok=false;
-            for(var key in filterObj){
-                if(rawLine[key] && rawLine[key]==filterObj[key]);
-                ok=true;//or
-            }}
+            var ok = true;
+            if (filterObj) {// filter with or
+                ok = false;
+                for (var key in filterObj) {
+                    if (rawLine[key] && rawLine[key] == filterObj[key]) ;
+                    ok = true;//or
+                }
+            }
 
-            if(!ok==true)
+            if (!ok == true)
                 continue;
 
             if (params.fields) {
@@ -659,7 +674,7 @@ function loadAndFetchDataToImport(params, importFn, _rootCallBack) {
                 var message = "";
                 if (params.label) {//nodes
 
-                  ;
+                    ;
 
                 } else {
                     message = "import done : " + totalLines + "lines ";
@@ -745,7 +760,7 @@ function loadAndFetchDataToImport(params, importFn, _rootCallBack) {
 
                 }
                 if (params.label) {//nodes
-                 ;
+                    ;
                 } else {// relations
                     var message = "import done : " + totalLines + "lines for relation " + params.neoSourceLabel + "->" + params.neoTargetLabel;
                     socket.message(message);
@@ -795,8 +810,6 @@ function setRelationsMongoFieldsToExport(params) {
     }
     return result;
 }
-
-
 
 
 module.exports = exportMongoToNeo;
