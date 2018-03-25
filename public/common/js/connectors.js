@@ -67,7 +67,7 @@ if(!options)
                     }
 
 
-                    if ((true || options && options.showNodesLabel) || !options)
+                    if (( options && options.showNodesLabel) || !options)
                         nodeObj.label = labelVisjs;
                     if (nodes[j].outline) {
 

@@ -7,6 +7,7 @@ var graphicController = (function () {
     self.dispatchAction = function (action) {
         $("#graphPopup").css("visibility", "hidden");
 
+
       //  visjsGraph.paintNodes([""+currentObject.id], "#af9d09",null,null,"box");
         visjsGraph.nodes.update([{id:""+currentObject.id,borderWidth:6}]);
 

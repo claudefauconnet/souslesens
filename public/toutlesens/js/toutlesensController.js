@@ -208,8 +208,8 @@ var toutlesensController = (function () {
                 $("#waitImg").css("visibility", "hidden");
                 $(".graphDisplayed").css("visibility", "visible");
 
-                if (toutlesensData && toutlesensData.queriesIds.length >1)
-                    options.dragConnectedNodes=true;
+                if (toutlesensData && toutlesensData.queriesIds.length > 1)
+                    options.dragConnectedNodes = true;
                 toutlesensController.displayGraph(data, options);
                 if (callback)
                     return callback(null, data);
@@ -466,8 +466,9 @@ var toutlesensController = (function () {
                     var str = "Label " + currentObject.label + "<br><table>"
                     if (currentObject.count < Gparams.jsTreeMaxChildNodes)
                         str += "<tr><td><a href='javascript:graphicController.dispatchAction(\"list\")'>List all nodes</a></td></tr>"
-                    str += "<tr><td><a href='javascript:graphicController.dispatchAction(\"graph\")'>Graph  all neighbours</a>"
                     str += "<tr><td><a href='javascript:graphicController.dispatchAction(\"search\")'>Search nodes...</a>"
+                    str += "<tr><td><a href='javascript:graphicController.dispatchAction(\"graph\")'>Graph  all neighbours</a>"
+
 
                     str += "<tr><td><a href='javascript:graphicController.dispatchAction(\"startLabel\")'>Graph from...</a></td></tr>"
                     if (graphicController.startLabel && graphicController.startLabel.label) {
@@ -762,13 +763,51 @@ var toutlesensController = (function () {
             })
 
         }
-        else if (action == "drawSchema") {
+        else if (action == "showSchema") {
             currentActionObj.graphType = "schema";
             $("#dialogLarge").dialog("close");
-            dataModel.getDBstats();
-            var data = connectors.toutlesensSchemaToVisjs(Schema.schema);
-            self.setRightPanelAppearance(false);
-            visjsGraph.draw("graphDiv", data);
+
+
+            var graphOptions = {
+                fixed: true,
+                onEndDrag: function () {
+                    Schema.currentGraph = visjsGraph.exportGraph();
+                    localStorage.setItem("schemaGraph_" + subGraph, JSON.stringify(Schema.currentGraph, null, 2));
+                },
+                onClick: function (params) {
+                    $("#graphPopup").css("visibility", "hidden");
+                    if (params.nodes.length == 1) {
+                        var point = params.pointer.DOM;
+                        var nodeId = params.nodes[0];
+                        currentObject = visjsGraph.nodes._data[nodeId];
+                        toutlesensController.dispatchAction("nodeInfos", nodeId);
+                        toutlesensController.showPopupMenu(point.x, point.y, "nodeInfo");
+                    }
+                }
+            };
+
+
+            if (Schema.currentGraph) {
+
+                visjsGraph.importGraph(Schema.currentGraph, graphOptions);
+
+            }
+            else {
+                var graphStr = localStorage.getItem("schemaGraph_" + subGraph);
+                if (graphStr) {
+                    Schema.currentGraph = JSON.parse(graphStr);
+                    dataModel.getDBstats(subGraph, function () {
+                        visjsGraph.importGraph(Schema.currentGraph, graphOptions);
+                    });
+                }
+                else {
+                    dataModel.getDBstats(subGraph, function () {
+                        var data = connectors.toutlesensSchemaToVisjs(Schema.schema);
+                        self.setRightPanelAppearance(false);
+                        visjsGraph.draw("graphDiv", data, graphOptions);
+                    });
+                }
+            }
         }
 
 
@@ -851,14 +890,8 @@ var toutlesensController = (function () {
 
     self.afterGraphInit = function () {
 
-        dataModel.getDBstats(subGraph, function (err, result) {
-            currentActionObj = {graphType: "schema"};
-            var data = connectors.toutlesensSchemaToVisjs(Schema.schema);
-            self.setRightPanelAppearance(false);
-            visjsGraph.draw("graphDiv", data);
-            $("#graphCommentDiv").append("Graph model");
-        })
-
+        currentActionObj = {graphType: "schema"};
+        self.dispatchAction("showSchema");
 
         //  paramsController.loadParams();
         var tabsanalyzePanelDisabledOptions = [];
