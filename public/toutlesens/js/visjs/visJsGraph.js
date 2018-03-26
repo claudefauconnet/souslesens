@@ -16,11 +16,12 @@ var visjsGraph = (function () {
         self.currentLayoutType = "random";
         self.currentLayoutDirection = "";
         self.clusters = []
-
+        self.scaleToShowLabels = 0.6;
 
         var stopPhysicsTimeout = 5000;
         var lastClick = new Date();
         var dblClickDuration = 500;
+
 
         var dragPosition = {};
         var options = {};
@@ -175,8 +176,21 @@ var visjsGraph = (function () {
 
             }, stopPhysicsTimeout);
 
+
+
             network.on("zoom", function (params) {
-                $("#graphInfosSpan").html(" scale " + Math.round((network.getScale() * 100)) + "%");
+                var scale = network.getScale();
+                $("#graphInfosSpan").html(" scale " + Math.round(scale * 100) + "%");
+                if (_options.showNodesLabel == false && scale > self.scaleToShowLabels) {
+                    var nodes = [];
+                    for (var key in self.nodes._data) {
+                        nodes.push({id: key, label: self.nodes._data[key].hiddenLabel});
+                    }
+                    self.nodes.update(nodes);
+
+                }
+
+
             });
             network.on("configChange", function () {
                 // this will immediately fix the height of the configuration
@@ -195,7 +209,7 @@ var visjsGraph = (function () {
             network.on("click", function (params) {
                 if (_options.onClick) {
                     var fn = _options["onClick"];
-                   return fn(params);
+                    return fn(params);
                 }
 
                 $("#graphPopup").css("visibility", "hidden");
@@ -732,11 +746,10 @@ var visjsGraph = (function () {
             return str0;
         }
 
-        self.importGraph = function (inputData,options) {
-            if(!options){
-                options={};
+        self.importGraph = function (inputData, options) {
+            if (!options) {
+                options = {};
             }
-
 
 
             function getNodeData(data) {

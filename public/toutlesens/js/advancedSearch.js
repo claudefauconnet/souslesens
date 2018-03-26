@@ -45,6 +45,7 @@ var advancedSearch = (function () {
 
     self.onChangeObjectName = function (value) {
         self.setPermittedLabelsCbxs(value);
+        if(propertiesSelectionDialog_propsSelect);
         filters.initProperty(null, value, propertiesSelectionDialog_propsSelect)
     }
     self.setPermittedLabelsCbxs = function (label) {

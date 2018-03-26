@@ -60,6 +60,7 @@ var Gparams = {
     jsTreeMaxChildNodes:1500,
     maxDepthExplorationAroundNode: 3,
     maxNodesForRelNamesOnGraph:100,
+    showLabelsMaxNumOfNodes:500,
 
 
     shortestPathMaxDistanceTest:8,

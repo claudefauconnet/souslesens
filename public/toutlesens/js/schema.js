@@ -36,7 +36,7 @@ var Schema = (function () {
         self.allLabelsPaths = null;
         self.subGraph;
 
-        self.currentGraph=null;
+        self.currentGraph = null;
 
 
         self.schema = {
@@ -472,7 +472,72 @@ var Schema = (function () {
 
         }
 
-        self.getLabelsDistance= function (startNode, endNode) {
+        self.getLabelsDistance = function (startNode, endNode) {
+            var relations = self.schema.relations;
+            var nodesChildren = {};
+
+            // nodes around each nodes
+            for (var key in relations) {
+                if (!nodesChildren[relations[key].startLabel])
+                    nodesChildren[relations[key].startLabel] = [];
+                if (nodesChildren[relations[key].startLabel].indexOf(relations[key].endLabel) < 0)
+                    nodesChildren[relations[key].startLabel].push(relations[key].endLabel);
+                if (!nodesChildren[relations[key].endLabel])
+                    nodesChildren[relations[key].endLabel] = []
+                if (nodesChildren[relations[key].endLabel].indexOf(relations[key].startLabel) < 0)
+                    nodesChildren[relations[key].endLabel].push(relations[key].startLabel);
+            }
+
+            // transfrom each neighbour node in object
+            for (var key in nodesChildren) {
+                var labels2 = [];
+                for (var i = 0; i < nodesChildren[key].length; i++) {
+                    labels2.push({name: nodesChildren[key][i]});
+
+                }
+                nodesChildren[key] = labels2;
+            }
+
+
+
+
+            var nodesSerie = []
+
+
+            //premier noeud
+            nodesSerie.push({name:startNode, isVisited:true,level:0})
+
+            var distance;
+            var i=0;
+            while (nodesSerie.length > 0 && (i++)<1000) {
+
+                var node = nodesSerie[nodesSerie.length - 1];//take the last Node
+                nodesSerie.splice(nodesSerie.length - 1, 1)//remove the last node;
+
+                for (var i = 0; i < nodesChildren[node.name].length; i++) {// for each related node
+                    var child = nodesChildren[node.name][i];
+                    if (!child.isVisited) {
+                        nodesSerie.push({name:child.name, isVisited:true,level:node.level + 1})
+                        if (child.name == endNode) {
+                           distance=node.level + 1;
+                            return distance;
+
+                        }
+                    }
+                }
+
+
+            }
+
+
+
+
+            return distance;
+
+
+        }
+
+        self.getLabelsDistanceDeep = function (startNode, endNode) {
             var relations = self.schema.relations;
             var nodes = {};
 
@@ -509,122 +574,42 @@ var Schema = (function () {
             // start from startnode
             var nodesSerie = []
             var nodesSerieObj = {}
+
             function recurse(parent) {
 
 
                 for (var i = 0; i < nodes[parent.name].length; i++) {
 
                     var node = nodes[parent.name][i];
-                    if(node.name=="personne")
-                        var xx=2
-                    if ( nodesSerie.indexOf(node.name)<0) {
-                        if(!node.isVisited ) {// first occurence
+                    if (node.name == "personne")
+                        var xx = 2
+                    if (nodesSerie.indexOf(node.name) < 0) {
+                        if (!node.isVisited) {// first occurence
                             nodesSerie.push(node.name);
                             nodesSerieObj[node.name] = parent.level + 1;
                             nodes[parent.name][i].isVisited = true;
-                         //   recurse({name: node.name, level: parent.level + 1})
-                        }else{
+                            recurse({name: node.name, level: parent.level + 1})
+                        } else {
 
 
                         }
                     }
-
-
-                }
-
-                for (var i = 0; i < nodes[parent.name].length; i++) {
-                    var node=nodes[parent.name][i];
-                    var nodeLevel = nodesSerieObj[node.name];
-                    if(nodeLevel){
-                        recurse(node);
+                    else if (tnode.isVisited) {
+                        if (nodesSerieObj[node.name] > parent.level + 1) {//choose shortest path
+                            nodesSerieObj[node.name] = parent.level + 1
+                            recurse({name: node.name, level: parent.level + 1})
+                        }
                     }
+
                 }
-
-
             }
 
-            recurse({name:startNode,level:0});
+            recurse({name: startNode, level: 0});
 
 
             console.log(JSON.stringify(nodesSerieObj));
 
             return nodesSerieObj[endNode];
-
-
-        }
-
-        self.getLabelsDistance1 = function (startNode, endNode) {
-            var relations = self.schema.relations;
-            var nodes = {};
-
-            // nodes around each nodes
-            for (var key in relations) {
-                if (!nodes[relations[key].startLabel])
-                    nodes[relations[key].startLabel] = [];
-                if (nodes[relations[key].startLabel].indexOf(relations[key].endLabel) < 0)
-                    nodes[relations[key].startLabel].push(relations[key].endLabel);
-                if (!nodes[relations[key].endLabel])
-                    nodes[relations[key].endLabel] = []
-                if (nodes[relations[key].endLabel].indexOf(relations[key].startLabel) < 0)
-                    nodes[relations[key].endLabel].push(relations[key].startLabel);
-            }
-
-            // transfrom each neighbour node in object
-            for (var key in nodes) {
-                var labels2 = [];
-                for (var i = 0; i < nodes[key].length; i++) {
-
-                    var nodeObj = {name: nodes[key][i]};
-                    if (nodes[key][i] == startNode) {
-                        nodeObj.istartNode = true;
-                        nodeObj.isVisited = true;
-                    }
-                    if (nodes[key][i] == endNode)
-                        nodeObj.isendNode = true;
-                    labels2.push(nodeObj)
-                }
-                nodes[key] = labels2;
-            }
-
-
-            // start from startnode
-            var nodesSerie = []
-            var nodesSerieObj = {}
-            function recurse(parent) {
-
-
-                for (var i = 0; i < nodes[parent.name].length; i++) {
-
-                    var node = nodes[parent.name][i];
-                    if(node.name=="personne")
-                        var xx=2
-                    if ( nodesSerie.indexOf(node.name)<0) {
-                        if(!node.isVisited ) {// first occurence
-                            nodesSerie.push(node.name);
-                            nodesSerieObj[node.name] = parent.level + 1;
-                            nodes[parent.name][i].isVisited = true;
-                            recurse({name: node.name, level: parent.level + 1})
-                        }else{
-
-
-                        }
-                    }
-                    else if(tnode.isVisited ){
-                        if( nodesSerieObj[node.name]>parent.level + 1){//choose shortest path
-                            nodesSerieObj[node.name]=parent.level + 1
-                            recurse({name: node.name, level: parent.level + 1})
-                        }
-                    }
-
-                }
-            }
-
-            recurse({name:startNode,level:0});
-
-
-          console.log(JSON.stringify(nodesSerieObj));
-
-          return nodesSerieObj[endNode];
 
 
         }

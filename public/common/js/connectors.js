@@ -67,8 +67,14 @@ if(!options)
                     }
 
 
-                    if (( options && options.showNodesLabel) || !options)
+                    if (resultArray.length<Gparams.showLabelsMaxNumOfNodes || (options && options.showNodesLabel) || !options) {
                         nodeObj.label = labelVisjs;
+
+                    }else{
+                        nodeObj.hiddenLabel = labelVisjs;
+                        options.showNodesLabel = false;
+                    }
+
                     if (nodes[j].outline) {
 
                         nodeObj.font = {
