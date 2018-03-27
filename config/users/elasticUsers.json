@@ -1,0 +1,29 @@
+{
+  "Claude": {
+    "login": "Claude",
+    "password": "CF1",
+    "groups":["ATD","ALL"]
+  },
+  "Jacques": {
+    "login": "Jacques",
+    "password": "JO1",
+    "groups":["ATD"]
+  },
+  "Chloe": {
+    "login": "Chloe",
+    "password": "CN1",
+    "groups":["ATD"]
+  }
+  ,
+  "Sebastien": {
+    "login": "Sebastien",
+    "password": "ST1",
+    "groups":["ATD"]
+  }
+  ,
+  "George":{
+    "login": "George",
+    "password": "GC1",
+    "groups":["ATD"]
+  }
+}

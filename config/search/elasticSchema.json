@@ -1,161 +1,276 @@
 {
-  "web_page": {
-    "settings": {
-      "analysis": {
-        "filter": {
-          "synonyms_fr_filter": {
-            "type": "synonym",
-            "synonyms_path": "synonyms/wordNetSyns.txt"
-          },
-          "stemmer_filter": {
-            "type": "stemmer",
-            "language": "french"
-          }
-        },
-        "analyzer": {
-          "my_synonyms": {
-            "tokenizer": "standard",
-            "filter": [
-              "lowercase",
-              "synonyms_fr_filter"
-            ]
-          }
-        }
-      }
-    },
-    "mappings": {
-      "web_page": {
-        "properties": {
-          "crawlDate": {
-            "type": "date",
-            "format": "yyyy-MM-dd"
-          },
-          "title": {
-            "type": "text"
-          },
-          "url": {
-            "type": "text"
-          },
-          "content": {
-            "type": "text",
-            "index_options": "offsets",
-            "analyzer": "my_synonyms",
-            "fielddata": true,
-            "fields": {
-              "contentKeyWords": {
-                "type": "keyword",
-                "ignore_above": 256
-              },
-              "sensitive": {
-                "fielddata": true,
-                "type": "text",
-                "analyzer": "whitespace"
-              }
-            }
-          }
-        }
-      }
-    }
+  "_indexCollections":{
+    "ATD":["phototheque","bordereaux","ocr","audiotheque"]
+
   },
-  "default": {
-    "mappings": {
-      "web_page": {
-        "properties": {
-          "crawlDate": {
-            "type": "date",
-            "format": "yyyy-MM-dd"
-          },
-          "title": {
-            "type": "text"
-          },
-          "url": {
-            "type": "text"
-          },
-          "content": {
-            "type": "text",
-            "index_options": "offsets",
-            "analyzer": "my_synonyms",
-            "fielddata": true,
-            "fields": {
-              "contentKeyWords": {
-                "type": "keyword",
-                "ignore_above": 256
-              }
+
+  "_indexes": {
+    "web_page": {
+      "settings": {
+        "analysis": {
+          "filter": {
+            "synonyms_fr_filter": {
+              "type": "synonym",
+              "synonyms_path": "synonyms/wordNetSyns.txt"
+            },
+            "stemmer_filter": {
+              "type": "stemmer",
+              "language": "french"
             }
-          }
-        }
-      }
-    }
-  },
-  "archivesatd": {
-    "mappings": {
-      "archive": {
-        "properties": {
-          "anneeDebut": {
-            "type": "integer"
           },
-          "anneeFin": {
-            "type": "integer"
-          },
-          "auteur": {
-            "type": "text"
-          },
-          "coteBoite": {
-            "type": "keyword"
-          },
-          "coteSerie": {
-            "type": "keyword"
-          },
-          "commentaire": {
-            "type": "text"
-          },
-          "confidentiel": {
-            "type": "keyword"
-          },
-          "dateStr": {
-            "type": "text"
-          },
-          "destinataire": {
-            "type": "text"
-          },
-          "format": {
-            "type": "text"
-          },
-          "genre": {
-            "type": "keyword"
-          },
-          "lieu": {
-            "type": "text"
-          },
-          "nbFeuilles": {
-            "type": "text"
-          },
-          "source": {
-            "type": "text"
-          },
-          "coteSousSerie": {
-            "type": "keyword"
-          },
-          "title": {
-            "type": "text"
-          },
-          "mongodId": {
-            "type": "keyword"
-          },
-          "content": {
-            "type": "text",
-            "index_options": "offsets",
-            "fielddata": true,
-            "fields": {
-              "contentKeyWords": {
-                "type": "keyword",
-                "ignore_above": 256
-              }
+          "analyzer": {
+            "my_synonyms": {
+              "tokenizer": "standard",
+              "filter": [
+                "lowercase",
+                "synonyms_fr_filter"
+              ]
             }
           }
         }
       },
-      "general_document": {
+      "mappings": {
+        "web_page": {
+          "properties": {
+            "crawlDate": {
+              "type": "date",
+              "format": "yyyy-MM-dd"
+            },
+            "title": {
+              "type": "text"
+            },
+            "url": {
+              "type": "text"
+            },
+            "content": {
+              "type": "text",
+              "index_options": "offsets",
+              "analyzer": "my_synonyms",
+              "fielddata": true,
+              "fields": {
+                "contentKeyWords": {
+                  "type": "keyword",
+                  "ignore_above": 256
+                },
+                "sensitive": {
+                  "fielddata": true,
+                  "type": "text",
+                  "analyzer": "whitespace"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "default": {
+      "mappings": {
+        "web_page": {
+          "properties": {
+            "crawlDate": {
+              "type": "date",
+              "format": "yyyy-MM-dd"
+            },
+            "title": {
+              "type": "text"
+            },
+            "url": {
+              "type": "text"
+            },
+            "content": {
+              "type": "text",
+              "index_options": "offsets",
+              "analyzer": "my_synonyms",
+              "fielddata": true,
+              "fields": {
+                "contentKeyWords": {
+                  "type": "keyword",
+                  "ignore_above": 256
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "phototheque": {
+      "mappings": {
+        "phototheque": {
+          "properties": {
+            "id": {
+              "type": "keyword",
+              "isId": true
+            },
+            "indexCIJW": {
+              "type": "keyword",
+              "isTitle": true
+            },
+            "dossier": {
+              "type": "keyword"
+            },
+            "sousdossier": {
+              "type": "keyword"
+            },
+            "document": {
+              "type": "keyword"
+            },
+            "versement": {
+              "type": "integer"
+            },
+            "lien": {
+              "type": "keyword"
+            },
+            "photographe": {
+              "type": "text"
+            },
+            "agence": {
+              "type": "text"
+            },
+            "droit_auteur": {
+              "type": "keyword"
+            },
+            "droit_image": {
+              "type": "keyword"
+            },
+            "contenu": {
+              "type": "text"
+            },
+            "temoin_ref": {
+              "type": "text"
+            },
+            "date": {
+              "type": "date"
+            },
+            "lieu": {
+              "type": "text"
+            },
+            "description": {
+              "type": "text"
+            },
+            "local": {
+              "type": "keyword"
+            },
+            "support": {
+              "type": "keyword"
+            },
+            "dateMaj": {
+              "type": "date"
+            },
+            "redacteur": {
+              "type": "keyword"
+            },
+            "content": {
+              "type": "text",
+              "index_options": "offsets",
+              "fielddata": true,
+              "fields": {
+                "contentKeyWords": {
+                  "type": "keyword",
+                  "ignore_above": 256
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "archivesatd": {
+      "mappings": {
+        "archive": {
+          "properties": {
+            "anneeDebut": {
+              "type": "integer"
+            },
+            "anneeFin": {
+              "type": "integer"
+            },
+            "auteur": {
+              "type": "text"
+            },
+            "coteBoite": {
+              "type": "keyword"
+            },
+            "coteSerie": {
+              "type": "keyword"
+            },
+            "commentaire": {
+              "type": "text"
+            },
+            "confidentiel": {
+              "type": "keyword"
+            },
+            "dateStr": {
+              "type": "text"
+            },
+            "destinataire": {
+              "type": "text"
+            },
+            "format": {
+              "type": "text"
+            },
+            "genre": {
+              "type": "keyword"
+            },
+            "lieu": {
+              "type": "text"
+            },
+            "nbFeuilles": {
+              "type": "text"
+            },
+            "source": {
+              "type": "text"
+            },
+            "coteSousSerie": {
+              "type": "keyword"
+            },
+            "title": {
+              "type": "text"
+            },
+            "mongodId": {
+              "type": "keyword"
+            },
+            "content": {
+              "type": "text",
+              "index_options": "offsets",
+              "fielddata": true,
+              "fields": {
+                "contentKeyWords": {
+                  "type": "keyword",
+                  "ignore_above": 256
+                }
+              }
+            }
+          }
+        },
+        "general_document": {
+          "properties": {
+            "author": {
+              "type": "text"
+            },
+            "content": {
+              "type": "text",
+              "index_options": "offsets",
+              "fields": {
+                "contentKeyWords": {
+                  "type": "keyword",
+                  "ignore_above": 256
+                }
+              },
+              "fielddata": true
+            },
+            "date": {
+              "type": "text"
+            },
+            "path": {
+              "type": "text"
+            },
+            "title": {
+              "type": "text"
+            }
+          }
+        }
+      },
+      "mail": {
         "properties": {
           "author": {
             "type": "text"
@@ -183,154 +298,70 @@
         }
       }
     },
-    "mail": {
-      "properties": {
-        "author": {
-          "type": "text"
-        },
-        "content": {
-          "type": "text",
-          "index_options": "offsets",
-          "fields": {
-            "contentKeyWords": {
-              "type": "keyword",
-              "ignore_above": 256
-            }
-          },
-          "fielddata": true
-        },
-        "date": {
-          "type": "text"
-        },
-        "path": {
-          "type": "text"
-        },
-        "title": {
-          "type": "text"
-        }
-      }
-    }
-  },
-  "wikipediacategories": {
-    "mappings": {
-      "category": {
-        "properties": {
-          "parent": {
-            "type": "text"
-          },
-          "child": {
-            "type": "text"
-          },
-          "count": {
-            "type": "integer"
-          }
-        }
-      }
-    }
-  },
-  "jsonIndex": {
-    "mappings": {
-      "json": {
-        "properties": {
-          "content": {
-            "type": "text",
-            "index_options": "offsets",
-            "fields": {
-              "contentKeyWords": {
-                "type": "keyword",
-                "ignore_above": 256
-              }
+    "wikipediacategories": {
+      "mappings": {
+        "category": {
+          "properties": {
+            "parent": {
+              "type": "text"
             },
-            "fielddata": true
+            "child": {
+              "type": "text"
+            },
+            "count": {
+              "type": "integer"
+            }
           }
         }
       }
-    }
-  },
-  "graph": {
-    "mappings": {
-      "node": {
-        "properties": {
-          "label": {
-            "type": "text"
-          },
-          "name": {
-            "type": "text"
-          }
-        }
-      },
-      "edge": {
-        "properties": {
-          "type": {
-            "type": "text"
-          },
-          "source": {
-            "type": "text"
-          },
-          "target": {
-            "type": "text"
+    },
+    "jsonIndex": {
+      "mappings": {
+        "json": {
+          "properties": {
+            "content": {
+              "type": "text",
+              "index_options": "offsets",
+              "fields": {
+                "contentKeyWords": {
+                  "type": "keyword",
+                  "ignore_above": 256
+                }
+              },
+              "fielddata": true
+            }
           }
         }
       }
-    }
-  },
-  "fields": [
-    "anneeDebut",
-    "anneeFin",
-    "auteur",
-    "coteBoite",
-    "coteSerie",
-    "commentaire",
-    "confidentiel",
-    "contenu",
-    "dateStr",
-    "destinataire",
-    "format",
-    "genre",
-    "lieu",
-    "nbFeuilles",
-    "source",
-    "coteSousSerie",
-    "title",
-    "mongoId",
-    "content"
-  ],
-  "csvFields": [
-    "type",
-    "title",
-    "source",
-    "coteBoite",
-    "coteSerie",
-    "coteSousSerie",
-    "anneeDebut",
-    "anneeFin",
-    "auteur",
-    "commentaire",
-    "confidentiel",
-    "dateStr",
-    "format",
-    "genre",
-    "lieu",
-    "nbFeuilles",
-    "destinataire",
-    "mongoId"
-  ],
-  "uiMappings": {
-    "title": "titre",
-    "content": "contenu"
-  },
-  "icons": {
-    "docTypes": {
-      "mail": "mail2.png",
-      "archive": "archive.png"
-    }
-  },
-  "mode": {
-    "archive": {
-      "source": "MongoDB",
-      "dbName": "ATD",
-      "collectionName": "archives"
+    },
+    "graph": {
+      "mappings": {
+        "node": {
+          "properties": {
+            "label": {
+              "type": "text"
+            },
+            "name": {
+              "type": "text"
+            }
+          }
+        },
+        "edge": {
+          "properties": {
+            "type": {
+              "type": "text"
+            },
+            "source": {
+              "type": "text"
+            },
+            "target": {
+              "type": "text"
+            }
+          }
+        }
+      }
     }
   }
+
 }
 

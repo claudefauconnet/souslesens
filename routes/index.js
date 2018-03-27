@@ -23,6 +23,8 @@ var fileSystemProxy = require("../bin/fileSystemProxy..js")
 var authentication = require("../bin/authentication..js")
 
 
+
+
 console.log("***********************serverParams.routesRootUrl " + serverParams.routesRootUrl + "*********")
 
 /*const cors = require('cors');
@@ -182,6 +184,12 @@ router.post(serverParams.routesRootUrl + '/elastic', function (req, response) {
         elasticProxy.getOriginalDocument(req.body.docRemotePath, function (error, result) {
             processResponse(response, error, result)
         });
+    else if (req.body && req.body.getUserIndexes)
+        elasticProxy.getUserIndexes(req.body.user, function (error, result) {
+            processResponse(response, error, result)
+        });
+
+
 
 
 });

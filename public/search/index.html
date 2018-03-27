@@ -56,6 +56,8 @@
         #panels {
 
         / / display: inline-table;
+            margin-top: 30px;
+            display: inline-flex;
         }
 
         #leftPanel {
@@ -76,17 +78,22 @@
 
         }
 
+        #resultDiv {
+            width: 600px;
+        }
+
         #rightPanel {
             width: 200px;
             float: left;
 
             overflow-y: auto;
             font-size: 10px;
+
         }
 
         #dialogContentDiv {
-            width: 800px;
-            height: 600px;
+            width: 820px;
+            height: 560px;
             margin-left: 10px;
             overflow: auto;
             background-color: white;
@@ -102,6 +109,10 @@
             font-size: 14px;
             font-weight: normal;
 
+        }
+
+        .rightPanelTd {
+            visibility: hidden;
         }
 
         #dialog {
@@ -149,7 +160,7 @@
         }
 
         #graphDiv {
-            width: 800px;
+            width: 600px;
             height: 500px;
         / / background-color: #93aeca;
         }
@@ -160,6 +171,14 @@
             padding: 10px;
             border-radius: 5px;
             min-width: 400px;
+        }
+
+        .docContentFields {
+
+            border-style: solid;
+            background-color: #CCCCCC;
+            table-border-color-light: #261803;
+
         }
 
         li {
@@ -214,17 +233,25 @@
 
         var queryAssociatedWords = true;
         var showClassifiersDiv = false;
-        var currentFindWord = {str:"",p:0};
+        var currentFindWord = {str: "", p: 0};
+        var userIndexes = [];
 
 
         $(function () {
+
+            setUserIndexes();
             totalWidth = $(window).width();
             totalHeight = $(window).height();
             // $("#centerPanel").width(Math.max(totalWidth - 500, 500));
 
+            var resultDivWidth = $("#resultDiv").width();
+            var leftPanelWidth = $("#leftPanel").width();
+
+
             $("#centerPanel").height(totalHeight);
             $("#leftPanel").height(totalHeight);
             $("#rightPanel").height(totalHeight);
+            // $("#rightPanel").css("left", 1000)
             $("#dialog").css("left", ((totalWidth) / 2) - 400)
             $("#slopSpan").css("visibility", "hidden");
             $("#showMongoFormInput").css("visibility", "hidden");
@@ -239,7 +266,7 @@
                 $("#classifiersDiv").css("visibility", "hidden");
 
 
-            if (queryParams.index) {
+            if (queryParams.index && queryParams.index.toLowerCase() != "_all") {
                 $("#indexInput").val(queryParams.index);
 
                 var payload = {
@@ -304,7 +331,7 @@
             });
 
 
-            if (true) {
+            if (false) {
 
                 $("#loginDiv").css("visibility", "visible");
                 $("#panels").css("visibility", "hidden");
@@ -337,6 +364,34 @@
 
         }
 
+        function setUserIndexes() {
+            var user = "Claude";
+            var payload = {
+                getUserIndexes: 1,
+                user: user
+            }
+            $.ajax({
+                type: "POST",
+                url: elasticUrl,
+                data: payload,
+                dataType: "json",
+                success: function (data, textStatus, jqXHR) {
+                    var x = data;
+
+                    var indexesCxbs = "<ul>";
+
+                    for (var i = 0; i < data.length; i++) {
+
+                        indexesCxbs += "<li><input type='checkbox' checked='checked' name='indexesCbxes' value='" + data[i] + "'>" + data[i] + "</li>"
+                    }
+                    indexesCxbs += "<ul>";
+                    $("#sourcesDiv").html(indexesCxbs);
+
+                }, error: function (e) {
+                }
+
+            })
+        }
 
         function search(_from, pageIncrement, page, callback) {
 
@@ -364,6 +419,14 @@
             $("#countDiv").html("");
             $("#resultDiv").html("");
             $("#associatedWordsDiv").html("");
+
+            var indexes = "";
+            var i = 0;
+            $('[name=indexesCbxes]:checked').each(function () {
+                if (i++ > 0)
+                    indexes += ",";
+                indexes += ($(this).val());
+            });
 
 
             var index = $("#indexInput").val();
@@ -404,7 +467,7 @@
                 options: {
                     from: from,
                     size: size,
-                    indexName: index,
+                    indexName: indexes,
                     word: word,
                     booleanSearchMode: booleanSearchMode,
                     getAssociatedWords: {
@@ -439,7 +502,7 @@
                 dataType: "json",
                 success: function (data, textStatus, jqXHR) {
                     $("#infos").css("visibility", "visible");
-                    $("#rightPanel").css("visibility", "visible");
+                    $(".rightPanelTd").css("visibility", "visible");
                     $("#clearSearchInputsImg").css("visibility", "visible");
 
                     if (callback) {
@@ -573,7 +636,7 @@
                 str += "<img  src='./icons/" + icons["docTypes"][obj.type] + "'>";
 
             str += "<img style='border-style: solid;border-color: #0000cc;border-width: 1px;border-radius: 8px' title='pre-visualize' onclick='visualizeDocContent(\"" + obj._id + "\")' src='./icons/details.png' width='20px'> </a>&nbsp;&nbsp;&nbsp;";
-
+            str += "<i>" + obj._index + "</i>&nbsp;";
             if (obj.path) {
                 var path = decodeURIComponent(obj.path)
                 var p = path.lastIndexOf("/");
@@ -765,13 +828,19 @@
                             }
 
                         }
-                        var html = "<b>title</b>: " + doc.title + "<br>";
-                        html += "<table border='1'>";
-                        var excludedKeys = ["highlights", "content", "title", "_id"]
+                        var html = "<b>source</b>: " + doc._index + "&nbsp;";
+                        html += "<b>title</b>: " + doc.title + "<br>";
+                        html += "<table  class='docContentFields'>";
+                        var excludedKeys = ["highlights", "content", "title", "_id", "_index", "type"]
 
                         for (var key in doc) {
                             if (excludedKeys.indexOf(key) == -1) {
-                                html += "<tr><td>" + key + "</td><td>" + doc[key] + "</td></tr>"
+
+                                if (key == "path") {
+                                    doc[key] = decodeURIComponent(doc[key]);
+                                    doc[key] = "<a href='" + doc[key] + "'>" + doc[key] + "</a>";
+                                }
+                                html += "<tr><td style='background-color: #999999'>" + key + "</td><td>" + doc[key] + "</td></tr>"
                             }
                         }
 
@@ -1084,11 +1153,10 @@
             var text = $("#dialogContentDiv").html();
 
 
-
             // remove selected word em
             var text = $("#dialogContentDiv").html();
-        //    text = text.replace(/wordEmSelected/gm, "wordEm");
-          //  var p = text.indexOf("wordEmSelected");
+            //    text = text.replace(/wordEmSelected/gm, "wordEm");
+            //  var p = text.indexOf("wordEmSelected");
 
 
             // remove all word em if change word
@@ -1098,8 +1166,8 @@
 
                 text = text.replace(/<em.* class="wordEm">.*<\/em>/, currentFindWord.str);
                 text = text.replace(/<\/em>/, "");
-                currentFindWord.str=word;
-                currentFindWord.p=0;
+                currentFindWord.str = word;
+                currentFindWord.p = 0;
                 //set new word ems
                 var regex = new RegExp(word, "gmi");
                 var text = text.replace(regex, strEm + word + "</em>");
@@ -1109,13 +1177,12 @@
             $("#dialogContentDiv").html(text);
 
 
-
-         // set selected em
-            var p = text.indexOf("wordEmSelected",  currentFindWord.p);
+            // set selected em
+            var p = text.indexOf("wordEmSelected", currentFindWord.p);
             if (p < 0)
-                p=0;
-            p =  currentFindWord.p+p + strEm.length;
-            currentFindWord.p=p;
+                p = 0;
+            p = currentFindWord.p + p + strEm.length;
+            currentFindWord.p = p;
             var strEmSelected = '<em class="wordEm wordEmSelected">' + word + "</em>";
             text = text.substring(0, p) + strEmSelected + text.substring(p + strEmSelected.length)
             $("#dialogContentDiv").html(text);
@@ -1152,7 +1219,7 @@
 </head>
 <body>
 
-<div id="panels" style="margin-top: 30px;  display: flex ">
+<div id="panels">
 
 
     <div id="leftPanel" style="visibility: hidden">
@@ -1168,7 +1235,7 @@
         <div id="associatedWordsDiv"></div>
 
     </div>
-    <div id="centerPanel" style="max-width: 500px;min-width: 300px">
+    <div id="centerPanel" style="max-width: 600px;min-width: 300px">
         <div id="top">
             <table>
 
@@ -1222,7 +1289,7 @@
 
                         <span id="slopSpan"> &nbsp; words proximity <input id="slopInput" size="5"></span>
 
-                        <button id="showMongoFormInput" onclick="showMongoForm()">Create</button>
+                        <!--   <button id="showMongoFormInput" onclick="showMongoForm()">Create</button>-->
                     </td>
                 </tr>
 
@@ -1239,20 +1306,26 @@
 
 
         <div id="resultDiv"></div>
-        <div id="graphDiv"></div>
+        <!--   <div id="graphDiv"></div>-->
 
     </div>
 
 
-    <div id="rightPanel" style="visibility: hidden;">
+    <div id="rightPanel">
         <table>
             <tr>
+                <td>
+                    sources<br>
+                    <div id="sourcesDiv"></div>
+                </td>
+            </tr>
+            <tr class="rightPanelTd">
                 <td>
                     types<br>
                     <div id="typesDiv"></div>
                 </td>
             </tr>
-            <tr>
+            <tr class="rightPanelTd">
                 <td>
                     <div id="classifiersDiv">
                         classifierSource <select id="classifierSource" onchange="search()">
@@ -1275,67 +1348,68 @@
 
 
     </div>
-    <div id="dialog"><br>
-        <table>
-            <tr>
-                <td>
-                    <button onclick='closeDialog()'>X</button>
-
-                </td>
-
-                <!--   <td>
-
-                       <button onclick='findSimilarDocuments()'> similar Docs</button>
-
-                       <br>
-                   </td>-->
-
-                <td>
-                    &nbsp;
-                    <button onclick='scrollToHighlight(-1)' id="scrollToHighlightUpButton" style="visibility: hidden">
-                        <
-                    </button>
-                    <b><span class="em">relevant passages</span></b>
 
 
-                    <button onclick='scrollToHighlight(+1)'> ></button>
+</div>
+<div id="dialog"><br>
+    <table>
+        <tr>
+            <td>
+                <button onclick='closeDialog()'>X</button>
+
+            </td>
+
+            <!--   <td>
+
+                   <button onclick='findSimilarDocuments()'> similar Docs</button>
+
+                   <br>
+               </td>-->
+
+            <td>
+                &nbsp;
+                <button onclick='scrollToHighlight(-1)' id="scrollToHighlightUpButton" style="visibility: hidden">
+                    <
+                </button>
+                <b><span class="em">relevant passages</span></b>
 
 
-                </td>
-           <!--     <td>
-                    &nbsp; &nbsp;
+                <button onclick='scrollToHighlight(+1)'> ></button>
 
 
-                    <button onclick='scrollToFindWord($("#searchWordInPrevisuButton").val(),-1)'
-                            id="scrollToWordUpButton" style="visibility: hidden"> <
-                    </button>
-
-                    <span class="wordEm">find word</span> <input id="searchWordInPrevisuButton" onkeydown="if (event.keyCode == 13)
-                        document.getElementById('scrollToWordDownButton').click()">
+            </td>
+            <!--     <td>
+                     &nbsp; &nbsp;
 
 
-                    <button onclick='scrollToFindWord($("#searchWordInPrevisuButton").val(),+1)'
-                            id="scrollToWordDownButton"> >
-                    </button>
+                     <button onclick='scrollToFindWord($("#searchWordInPrevisuButton").val(),-1)'
+                             id="scrollToWordUpButton" style="visibility: hidden"> <
+                     </button>
 
-                    <!-- -->
-                    <!-- <button onclick='nexHighlight()'> >></button>-->
-                </td>-->
-
-
-                <td>
-                    <div id="dialogLeftDiv"></div>
-                    <!--  <button onclick='$("#dialog").css("visibility","hidden")'>X</button>-->
-                </td>
-            </tr>
+                     <span class="wordEm">find word</span> <input id="searchWordInPrevisuButton" onkeydown="if (event.keyCode == 13)
+                         document.getElementById('scrollToWordDownButton').click()">
 
 
-        </table>
+                     <button onclick='scrollToFindWord($("#searchWordInPrevisuButton").val(),+1)'
+                             id="scrollToWordDownButton"> >
+                     </button>
+
+                     <!-- -->
+            <!-- <button onclick='nexHighlight()'> >></button>-->
+            </td>-->
 
 
-        <div id="dialogContentDiv"></div>
-    </div>
+            <td>
+                <div id="dialogLeftDiv"></div>
+                <!--  <button onclick='$("#dialog").css("visibility","hidden")'>X</button>-->
+            </td>
+        </tr>
 
+
+    </table>
+
+
+    <div id="dialogContentDiv"></div>
 </div>
 <div id="loginDiv" style="position: absolute;top:200px;left: 200px;visibility: hidden">
     login<input id="loginInput">

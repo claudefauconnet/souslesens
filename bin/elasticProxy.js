@@ -36,6 +36,7 @@ var request = require('request');
 var async = require('async');
 var path = require('path');
 var mime = require('mime');
+
 var classifierManager = require("./rdf/classifierManager.js");
 
 var elasticCustom = require("./elasticCustom.js");
@@ -55,18 +56,18 @@ var baseUrl = serverParams.elasticUrl
 var maxContentLength = 150;
 var elasticSchema = null;
 var wordBlackList = null;
-
+var users = null;
 var client = null;
 
 var elasticProxy = {
 
 
-    getSchema: function () {
+    getSchema: function (index) {
         if (!elasticSchema) {
             var str = fs.readFileSync(path.resolve(__dirname, "../config/search/elasticSchema.json"));
 
             try {
-                console.log("" + str)
+                //  console.log("" + str)
                 elasticSchema = JSON.parse("" + str);
             }
             catch (e) {
@@ -74,7 +75,43 @@ var elasticProxy = {
                 return null;
             }
         }
-        return elasticSchema;
+        if (!index)
+            return null;
+        var schema = elasticSchema._indexes[index];
+        if (!schema) {
+            return {};
+        } else {
+
+
+            elasticProxy.initSchema(index);
+            return schema;
+        }
+    },
+
+    initSchema: function (index, type) {
+
+        var fields = [];
+        var types = [];
+        if (type) {// only fields of this type
+            types.push(elasticSchema._indexes[index].mappings[type]);
+        }
+        else {// all fields of all types
+            for (var key in elasticSchema._indexes[index].mappings) {
+                types.push(elasticSchema._indexes[index].mappings[key]);
+            }
+        }
+        for (var i = 0; i < types.length; i++) {
+
+            for (var key in types[i].properties) {
+                fields.push(key);
+                if (types[i].properties[key].isTitle)
+                    elasticSchema._indexes[index].titleField = key;
+
+            }
+
+        }
+        elasticSchema._indexes[index].fields = fields;
+
     },
     getWordBlacklist: function () {
         if (!wordBlackList) {
@@ -191,8 +228,12 @@ var elasticProxy = {
                 }
             };
         var fields = elasticProxy.getShemaFields(index);
-        if (!fields || fields.indexOf("content") < 0)
+        if (!fields)
             fields = ["content"];
+        if (fields.indexOf("content") < 0)
+            fields.push("content");
+
+
         payload._source = fields;
 
         if (words) {
@@ -527,27 +568,33 @@ var elasticProxy = {
         var docs = []
 
 
-        var uiMappings = {}
-        schema = elasticProxy.getSchema();
-        if (schema && schema[index] && schema[index].uiMappings)
-            uiMappings = schema[index].uiMappings;
+        var uiMappings = {};
         var icons = [];
-        if (schema && schema[index] && schema[index].icons) {
-            icons = schema[index].icons;
-        }
         var mode = "read";
+        var csvFields = [];
+        var titleField = "title";
+        var indexSchema = elasticProxy.getSchema(index);
+        if (indexSchema) {
 
-        if (schema && schema[index] && schema[index].mode)
-            mode = schema[index].mode
-        var csvFields = []
-        if (schema && schema[index] && schema[index].csvFields)
-            csvFields = schema[index].csvFields;
-
+            if (indexSchema.uiMappings)
+                uiMappings = indexSchema.uiMappings;
+            if (indexSchema.icons)
+                icons = indexSchema.icons;
+            if (indexSchema.mode)
+                mode = indexSchema.mode
+            if (indexSchema.csvFields)
+                csvFields = indexSchema.csvFields;
+            var str = indexSchema.titleField;
+            if (str)
+                titleField = str;
+        }
+        var indexStats = {};
         for (var i = 0; i < hits.length; i++) {
 
             var obj = {};
             var objElastic = hits[i]._source;
 
+            objElastic.title = objElastic[titleField];
 
             for (var key in objElastic) {
                 var value = objElastic[key];
@@ -561,6 +608,7 @@ var elasticProxy = {
                     obj[key] = value;
                 }
             }
+
 
             obj.highlights = [];
             if (hits[i].highlight && hits[i].highlight.content) {
@@ -576,6 +624,10 @@ var elasticProxy = {
 
             obj.type = hits[i]._type;
             obj._id = hits[i]._id;
+            obj._index = hits[i]._index;
+            if (!indexStats[obj._index])
+                indexStats[obj._index] = 0;
+            indexStats[obj._index] += 1;
 
             docs.push(obj);
         }
@@ -587,6 +639,7 @@ var elasticProxy = {
             icons: icons,
             mode: mode,
             csvFields: csvFields,
+            indexStats:indexStats
 
         }
 
@@ -595,6 +648,7 @@ var elasticProxy = {
             var index = options.getAssociatedWords.indexName;
             var size = options.getAssociatedWords.size;
             var options = options.getAssociatedWords;
+
             word = null;
 
             elasticProxy.getAssociatedWords(index, word, size, options, function (err, result2) {
@@ -839,6 +893,7 @@ var elasticProxy = {
         });
 
     }
+
     ,
     acceptAssociatedWord: function (word) {
         if (word.length < 3)
@@ -1285,6 +1340,83 @@ var elasticProxy = {
 
                 });
 
+            }
+            ,
+            function (err, result) {//end
+                if (err) {
+                    callback(err);
+
+                } else {
+                    callback(null, "done");
+                }
+
+            });
+    }
+    ,
+
+    indexSqlTable: function (connection, sql, elasticIndex, elasticType, callback) {
+        var mySQLproxy = require('./mySQLproxy..js');
+        if (typeof connection !== "object")
+            connection = JSON.parse(connection);
+
+        var currentIndex = 0;
+        var resultSize = 1;
+        var elasticFields = elasticProxy.getShemaFields(elasticIndex, elasticType);
+        var mongoFields = {};
+        for (var i = 0; i < elasticFields.length; i++) {
+            var field = elasticFields[i];
+        }
+        var offset = 0;
+
+        async.whilst(
+            function () {//test
+                return resultSize > 0;
+            },
+            function (callbackWhilst) {//iterate
+                var sqlFetch = sql + " limit " + serverParams.mongoFetchSize + " offset " + offset;
+                offset += serverParams.mongoFetchSize;
+                mySQLproxy.find(connection, sqlFetch, function (err, result) {
+                    if (err) {
+                        callback(err);
+                        return;
+                    }
+                    resultSize = result.length;
+                    if (resultSize == 0) {
+                        return callback(null, "end");
+                    }
+                    currentIndex += serverParams.mongoFetchSize;
+                    var startId = Math.round(Math.random() * 10000000);
+                    var elasticPayload = [];
+
+                    // contcat all fields values in content field
+                    for (var i = 0; i < result.length; i++) {
+                        elasticPayload.push({index: {_index: elasticIndex, _type: elasticType, _id: "_" + (startId++)}})
+                        var payload = {};
+                        var content = "";
+                        for (var j = 0; j < elasticFields.length; j++) {
+                            var key = elasticFields[j];
+                            var value = result[i][key];
+                            if (!value)
+                                continue;
+                            content += " " + value;
+                            payload[key] = value;
+                        }
+                        payload["content"] = content;
+                        elasticPayload.push(payload);
+
+                    }
+                    getClient().bulk({
+                        body: elasticPayload
+                    }, function (err, resp) {
+                        if (err) {
+                            console.log("ERROR " + err)
+                            console.log(JSON.stringify(elasticPayload, null, 2))
+
+                        } else {
+                            return callbackWhilst(null);
+                        }
+                    });
+                });
             }
             ,
             function (err, result) {//end
@@ -1842,30 +1974,55 @@ var elasticProxy = {
     ,
     getShemaFields: function (index, type) {
 
-        schema = elasticProxy.getSchema();
-        if (!schema || !schema[index] || !schema[index].mappings)
-            return ["path", "title", "date"];
-
-        var fields = [];
-        var types = [];
-        if (type) {// only fields of this type
-            types.push(schema[index].mappings[type]);
+        var indexes = []
+        var p = index.indexOf(",");
+        if (p > -1) {//multi index
+            indexes = index.split(",")
         }
-        else {// all fields of all types
-            for (var key in schema[index].mappings) {
-                types.push(schema[index].mappings[key]);
+        else
+            indexes = [index];
+
+        var allFields = [];
+        for (var i = 0; i < indexes.length; i++) {
+            var fields = [];
+            var schema = elasticProxy.getSchema(index);
+            if (!schema || !schema.mappings)
+                fields = ["path", "title", "date"];
+            else
+                fields = elasticSchema._indexes[index].fields;
+
+            for (var j = 0; j < fields.length; j++) {
+                if (allFields.indexOf(fields[j]) < 0)
+                    allFields.push(fields[j])
             }
         }
-        for (var i = 0; i < types.length; i++) {
+        return allFields;
+    },
 
-            for (var key in types[i].properties) {
-                fields.push(key)
+    getUserIndexes: function (user, callback) {
+        if (!users) {
+            var str = fs.readFileSync(path.resolve(__dirname, "../config/users/elasticUsers.json"));
 
+            try {
+                users = JSON.parse("" + str);
+            }
+            catch (e) {
+                console.log(e)
+                return callback(e);
             }
 
         }
-
-        return fields;
+        if (!elasticSchema)
+            elasticProxy.getSchema();
+        var userObj = users[user];
+        if (!userObj)
+            return callback("no registred user :" + user);
+        var indexes = [];
+        for (var i = 0; i < userObj.groups.length; i++) {
+            if (userObj.groups[i] != "ALL")
+                indexes = indexes.concat(elasticSchema._indexCollections[userObj.groups[i]]);
+        }
+        return callback(null, indexes);
 
     }
     ,
@@ -1920,7 +2077,7 @@ function indexJsonFile(filePath, ealasticUrl) {
 
 
 module.exports = elasticProxy;
-//elasticProxy.getSchema();
+
 
 //**********************************************Command Line args***********************************
 const args = process.argv;
