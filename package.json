@@ -37,7 +37,8 @@
     "xml2js": "^0.4.19",
     "xmlbuilder": "^9.0.4",
     "xmldom": "latest",
-    "mime":"latest"
+    "mime":"latest",
+    "mysql":"latest"
 
   },
   "devDependencies": {},
