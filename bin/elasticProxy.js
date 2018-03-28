@@ -550,6 +550,7 @@ var elasticProxy = {
         });
     },
     processSearchResult: function (options) {
+        var _options = options;
         var error = options.error;
         var index = options.index;
         var body = options.body;
@@ -572,29 +573,38 @@ var elasticProxy = {
         var icons = [];
         var mode = "read";
         var csvFields = [];
-        var titleField = "title";
-        var indexSchema = elasticProxy.getSchema(index);
-        if (indexSchema) {
 
-            if (indexSchema.uiMappings)
-                uiMappings = indexSchema.uiMappings;
-            if (indexSchema.icons)
-                icons = indexSchema.icons;
-            if (indexSchema.mode)
-                mode = indexSchema.mode
-            if (indexSchema.csvFields)
-                csvFields = indexSchema.csvFields;
-            var str = indexSchema.titleField;
-            if (str)
-                titleField = str;
-        }
+        var indexesInfos = {}
+
         var indexStats = {};
         for (var i = 0; i < hits.length; i++) {
+            var hitIndex = hits[i]._index;
+
+            if (!indexesInfos[hitIndex]) {
+                var indexSchema = elasticProxy.getSchema(hitIndex);
+                var indexInfos = {}
+                if (indexSchema.uiMappings)
+                    indexInfos.uiMappings = indexSchema.uiMappings;
+                if (indexSchema.icons)
+                    indexInfos.icons = indexSchema.icons;
+                if (indexSchema.mode)
+                    indexInfos.mode = indexSchema.mode
+                if (indexSchema.csvFields)
+                    indexInfos.csvFields = indexSchema.csvFields;
+                var str = indexSchema.titleField;
+                if (str)
+                    indexInfos.titleField = str;
+                else
+                    indexInfos.titleField = "title";
+
+                indexesInfos[hitIndex] = indexInfos;
+            }
+
 
             var obj = {};
             var objElastic = hits[i]._source;
 
-            objElastic.title = objElastic[titleField];
+            objElastic.title = objElastic[indexesInfos[hitIndex].titleField];
 
             for (var key in objElastic) {
                 var value = objElastic[key];
@@ -625,9 +635,9 @@ var elasticProxy = {
             obj.type = hits[i]._type;
             obj._id = hits[i]._id;
             obj._index = hits[i]._index;
-            if (!indexStats[obj._index])
-                indexStats[obj._index] = 0;
-            indexStats[obj._index] += 1;
+            /*   if (!indexStats[obj._index])
+                   indexStats[obj._index] = 0;
+               indexStats[obj._index] += 1;*/
 
             docs.push(obj);
         }
@@ -636,35 +646,90 @@ var elasticProxy = {
             docs: docs,
 
             total: total,
-            icons: icons,
-            mode: mode,
-            csvFields: csvFields,
-            indexStats:indexStats
+            indexesInfos: indexesInfos
+            //  icons: icons,
+            //  mode: mode,
+            //  csvFields: csvFields,
+            // indexStats: indexStats
 
         }
 
 
-        if (options.getAssociatedWords) {
-            var index = options.getAssociatedWords.indexName;
-            var size = options.getAssociatedWords.size;
-            var options = options.getAssociatedWords;
-
-            word = null;
-
-            elasticProxy.getAssociatedWords(index, word, size, options, function (err, result2) {
+        if (_options.getAssociatedWords) {
+            elasticProxy.queryStats(options, function (err, resultStats) {
                 if (err) {
-                    result.associatedWords = {};
+                    result.stats = {};
                 }
-                result.associatedWords = result2
+                result.stats = resultStats
 
-                return callback(null, result);
+                var index = _options.getAssociatedWords.indexName;
+                var size = _options.getAssociatedWords.size;
+                var options = _options.getAssociatedWords;
 
+                word = null;
+
+                elasticProxy.getAssociatedWords(index, word, size, options, function (err, result2) {
+                    if (err) {
+                        result.associatedWords = {};
+                    }
+                    result.associatedWords = result2
+
+                    return callback(null, result);
+
+                })
             })
-        } else {
+        }
+        else {
             return callback(null, result);
         }
 
 
+    }
+    ,
+    queryStats: function (options, callback) {
+        var payload = {
+            "query": options.getAssociatedWords.query,
+            "size": 0,
+
+            "aggs": {
+                "stats": {
+                    "terms": {"field": "_index"}
+                }
+            }
+        }
+        var ajaxOptions = {
+            method: 'POST',
+            json: payload,
+            url: baseUrl + options.index + "/_search"
+        };
+
+
+        request(ajaxOptions, function (error, response, body) {
+            if (error)
+                return callback(error);
+            if (!body.hits) {
+                return callback(null, []);
+            }
+
+            var types = [];
+            var hits = body.hits.hits;
+            for (var i = 0; i < hits.length; i++) {
+                if (types.indexOf(hits[i]._type) < 0) {
+                    types.push(hits[i]._type)
+                }
+            }
+            var buckets = body.aggregations.stats.buckets;
+            var iterationNstopWords = 0;
+            var words = [];
+            for (var i = 0; i < buckets.length; i++) {
+                var obj = {};
+                var objElastic = buckets[i];
+                obj.key = objElastic.key;
+                obj.count = objElastic.doc_count;
+                words.push(obj);
+            }
+            callback(null, words)
+        })
     }
     ,
     getAssociatedWords: function (index, word, size, options, callback) {
@@ -1984,12 +2049,15 @@ var elasticProxy = {
 
         var allFields = [];
         for (var i = 0; i < indexes.length; i++) {
+            var _index = indexes[i];
             var fields = [];
-            var schema = elasticProxy.getSchema(index);
+            var schema = elasticProxy.getSchema(_index);
             if (!schema || !schema.mappings)
                 fields = ["path", "title", "date"];
             else
-                fields = elasticSchema._indexes[index].fields;
+                fields = elasticSchema._indexes[_index].fields;
+            if (schema.titleField)
+                fields.push(schema.titleField);
 
             for (var j = 0; j < fields.length; j++) {
                 if (allFields.indexOf(fields[j]) < 0)

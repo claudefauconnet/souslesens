@@ -41,22 +41,31 @@ var mySQLproxy = {
 
 module.exports = mySQLproxy;
 
-var connOptions = {
-    host: "localhost",
-    user: "root",
-    password: "vi0lon",
-    database: 'phototheque'
-}
+
+
 
 
 if (false) {
-    mySQLproxy.find(connOptions, "select * from phototheque limit 100", function (err, result) {
-        var x = result;
-        console.log(JSON.stringify(result[0], null, 2))
-    });
-}
-if (false) {
+    var connOptions = {
+        host: "localhost",
+        user: "root",
+        password: "vi0lon",
+        database: 'phototheque'
+    }
     elasticProxy.indexSqlTable(connOptions, "select * from phototheque", "phototheque", "phototheque", function (err, result) {
+        var x = 1;
+        console.log("done");
+    })
+}
+
+if (true) {
+    var connOptions = {
+        host: "localhost",
+        user: "root",
+        password: "vi0lon",
+        database: 'audiotheque'
+    }
+    elasticProxy.indexSqlTable(connOptions, "select * from audiotheque", "audiotheque", "audiotheque", function (err, result) {
         var x = 1;
         console.log("done");
     })

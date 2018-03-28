@@ -180,6 +180,11 @@
             table-border-color-light: #261803;
 
         }
+        .indexCbxButton{
+            margin: 1px;
+            padding: 1px;
+            font-size: 10px;
+        }
 
         li {
             margin-left: 10px;
@@ -377,12 +382,12 @@
                 dataType: "json",
                 success: function (data, textStatus, jqXHR) {
                     var x = data;
-
+                    data.sort();
                     var indexesCxbs = "<ul>";
 
                     for (var i = 0; i < data.length; i++) {
 
-                        indexesCxbs += "<li><input type='checkbox' checked='checked' name='indexesCbxes' value='" + data[i] + "'>" + data[i] + "</li>"
+                        indexesCxbs += "<li><input type='checkbox' checked='checked' onchange='search()' name='indexesCbxes' value='" + data[i] + "'><span id='indexCbxSpan_" + data[i] + "'>" + data[i] + "</span></li>"
                     }
                     indexesCxbs += "<ul>";
                     $("#sourcesDiv").html(indexesCxbs);
@@ -508,7 +513,7 @@
                     if (callback) {
                         return callback(null, data)
                     }
-                    icons = data.icons;
+                    icons = {};//data.icons;
 
                     if (isFieldQuery()) {
                         var visData = connectors.elasticSkosToVisjs(data.docs);
@@ -519,6 +524,7 @@
                         showPageControls(data.total);
                         if (associatedWords) {
                             showAssociatedWords(data.associatedWords.buckets);
+                            showIndexesStats(data.stats);
                             showTypes(data.associatedWords.types);
                             showClassifier(data.associatedWords.classifier);
                         }
@@ -635,7 +641,7 @@
             if (icons["docTypes"] && icons["docTypes"][obj.type])
                 str += "<img  src='./icons/" + icons["docTypes"][obj.type] + "'>";
 
-            str += "<img style='border-style: solid;border-color: #0000cc;border-width: 1px;border-radius: 8px' title='pre-visualize' onclick='visualizeDocContent(\"" + obj._id + "\")' src='./icons/details.png' width='20px'> </a>&nbsp;&nbsp;&nbsp;";
+            str += "<img style='border-style: solid;border-color: #0000cc;border-width: 1px;border-radius: 8px' title='pre-visualize' onclick='visualizeDocContent(\"" + obj._id + "\",\"" + obj._index + "\")' src='./icons/details.png' width='20px'> </a>&nbsp;&nbsp;&nbsp;";
             str += "<i>" + obj._index + "</i>&nbsp;";
             if (obj.path) {
                 var path = decodeURIComponent(obj.path)
@@ -781,11 +787,11 @@
         }
 
 
-        function visualizeDocContent(id) {
+        function visualizeDocContent(id, index) {
             $("#dialogLeftDiv").html("");
 
             currentDocId = id;
-            var index = $("#indexInput").val();
+            //   var index = $("#indexInput").val();
             var words = associatedWords;
             var word = $("#searchInput").val()
             if (words.indexOf(word) < 0)
@@ -849,12 +855,12 @@
                         html += doc._id;
                         html += doc.content.replace(/[\n\r]/g, "<br>");
 
-                        mode = data.mode[doc.type];
-                        if (mode && mode.source == "MongoDB") {
-                            var str = "<button onclick=editMongoForm('" + doc.mongoId + "','" + doc._id + "')>Edit</button>"
-                            $("#dialogLeftDiv").append(str);
-                            $("#dialogLeftDiv").css("visibility", "visible");
-                        }
+                        /*    mode = data.mode[doc.type];
+                            if (mode && mode.source == "MongoDB") {
+                                var str = "<button onclick=editMongoForm('" + doc.mongoId + "','" + doc._id + "')>Edit</button>"
+                                $("#dialogLeftDiv").append(str);
+                                $("#dialogLeftDiv").css("visibility", "visible");
+                            }*/
 
                         $("#dialogContentDiv").html(html);
                         $("#dialog").css("visibility", "visible");
@@ -1212,6 +1218,29 @@
 
         }
 
+        function showIndexesStats(data) {
+            var indexesCxbs = "<ul>";
+            for (var i = 0; i < data.length; i++) {
+                var str =  "<button class='indexCbxButton' onclick='filterIndex(\"" + data[i].key + "\")'>O</button>"+data[i].key + " (" + data[i].count + ")"
+                $("#indexCbxSpan_" + data[i].key).html(str);
+                //  indexesCxbs += "<li><input type='checkbox' checked='checked' name='indexesCbxes' value='" + data[i].key + "'>" + data[i].key+" ("+ data[i].count+")</li>"
+            }
+            //    indexesCxbs += "<ul>";
+            //  $("#sourcesDiv").html(indexesCxbs);
+
+        }
+
+        function filterIndex(index0) {
+            $('[name=indexesCbxes]').each(function () {
+                var index = $(this).val();
+                if (index != index0)
+                    $(this).prop('checked', false);
+                else
+                    $(this).prop('checked', "checked");
+            });
+            search();
+        }
+
 
     </script>
 
@@ -1319,12 +1348,12 @@
                     <div id="sourcesDiv"></div>
                 </td>
             </tr>
-            <tr class="rightPanelTd">
-                <td>
-                    types<br>
-                    <div id="typesDiv"></div>
-                </td>
-            </tr>
+            <!--   <tr class="rightPanelTd">
+                   <td>
+                       types<br>
+                       <div id="typesDiv"></div>
+                   </td>
+               </tr>-->
             <tr class="rightPanelTd">
                 <td>
                     <div id="classifiersDiv">

@@ -93,6 +93,107 @@
         }
       }
     },
+    "audiotheque":{
+
+      "mappings": {
+        "audiotheque": {
+          "properties": {
+            "id": {
+              "type": "integer",
+              "idId": true
+            },
+            "indexCIJW": {
+              "type": "keyword",
+              "isTitle": true
+            },
+            "Cote": {
+              "type": "keyword"
+            },
+            "Type": {
+              "type": "keyword"
+            },
+            "NDA": {
+              "type": "keyword"
+            },
+            "Comptage": {
+              "type": "keyword"
+            },
+            "DateNumerisation": {
+              "type": "date"
+            },
+            "Operateur": {
+              "type": "keyword"
+            },
+            "Titre1": {
+              "type": "text"
+            },
+            "Titre2": {
+              "type": "text"
+            },
+            "TitreCatalogue": {
+              "type": "text"
+            },
+            "QualiteEcoute": {
+              "type": "keyword"
+            },
+            "RDB": {
+              "type": "keyword"
+            },
+            "RMDA": {
+              "type": "keyword"
+            },
+            "DocumentsAssocies": {
+              "type": "keyword"
+            },
+            "DateConformation": {
+              "type": "date"
+            },
+            "Conformation": {
+              "type": "text"
+            },
+            "DH": {
+              "type": "keyword"
+            },
+            "DM": {
+              "type": "keyword"
+            },
+            "DS": {
+              "type": "keyword"
+            },
+            "DS10_3": {
+              "type": "keyword"
+            },
+            "DateEnregistrement": {
+              "type": "date"
+            },
+            "MoisEnregistrement": {
+              "type": "integer"
+            },
+            "AnneeEnregistrement": {
+              "type": "integer"
+            },
+            "dateMaj": {
+              "type": "date"
+            },
+            "redacteur": {
+              "type": "keyword"
+            },
+            "content": {
+              "type": "text",
+              "index_options": "offsets",
+              "fielddata": true,
+              "fields": {
+                "contentKeyWords": {
+                  "type": "keyword",
+                  "ignore_above": 256
+                }
+              }
+            }
+          }
+        }
+      }
+      
+    },
     "phototheque": {
       "mappings": {
         "phototheque": {
