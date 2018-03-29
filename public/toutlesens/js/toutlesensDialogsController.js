@@ -130,9 +130,10 @@ self.getAllpropertiesDialogContent("setSearchNodeReturnFilterVal()");
 
 
 self.getNodeInfoButtons=function(){
-      var str=   "<input type='image' height='20px'  alt='set as rootNode' onclick='toutlesensController.dispatchAction(\"expandNode\")' src='images/expand.png'/>";
-    str+=   "<input type='image' height='20px'  alt='set as rootNode' onclick='toutlesensController.dispatchAction(\"setAsRootNode\")' src='images/center.png'/>"
-    str+=   "<input type='image' height='20px'  alt='remove node from graph' onclick='toutlesensController.dispatchAction(\"removeNode\")' src='images/trash.png'/>"
+      var str= "<input type='image' height='20px'  title='expand all' onclick='toutlesensController.dispatchAction(\"expandNode\")' src='images/expand.png'/>";
+    str+=   "<input type='image' height='15px'  title='expand label...' onclick='toutlesensController.dispatchAction(\"expandNodeWithLabel\")' src='images/expandLabel.png'/>";
+    str+=   "<input type='image' height='20px'  title='set as rootNode' onclick='toutlesensController.dispatchAction(\"setAsRootNode\")' src='images/center.png'/>"
+    str+=   "<input type='image' height='20px'  title='remove node from graph' onclick='toutlesensController.dispatchAction(\"removeNode\")' src='images/trash.png'/>"
     return  str;
 }
 
@@ -142,7 +143,7 @@ self.getNodeInfoButtons=function(){
       str+= "relType :"+currentObject.type+"<br>";
         str+= "["+currentObject.fromNode.labelNeo+"]"+currentObject.fromNode.label+"<br>";
         str+= "--> ["+currentObject.toNode.labelNeo+"]"+currentObject.toNode.label;
-        str+="<td> <input type='image' height='20px' alt='infos'  onclick='toutlesensController.dispatchAction(\"deleteRelation\")' src='images/trash.png'/></td>";
+        str+="<td> <input type='image' height='20px' title='infos'  onclick='toutlesensController.dispatchAction(\"deleteRelation\")' src='images/trash.png'/></td>";
         if(false && currentObject.type=="composite")
         str+="<a href='javascript:toutlesensController.dispatchAction(\"showClusterIntermediateNodes\");'>show intermediateNodes</a>";
         return str;
@@ -166,10 +167,10 @@ self.getNodeInfoButtons=function(){
   var str="<table> <tr>" ;//+
        str+="<td>"+ self.getNodeInfoButtons()+"</td>";
     if(Gparams.readOnly ==false){
-        str+="<td> <input type='image' height='20px' alt='infos'  onclick='toutlesensController.dispatchAction(\"modifyNode\")' src='images/modify.png'/></td>"+
-      "<td><input type='image' height='20px'  alt='set as rootNode' onclick='toutlesensController.dispatchAction(\"linkSource\")' src='images/sourceLink.png'/></td>"+
-            "<td><input type='image' height='20px'  alt='set as rootNode' onclick='toutlesensController.dispatchAction(\"linkTarget\")' src='images/targetLink.png'/></td>"
-     //  +"<td><input type='image' height='20px'  alt='set as rootNode' onclick='toutlesensController.dispatchAction(\"newNode\")' src='images/new.jpg'/></td>"
+        str+="<td> <input type='image' height='20px' title='infos'  onclick='toutlesensController.dispatchAction(\"modifyNode\")' src='images/modify.png'/></td>"+
+      "<td><input type='image' height='20px'  title='set as rootNode' onclick='toutlesensController.dispatchAction(\"linkSource\")' src='images/sourceLink.png'/></td>"+
+            "<td><input type='image' height='20px'  title='set as rootNode' onclick='toutlesensController.dispatchAction(\"linkTarget\")' src='images/targetLink.png'/></td>"
+     //  +"<td><input type='image' height='20px'  title='set as rootNode' onclick='toutlesensController.dispatchAction(\"newNode\")' src='images/new.jpg'/></td>"
     }
 
   str+="</td></tr><tr><td>"

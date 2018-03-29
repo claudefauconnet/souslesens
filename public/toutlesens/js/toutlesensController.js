@@ -484,7 +484,7 @@ var toutlesensController = (function () {
                 toutlesensData.getNodeInfos(id, function (obj) {
                     var $currentObj = currentObject;
                     if (self.hasRightPanel) {
-                        var str = "<input type='image' src='images/back.png' height='15px' alt='back' onclick='toutlesensController.restorePopupMenuNodeInfo()' ><br>"
+                        var str = "<input type='image' src='images/back.png' height='15px' title='back' onclick='toutlesensController.restorePopupMenuNodeInfo()' ><br>"
                         str += textOutputs.formatNodeInfo(obj[0].n.properties);
                         str += "<br>" + customizeUI.customInfo(obj);
                         popupMenuNodeInfoCache = $("#nodeInfoMenuDiv").html();
@@ -525,6 +525,27 @@ var toutlesensController = (function () {
         else if (action == 'expandNode') {
             toutlesensController.generateGraph(currentObject.id, {applyFilters: false, addToPreviousQuery: true});
         }
+        else if (action == 'expandNodeWithLabel') {
+            var labels=Schema.getPermittedLabels(currentObject.labelNeo,true,true);
+            labels.splice(0,0,"");
+            var str="labels<br><select onchange=' toutlesensController.dispatchAction(\"expandNodeWithLabelExecute\",$(this).val())'>";
+            for(var i=0;i<labels.length;i++){
+                str+="<option>"+labels[i]+"</option>>";
+            }
+            $("#graphPopup").append(str);
+            $("#graphPopup").css("visibility","visible");
+
+        }
+        else if (action == 'expandNodeWithLabelExecute') {
+            if(objectId!="" && objectId!="ALL")
+                currentLabel=objectId;
+            else
+                currentLabel=null;
+            toutlesensController.generateGraph(currentObject.id, {applyFilters: false, addToPreviousQuery: true},function(err, result){
+                currentLabel=null;
+            });
+        }
+
         else if (action == 'closeNode') {
 
         }

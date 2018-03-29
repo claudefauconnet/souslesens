@@ -1,4 +1,5 @@
 var mysql = require('mysql');
+//var nodeMaria = require('node-mariadb');
 var elasticProxy = require('./elasticProxy.js');
 
 
@@ -23,6 +24,10 @@ var mySQLproxy = {
 
 
     find: function (connection, sql, callback) {
+        var nodeMaria = require('node-mariadb');
+
+
+
         mySQLproxy.getConnection(connection, function (err, conn) {
             if (err)
                 return callback(err);

@@ -1421,6 +1421,7 @@ var elasticProxy = {
 
     indexSqlTable: function (connection, sql, elasticIndex, elasticType, callback) {
         var mySQLproxy = require('./mySQLproxy..js');
+        var totalIndexed=0
         if (typeof connection !== "object")
             connection = JSON.parse(connection);
 
@@ -1446,6 +1447,7 @@ var elasticProxy = {
                         return;
                     }
                     resultSize = result.length;
+                    totalIndexed+=resultSize;
                     if (resultSize == 0) {
                         return callback(null, "end");
                     }
@@ -1454,6 +1456,7 @@ var elasticProxy = {
                     var elasticPayload = [];
 
                     // contcat all fields values in content field
+
                     for (var i = 0; i < result.length; i++) {
                         elasticPayload.push({index: {_index: elasticIndex, _type: elasticType, _id: "_" + (startId++)}})
                         var payload = {};
@@ -1478,6 +1481,7 @@ var elasticProxy = {
                             console.log(JSON.stringify(elasticPayload, null, 2))
 
                         } else {
+                            console.log(" totalIndexed "+totalIndexed)
                             return callbackWhilst(null);
                         }
                     });

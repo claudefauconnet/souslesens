@@ -283,8 +283,11 @@ var toutlesensData = (function () {
                 dataType: "json",
                 success: function (data, textStatus, jqXHR) {
 
+                    if (data.length == 0 && options.addToPreviousQuery){
+                        data = [];
+                    }
+                    else if (data.length == 0) {
 
-                    if (data.length == 0) {
                         if (id == null) {
                             return callback(null, []);
                         }
@@ -1254,8 +1257,8 @@ var toutlesensData = (function () {
 
 
             console.log(str);
-            var whereStrRaw=whereStr;
-            if (whereStr && whereStr.length > 0 && whereStr.toUpperCase().indexOf("WHERE")<0)
+            var whereStrRaw = whereStr;
+            if (whereStr && whereStr.length > 0 && whereStr.toUpperCase().indexOf("WHERE") < 0)
                 whereStr = " WHERE " + whereStr;
             str = "MATCH (n" + labelStr + ") " + whereStr + subGraphWhere + returnStr;
             if (resultType == "matchStr" && callback) {

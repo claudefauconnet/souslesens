@@ -17,6 +17,8 @@ var visjsGraph = (function () {
         self.currentLayoutDirection = "";
         self.clusters = []
         self.scaleToShowLabels = 0.6;
+        self.context=null;
+        self.dragRect={x:0,y:0,w:0,h:0};
 
         var stopPhysicsTimeout = 5000;
         var lastClick = new Date();
@@ -265,17 +267,25 @@ var visjsGraph = (function () {
                     toutlesensController.showPopupMenu(point.x, point.y, "relationInfos");
                 }
             });
-
+            network.on("beforeDrawing", function (ctx) {
+             self.context=ctx;
+             });
             network.on("dragStart", function (params) {
 
                 dragPosition = params.pointer.DOM;
 
+                self.dragRect("dragStart",dragPosition.x,dragPosition.y);
+            });
 
+            network.on("drag", function (params) {
+                dragPosition = params.pointer.DOM;
+                self.dragRect("drag",dragPosition.x,dragPosition.y);
             });
 
             network.on("dragEnd", function (params) {
 
                 var dragEndPos = params.pointer.DOM;
+                self.dragRect("dragEnd",dragPosition.x,dragPosition.y);
                 if (_options.dragConnectedNodes && params.event.srcEvent.ctrlKey) {
                     self.dragConnectedNodes(params.nodes[0], {
                         x: dragEndPos.x - dragPosition.x,
@@ -983,6 +993,37 @@ var visjsGraph = (function () {
 
         self.deleteRelation = function (edgeId) {
             self.edges.remove(edgeId);
+        }
+
+
+
+        self.dragRect=function(action,x,y) {
+            var ctx = self.context;
+            if (action == "dragStart") {
+                self.dragRect.x = x;
+                self.dragRect.y = y;
+
+            }
+            else if (action.indexOf("drag") == 0) {
+                self.dragRect.w = x - self.dragRect.x;
+                self.dragRect.h = y - self.dragRect.y;
+                self.dragRect.w =200;
+                self.dragRect.h =300;
+
+
+
+                if (action == "dragEnd") {
+                    var ctx=self.context;
+                    ctx.strokeStyle = '#A6D5F7';
+                    ctx.fillStyle = '#294475';
+                    ctx.rect(self.dragRect.x, self.dragRect.y, self.dragRect.w, self.dragRect.h);
+                    ctx.fill();
+                    ctx.stroke();
+
+                }
+
+
+            }
         }
 
 
