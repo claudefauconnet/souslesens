@@ -1,6 +1,6 @@
 # Souslesens
 
-Souslesens is a tool to visualize and manipulate graphs. It is based on Neo4j, D3js and Nodejs
+Souslesens is a tool to visualize and manipulate graphs. It is based on Neo4j,Visjs and Nodejs
 - [example] (example.png)
 - [demo] (http://vps254642.ovh.net/toutlesens/index.html?subGraph=hist-antiq)
 
