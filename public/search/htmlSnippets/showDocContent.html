@@ -1,0 +1,59 @@
+
+    <table>
+        <tr>
+            <td>
+                <button onclick='searchUI.closeDialog()'>X</button>
+
+            </td>
+
+            <!--   <td>
+
+                   <button onclick='findSimilarDocuments()'> similar Docs</button>
+
+                   <br>
+               </td>-->
+
+            <td>
+                &nbsp;
+                <button onclick='searchUI.scrollToHighlight(-1)' id="scrollToHighlightUpButton" style="visibility: hidden">
+                    <
+                </button>
+                <b><span class="em">relevant passages</span></b>
+
+
+                <button onclick='searchUI.scrollToHighlight(+1)'> ></button>
+
+
+            </td>
+            <!--     <td>
+                     &nbsp; &nbsp;
+
+
+                     <button onclick='scrollToFindWord($("#searchWordInPrevisuButton").val(),-1)'
+                             id="scrollToWordUpButton" style="visibility: hidden"> <
+                     </button>
+
+                     <span class="wordEm">find word</span> <input id="searchWordInPrevisuButton" onkeydown="if (event.keyCode == 13)
+                         document.getElementById('scrollToWordDownButton').click()">
+
+
+                     <button onclick='searchUI.scrollToFindWord($("#searchWordInPrevisuButton").val(),+1)'
+                             id="scrollToWordDownButton"> >
+                     </button>
+
+                     <!-- -->
+            <!-- <button onclick='nexHighlight()'> >></button>-->
+            </td>-->
+
+
+            <td>
+                <div id="dialogLeftDiv"></div>
+                <!--  <button onclick='$("#dialog").css("visibility","hidden")'>X</button>-->
+            </td>
+        </tr>
+
+
+    </table>
+
+
+    <div id="dialogContentDiv"></div>

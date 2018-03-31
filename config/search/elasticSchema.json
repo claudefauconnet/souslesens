@@ -275,7 +275,7 @@
         }
       }
     },
-    "archivesatd": {
+    "bordereaux": {
       "mappings": {
         "archive": {
           "properties": {

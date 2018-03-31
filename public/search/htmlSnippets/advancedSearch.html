@@ -1,0 +1,71 @@
+<style>
+
+    #advancedSearchDialog_criteriaDiv {
+        font-size: 14px;
+        font-weight: bold;
+
+        color: blue;
+       // background: #95a4bd;
+
+    }
+
+</style>
+<button onclick="$('#dialog').css('visibility','hidden')">X</button>
+<table valign="top"  align="center" style=" margin: 10px;padding: 10px">
+    <tr style="font-weight: bold">
+
+        <td colspan="2" align="center">
+            Build advanced Query
+        </td>
+    </tr>
+    <tr>
+
+        <td >
+            sources and fields
+        </td>
+        <td>
+            criteria
+        </td>
+    </tr>
+    <tr style=" margin: 10px;padding: 10px">
+
+        <td>
+            <div id="jsTreeDiv" style="height: 550px; overflow: auto">
+
+            </div>
+        </td>
+
+        <td valign="top">
+            <input id="advancedSearchDialog_fieldInput">
+            <select id="advancedSearchDialog_operatorSelect">
+
+
+            </select>
+
+            <input id="advancedSearchDialog_valueInput" onkeydown="if (event.keyCode == 13)
+                        document.getElementById('advancedSearchDialog_addCriterionButton').click()">
+
+            <button id="advancedSearchDialog_addCriterionButton" onclick="advancedSearch.addCriterion()">Add</button>
+
+
+
+            <br>
+            <br>
+            <br>
+            <div id="advancedSearchDialog_criteriaDiv"></div>
+            <br>
+            <br>
+
+            <div id="advancedSearchDialog_searchDiv" style="visibility: hidden;">
+
+
+                <button id="advancedSearchDialog_searchButton" onclick="advancedSearch.executeSearchQuery()">Search</button>
+                &nbsp;
+                <button id="advancedSearchDialog_clearAllCriteriaButton" onclick="advancedSearch.clearAllCriteria()">Clear
+                </button>
+            </div>
+        </td>
+    </tr>
+
+
+</table>

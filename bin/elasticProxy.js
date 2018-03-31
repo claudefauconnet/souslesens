@@ -91,6 +91,7 @@ var elasticProxy = {
     initSchema: function (index, type) {
 
         var fields = [];
+        fields.fieldObjs = {}
         var types = [];
         if (type) {// only fields of this type
             types.push(elasticSchema._indexes[index].mappings[type]);
@@ -104,6 +105,8 @@ var elasticProxy = {
 
             for (var key in types[i].properties) {
                 fields.push(key);
+                fields.fieldObjs[key] = types[i].properties[key];
+
                 if (types[i].properties[key].isTitle)
                     elasticSchema._indexes[index].titleField = key;
 
@@ -143,7 +146,7 @@ var elasticProxy = {
 
     },
     searchWordAll: function (word, callback) {
-        getClient().search({
+        getClient().searchUI.search({
             q: word
         }).then(function (body) {
             var hits = body.hits.hits;
@@ -157,7 +160,7 @@ var elasticProxy = {
 
     search: function (index, type, query, callback) {
 
-        getClient().search({
+        getClient().searchUI.search({
             index: index,
             type: type,
             body: {
@@ -227,7 +230,7 @@ var elasticProxy = {
                     }
                 }
             };
-        var fields = elasticProxy.getShemaFields(index);
+        var fields = elasticProxy.getShemasFieldNames(index);
         if (!fields)
             fields = ["content"];
         if (fields.indexOf("content") < 0)
@@ -343,6 +346,7 @@ var elasticProxy = {
         var from = options.from;
         var size = options.size;
         var slop = options.slop;
+        var queryObject = options.queryObject;
         var resultFields = options.resultFields;
         var andWords = options.andWords;
         var booleanSearchMode = options.booleanSearchMode;
@@ -354,156 +358,163 @@ var elasticProxy = {
             slop = 0;
 
 
-        var match = {"content": word};
-
-        if (!queryField)
-            queryField = "content"
-        else
-            queryField = "content." + queryField
+        if (queryObject)// request allready complete
+            query = queryObject;
+        else {
 
 
-        if (!resultFields) {
-            resultFields = elasticProxy.getShemaFields(index, type);
+            var match = {"content": word};
 
-        }
-        if (size)
-            size = parseInt("" + size)
-        var query = "";
-
-        if (word == null || word == "*" || word == "")//all
-            query = {"match_all": {}}
-
-        var shouldQuery = null;
+            if (!queryField)
+                queryField = "content"
+            else
+                queryField = "content." + queryField
 
 
-        if (word.indexOf(" ") > -1 && slop == 0) {//or
-            var words = word.split(" ");
-            var shouldQueries = [];
-            for (var i = 0; i < words.length; i++) {
-                var word = words[i];
-                if (word == "")
-                    continue;
-
-                var aShouldQuery = {};
-                if (word.indexOf("*") > -1) {
-                    aShouldQuery = {
-                        "wildcard": {"content": word}
-                    }
-                } else {
-                    aShouldQuery = {"match": {}};
-                    aShouldQuery.match[queryField] = word;
-                }
-                shouldQueries.push(aShouldQuery);
-            }
-            shouldQuery =
-                {
-                    "bool": {
-                        "should": [
-                            shouldQueries
-                        ]
-                    }
-                }
-
-
-        }
-
-
-        var mustQuery = null;
-        if (andWords && andWords.length > 0) {//must
-            if (word.indexOf("*") > -1) {
-                query = {
-                    "wildcard": {"content": word}
-                }
-            } else {
-                query = {"match": {}};
-                query.match[queryField] = word;
-            }
-
-            mustQuery =
-                {
-                    "bool": {
-                        "must": [
-                            query
-                        ]
-                    }
-                }
-
-
-            for (var i = 0; i < andWords.length; i++) {
-                var andWord = andWords[i];
-                if (andWord == "")
-                    continue;
-
-                var queryAndWords = {};
-                if (andWord.indexOf("*") > -1) {
-                    queryAndWords = {
-                        "wildcard": {"content": andWord}
-                    }
-                } else {
-                    var queryAndWords = {"match": {}};
-                    queryAndWords.match[queryField] = andWord;
-                }
-
-
-                mustQuery.bool.must.push(queryAndWords);
+            if (!resultFields) {
+                resultFields = elasticProxy.getShemasFieldNames(index, type);
 
             }
+            if (size)
+                size = parseInt("" + size)
+            var query = "";
 
-        }
+            if (word == null || word == "*" || word == "")//all
+                query = {"match_all": {}}
 
-        if (mustQuery && shouldQuery) {
-            if (booleanSearchMode == "and") {
-                query =
-                    {
-                        "bool": {
-                            "must": [
-                                mustQuery, shouldQuery
-                            ]
+            var shouldQuery = null;
+
+
+            if (word.indexOf(" ") > -1 && slop == 0) {//or
+                var words = word.split(" ");
+                var shouldQueries = [];
+                for (var i = 0; i < words.length; i++) {
+                    var word = words[i];
+                    if (word == "")
+                        continue;
+
+                    var aShouldQuery = {};
+                    if (word.indexOf("*") > -1) {
+                        aShouldQuery = {
+                            "wildcard": {"content": word}
                         }
+                    } else {
+                        aShouldQuery = {"match": {}};
+                        aShouldQuery.match[queryField] = word;
                     }
-            }
-            else {
-                query =
+                    shouldQueries.push(aShouldQuery);
+                }
+                shouldQuery =
                     {
                         "bool": {
                             "should": [
-                                mustQuery, shouldQuery
+                                shouldQueries
                             ]
                         }
                     }
+
+
             }
-        } else if (mustQuery) {
-            query = mustQuery;
+
+
+            var mustQuery = null;
+            if (andWords && andWords.length > 0) {//must
+                if (word.indexOf("*") > -1) {
+                    query = {
+                        "wildcard": {"content": word}
+                    }
+                } else {
+                    query = {"match": {}};
+                    query.match[queryField] = word;
+                }
+
+                mustQuery =
+                    {
+                        "bool": {
+                            "must": [
+                                query
+                            ]
+                        }
+                    }
+
+
+                for (var i = 0; i < andWords.length; i++) {
+                    var andWord = andWords[i];
+                    if (andWord == "")
+                        continue;
+
+                    var queryAndWords = {};
+                    if (andWord.indexOf("*") > -1) {
+                        queryAndWords = {
+                            "wildcard": {"content": andWord}
+                        }
+                    } else {
+                        var queryAndWords = {"match": {}};
+                        queryAndWords.match[queryField] = andWord;
+                    }
+
+
+                    mustQuery.bool.must.push(queryAndWords);
+
+                }
+
+            }
+
+            if (mustQuery && shouldQuery) {
+                if (booleanSearchMode == "and") {
+                    query =
+                        {
+                            "bool": {
+                                "must": [
+                                    mustQuery, shouldQuery
+                                ]
+                            }
+                        }
+                }
+                else {
+                    query =
+                        {
+                            "bool": {
+                                "should": [
+                                    mustQuery, shouldQuery
+                                ]
+                            }
+                        }
+                }
+            } else if (mustQuery) {
+                query = mustQuery;
+            }
+            else if (shouldQuery) {
+                query = shouldQuery;
+            } else {
+                if (slop || slop > 2) {// match_phrase
+                    query = {
+                        "match_phrase": {}
+                    }
+                    query.match_phrase[queryField] = {
+                        "query": word,
+                        "slop": util.convertNumStringToNumber(slop)
+                    }
+                }
+
+                else if (word.indexOf("*") > -1) {
+                    query = {
+                        "wildcard": {}
+                    }
+                    query.wildcard[queryField] = word;
+                }
+                else {
+                    query = {
+                        "match": {}
+                    }
+                    query.match[queryField] = word;
+                }
+
+
+            }
+
+
         }
-        else if (shouldQuery) {
-            query = shouldQuery;
-        } else {
-            if (slop || slop > 2) {// match_phrase
-                query = {
-                    "match_phrase": {}
-                }
-                query.match_phrase[queryField] = {
-                    "query": word,
-                    "slop": util.convertNumStringToNumber(slop)
-                }
-            }
-
-            else if (word.indexOf("*") > -1) {
-                query = {
-                    "wildcard": {}
-                }
-                query.wildcard[queryField] = word;
-            }
-            else {
-                query = {
-                    "match": {}
-                }
-                query.match[queryField] = word;
-            }
-
-
-        }
-
 
         var payload = {
             "from": from,
@@ -559,6 +570,9 @@ var elasticProxy = {
         if (error) {
             console.log(error);
             return callback(error);
+        }
+        if(body.error){
+            return callback(body.error);
         }
         if (!body.hits) {
             return callback(null, []);
@@ -837,9 +851,9 @@ var elasticProxy = {
 
                 }
             }*/
-        if (false && options.stopWords) {
+        if (options.stopWords) {
 
-            for (var i = 0; i < stopWords.length; i++) {
+            for (var i = 0; i < options.stopWords.length; i++) {
                 payload.aggs.associatedWords.terms.exclude.push(options.stopWords[i]);
             }
         }
@@ -855,6 +869,10 @@ var elasticProxy = {
         request(ajaxOptions, function (error, response, body) {
             if (error)
                 return callback(error);
+           if(body.error){
+               return callback(body.error);
+           }
+
             if (!body.hits) {
                 return callback(null, []);
             }
@@ -892,12 +910,15 @@ var elasticProxy = {
             }
 
             //  console.log(iterationNstopWords + "/" + words.length)
-            if (options.iterations > 0 && ((iterationNstopWords * 4) > words.length)) {// condition for re-extract associated words with more stopwords
+            if (options.iterations > 0) {//&& ((iterationNstopWords * 4) > words.length)) {// condition for re-extract associated words with more stopwords
 
                 options.iterations--;
                 elasticProxy.getAssociatedWords(index, word, size, options, callback);
                 //  elasticProxy.getAssociatedWords(index, word, size, slop, andWords, stopWords, classifierSource, iterations, callback);
 
+            }
+            else {
+                var xx = options.stopWords;
             }
 
 
@@ -961,11 +982,14 @@ var elasticProxy = {
 
     ,
     acceptAssociatedWord: function (word) {
+        console.log(word)
+        if (word.indexOf("’") < -1)
+            return false;
         if (word.length < 3)
             return false;
         if (word.match(/[0-9]+/))
             return false;
-        if (word.match(/['|`]/))
+        if (word.match(/['|`|’]/))
             return false;
         return true;
 
@@ -1132,7 +1156,7 @@ var elasticProxy = {
         function (index, type, id, payload, callback) {
             if (!id)
                 id = "_" + Math.round(Math.random() * 10000000);
-            var elasticFields = elasticProxy.getShemaFields(index, type);
+            var elasticFields = elasticProxy.getShemasFieldNames(index, type);
             var content = "";
             for (var j = 0; j < elasticFields.length; j++) {
                 var key = elasticFields[j];
@@ -1324,7 +1348,7 @@ var elasticProxy = {
 
         var currentIndex = 0;
         var resultSize = 1;
-        var elasticFields = elasticProxy.getShemaFields(elasticIndex, elasticType);
+        var elasticFields = elasticProxy.getShemasFieldNames(elasticIndex, elasticType);
         var mongoFields = {};
         for (var i = 0; i < elasticFields.length; i++) {
             var field = elasticFields[i];
@@ -1421,13 +1445,13 @@ var elasticProxy = {
 
     indexSqlTable: function (connection, sql, elasticIndex, elasticType, callback) {
         var mySQLproxy = require('./mySQLproxy..js');
-        var totalIndexed=0
+        var totalIndexed = 0
         if (typeof connection !== "object")
             connection = JSON.parse(connection);
 
         var currentIndex = 0;
         var resultSize = 1;
-        var elasticFields = elasticProxy.getShemaFields(elasticIndex, elasticType);
+        var elasticFields = elasticProxy.getShemasFieldNames(elasticIndex, elasticType);
         var mongoFields = {};
         for (var i = 0; i < elasticFields.length; i++) {
             var field = elasticFields[i];
@@ -1447,7 +1471,7 @@ var elasticProxy = {
                         return;
                     }
                     resultSize = result.length;
-                    totalIndexed+=resultSize;
+                    totalIndexed += resultSize;
                     if (resultSize == 0) {
                         return callback(null, "end");
                     }
@@ -1481,7 +1505,7 @@ var elasticProxy = {
                             console.log(JSON.stringify(elasticPayload, null, 2))
 
                         } else {
-                            console.log(" totalIndexed "+totalIndexed)
+                            console.log(" totalIndexed " + totalIndexed)
                             return callbackWhilst(null);
                         }
                     });
@@ -2041,7 +2065,7 @@ var elasticProxy = {
         console.log(message);
     }
     ,
-    getShemaFields: function (index, type) {
+    getShemasFieldNames: function (index, type) {
 
         var indexes = []
         var p = index.indexOf(",");
@@ -2071,6 +2095,7 @@ var elasticProxy = {
         return allFields;
     },
 
+
     getUserIndexes: function (user, callback) {
         if (!users) {
             var str = fs.readFileSync(path.resolve(__dirname, "../config/users/elasticUsers.json"));
@@ -2089,12 +2114,26 @@ var elasticProxy = {
         var userObj = users[user];
         if (!userObj)
             return callback("no registred user :" + user);
-        var indexes = [];
+        var output = {};
         for (var i = 0; i < userObj.groups.length; i++) {
             if (userObj.groups[i] != "ALL")
-                indexes = indexes.concat(elasticSchema._indexCollections[userObj.groups[i]]);
+                var userIndexes = elasticSchema._indexCollections[userObj.groups[i]];
+            //   var userIndexesObjArray=[]
+            for (var j = 0; j < userIndexes.length; j++) {
+                var index = userIndexes[j];
+                if (!elasticSchema._indexes[index]) {
+                    console.log("no mappings for index : " + index);
+                    output[index] = {name: index, fields: {}};
+                    continue;
+                }
+                if (!elasticSchema._indexes[index].fields)
+                    elasticProxy.initSchema(index);
+
+                output[index] = {name: index, fields: elasticSchema._indexes[index].fields.fieldObjs};
+            }
+            //   indexes = indexes.concat(userIndexesObjArray);
         }
-        return callback(null, indexes);
+        return callback(null, output);
 
     }
     ,

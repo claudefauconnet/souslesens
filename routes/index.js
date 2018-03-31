@@ -105,7 +105,7 @@ router.post(serverParams.routesRootUrl + '/elastic', function (req, response) {
             processResponse(response, error, result)
         });
     else if (req.body && req.body.searchDo)
-        elasticProxy.search(req.body.indexName, req.body.type, req.body.payload, function (error, result) {
+        elasticProxy.searchUI.search(req.body.indexName, req.body.type, req.body.payload, function (error, result) {
             processResponse(response, error, result)
         });
     else if (req.body && req.body.indexOneDoc)

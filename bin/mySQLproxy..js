@@ -63,7 +63,7 @@ if (false) {
     })
 }
 
-if (true) {
+if (false) {
     var connOptions = {
         host: "localhost",
         user: "root",
