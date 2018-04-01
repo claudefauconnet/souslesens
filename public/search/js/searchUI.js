@@ -1,6 +1,6 @@
 var searchUI = (function () {
     var self = {}
-
+    self.userIndexes=[];
     self.doLogin = function () {
         var payload = {
             authentify: 1,
@@ -39,16 +39,16 @@ var searchUI = (function () {
             dataType: "json",
             success: function (data, textStatus, jqXHR) {
                 advancedSearch.userMappings = data;
-                var indexes = []
+                self.userIndexes = []
                 for (var key in data) {
-                    indexes.push(key);
+                    self.userIndexes.push(key);
                 }
-                indexes.sort();
+                self.userIndexes.sort();
                 var indexesCxbs = "<ul>";
 
-                for (var i = 0; i < indexes.length; i++) {
+                for (var i = 0; i < self.userIndexes.length; i++) {
 
-                    indexesCxbs += "<li><input type='checkbox' checked='checked' onchange='searchUI.search()' name='indexesCbxes' value='" + indexes[i] + "'><span id='indexCbxSpan_" + indexes[i] + "'>" + indexes[i] + "</span></li>"
+                    indexesCxbs += "<li><input type='checkbox' checked='checked' onchange='searchUI.search()' name='indexesCbxes' value='" + self.userIndexes[i] + "'><span id='indexCbxSpan_" + self.userIndexes[i] + "'>" + self.userIndexes[i] + "</span></li>"
                 }
                 indexesCxbs += "<ul>";
                 $("#sourcesDiv").html(indexesCxbs);
@@ -166,7 +166,8 @@ var searchUI = (function () {
                 self.processSearchResults(data, callback);
 
             }
-            , error: function (xhr, err, msg) {
+            , error: function ( err) {
+                console.log(err.responseText)
                 if (callback) {
                     return callback(err)
                 }
@@ -284,7 +285,7 @@ var searchUI = (function () {
         })
         for (var i = 0; i < data.length; i++) {
             if (data[i].key.length > 3)
-                html += "<li>" + "<a href='javascript:self.addAssociatedWord(\"" + data[i].key + "\")'>" + data[i].key + " (" + data[i].count + ")</a></li>"
+                html += "<li>" + "<a href='javascript:searchUI.addAssociatedWord(\"" + data[i].key + "\")'>" + data[i].key + " (" + data[i].count + ")</a></li>"
         }
         html += "</ul>";
         $("#leftPanel").css("visibility", "visible");
@@ -372,7 +373,7 @@ var searchUI = (function () {
 
     self.addAssociatedWord = function (word, dontSearch) {
         associatedWords.push(word);
-        self.self.showAssociatedWordsBreadcrumb();
+        self.showAssociatedWordsBreadcrumb();
         if (!dontSearch)
             self.search();
 
@@ -383,7 +384,7 @@ var searchUI = (function () {
     self.showAssociatedWordsBreadcrumb = function () {
         var str = "";
         for (var i = 0; i < associatedWords.length; i++) {
-            str += "<a href='javascript:self.removeAssociatedWord(" + i + ")'>" + associatedWords[i] + "</a>&nbsp;";
+            str += "<a href='javascript:searchUI.removeAssociatedWord(" + i + ")'>" + associatedWords[i] + "</a>&nbsp;";
         }
         $("#associatedWordsBreadcrumbDiv").html(str)
 
@@ -430,9 +431,9 @@ var searchUI = (function () {
         if (!types)
             return;
         //  var str="<select onclick='self.onTypeClick(this)' size='"+(types.length+1)+"'><option></option>";
-        var str = "<ul><li onclick=self.onTypeClick('')>all types</li>";
+        var str = "<ul><li onclick=searchUI.onTypeClick('')>all types</li>";
         for (var i = 0; i < types.length; i++) {
-            str += "<li onclick=self.onTypeClick('" + types[i] + "')>" + types[i] + "</li>";
+            str += "<li onclick=searchUI.onTypeClick('" + types[i] + "')>" + types[i] + "</li>";
         }
         str += "</ul>";
         $("#typesDiv").html(str);
@@ -481,7 +482,6 @@ var searchUI = (function () {
                 if (data.docs && data.docs.length > 0) {
                     var doc = data.docs[0];
 
-
                     for (var i = 0; i < doc.highlights.length; i++) {
                         var highlight = doc.highlights[i];
                         var highlight2 = highlight.replace(/<em>/g, "");
@@ -519,7 +519,7 @@ var searchUI = (function () {
 
                     /*    mode = data.mode[doc.type];
                         if (mode && mode.source == "MongoDB") {
-                            var str = "<button onclick=self.editMongoForm('" + doc.mongoId + "','" + doc._id + "')>Edit</button>"
+                            var str = "<button onclick=searchUI.editMongoForm('" + doc.mongoId + "','" + doc._id + "')>Edit</button>"
                             $("#dialogLeftDiv").append(str);
                             $("#dialogLeftDiv").css("visibility", "visible");
                         }*/
@@ -885,10 +885,13 @@ var searchUI = (function () {
     }
 
     self.showIndexesStats = function (data) {
-        var indexesCxbs = "<ul>";
+
+      //  $("#sourcesDiv").html(indexesCxbs);
         for (var i = 0; i < data.length; i++) {
             var str = "<button class='indexCbxButton' onclick='searchUI.filterIndex(\"" + data[i].key + "\")'>O</button>" + data[i].key + " (" + data[i].count + ")"
             $("#indexCbxSpan_" + data[i].key).html(str);
+            $("[name=indexCbxSpan] [value="+data[i].key+"]").prop("checked",true);
+
           //  indexesCxbs += "<li><input type='checkbox' checked='checked' name='indexesCbxes' value='" + data[i].key + "'>" + data[i].key+" ("+ data[i].count+")</li>"
         }
          //  indexesCxbs += "<ul>";

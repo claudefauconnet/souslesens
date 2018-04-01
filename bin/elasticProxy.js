@@ -61,6 +61,11 @@ var client = null;
 
 var elasticProxy = {
 
+    setElasticServerUrl: function (url) {
+
+        serverParams.elasticUrl = url;
+        baseUrl = url;
+    },
 
     getSchema: function (index) {
         if (!elasticSchema) {
@@ -115,6 +120,28 @@ var elasticProxy = {
         }
         elasticSchema._indexes[index].fields = fields;
 
+    },
+
+    removeSchemaMappingsCustomProperties: function (indexSchema) {
+        var customProperties = ["isTitle", "isId"];
+        var types = [];
+
+        for (var key in indexSchema.mappings) {
+            types.push(key);
+        }
+
+        for (var i = 0; i < types.length; i++) {
+
+            var xx = indexSchema.mappings[types[i]];
+            for (var key in indexSchema.mappings[types[i]].properties) {
+                for (var j = 0; j < customProperties.length; j++) {
+
+                    delete indexSchema.mappings[types[i]].properties[key][customProperties[j]];
+                }
+
+            }
+        }
+        return indexSchema;
     },
     getWordBlacklist: function () {
         if (!wordBlackList) {
@@ -357,7 +384,7 @@ var elasticProxy = {
         else
             slop = 0;
 
-
+        var query = {};
         if (queryObject)// request allready complete
             query = queryObject;
         else {
@@ -377,7 +404,7 @@ var elasticProxy = {
             }
             if (size)
                 size = parseInt("" + size)
-            var query = "";
+
 
             if (word == null || word == "*" || word == "")//all
                 query = {"match_all": {}}
@@ -571,7 +598,7 @@ var elasticProxy = {
             console.log(error);
             return callback(error);
         }
-        if(body.error){
+        if (body.error) {
             return callback(body.error);
         }
         if (!body.hits) {
@@ -617,8 +644,8 @@ var elasticProxy = {
 
             var obj = {};
             var objElastic = hits[i]._source;
-
-            objElastic.title = objElastic[indexesInfos[hitIndex].titleField];
+            if (indexesInfos[hitIndex].titleField)
+                objElastic.title = objElastic[indexesInfos[hitIndex].titleField];
 
             for (var key in objElastic) {
                 var value = objElastic[key];
@@ -851,6 +878,7 @@ var elasticProxy = {
 
                 }
             }*/
+
         if (options.stopWords) {
 
             for (var i = 0; i < options.stopWords.length; i++) {
@@ -869,9 +897,12 @@ var elasticProxy = {
         request(ajaxOptions, function (error, response, body) {
             if (error)
                 return callback(error);
-           if(body.error){
-               return callback(body.error);
-           }
+            if (body.error) {
+                console.log("ERROR " + JSON.stringify(body.error, null, 2) + "\n" + "QUERY " + JSON.stringify(payload, null, 2));
+                return callback(body.error);
+
+
+            }
 
             if (!body.hits) {
                 return callback(null, []);
@@ -1490,8 +1521,12 @@ var elasticProxy = {
                             var value = result[i][key];
                             if (!value)
                                 continue;
+                            if (value == "0000-00-00")
+                                continue;
+
                             content += " " + value;
                             payload[key] = value;
+
                         }
                         payload["content"] = content;
                         elasticPayload.push(payload);
@@ -1505,6 +1540,15 @@ var elasticProxy = {
                             console.log(JSON.stringify(elasticPayload, null, 2))
 
                         } else {
+                            if (resp.errors == true) {
+                                for (var i = 0; i < resp.items.length; i++) {
+                                    if (resp.items[i].index.status != 201) {
+                                        if (resp.items[i].index.error && resp.items[i].index.error.caused_by)
+                                            console.log(JSON.stringify(resp.items[i].index.error.caused_by))
+                                    }
+                                }
+
+                            }
                             console.log(" totalIndexed " + totalIndexed)
                             return callbackWhilst(null);
                         }
@@ -1576,9 +1620,34 @@ var elasticProxy = {
         })
     }
     ,
+    initIndex: function (indexName, settingsType, callback) {
+        elasticProxy.deleteIndex(indexName, true, function (err) {
+            if (err)
+                return callback(err);
 
+            var schemaJson = elasticProxy.getSchema(indexName);
+            schemaJson = elasticProxy.removeSchemaMappingsCustomProperties(schemaJson);
+            var indexSettings = elasticSchema._settings[settingsType];
 
-    initDocIndex: function (index, callback) {
+            var settings = elasticSchema._settings
+            schemaJson = {settings: indexSettings, mappings: schemaJson.mappings};
+            var options = {
+                method: 'PUT',
+                url: baseUrl + indexName + "/",
+                json: schemaJson
+            }
+            request(options, function (error, response, body) {
+                if (error)
+                    return callback(error);
+                if (body.error)
+                    return callback(body.error);
+                callback(null, body)
+
+            });
+        })
+
+    },
+    initDocIndex: function (index, settings, callback) {
 
         elasticProxy.deleteIndex(index, true, function (err) {
             if (err)
@@ -1606,141 +1675,37 @@ var elasticProxy = {
                     return callback(error);
 
 //******************************* init content Mapping*******************************
+
+                var schemaJson = elasticProxy.getSchema("officeDocument");
+                schemaJson = elasticProxy.removeSchemaMappingsCustomProperties(schemaJson);
+                var settingsJson = elasticSchema._settings[settings];
                 var options = {
                     method: 'PUT',
                     description: "init mapping on attachment content",
                     url: baseUrl + index + "/",
 
-                    json: {
-                        "mappings": {
-                            "general_document": {
-
-                                "properties": {
-                                    "date": {
-                                        "type": "text"
-                                    },
-                                    "path": {
-                                        "type": "text"
-                                    },
-                                    "title": {
-                                        "type": "text"
-                                    },
-                                    "content": {
-                                        "type": "text",
-                                        "index_options": "offsets",
-
-                                        "fields": {
-                                            "contentKeyWords": {
-                                                "type": "keyword",
-                                                "ignore_above": 256
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
+                    json: {mappings: schemaJson.mappings}
                 };
-
-                if (true) {
-
-
-                    options.json.settings = {
-
-                        "analysis": {
-                            "analyzer": {
-                                "default": {
-                                    "tokenizer": "standard",
-                                    "filter": ["my_lowercase", "my_ascii_folding"]
-                                }
-                            },
-                            "filter": {
-                                "my_ascii_folding": {
-                                    "type": "asciifolding",
-                                    "preserve_original": true
-                                },
-                                "my_lowercase": {
-                                    "type": "lowercase",
-
-                                }
-                            }
-                        }
-                    }
-
-
-                    /*   "analysis": {
-                           "analyzer": {
-                               "default": {
-                                   "type": "custom",
-                                   "tokenizer": "standard",
-                                   "filter": [ "lowercase", "asciifolding" ]
-                               }
-                           }
-
-                       }
-                   }*/
-                    /* {
-                    "analysis": {
-                        "filter": {
-                            "synonyms_fr_filter": {
-                                "type": "synonym",
-                                "synonyms_path": "synonyms/wordNetSyns.txt"
-                            },
-                            "stemmer_filter": {
-                                "type": "stemmer",
-                                "language": "french"
-                            }
-
-                        },
-                        "analyzer": {
-                            "my_synonyms": {
-                                "tokenizer": "standard",
-                                "filter": [
-                                    "lowercase",
-                                    "synonyms_fr_filter",
-                                    "asciifolding"
-                                ]
-                            }
-                        }
-                    }
-
-
-                }*/
+                if (settings) {
+                    options.json.mappings.officeDocument.properties.content.analyzer = settings;
+                    options.json.settings = settingsJson;
                 }
-//console.log(JSON.stringify(options,null, 2));
+
+
                 request(options, function (error, response, body) {
                     if (error)
                         return callback(error);
+                    if (body.error) {
+                        console.log(JSON.stringify(body.error));
+                        callback(body.error);
 
-                    if (body.error)
-                        return callback(body.error);
-                    //******************************* initfielddata*******************************
-                    //    http://localhost:9200/my_index2/_mapping/my_type
-                    var options = {
-                        method: 'PUT',
-                        description: "init fielddata",
-                        url: baseUrl + index + "/_mapping/general_document",
-                        json: {
-                            "properties": {
-                                "content": {
-                                    "type": "text",
-                                    "fielddata": true
-                                }
-                            }
-                        }
                     }
+                    callback(null, body)
 
-                    request(options, function (error, response, body) {
-                        if (error)
-                            return callback(error);
-                        if (body.error)
-                            return callback(body.error);
-                        callback(null, body)
-
-                    });
                 });
             });
-        })
+        });
+
 
     }
     ,
@@ -1920,7 +1885,8 @@ var elasticProxy = {
 
 
     ,
-    indexDocDirInNewIndex: function (index, type, rootDir, doClassifier, callback) {
+    indexDocDirInNewIndex: function (index, type, rootDir, doClassifier, settings, callback) {
+
 
         if (!fs.existsSync(rootDir)) {
             var message = ("directory " + rootDir + " does not not exist on server")
@@ -1929,14 +1895,14 @@ var elasticProxy = {
         }
 
         var indexTemp = index + "temp";
-        elasticProxy.initDocIndex(index, function (err, result) {
+        elasticProxy.initDocIndex(index, settings, function (err, result) {
             if (err) {
                 elasticProxy.sendMessage("ERROR" + err);
                 return callback(err);
             }
             elasticProxy.sendMessage("index " + index + " created");
 
-            elasticProxy.initDocIndex(indexTemp, function (err, result) {
+            elasticProxy.initDocIndex(indexTemp, settings, function (err, result) {
                 if (err) {
                     elasticProxy.sendMessage("ERROR" + err);
                     return callback(err);
@@ -1951,6 +1917,7 @@ var elasticProxy = {
                         return callback(err);
                     }
 
+
                     elasticProxy.sendMessage("indexation in tempIndex successfull " + result);
 
 
@@ -1964,7 +1931,7 @@ var elasticProxy = {
                         elasticProxy.deleteIndex(indexTemp, true, function (err, result) {
                             elasticProxy.sendMessage("delete temporary index " + indexTemp);
                             var message = "-----------Index " + index + " is ready to use-----------"
-                            if (doClassifier.toLowerCase() == "y") {
+                            if (doClassifier && doClassifier.toLowerCase() == "y") {
 
                                 classifierManager.createIndexClassifierFromElasticFrequentWordsAndOntology(index, 200, null, null, 10, ["BNF"], "fr", 1, function (err, result) {
                                     elasticProxy.sendMessage("classifier done");
@@ -1984,7 +1951,7 @@ var elasticProxy = {
         })
     }
     ,
-    indexDirInExistingIndex: function (index, type, rootDir, doClassifier, callback) {
+    indexDirInExistingIndex: function (index, type, rootDir, doClassifier, settings, callback) {
         if (!fs.existsSync(rootDir)) {
             var message = ("directory " + rootDir + " does not not exist on server")
             elasticProxy.sendMessage("ERROR" + message);
@@ -2009,7 +1976,7 @@ var elasticProxy = {
             }
 
 
-            elasticProxy.initDocIndex(indexTemp, function (err, result) {
+            elasticProxy.initDocIndex(indexTemp, settings, function (err, result) {
                 if (err) {
                     elasticProxy.sendMessage("ERROR" + err);
                     return callback(err);
@@ -2121,15 +2088,16 @@ var elasticProxy = {
             //   var userIndexesObjArray=[]
             for (var j = 0; j < userIndexes.length; j++) {
                 var index = userIndexes[j];
-                if (!elasticSchema._indexes[index]) {
-                    console.log("no mappings for index : " + index);
-                    output[index] = {name: index, fields: {}};
-                    continue;
-                }
-                if (!elasticSchema._indexes[index].fields)
-                    elasticProxy.initSchema(index);
+                var mappings=index;
+                if (!elasticSchema._indexes[mappings]) {
+                    mappings="officeDocument"
+                    console.log("no mappings for index : " + index + "use officeDocument instead");
 
-                output[index] = {name: index, fields: elasticSchema._indexes[index].fields.fieldObjs};
+                }
+                if (!elasticSchema._indexes[mappings].fields)
+                    elasticProxy.initSchema(mappings);
+
+                output[index] = {name: index, fields: elasticSchema._indexes[mappings].fields.fieldObjs};
             }
             //   indexes = indexes.concat(userIndexesObjArray);
         }
@@ -2228,7 +2196,7 @@ if (args.length > 2) {
                 var index = result.index;
                 var rootDir = result.rootDir;
                 var doClassifier = result.generateBNFclassifier;
-                elasticProxy.indexDocDirInNewIndex(index, type, rootDir, doClassifier, function (err, result) {
+                elasticProxy.indexDocDirInNewIndex(index, type, rootDir, doClassifier, null, function (err, result) {
                     if (err)
                         console.log("ERROR " + err);
                     console.log("DONE");
@@ -2274,6 +2242,7 @@ if (args.length > 2) {
                 }
             }
         };
+
         var prompt = require('prompt');
         prompt.start();
 
@@ -2296,11 +2265,11 @@ if (args.length > 2) {
 
     }
 
-
+    ""
 }
 
 if (false) {
-    elasticProxy.indexDocDirInNewIndex("dsi", "D:\\docsDSI", "false", function (err, result) {
+    elasticProxy.indexDocDirInNewIndex("dsi", "D:\\docsDSI", "false", "ATD", function (err, result) {
 
     })
 
@@ -2308,7 +2277,7 @@ if (false) {
 
 
 if (false) {
-    elasticProxy.indexDocDirInNewIndex("jfm", "D:\\JFM\\ETUDES DOCTORALES", "false", function (err, result) {
+    elasticProxy.indexDocDirInNewIndex("jfm", "D:\\JFM\\ETUDES DOCTORALES", "false", "ATD", function (err, result) {
 
     })
 

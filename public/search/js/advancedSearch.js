@@ -65,20 +65,26 @@ var advancedSearch = (function () {
                 operators.push("#");
             }
             else if (type == "integer") {
-                operators.push(">");
                 operators.push("=");
+                operators.push(">");
+                operators.push(">=");
                 operators.push("<");
-                operators.push("beetween");
+                operators.push("<=");
+
+
             }
             else if (type == "date") {
                 operators.push(">");
-                operators.push("=");
                 operators.push("<");
-                operators.push("beetween");
+                operators.push(">=");
+                operators.push("<=");
+                operators.push("=");
+
              /*   $(function () {
                     $("#advancedSearchDialog_valueInput").datepicker();
                 });*/
             }
+            document.getElementById("advancedSearchDialog_operatorSelect").options.length = 0;
             for (var i = 0; i < operators.length; i++) {
                 $("#advancedSearchDialog_operatorSelect").append("<option>" + operators[i] + "</option>");
             }

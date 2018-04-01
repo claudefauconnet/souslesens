@@ -3,6 +3,7 @@ var mysql = require('mysql');
 var elasticProxy = require('./elasticProxy.js');
 
 
+
 var connections = {};
 var mySQLproxy = {
     getConnection: function (connOptions, callback) {
@@ -41,6 +42,9 @@ var mySQLproxy = {
     }
 
 
+
+
+
 }
 
 
@@ -49,29 +53,3 @@ module.exports = mySQLproxy;
 
 
 
-
-if (false) {
-    var connOptions = {
-        host: "localhost",
-        user: "root",
-        password: "vi0lon",
-        database: 'phototheque'
-    }
-    elasticProxy.indexSqlTable(connOptions, "select * from phototheque", "phototheque", "phototheque", function (err, result) {
-        var x = 1;
-        console.log("done");
-    })
-}
-
-if (false) {
-    var connOptions = {
-        host: "localhost",
-        user: "root",
-        password: "vi0lon",
-        database: 'audiotheque'
-    }
-    elasticProxy.indexSqlTable(connOptions, "select * from audiotheque", "audiotheque", "audiotheque", function (err, result) {
-        var x = 1;
-        console.log("done");
-    })
-}

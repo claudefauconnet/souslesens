@@ -1,34 +1,66 @@
 {
-  "_indexCollections":{
-    "ATD":["phototheque","bordereaux","ocr","audiotheque"]
-
+  "_indexCollections": {
+    "ATD": [
+      "phototheque",
+      "bordereaux",
+      "ocr",
+      "audiotheque"
+    ]
   },
+  "_settings": {
+    "ATD": {
+      "analysis": {
+        "filter": {
+          "stemmer_filter": {
+            "type": "stemmer",
+            "language": "french"
+          }
+        },
+        "analyzer": {
+          "ATD": {
+            "tokenizer": "standard",
+            "filter": [
+              "lowercase",
+              "asciifolding",
+              "stemmer_filter"
+            ]
+          }
+        }
+      }
+    }
+  ,
+
+    "SYNONYMS_FR": {
+      "analysis": {
+        "filter": {
+          "synonyms_fr_filter": {
+            "type": "synonym",
+            "synonyms_path": "synonyms/wordNetSyns.txt"
+          },
+          "stemmer_filter": {
+            "type": "stemmer",
+            "language": "french"
+          }
+        },
+        "analyzer": {
+          "SYNONYMS": {
+            "tokenizer": "standard",
+            "filter": [
+              "lowercase",
+              "asciifolding",
+              "stemmer_filter"
+            ]
+          }
+        }
+      }
+    }
+  },
+
+
+
 
   "_indexes": {
     "web_page": {
-      "settings": {
-        "analysis": {
-          "filter": {
-            "synonyms_fr_filter": {
-              "type": "synonym",
-              "synonyms_path": "synonyms/wordNetSyns.txt"
-            },
-            "stemmer_filter": {
-              "type": "stemmer",
-              "language": "french"
-            }
-          },
-          "analyzer": {
-            "my_synonyms": {
-              "tokenizer": "standard",
-              "filter": [
-                "lowercase",
-                "synonyms_fr_filter"
-              ]
-            }
-          }
-        }
-      },
       "mappings": {
         "web_page": {
           "properties": {
@@ -45,7 +77,7 @@
             "content": {
               "type": "text",
               "index_options": "offsets",
-              "analyzer": "my_synonyms",
+              "analyzer": "ATD",
               "fielddata": true,
               "fields": {
                 "contentKeyWords": {
@@ -63,44 +95,46 @@
         }
       }
     },
-    "default": {
+    "officeDocument": {
       "mappings": {
-        "web_page": {
+        "officeDocument": {
           "properties": {
-            "crawlDate": {
-              "type": "date",
-              "format": "yyyy-MM-dd"
-            },
-            "title": {
-              "type": "text"
-            },
-            "url": {
+            "author": {
               "type": "text"
             },
             "content": {
               "type": "text",
               "index_options": "offsets",
-              "analyzer": "my_synonyms",
-              "fielddata": true,
+              "analyzer": "ATD",
               "fields": {
                 "contentKeyWords": {
                   "type": "keyword",
                   "ignore_above": 256
                 }
-              }
+              },
+              "fielddata": true
+            },
+            "date": {
+              "type": "date"
+            },
+            "path": {
+              "type": "text"
+            },
+            "title": {
+              "type": "text"
             }
           }
         }
       }
     },
-    "audiotheque":{
+    "audiotheque": {
 
       "mappings": {
         "audiotheque": {
           "properties": {
             "id": {
               "type": "integer",
-              "idId": true
+              "isId": true
             },
             "indexCIJW": {
               "type": "keyword",
@@ -119,13 +153,14 @@
               "type": "keyword"
             },
             "DateNumerisation": {
-              "type": "date"
+              "type": "text"
             },
             "Operateur": {
               "type": "keyword"
             },
             "Titre1": {
-              "type": "text"
+              "type": "text",
+              "analyzer": "ATD"
             },
             "Titre2": {
               "type": "text"
@@ -146,7 +181,8 @@
               "type": "keyword"
             },
             "DateConformation": {
-              "type": "date"
+              "type": "text"
+
             },
             "Conformation": {
               "type": "text"
@@ -164,7 +200,8 @@
               "type": "keyword"
             },
             "DateEnregistrement": {
-              "type": "date"
+              "type": "text"
+
             },
             "MoisEnregistrement": {
               "type": "integer"
@@ -174,6 +211,7 @@
             },
             "dateMaj": {
               "type": "date"
+
             },
             "redacteur": {
               "type": "keyword"
@@ -182,6 +220,7 @@
               "type": "text",
               "index_options": "offsets",
               "fielddata": true,
+              "analyzer": "ATD",
               "fields": {
                 "contentKeyWords": {
                   "type": "keyword",
@@ -192,9 +231,9 @@
           }
         }
       }
-      
     },
     "phototheque": {
+
       "mappings": {
         "phototheque": {
           "properties": {
@@ -234,7 +273,8 @@
               "type": "keyword"
             },
             "contenu": {
-              "type": "text"
+              "type": "text",
+              "analyzer": "ATD"
             },
             "temoin_ref": {
               "type": "text"
@@ -246,7 +286,8 @@
               "type": "text"
             },
             "description": {
-              "type": "text"
+              "type": "text",
+              "analyzer": "ATD"
             },
             "local": {
               "type": "keyword"
@@ -263,6 +304,7 @@
             "content": {
               "type": "text",
               "index_options": "offsets",
+              "analyzer": "ATD",
               "fielddata": true,
               "fields": {
                 "contentKeyWords": {
@@ -275,7 +317,8 @@
         }
       }
     },
-    "bordereaux": {
+    "archivesATD": {
+
       "mappings": {
         "archive": {
           "properties": {
@@ -463,6 +506,5 @@
       }
     }
   }
-
 }
 
