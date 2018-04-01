@@ -1475,6 +1475,9 @@ var elasticProxy = {
     ,
 
     indexSqlTable: function (connection, sql, elasticIndex, elasticType, callback) {
+
+        serverParams.mongoFetchSize = 300;
+        var bulkStr = "";
         var mySQLproxy = require('./mySQLproxy..js');
         var totalIndexed = 0
         if (typeof connection !== "object")
@@ -1494,78 +1497,103 @@ var elasticProxy = {
                 return resultSize > 0;
             },
             function (callbackWhilst) {//iterate
+
                 var sqlFetch = sql + " limit " + serverParams.mongoFetchSize + " offset " + offset;
                 offset += serverParams.mongoFetchSize;
                 mySQLproxy.find(connection, sqlFetch, function (err, result) {
-                    if (err) {
-                        callback(err);
-                        return;
-                    }
-                    resultSize = result.length;
-                    totalIndexed += resultSize;
-                    if (resultSize == 0) {
-                        return callback(null, "end");
-                    }
-                    currentIndex += serverParams.mongoFetchSize;
-                    var startId = Math.round(Math.random() * 10000000);
-                    var elasticPayload = [];
-
-                    // contcat all fields values in content field
-
-                    for (var i = 0; i < result.length; i++) {
-                        elasticPayload.push({index: {_index: elasticIndex, _type: elasticType, _id: "_" + (startId++)}})
-                        var payload = {};
-                        var content = "";
-                        for (var j = 0; j < elasticFields.length; j++) {
-                            var key = elasticFields[j];
-                            var value = result[i][key];
-                            if (!value)
-                                continue;
-                            if (value == "0000-00-00")
-                                continue;
-
-                            content += " " + value;
-                            payload[key] = value;
-
-                        }
-                        payload["content"] = content;
-                        elasticPayload.push(payload);
-
-                    }
-                    getClient().bulk({
-                        body: elasticPayload
-                    }, function (err, resp) {
                         if (err) {
-                            console.log("ERROR " + err)
-                            console.log(JSON.stringify(elasticPayload, null, 2))
+                            callback(err);
+                            return;
+                        }
+                        resultSize = result.length;
+                        totalIndexed += resultSize;
+                        if (resultSize == 0) {
+                            return callback(null, "end");
+                        }
+                        currentIndex += serverParams.mongoFetchSize;
+                        var startId = Math.round(Math.random() * 10000000);
+                        var elasticPayload = [];
 
-                        } else {
-                            if (resp.errors == true) {
-                                for (var i = 0; i < resp.items.length; i++) {
-                                    if (resp.items[i].index.status != 201) {
-                                        if (resp.items[i].index.error && resp.items[i].index.error.caused_by)
-                                            console.log(JSON.stringify(resp.items[i].index.error.caused_by))
-                                    }
-                                }
+                        // contcat all fields values in content field
+
+                        for (var i = 0; i < result.length; i++) {
+                            elasticPayload.push({index: {_index: elasticIndex, _type: elasticType, _id: "_" + (startId++)}})
+                            var payload = {};
+                            var content = "";
+                            for (var j = 0; j < elasticFields.length; j++) {
+                                var key = elasticFields[j];
+                                var value = result[i][key];
+                                if (!value)
+                                    continue;
+                                if (value == "0000-00-00")
+                                    continue;
+
+                                content += " " + value;
+                                payload[key] = value;
 
                             }
-                            console.log(" totalIndexed " + totalIndexed)
-                            return callbackWhilst(null);
+                            payload["content"] = content;
+                            elasticPayload.push(payload);
+
                         }
+
+                        /*   if(true) {
+                               postStr = JSON.stringify(elasticPayload)
+                            //console.log(JSON.stringify(elasticPayload));
+                               fs.writeFileSync("./post_"+offset+".json",postStr);
+
+                               return callbackWhilst();
+                           }*/
+
+                        var options = {
+                            method: 'PUT',
+                            url: baseUrl + index + "/_bulk",
+                            json: elasticPayload
+                        }
+
+
+                        request(options, function (error, response, body) {
+                            if (error) {
+
+                                console.log(JSON.stringify(elasticPayload, null, 2))
+                                return callbackWhilst(err);
+                                // return callback(file+" : "+error);
+                            }
+
+                            else {
+                                if (body.errors == true) {
+                                    for (var i = 0; i < body.items.length; i++) {
+                                        if (body.items[i].index.status != 201) {
+                                            if (body.items[i].index.error && body.items[i].index.error.caused_by)
+                                                console.log(JSON.stringify(body.items[i].index.error.caused_by))
+                                        }
+                                    }
+
+                                }
+                                console.log(" totalIndexed " + totalIndexed)
+                                return callbackWhilst(null);
+                            }
+
+                        });
+
+                    }
+
+                    ,
+                    function (err, result) {//end
+                        if (err) {
+                            callback(err);
+
+                        } else {
+
+
+                            callback(null, "done");
+                        }
+
                     });
-                });
-            }
-            ,
-            function (err, result) {//end
-                if (err) {
-                    callback(err);
-
-                } else {
-                    callback(null, "done");
-                }
-
-            });
+            })
     }
+
+
     ,
 
     deleteDoc: function (index, type, elasticId, callback) {
@@ -2088,9 +2116,9 @@ var elasticProxy = {
             //   var userIndexesObjArray=[]
             for (var j = 0; j < userIndexes.length; j++) {
                 var index = userIndexes[j];
-                var mappings=index;
+                var mappings = index;
                 if (!elasticSchema._indexes[mappings]) {
-                    mappings="officeDocument"
+                    mappings = "officeDocument"
                     console.log("no mappings for index : " + index + "use officeDocument instead");
 
                 }
