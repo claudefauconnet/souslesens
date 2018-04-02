@@ -262,7 +262,7 @@ var advancedSearch = (function () {
 
 
     self.searchSimilars = function (node,similarityTypes) {
-        $("#similarsDialogSimilarsDiv").html();
+        $("#similarsDialogSimilarsDiv").html("");
         var messageDivId = $("#similarsDialogMessageDiv");
         messageDivId.html("");
         if (!node)
@@ -340,6 +340,7 @@ var advancedSearch = (function () {
     }
 
     self.similarsDialogShowRefineDialog=function(){
+        $("#similarsDialogSimilarsDiv").html("");
         var labelsCxbs="Select aspects of the similarities<ul>"
         for(var i=0;i<self.currentObject.similarLabels.length;i++){
                 var label2=self.currentObject.similarLabels[i];
