@@ -227,7 +227,7 @@ var advancedSearch = (function () {
             dataType: "json",
             success: function (data, textStatus, jqXHR) {
                 $("#dialog").css("visibility", "hidden");
-                //   $("#advancedSearchDialog_searchDiv").css("visibility", "hidden");
+                 $("#advancedSearchDialog_searchDiv").css("visibility", "hidden");
                 $("#infos").html($("#advancedSearchDialog_criteriaDiv").html());
                 searchUI.processSearchResults(data);
 

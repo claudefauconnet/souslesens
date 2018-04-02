@@ -240,9 +240,9 @@ if(!options){
             var str = "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;pages ";
             var k = 1
 
-            str += "<a href='javascript:self.search({start:" + currentPage * fetchSize + ",pageIncrement:1})'> next  </a>&nbsp;&nbsp;";
+            str += "<a href='javascript:searchUI.search({start:" + currentPage * fetchSize + ",pageIncrement:1})'> next  </a>&nbsp;&nbsp;";
             if (currentPage > 1)
-                str += "<a href='javascript:self.search({start:" + (currentPage - 1) * fetchSize + ",pageIncrement:-1})'> previous  </a>&nbsp;&nbsp;";
+                str += "<a href='javascript:searchUI.search({start:" + (currentPage - 1) * fetchSize + ",pageIncrement:-1})'> previous  </a>&nbsp;&nbsp;";
 
 
             for (var i = 1; i < total; i++) {
@@ -252,7 +252,7 @@ if(!options){
 
 
                 if (i % fetchSize == 0) {
-                    str += "<a " + linkClass + "href='javascript:self.search({start:" + (k - 1) * fetchSize + ",pageIncrement:0,pageOffet:" + k + "})'>" + k + "</a>&nbsp;&nbsp;"
+                    str += "<a " + linkClass + "href='javascript:searchUI.search({start:" + (k - 1) * fetchSize + ",pageIncrement:0,pageOffet:" + k + "})'>" + k + "</a>&nbsp;&nbsp;"
                     k++;
                 }
 
