@@ -123,7 +123,7 @@ var elasticProxy = {
     },
 
     removeSchemaMappingsCustomProperties: function (indexSchema) {
-        var customProperties = ["isTitle", "isId"];
+        var customProperties = ["isTitle", "isId","inCSV"];
         var types = [];
 
         for (var key in indexSchema.mappings) {

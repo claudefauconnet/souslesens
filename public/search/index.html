@@ -176,7 +176,7 @@
         .docContentFields {
 
             border-style: solid;
-            background-color: #CCCCCC;
+            background-color: #93aeca;
             table-border-color-light: #261803;
 
         }
@@ -343,7 +343,7 @@
             });
 
 
-            if (false) {
+            if (true) {
 
                 $("#loginDiv").css("visibility", "visible");
                 $("#panels").css("visibility", "hidden");
@@ -367,12 +367,12 @@
         Associated words<br>
      <!--   filter
         <select id="associatedWordsFilter" onchange="searchUI.getAssociatedWords()">
-            <option value="allwords" selected="selected">low</option>-->
+            <option value="allwords" selected="selected">low</option>
             </optionvalue>
             <option value="lemmes">medium</option>
             <option value="wordnetEntities">high</option>
             <!--  <option>googleEntities</option>-->
-        </select>
+       <!-- </select>-->
         <div id="associatedWordsDiv"></div>
 
     </div>
@@ -383,7 +383,10 @@
                 <tr>
 
                     <td valign="middle">
-                        <button onclick="advancedSearch.showAdvancedQueryDialog()">advanced Query</button>
+
+                        <input type="image" align="middle" title="advancedSearch" height="25px"
+                               onclick="advancedSearch.showAdvancedQueryDialog()"  src="icons/advancedSearch.png"/>
+                        <!-- <button onclick="advancedSearch.showAdvancedQueryDialog()">advanced Query</button>-->
                     </td>
                     <td valign="middle">
                         <input id="searchInput" fetchSize="40" onkeydown="if (event.keyCode == 13)
@@ -394,9 +397,10 @@
                                  onclick="searchUI.search();" id="searchInputsImg"
                                  src="icons/search.png"/>-->
                         <input style="visibility: hidden;" type="image" align="middle" title="erase" height="20px"
-                               onclick="searchUI.clearSearchInputs();" id="clearSearchInputsImg"
-                               src="icons/erase.png"/>
+                               onclick="searchUI.clearSearchInputs();" id="clearSearchInputsImg"   src="icons/erase.png"/>
                     </td>
+
+
                     <td valign="middle">
 
 

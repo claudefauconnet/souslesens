@@ -66,13 +66,16 @@
           "properties": {
             "crawlDate": {
               "type": "date",
-              "format": "yyyy-MM-dd"
+              "format": "yyyy-MM-dd",
+              "inCSV":true
             },
             "title": {
-              "type": "text"
+              "type": "text",
+              "inCSV":true
             },
             "url": {
-              "type": "text"
+              "type": "text",
+              "inCSV":true
             },
             "content": {
               "type": "text",
@@ -100,7 +103,8 @@
         "officeDocument": {
           "properties": {
             "author": {
-              "type": "text"
+              "type": "text",
+              "inCSV":true
             },
             "content": {
               "type": "text",
@@ -115,13 +119,15 @@
               "fielddata": true
             },
             "date": {
-              "type": "date"
+              "type": "date",
+              "inCSV":true
             },
             "path": {
               "type": "text"
             },
             "title": {
-              "type": "text"
+              "type": "text",
+              "inCSV":true
             }
           }
         }
@@ -138,10 +144,12 @@
             },
             "indexCIJW": {
               "type": "keyword",
-              "isTitle": true
+              "isTitle": true,
+              "inCSV":true
             },
             "Cote": {
-              "type": "keyword"
+              "type": "keyword",
+              "inCSV":true
             },
             "Type": {
               "type": "keyword"
@@ -160,7 +168,8 @@
             },
             "Titre1": {
               "type": "text",
-              "analyzer": "ATD"
+              "analyzer": "ATD",
+              "inCSV":true
             },
             "Titre2": {
               "type": "text"
@@ -200,14 +209,17 @@
               "type": "keyword"
             },
             "DateEnregistrement": {
-              "type": "text"
+              "type": "text",
+              "inCSV":true
 
             },
             "MoisEnregistrement": {
-              "type": "integer"
+              "type": "integer",
+              "inCSV":true
             },
             "AnneeEnregistrement": {
-              "type": "integer"
+              "type": "integer",
+              "inCSV":true
             },
             "dateMaj": {
               "type": "date"
@@ -243,16 +255,20 @@
             },
             "indexCIJW": {
               "type": "keyword",
-              "isTitle": true
+              "isTitle": true,
+              "inCSV":true
             },
             "dossier": {
-              "type": "keyword"
+              "type": "keyword",
+              "inCSV":true
             },
             "sousdossier": {
-              "type": "keyword"
+              "type": "keyword",
+              "inCSV":true
             },
             "document": {
-              "type": "keyword"
+              "type": "keyword",
+              "inCSV":true
             },
             "versement": {
               "type": "integer"
@@ -280,7 +296,8 @@
               "type": "text"
             },
             "date": {
-              "type": "date"
+              "type": "date",
+              "inCSV":true
             },
             "lieu": {
               "type": "text"

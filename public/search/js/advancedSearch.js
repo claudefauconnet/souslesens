@@ -6,6 +6,7 @@ var advancedSearch = (function () {
     self.criteria = []
 
     self.showAdvancedQueryDialog = function () {
+        $("#searchInput").val("");
         $("#dialog").css("visibility", "visible");
         $("#dialog").load("htmlSnippets/advancedSearch.html", function () {
             $('#advancedSearchDialog_fieldInput').attr('disabled', 'disabled');
@@ -15,7 +16,8 @@ var advancedSearch = (function () {
                 var node = {
                     id: key,
                     text: key,
-                    parent: "#"
+                    parent: "#",
+                    type:"index"
                 }
                 data.push(node);
                 for (var key2 in  self.userMappings[key].fields) {
@@ -23,6 +25,7 @@ var advancedSearch = (function () {
                         id: key + "_" + key2,
                         text: key2,
                         parent: key,
+                        type:"field",
                         data: self.userMappings[key].fields[key2]
                     }
                     data.push(child);
@@ -32,7 +35,13 @@ var advancedSearch = (function () {
 
                 'core': {
                     'data': data
-                }
+                },
+                "types" : {
+                    'index':{icon :'icons/index.png'},
+
+                'field':{icon :'icons/field2.png'}
+                },
+                plugins:[""]
 
             }).on('select_node.jstree', function (node, selected, event) {
 
@@ -49,9 +58,13 @@ var advancedSearch = (function () {
     }
 
     self.advancedSearchOnFieldSelect = function (node) {
+
         if (node.parent != self.currentField.parent)
             self.clearAllCriteria()
         self.currentField = node;
+
+        $("#advancedSearchDialog_valueInput").val("")
+        $("#advancedSearchDialog_valueInput").focus()
         $("#advancedSearchDialog_fieldInput").val(node.text)
         var operators = [];
         if (node.data && node.data.type) {
@@ -80,9 +93,9 @@ var advancedSearch = (function () {
                 operators.push("<=");
                 operators.push("=");
 
-             /*   $(function () {
-                    $("#advancedSearchDialog_valueInput").datepicker();
-                });*/
+                /*   $(function () {
+                       $("#advancedSearchDialog_valueInput").datepicker();
+                   });*/
             }
             document.getElementById("advancedSearchDialog_operatorSelect").options.length = 0;
             for (var i = 0; i < operators.length; i++) {
@@ -101,12 +114,16 @@ var advancedSearch = (function () {
             operator: $("#advancedSearchDialog_operatorSelect").val(),
             value: $("#advancedSearchDialog_valueInput").val()
         }
-
-        var criterionStr = $("#advancedSearchDialog_fieldInput").val() + " " + criterion.operator + " " + criterion.value + "<br>"
+        var criterionStr="";
+        var str=$("#advancedSearchDialog_criteriaDiv").html();
+        if(str!="")
+            criterionStr+=" AND "
+        else
+            criterionStr="Source "+ criterion.index + "<br>"
+         criterionStr += $("#advancedSearchDialog_fieldInput").val() + " " + criterion.operator + " " + criterion.value + "<br>"
         $("#advancedSearchDialog_criteriaDiv").append(criterionStr);
-     //   if (criterion.type == "date") {
-            self.criteria.push(criterion);
-
+        //   if (criterion.type == "date") {
+        self.criteria.push(criterion);
 
 
     }
@@ -182,7 +199,6 @@ var advancedSearch = (function () {
             }
 
 
-
         var classifierSourceStr = null;
         var payload = {
             findDocuments: 1,
@@ -210,15 +226,15 @@ var advancedSearch = (function () {
             data: payload,
             dataType: "json",
             success: function (data, textStatus, jqXHR) {
-              //  $("#dialog").css("visibility", "hidden");
-             //   $("#advancedSearchDialog_searchDiv").css("visibility", "hidden");
-
+                $("#dialog").css("visibility", "hidden");
+                //   $("#advancedSearchDialog_searchDiv").css("visibility", "hidden");
+                $("#infos").html($("#advancedSearchDialog_criteriaDiv").html());
                 searchUI.processSearchResults(data);
 
             }
             , error: function (xhr, err, msg) {
-             //   $("#dialog").css("visibility", "hidden");
-             //   $("#advancedSearchDialog_searchDiv").css("visibility", "hidden");
+                //   $("#dialog").css("visibility", "hidden");
+                //   $("#advancedSearchDialog_searchDiv").css("visibility", "hidden");
 
                 return (err);
             }

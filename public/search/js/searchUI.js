@@ -59,19 +59,21 @@ var searchUI = (function () {
         })
     }
 
-    self.search = function (_from, pageIncrement, page, callback) {
-
+    self.search = function (options, callback) {
+if(!options){
+    options={}
+}
 
         var from;
-        if (!_from) {
+        if (!options.startPage) {
             from = 0;
             currentPage = 1
         }
         else {
-            from = _from;
+            from = options.startPage;
             if (page)
                 currentPage = page;
-            if (pageIncrement)
+            if (options.pageIncrement)
                 currentPage += pageIncrement;
         }
 
@@ -238,9 +240,9 @@ var searchUI = (function () {
             var str = "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;pages ";
             var k = 1
 
-            str += "<a href='javascript:self.search(" + currentPage * fetchSize + ",1)'> next  </a>&nbsp;&nbsp;";
+            str += "<a href='javascript:self.search({start:" + currentPage * fetchSize + ",pageIncrement:1})'> next  </a>&nbsp;&nbsp;";
             if (currentPage > 1)
-                str += "<a href='javascript:self.search(" + (currentPage - 1) * fetchSize + ",-1)'> previous  </a>&nbsp;&nbsp;";
+                str += "<a href='javascript:self.search({start:" + (currentPage - 1) * fetchSize + ",pageIncrement:-1})'> previous  </a>&nbsp;&nbsp;";
 
 
             for (var i = 1; i < total; i++) {
@@ -250,18 +252,14 @@ var searchUI = (function () {
 
 
                 if (i % fetchSize == 0) {
-                    str += "<a " + linkClass + "href='javascript:self.search(" + (k - 1) * fetchSize + ",0," + k + ")'>" + k + "</a>&nbsp;&nbsp;"
+                    str += "<a " + linkClass + "href='javascript:self.search({start:" + (k - 1) * fetchSize + ",pageIncrement:0,pageOffet:" + k + "})'>" + k + "</a>&nbsp;&nbsp;"
                     k++;
                 }
 
-                /*  if (currentPage > 1) {
-                 str += "<a href='javascript:self.search(" + 0 + ",1)'>...first  </a>&nbsp;&nbsp;";
 
-                 }*/
 
                 if (i > maxPagesLinks * fetchSize) {
                     str += "...";
-                    // str += "<a href='javascript:self.search(" +Math.round(total/fetchSize)*fetchSize + ")'>... first </a>&nbsp;&nbsp;";
                     break;
                 }
             }
@@ -352,23 +350,7 @@ var searchUI = (function () {
         return str;
     }
 
-    /* function addWordToQuery() {
 
-         var word = $("#addWordInput").val();
-         if (word.length > 0)
-
-             $("#slopInput").val("")
-         if ($("#booleanSearchMode").val() == "and") {
-             self.addAssociatedWord(word);
-
-         }
-         else {
-             $("#searchInput").val($("#searchInput").val() + " " + word)
-             $("#slopInput").val("")
-             $("#slopInput").css("visibility", "hidden")
-             self.search();
-         }
-     }*/
 
 
     self.addAssociatedWord = function (word, dontSearch) {
@@ -508,7 +490,7 @@ var searchUI = (function () {
                                 doc[key] = decodeURIComponent(doc[key]);
                                 doc[key] = "<a href='" + doc[key] + "'>" + doc[key] + "</a>";
                             }
-                            html += "<tr><td style='background-color: #999999'>" + key + "</td><td>" + doc[key] + "</td></tr>"
+                            html += "<tr><td style='background-color: #999999;font-weight: bold'>" + key + "</td><td>" + doc[key] + "</td></tr>"
                         }
                     }
 
@@ -737,7 +719,7 @@ var searchUI = (function () {
     }
 
     self.toCsv = function () {
-        self.search(0, 0, 0, function (err, data) {
+        self.search({format:"CSV"}, function (err, data) {
             var csvFields = data.csvFields;
             data = data.docs;
             var str = "";

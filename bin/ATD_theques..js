@@ -43,16 +43,11 @@ var ATD_theques = {
 
         async.eachSeries(indexes, function (index, callbackEachIndex) {
             var schema = elasticProxy.getSchema(index);
-          /*  if (remoteUrl)
-                elasticProxy.setElasticServerUrl(remoteUrl);*/
+          if (remoteUrl)
+                elasticProxy.setElasticServerUrl(remoteUrl);
             var description = ATD_theques.indexDescriptions[index];
 
 
-         /*   elasticProxy.indexSqlTable(description.connOptions, description.sqlQuery, index, index, function(err,result){
-                var xx=err;
-
-            });
-            return;*/
             elasticProxy.initIndex(index, description.settings, function (err, result) {
                     if (err) {
                         console.log(err);
@@ -82,10 +77,6 @@ var ATD_theques = {
 
                     }
 
-
-
-
-
                 },
                 function (err) {
 
@@ -104,6 +95,7 @@ module.exports = ATD_theques
 //iptables -D INPUT -p tcp --dport 9200 -j DROP
 // iptables -A INPUT -p tcp --dport 9200 -j DROP
 
-ATD_theques.indexTheques(["phototheque"],"http://92.222.116.179:9200");
-//ATD_theques.indexTheques([ "ocr"],"http://92.222.116.179:9200");
-ATD_theques.indexTheques(["phototheque", "audiotheque"], "http://92.222.116.179:9200/");
+//ATD_theques.indexTheques(["phototheque"]);//,"http://92.222.116.179:9200");
+//ATD_theques.indexTheques(["phototheque"],"http://92.222.116.179:9200");
+ATD_theques.indexTheques([ "bordereaux"]);//,"http://92.222.116.179:9200");
+//ATD_theques.indexTheques(["phototheque", "audiotheque"], "http://92.222.116.179:9200/");
