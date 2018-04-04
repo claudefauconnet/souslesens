@@ -247,8 +247,6 @@
         var currentFindWord = {str: "", p: 0};
 
 
-
-
         $(function () {
 
             searchUI.setUserIndexes();
@@ -343,15 +341,13 @@
             });
 
 
-            if (true) {
+            if (false) {
 
                 $("#loginDiv").css("visibility", "visible");
                 $("#panels").css("visibility", "hidden");
 
             }
         })
-
-
 
 
     </script>
@@ -365,14 +361,14 @@
 
     <div id="leftPanel" style="visibility: hidden">
         Associated words<br>
-     <!--   filter
-        <select id="associatedWordsFilter" onchange="searchUI.getAssociatedWords()">
-            <option value="allwords" selected="selected">low</option>
-            </optionvalue>
-            <option value="lemmes">medium</option>
-            <option value="wordnetEntities">high</option>
-            <!--  <option>googleEntities</option>-->
-       <!-- </select>-->
+        <!--   filter
+           <select id="associatedWordsFilter" onchange="searchUI.getAssociatedWords()">
+               <option value="allwords" selected="selected">low</option>
+               </optionvalue>
+               <option value="lemmes">medium</option>
+               <option value="wordnetEntities">high</option>
+               <!--  <option>googleEntities</option>-->
+        <!-- </select>-->
         <div id="associatedWordsDiv"></div>
 
     </div>
@@ -384,8 +380,11 @@
 
                     <td valign="middle">
 
+
+                        <input style="visibility: hidden;" type="image" align="middle" title="erase" height="20px"
+                               onclick="searchUI.clearSearchInputs();" id="clearSearchInputsImg" src="icons/erase.png"/>
                         <input type="image" align="middle" title="advancedSearch" height="25px"
-                               onclick="advancedSearch.showAdvancedQueryDialog()"  src="icons/advancedSearch.png"/>
+                               onclick="advancedSearch.showAdvancedQueryDialog()" src="icons/advancedSearch.png"/>
                         <!-- <button onclick="advancedSearch.showAdvancedQueryDialog()">advanced Query</button>-->
                     </td>
                     <td valign="middle">
@@ -396,8 +395,7 @@
                         <!--  <input type="image" title="search" height="30px"
                                  onclick="searchUI.search();" id="searchInputsImg"
                                  src="icons/search.png"/>-->
-                        <input style="visibility: hidden;" type="image" align="middle" title="erase" height="20px"
-                               onclick="searchUI.clearSearchInputs();" id="clearSearchInputsImg"   src="icons/erase.png"/>
+
                     </td>
 
 
@@ -495,7 +493,7 @@
 
 </div>
 
-<div id="dialog" style="visibility: hidden">
+<div id="dialog" style="visibility: hidden"></div>
 
 <div id="loginDiv" style="position: absolute;top:200px;left: 200px;visibility: hidden">
     login<input id="loginInput">

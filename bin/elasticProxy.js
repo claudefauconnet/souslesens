@@ -123,7 +123,7 @@ var elasticProxy = {
     },
 
     removeSchemaMappingsCustomProperties: function (indexSchema) {
-        var customProperties = ["isTitle", "isId","inCSV"];
+        var customProperties = ["isTitle", "isId", "inCSV"];
         var types = [];
 
         for (var key in indexSchema.mappings) {
@@ -285,7 +285,7 @@ var elasticProxy = {
             url: baseUrl + index + "/_search"
         };
 
-        console.log(JSON.stringify(payload, null, 2));
+       // console.log(JSON.stringify(payload, null, 2));
         request(options, function (error, response, body) {
             var options = {
                 error: error,
@@ -376,6 +376,7 @@ var elasticProxy = {
         var queryObject = options.queryObject;
         var resultFields = options.resultFields;
         var andWords = options.andWords;
+        var format = options.format;
         var booleanSearchMode = options.booleanSearchMode;
         if (!booleanSearchMode)
             booleanSearchMode = "and";
@@ -397,8 +398,9 @@ var elasticProxy = {
             else
                 queryField = "content." + queryField
 
-
-            if (!resultFields) {
+            if (format == "CSV")
+                resultFields = elasticProxy.getShemasFieldNames(index, "CSV");
+            else if (!resultFields) {
                 resultFields = elasticProxy.getShemasFieldNames(index, type);
 
             }
@@ -410,8 +412,7 @@ var elasticProxy = {
                 query = {"match_all": {}}
 
             var shouldQuery = null;
-
-
+            // ******************************should query************************
             if (word.indexOf(" ") > -1 && slop == 0) {//or
                 var words = word.split(" ");
                 var shouldQueries = [];
@@ -443,45 +444,51 @@ var elasticProxy = {
 
             }
 
+            function getElementaryQuery(aword){
+                var equery={}
+                 if (slop || slop > 2) {// match_phrase
+                     equery = {
+                       "match_phrase": {}
+                   }
+                     equery.match_phrase[queryField] = {
+                       "query": aword,
+                       "slop": util.convertNumStringToNumber(slop)
+                   }
+               }
 
+               else if (aword.indexOf("*") > -1) {
+                     equery = {
+                       "wildcard":  {}
+                   }
+                     equery.wildcard[queryField] = aword;
+               }
+               else {
+                     equery = {
+                       "match": {}
+                   }
+                     equery.match[queryField] = aword;
+               }
+               return equery;
+            }
+
+            // ******************************must query************************
             var mustQuery = null;
             if (andWords && andWords.length > 0) {//must
-                if (word.indexOf("*") > -1) {
-                    query = {
-                        "wildcard": {"content": word}
-                    }
-                } else {
-                    query = {"match": {}};
-                    query.match[queryField] = word;
-                }
-
                 mustQuery =
                     {
                         "bool": {
                             "must": [
-                                query
+                                getElementaryQuery(word)
                             ]
                         }
                     }
-
 
                 for (var i = 0; i < andWords.length; i++) {
                     var andWord = andWords[i];
                     if (andWord == "")
                         continue;
 
-                    var queryAndWords = {};
-                    if (andWord.indexOf("*") > -1) {
-                        queryAndWords = {
-                            "wildcard": {"content": andWord}
-                        }
-                    } else {
-                        var queryAndWords = {"match": {}};
-                        queryAndWords.match[queryField] = andWord;
-                    }
-
-
-                    mustQuery.bool.must.push(queryAndWords);
+                    mustQuery.bool.must.push(   getElementaryQuery(andWord));
 
                 }
 
@@ -514,28 +521,7 @@ var elasticProxy = {
             else if (shouldQuery) {
                 query = shouldQuery;
             } else {
-                if (slop || slop > 2) {// match_phrase
-                    query = {
-                        "match_phrase": {}
-                    }
-                    query.match_phrase[queryField] = {
-                        "query": word,
-                        "slop": util.convertNumStringToNumber(slop)
-                    }
-                }
-
-                else if (word.indexOf("*") > -1) {
-                    query = {
-                        "wildcard": {}
-                    }
-                    query.wildcard[queryField] = word;
-                }
-                else {
-                    query = {
-                        "match": {}
-                    }
-                    query.match[queryField] = word;
-                }
+                query= getElementaryQuery(word);
 
 
             }
@@ -714,7 +700,6 @@ var elasticProxy = {
                         result.associatedWords = {};
                     }
                     result.associatedWords = result2
-
                     return callback(null, result);
 
                 })
@@ -1013,7 +998,7 @@ var elasticProxy = {
 
     ,
     acceptAssociatedWord: function (word) {
-        console.log(word)
+   ///     console.log(word)
         if (word.indexOf("’") < -1)
             return false;
         if (word.length < 3)
@@ -2083,7 +2068,13 @@ var elasticProxy = {
                 fields.push(schema.titleField);
 
             for (var j = 0; j < fields.length; j++) {
-                if (allFields.indexOf(fields[j]) < 0)
+                if(type=="CSV"){
+                    if(fields[j].inCSV){
+                        if (allFields.indexOf(fields[j]) < 0)
+                            allFields.push(fields[j])
+                    }
+
+                }else if (allFields.indexOf(fields[j]) < 0)
                     allFields.push(fields[j])
             }
         }

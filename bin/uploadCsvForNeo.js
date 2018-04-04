@@ -25,21 +25,21 @@
  *
  ******************************************************************************/
 
-var fileUpload=require("./fileUpload.js");
-var fs=require("fs");
+var fileUpload = require("./fileUpload.js");
+var fs = require("fs");
 //var exportMongoToNeao=require("./exportMongoToNeo.js");
-var csv=require('csvtojson');
+var csv = require('csvtojson');
 var socket = require('../routes/socket.js');
 
-var uploadCsvForNeo={
+var uploadCsvForNeo = {
 
-    upload:function (req,callback){
-        fileUpload.upload(req,'csv', function (err, req) {
-            if(err) {
+    upload: function (req, callback) {
+        fileUpload.upload(req, 'csv', function (err, req) {
+            if (err) {
                 console.log(err);
                 return;
             }
-            if(req.file && req.file.buffer ) {
+            if (req.file && req.file.buffer) {
 
                 var data = "" + req.file.buffer;
                 var fileName = req.file.originalname;
@@ -51,32 +51,63 @@ var uploadCsvForNeo={
 
                     .fromString(data)
                     .on('json', function (json) {
-                     //   if (i == 0) {
-                            for (var key in json) {
-                                if(header.indexOf(key)<0)
+
+                        for (var key in json) {
+                            if (header.indexOf(key) < 0)
                                 header.push(key);
-                            }
-                       //     ;
-                            i++;
 
 
-                        jsonArray.push(json);
+                        }
+                  //      var jsonMultiple = uploadCsvForNeo.splitMultipleValuesInColumns(json, ";");
+                        if (false && jsonMultiple.length > 0)
+                            jsonArray = jsonArray.concat(jsonMultiple);
+                        else
+                            jsonArray.push(json);
 
                     })
                     .on('done', function () {
                         var path = "./uploads/" + fileName + ".json";
-                        header= header.sort();
-                        fs.writeFileSync(path,JSON.stringify(jsonArray));
-                        var result = {message:"listCsvFields",remoteJsonPath: path,name:fileName, header: header};
-                       socket.message(JSON.stringify(result));
-                     callback(null,result);
+                        header = header.sort();
+                        fs.writeFileSync(path, JSON.stringify(jsonArray));
+                        var result = {message: "listCsvFields", remoteJsonPath: path, name: fileName, header: header};
+                        socket.message(JSON.stringify(result));
+                        callback(null, result);
                     });
             }
 
         });
     }
+    ,
+    splitMultipleValuesInColumns: function (json, sep) {
+        var multipleKeys=[]
+        for (var key in json) {
+            if (json[key].indexOf(";") > -1)
+                multipleKeys.push(key)
+        }
+
+        var jsonMultiple = [json];
+        for (var i = 0; i < multipleKeys.length; i++) {
+           var key=multipleKeys[i];
+            for (var j = 0; j < jsonMultiple.length; j++) {
+                var json=jsonMultiple[j];
+
+                if (json[key].indexOf(";") > -1) {
+                    var clone = JSON.parse(JSON.stringify(json));
+                        jsonMultiple.splice(j,1);
+                    var values = json[key].split(sep);
+                    for (var k = 0; k < values.length; k++) {
 
 
+                        clone[key] = values[k];
+                        jsonMultiple.push(clone);
+
+                    }
+                }
+            }
+        }
+
+        return jsonMultiple;
+    }
 
 
 }

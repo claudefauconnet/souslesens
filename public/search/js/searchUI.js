@@ -152,6 +152,8 @@ if(!options){
         if (associatedWords.length > 0)
             payload.options.andWords = associatedWords;
 
+        if(options.format)
+            payload.options.format = options.format;
         var queryField = $("#queryFieldSelect").val();
         if (queryField != "") {
             payload.options.queryField = queryField;
@@ -180,11 +182,10 @@ if(!options){
 
     }
 
-
    self.processSearchResults=function(data, callback) {
         $("#infos").css("visibility", "visible");
         $(".rightPanelTd").css("visibility", "visible");
-        $("#self.clearSearchInputsImg").css("visibility", "visible");
+        $("#clearSearchInputsImg").css("visibility", "visible");
 
         if (callback) {
             return callback(null, data)
