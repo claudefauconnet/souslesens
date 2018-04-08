@@ -307,8 +307,26 @@
 
             $("#searchInput").keyup(function () {
                 var val = $(this).val();
-                if (val.length > 2)
+                if (val.length > 1)
                     $("#plusSpan").css("visibility", "visible")
+
+                var p = val.indexOf(" ");
+                if (p > 0 && p < (val.length - 1) && val.indexOf("*") < 0) {
+                    $("#slopSpan").css("visibility", "visible")
+                    $("#slopInput").val("3")
+                    $("#slopInput").css("visibility", "visible");
+                }
+                else {
+                    $("#slopInput").css("visibility", "hidden");
+                    $("#slopInput").val("")
+                    $("#slopSpan").css("visibility", "hidden")
+                }
+
+            });
+
+            $("#addWordInput").keyup(function () {
+                var val = $(this).val();
+
 
                 var p = val.indexOf(" ");
                 if (p > 0 && p < (val.length - 1) && val.indexOf("*") < 0) {
@@ -341,7 +359,7 @@
             });
 
 
-            if (false) {
+            if (true) {
 
                 $("#loginDiv").css("visibility", "visible");
                 $("#panels").css("visibility", "hidden");
@@ -412,7 +430,7 @@
                     <td>
                         <span id="plusSpan" style="visibility: hidden;">
                                <input type="image" align="middle" title="erase" height="20px"
-                                      onclick="$('#subQuerySpan').css('visibility','visible');  $('#plusSpan').css('visibility', 'hidden')"
+                                      onclick="$('#subQuerySpan').css('visibility','visible');  $('#plusSpan').css('visibility', 'hidden'); $('#addWordInput').focus()"
                                       id="plusImg"
                                       src="icons/plus.png"/>
 
@@ -442,7 +460,7 @@
                 title='export csv' onclick='searchUI.toCsv()' src='./icons/csv.png' width='20px'> </a></div>
         <br>
 
-
+<div id="queryTextDiv"></div>
         <div id="associatedWordsBreadcrumbDiv"></div>
 
 

@@ -3,9 +3,11 @@ var advancedSearch = (function () {
     self = {};
     self.userMappings = {};
     self.currentField = {}
-    self.criteria = []
+    self.criteria = [];
+    self.queryObject={}
 
     self.showAdvancedQueryDialog = function () {
+        self.queryObject={};
         $("#searchInput").val("");
         $("#dialog").css("visibility", "visible");
         $("#dialog").load("htmlSnippets/advancedSearch.html", function () {
@@ -41,7 +43,7 @@ var advancedSearch = (function () {
 
                 'field':{icon :'icons/field2.png'}
                 },
-                plugins:[""]
+                plugins:["sort"]
 
             }).on('select_node.jstree', function (node, selected, event) {
 
@@ -200,6 +202,8 @@ var advancedSearch = (function () {
 
 
         var classifierSourceStr = null;
+        self.queryObject.query=query;
+        self.queryObject.indexName=index;
         var payload = {
             findDocuments: 1,
             options: {
@@ -228,7 +232,7 @@ var advancedSearch = (function () {
             success: function (data, textStatus, jqXHR) {
                 $("#dialog").css("visibility", "hidden");
                  $("#advancedSearchDialog_searchDiv").css("visibility", "hidden");
-                $("#infos").html($("#advancedSearchDialog_criteriaDiv").html());
+                $("#queryTextDiv").html($("#advancedSearchDialog_criteriaDiv").html());
                 searchUI.processSearchResults(data);
 
             }

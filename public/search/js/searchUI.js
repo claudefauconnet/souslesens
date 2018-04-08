@@ -48,7 +48,7 @@ var searchUI = (function () {
 
                 for (var i = 0; i < self.userIndexes.length; i++) {
 
-                    indexesCxbs += "<li><input type='checkbox' checked='checked' onchange='searchUI.search()' name='indexesCbxes' value='" + self.userIndexes[i] + "'><span id='indexCbxSpan_" + self.userIndexes[i] + "'>" + self.userIndexes[i] + "</span></li>"
+                    indexesCxbs += "<li><input type='checkbox' checked='checked' onchange='searchUI.search()' name='indexesCbxes' value='" + self.userIndexes[i] + "'> <button class='indexCbxButton' onclick='searchUI.filterIndex(\"" + self.userIndexes[i]+ "\")'>O</button>" + self.userIndexes[i] + "<span id='indexCbxSpan_" + self.userIndexes[i] + "'></span></li>"
                 }
                 indexesCxbs += "<ul>";
                 $("#sourcesDiv").html(indexesCxbs);
@@ -65,14 +65,14 @@ if(!options){
 }
 
         var from;
-        if (!options.startPage) {
+        if (!options.start) {
             from = 0;
             currentPage = 1
         }
         else {
-            from = options.startPage;
-            if (page)
-                currentPage = page;
+            from = options.start;
+            if (options.pageOffset)
+                currentPage = options.pageOffset;
             if (options.pageIncrement)
                 currentPage += pageIncrement;
         }
@@ -145,6 +145,14 @@ if(!options){
                 }
             }
         };
+
+        if(advancedSearch.queryObject.query){
+            payload.options.queryObject=advancedSearch.queryObject.query;
+            payload.options.indexName=advancedSearch.queryObject.indexName;
+            payload.options.getAssociatedWords.indexName=advancedSearch.queryObject.indexName;
+
+
+        }
         if (currentType)
             payload.options.type = currentType
         if (slop != "")
@@ -253,7 +261,7 @@ if(!options){
 
 
                 if (i % fetchSize == 0) {
-                    str += "<a " + linkClass + "href='javascript:searchUI.search({start:" + (k - 1) * fetchSize + ",pageIncrement:0,pageOffet:" + k + "})'>" + k + "</a>&nbsp;&nbsp;"
+                    str += "<a " + linkClass + "href='javascript:searchUI.search({start:" + (k - 1) * fetchSize + ",pageIncrement:0,pageOffset:" + k + "})'>" + k + "</a>&nbsp;&nbsp;"
                     k++;
                 }
 
@@ -355,6 +363,7 @@ if(!options){
 
 
     self.addAssociatedWord = function (word, dontSearch) {
+        if(associatedWords.indexOf(word)<0)
         associatedWords.push(word);
         self.showAssociatedWordsBreadcrumb();
         if (!dontSearch)
@@ -479,6 +488,8 @@ if(!options){
                         }
 
                     }
+
+
                     var html = "<b>source</b>: " + doc._index + "&nbsp;";
                     html += "<b>title</b>: " + doc.title + "<br>";
                     html += "<table  class='docContentFields'>";
@@ -511,6 +522,10 @@ if(!options){
                     $("#dialog").load("htmlSnippets/showDocContent.html", function () {
                         $('#advancedSearchDialog_fieldInput').attr('disabled', 'disabled');
                         $("#dialogContentDiv").html(html);
+                        var title="";
+                        if(doc.title)
+                            title= doc.title;
+                        $("#detailsTitle").html(title);
 
 
 
@@ -856,10 +871,12 @@ if(!options){
     self.clearSearchInputs = function () {
         associatedWords = [];
         $("#searchInput").val("");
-        $("#associatedWordsBreadcrumbDiv").val("");
+        $("#associatedWordsBreadcrumbDiv").html("");
+        $("#queryTextDiv").html("");
+
         $("#associatedWordsDiv").html("");
         $("#leftPanel").css("visibility", "hidden")
-        $("#infos").html("");
+        $("#infos").css("visibility", "hidden")
         $("#resultDiv").html("");
         $("#typesDiv").html("");
         $("#classifiersDiv").html("");
@@ -868,11 +885,13 @@ if(!options){
     }
 
     self.showIndexesStats = function (data) {
-
-      //  $("#sourcesDiv").html(indexesCxbs);
+for(var i=0;i<self.userIndexes.length;i++){
+    $("#indexCbxSpan_" + self.userIndexes[i]).html(" (0)");
+}
+      //  $("#sourcesDiv").html(indexesCxbs)
         for (var i = 0; i < data.length; i++) {
-            var str = "<button class='indexCbxButton' onclick='searchUI.filterIndex(\"" + data[i].key + "\")'>O</button>" + data[i].key + " (" + data[i].count + ")"
-            $("#indexCbxSpan_" + data[i].key).html(str);
+           // var str = + data[i].key
+            $("#indexCbxSpan_" + data[i].key).html(" (" + data[i].count + ")");
             $("[name=indexCbxSpan] [value="+data[i].key+"]").prop("checked",true);
 
           //  indexesCxbs += "<li><input type='checkbox' checked='checked' name='indexesCbxes' value='" + data[i].key + "'>" + data[i].key+" ("+ data[i].count+")</li>"

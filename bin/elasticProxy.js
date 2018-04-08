@@ -185,6 +185,7 @@ var elasticProxy = {
 
     ,
 
+
     search: function (index, type, query, callback) {
 
         getClient().searchUI.search({
@@ -285,7 +286,7 @@ var elasticProxy = {
             url: baseUrl + index + "/_search"
         };
 
-       // console.log(JSON.stringify(payload, null, 2));
+        // console.log(JSON.stringify(payload, null, 2));
         request(options, function (error, response, body) {
             var options = {
                 error: error,
@@ -374,6 +375,7 @@ var elasticProxy = {
         var size = options.size;
         var slop = options.slop;
         var queryObject = options.queryObject;
+
         var resultFields = options.resultFields;
         var andWords = options.andWords;
         var format = options.format;
@@ -385,149 +387,140 @@ var elasticProxy = {
         else
             slop = 0;
 
-        var query = {};
-        if (queryObject)// request allready complete
-            query = queryObject;
-        else {
+
+        if (queryObject) {//substitute
+            word = queryObject;
+        }
+
+        var match = {"content": word};
+
+        if (!queryField)
+            queryField = "content"
+        else
+            queryField = "content." + queryField
+
+        if (format == "CSV")
+            resultFields = elasticProxy.getShemasFieldNames(index, "CSV");
+        else if (!resultFields) {
+            resultFields = elasticProxy.getShemasFieldNames(index, type);
+
+        }
+        if (size)
+            size = parseInt("" + size)
 
 
-            var match = {"content": word};
+        function getElementaryQuery(aword, options) {
 
-            if (!queryField)
-                queryField = "content"
-            else
-                queryField = "content." + queryField
+            if (typeof aword === 'object')// request allready complete
+                return queryObject;
 
-            if (format == "CSV")
-                resultFields = elasticProxy.getShemasFieldNames(index, "CSV");
-            else if (!resultFields) {
-                resultFields = elasticProxy.getShemasFieldNames(index, type);
+            if (!options)
+                options = {};
+            var equery = {}
+            if (aword.indexOf(" ") > -1) {
 
-            }
-            if (size)
-                size = parseInt("" + size)
-
-
-            if (word == null || word == "*" || word == "")//all
-                query = {"match_all": {}}
-
-            var shouldQuery = null;
-            // ******************************should query************************
-            if (word.indexOf(" ") > -1 && slop == 0) {//or
-                var words = word.split(" ");
-                var shouldQueries = [];
-                for (var i = 0; i < words.length; i++) {
-                    var word = words[i];
-                    if (word == "")
-                        continue;
-
-                    var aShouldQuery = {};
-                    if (word.indexOf("*") > -1) {
-                        aShouldQuery = {
-                            "wildcard": {"content": word}
-                        }
-                    } else {
-                        aShouldQuery = {"match": {}};
-                        aShouldQuery.match[queryField] = word;
+                var words = aword.split(" ");
+                if (slop > 0) {// match_phrase
+                    equery = {
+                        "match_phrase": {}
                     }
-                    shouldQueries.push(aShouldQuery);
-                }
-                shouldQuery =
-                    {
-                        "bool": {
-                            "should": [
-                                shouldQueries
-                            ]
-                        }
+                    equery.match_phrase[queryField] = {
+                        "query": aword,
+                        "slop": util.convertNumStringToNumber(slop)
                     }
 
 
-            }
+                } else { // OR
+                    var shouldQueries = [];
+                    for (var i = 0; i < words.length; i++) {
+                        var word = words[i];
+                        if (word == "")
+                            continue;
 
-            function getElementaryQuery(aword){
-                var equery={}
-                 if (slop || slop > 2) {// match_phrase
-                     equery = {
-                       "match_phrase": {}
-                   }
-                     equery.match_phrase[queryField] = {
-                       "query": aword,
-                       "slop": util.convertNumStringToNumber(slop)
-                   }
-               }
-
-               else if (aword.indexOf("*") > -1) {
-                     equery = {
-                       "wildcard":  {}
-                   }
-                     equery.wildcard[queryField] = aword;
-               }
-               else {
-                     equery = {
-                       "match": {}
-                   }
-                     equery.match[queryField] = aword;
-               }
-               return equery;
-            }
-
-            // ******************************must query************************
-            var mustQuery = null;
-            if (andWords && andWords.length > 0) {//must
-                mustQuery =
-                    {
-                        "bool": {
-                            "must": [
-                                getElementaryQuery(word)
-                            ]
-                        }
-                    }
-
-                for (var i = 0; i < andWords.length; i++) {
-                    var andWord = andWords[i];
-                    if (andWord == "")
-                        continue;
-
-                    mustQuery.bool.must.push(   getElementaryQuery(andWord));
-
-                }
-
-            }
-
-            if (mustQuery && shouldQuery) {
-                if (booleanSearchMode == "and") {
-                    query =
-                        {
-                            "bool": {
-                                "must": [
-                                    mustQuery, shouldQuery
-                                ]
+                        var aShouldQuery = {};
+                        if (word.indexOf("*") > -1) {
+                            aShouldQuery = {
+                                "wildcard": {"content": word}
                             }
+                        } else {
+                            aShouldQuery = {"match": {}};
+                            aShouldQuery.match[queryField] = word;
                         }
-                }
-                else {
-                    query =
+                        shouldQueries.push(aShouldQuery);
+                    }
+                    equery =
                         {
                             "bool": {
                                 "should": [
-                                    mustQuery, shouldQuery
+                                    shouldQueries
                                 ]
                             }
                         }
                 }
-            } else if (mustQuery) {
-                query = mustQuery;
-            }
-            else if (shouldQuery) {
-                query = shouldQuery;
-            } else {
-                query= getElementaryQuery(word);
-
-
             }
 
 
+            else if (aword.indexOf("*") > -1) {
+                equery = {
+                    "wildcard": {}
+                }
+                equery.wildcard[queryField] = aword;
+            }
+            else {
+                equery = {
+                    "match": {}
+                }
+                equery.match[queryField] = aword;
+            }
+            return equery;
         }
+
+
+        var query = null;
+
+
+        // ******************************andWords************************
+
+
+        if (andWords && andWords.length > 0) {//must
+
+            var queryArray = [];
+            queryArray.push(getElementaryQuery(word));
+            for (var i = 0; i < andWords.length; i++) {
+                var andWord = andWords[i];
+                if (andWord == "")
+                    continue;
+                queryArray.push(getElementaryQuery(andWord, {noSlop: true}));
+
+            }
+
+            if (booleanSearchMode == "and") {
+                query =
+                    {
+                        "bool": {
+                            "must": queryArray
+                        }
+                    }
+
+            }
+            else if (booleanSearchMode == "or") {
+                query =
+                    {
+                        "bool": {
+                            "should": queryArray
+                        }
+                    }
+
+
+            }
+        }
+
+        else if (word == null || word == "*" || word == "")//all
+            query = {"match_all": {}}
+
+        else
+            query = getElementaryQuery(word);
+
 
         var payload = {
             "from": from,
@@ -998,7 +991,7 @@ var elasticProxy = {
 
     ,
     acceptAssociatedWord: function (word) {
-   ///     console.log(word)
+        ///     console.log(word)
         if (word.indexOf("’") < -1)
             return false;
         if (word.length < 3)
@@ -2068,13 +2061,13 @@ var elasticProxy = {
                 fields.push(schema.titleField);
 
             for (var j = 0; j < fields.length; j++) {
-                if(type=="CSV"){
-                    if(fields[j].inCSV){
+                if (type == "CSV") {
+                    if (fields[j].inCSV) {
                         if (allFields.indexOf(fields[j]) < 0)
                             allFields.push(fields[j])
                     }
 
-                }else if (allFields.indexOf(fields[j]) < 0)
+                } else if (allFields.indexOf(fields[j]) < 0)
                     allFields.push(fields[j])
             }
         }

@@ -1209,8 +1209,14 @@ function setCsvImportFields(json) {
 
     common.fillSelectOptionsWithStringArray(dbSelect,  [json.name]);
 //  $("#dbSelect").val('CSV');
-    loadRequests();
     onCollSelect();
+    try{
+        loadRequests();
+    }
+    catch(e){
+
+    }
+
 
 
 }

@@ -58,9 +58,14 @@ var uploadCsvForNeo = {
 
 
                         }
-                  //      var jsonMultiple = uploadCsvForNeo.splitMultipleValuesInColumns(json, ";");
-                        if (false && jsonMultiple.length > 0)
-                            jsonArray = jsonArray.concat(jsonMultiple);
+
+                        var jsonArrayMultiple=[];
+                        // var jsonArrayMultiple = uploadCsvForNeo.splitMultipleValuesInColumns(json, ";");
+                        if (true && jsonArrayMultiple.length > 0) {
+                            for( var i=0;i<jsonArrayMultiple.length;i++) {
+                                jsonArray.push(jsonArrayMultiple[i]);
+                            }
+                        }
                         else
                             jsonArray.push(json);
 
@@ -85,28 +90,34 @@ var uploadCsvForNeo = {
                 multipleKeys.push(key)
         }
 
-        var jsonMultiple = [json];
+        var jsonArray = [json];
+
         for (var i = 0; i < multipleKeys.length; i++) {
-           var key=multipleKeys[i];
-            for (var j = 0; j < jsonMultiple.length; j++) {
-                var json=jsonMultiple[j];
+            var jsonMultiple=[]
+            var key=multipleKeys[i];
+           var rowsToRemove=[];
+            for (var j = 0; j < jsonArray.length; j++) {
+                var json=jsonArray[j];
 
                 if (json[key].indexOf(";") > -1) {
-                    var clone = JSON.parse(JSON.stringify(json));
-                        jsonMultiple.splice(j,1);
+
                     var values = json[key].split(sep);
                     for (var k = 0; k < values.length; k++) {
 
-
+                        var clone = JSON.parse(JSON.stringify(json));
                         clone[key] = values[k];
                         jsonMultiple.push(clone);
 
                     }
                 }
+                else{
+                    jsonMultiple.push(json);
+                }
             }
+            jsonArray= JSON.parse(JSON.stringify(jsonMultiple));
         }
 
-        return jsonMultiple;
+        return jsonArray;
     }
 
 
