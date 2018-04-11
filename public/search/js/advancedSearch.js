@@ -125,6 +125,7 @@ var advancedSearch = (function () {
          criterionStr += $("#advancedSearchDialog_fieldInput").val() + " " + criterion.operator + " " + criterion.value + "<br>"
         $("#advancedSearchDialog_criteriaDiv").append(criterionStr);
         //   if (criterion.type == "date") {
+        criterion.value=criterion.value.toLowerCase();
         self.criteria.push(criterion);
 
 

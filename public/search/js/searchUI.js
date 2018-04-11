@@ -99,9 +99,11 @@ if(!options){
 
         var index = $("#indexInput").val();
         var word = $("#searchInput").val().trim();
+        word=word.toLowerCase();
         var booleanSearchMode = $("#booleanSearchSelect").val();
 
         var addWordInput = $("#addWordInput").val();
+        addWordInput=addWordInput.toLowerCase();
 
         if (addWordInput && addWordInput.length > 0) {
             self.addAssociatedWord(addWordInput, true);
@@ -113,11 +115,11 @@ if(!options){
         oldWord = word;
         var slop = $("#slopInput").val();
 
-        if (slop != "" && word.indexOf(" ") > 0 && word.indexOf("*") > 0) {
+     /*   if (slop != "" && word.indexOf(" ") > 0 && word.indexOf("*") > 0) {
 
             $("#resultDiv").html("Impossible to have a query with this pattern : xxx* yyy and a distance between the two words. remove * or set distance to 0");
             return;
-        }
+        }*/
 
 
 
@@ -456,7 +458,7 @@ if(!options){
             findDocumentsById: 1,
             indexName: index,
             ids: [id],
-            words: words
+           words: words
         };
 
         console.log(JSON.stringify(payload, null, 2))
@@ -469,7 +471,7 @@ if(!options){
                 currentDocHighlightIndex = 0;
                 currentDocFindWordIndex = 100;
                 dialogContentDivScroll = 0;
-                $("#self.scrollToHighlightUpButton").css("visibility", "hidden");
+                $("#scrollToHighlightUpButton").css("visibility", "hidden");
                 words.pop(word);
                 if (data.docs && data.docs.length > 0) {
                     var doc = data.docs[0];
@@ -711,6 +713,7 @@ if(!options){
     self.editMongoForm = function (mongoId, elasticId) {
         var url = "./form.html";
         $("#dialogLeftDiv").css("visibility", "hidden");
+
         $("#dialogContentDiv").load(url, function () {
 
             loadFormDataFromMongo(mode.dbName, mode.collectionName, mongoId, elasticId)
@@ -720,6 +723,7 @@ if(!options){
 
     self.closeDialog = function () {
         $("#dialogContentDiv").html("");
+        $("#scrollToHighlightUpButton").css("visibility", "hidden");
         $("#dialog").css("visibility", "hidden")
     }
 
@@ -741,7 +745,7 @@ if(!options){
             var str = "";
             if (data.length == 0)
                 return;
-            var keys = [];
+            var keys = ["_index"];
             if (csvFields && csvFields.length > 0) {
                 keys = csvFields;
             }
@@ -758,7 +762,8 @@ if(!options){
 
                 }
             }
-            for (var j = 0; j < keys.length; j++) {
+            str +="source;"
+            for (var j = 1; j < keys.length; j++) {
                 str += keys[j] + ";"
 
             }
@@ -801,9 +806,9 @@ if(!options){
     self.scrollToHighlight = function (amount) {
         currentDocHighlightIndex += amount;
         if (currentDocHighlightIndex > 0)
-            $("#self.scrollToHighlightUpButton").css("visibility", "visible");
+            $("#scrollToHighlightUpButton").css("visibility", "visible");
         else
-            $("#self.scrollToHighlightUpButton").css("visibility", "hidden");
+            $("#scrollToHighlightUpButton").css("visibility", "hidden");
         var h = $("#dialogContentDiv").height() / 2
         var z = $("#em_" + (currentDocHighlightIndex - 1)).offset().top;
         z -= h;
@@ -870,11 +875,12 @@ if(!options){
 
     self.clearSearchInputs = function () {
         associatedWords = [];
+        $("#associatedWordsDiv").html("");
         $("#searchInput").val("");
         $("#associatedWordsBreadcrumbDiv").html("");
         $("#queryTextDiv").html("");
 
-        $("#associatedWordsDiv").html("");
+
         $("#leftPanel").css("visibility", "hidden")
         $("#infos").css("visibility", "hidden")
         $("#resultDiv").html("");

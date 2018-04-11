@@ -254,7 +254,7 @@ var elasticProxy = {
                 ,
                 "highlight": {
                     "fields": {
-                        "content": {"number_of_fragments": 100}
+                        "content": {"number_of_fragments": 50}
                     }
                 }
             };
@@ -286,7 +286,7 @@ var elasticProxy = {
             url: baseUrl + index + "/_search"
         };
 
-        // console.log(JSON.stringify(payload, null, 2));
+        console.log(JSON.stringify(payload, null, 2));
         request(options, function (error, response, body) {
             var options = {
                 error: error,
@@ -664,7 +664,6 @@ var elasticProxy = {
 
         var result = {
             docs: docs,
-
             total: total,
             indexesInfos: indexesInfos
             //  icons: icons,
@@ -2052,23 +2051,30 @@ var elasticProxy = {
         for (var i = 0; i < indexes.length; i++) {
             var _index = indexes[i];
             var fields = [];
+            var fieldObjs = [];
             var schema = elasticProxy.getSchema(_index);
             if (!schema || !schema.mappings)
                 fields = ["path", "title", "date"];
-            else
+            else {
                 fields = elasticSchema._indexes[_index].fields;
+                fieldObjs = elasticSchema._indexes[_index].fields.fieldObjs;
+            }
             if (schema.titleField)
                 fields.push(schema.titleField);
 
-            for (var j = 0; j < fields.length; j++) {
-                if (type == "CSV") {
-                    if (fields[j].inCSV) {
-                        if (allFields.indexOf(fields[j]) < 0)
-                            allFields.push(fields[j])
+            if (type == "CSV"  && schema.mappings) {
+                for (var key in fieldObjs) {
+                    if (fieldObjs[key].inCSV) {
+                        if (allFields.indexOf(key) < 0)
+                            allFields.push(key)
                     }
+                }
 
-                } else if (allFields.indexOf(fields[j]) < 0)
-                    allFields.push(fields[j])
+            }else {
+                for (var j = 0; j < fields.length; j++) {
+                    if (allFields.indexOf(fields[j]) < 0)
+                        allFields.push(fields[j])
+                }
             }
         }
         return allFields;

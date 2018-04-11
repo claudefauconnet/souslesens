@@ -51,3 +51,7 @@ public/toutlesens/js/infosGenericDisplay2.js
 *.log
 
 *.log
+bin/elasticProxy.js
+*.log
+logs/classifierManager.log
+logs/elastic.log
