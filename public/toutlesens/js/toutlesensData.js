@@ -273,7 +273,7 @@ var toutlesensData = (function () {
             if (options.useCurrentStatement && self.currentStatement) {
                 var p= self.currentStatement.indexOf("WHERE")
                 if(p>-1 && self.whereFilter.length>0)
-                    statement=statement.substring(0,p)+" "+self.whereFilter+" "+statement.substring(p+1);
+                    statement=self.currentStatement.substring(0,p)+" "+self.whereFilter+" "+self.currentStatement.substring(p+1);
 
 
             } else
