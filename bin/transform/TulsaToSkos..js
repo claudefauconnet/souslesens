@@ -102,7 +102,7 @@ for (var i = 0; i < words.length; i++) {
 }
 
 
-elasticProxy.indexJsonArray("tulsathesaurus", "json", skosArray, function (err,result){
+elasticProxy.indexJsonArray("tulsathesaurus", "json", skosArray, {},function (err,result){
 if(err)
     console.log(err);
 });

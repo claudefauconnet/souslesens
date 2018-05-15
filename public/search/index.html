@@ -225,7 +225,7 @@
     <link rel="stylesheet" href="../../common/js/jsTree/themes/default/style.min.css"/>
     <script>
         var elasticUrl = "../../../elastic";
-        var authenticationUrl = "../../../authentication";
+
         var associatedWords = [];
         var oldWord = "";
         var currentClassifierData = [];
@@ -361,8 +361,9 @@
                 $("#dialog").css("visibility", "hidden")
             });
 
+            var url = window.location.host;
+            if(url.indexOf("localhost")<0 && url.indexOf("127.0.0.1")<0){
 
-            if (true) {
 
                 $("#loginDiv").css("visibility", "visible");
                 $("#panels").css("visibility", "hidden");

@@ -1,18 +1,37 @@
 var searchUI = (function () {
     var self = {}
+    self.authenticationUrl = "../../../authentication";
     self.userIndexes=[];
-    self.doLogin = function () {
+    self.doLogin = function (group) {
+        var login=$("#loginInput").val();
+        var password=$("#passwordInput").val();
+       // var match=password.match(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/);
+
+        if(!password.match(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/)) {
+            $("#loginMessage").html("invalid  login : Minimum eight characters, at least one uppercase letter, one lowercase letter and one number");
+        }
         var payload = {
             authentify: 1,
-            login: $("#loginInput").val(),
-            password: $("#passwordInput").val()
-        }
+            login: login,
+            password: password
+
+    }
         $.ajax({
             type: "POST",
-            url: authenticationUrl,
+            url: self.authenticationUrl,
             data: payload,
             dataType: "json",
             success: function (data, textStatus, jqXHR) {
+                if(group){
+                    if(!$.isArray(data))
+                        data=[data];
+                    if(data.indexOf(group)<0){
+                        $("#loginMessage").html("invalid  login or password");
+                        return;
+                    }
+
+                }
+
                 $("#loginDiv").css("visibility", "hidden");
                 $("#panels").css("visibility", "visible");
                 $("#searchInput").focus();

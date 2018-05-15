@@ -5,6 +5,7 @@ var router = express.Router();
 var neoProxy = require('../bin/neoProxy.js');
 var mongoProxy = require('../bin/mongoProxy.js');
 var elasticProxy = require('../bin/elasticProxy.js');
+var neo2Elastic= require('../bin/neo2Elastic..js');
 var httpProxy = require('../bin/httpProxy.js');
 var fileUpload = require('../bin/fileUpload.js');
 var jsonFileStorage = require('../bin/jsonFileStorage.js');
@@ -21,7 +22,6 @@ var serverParams = require("../bin/serverParams.js")
 var socket = require('./socket.js');
 var fileSystemProxy = require("../bin/fileSystemProxy..js")
 var authentication = require("../bin/authentication..js")
-
 
 
 
@@ -131,11 +131,11 @@ router.post(serverParams.routesRootUrl + '/elastic', function (req, response) {
             processResponse(response, error, result)
         });
     else if (req.body && req.body.indexDocDirInNewIndex)
-        elasticProxy.indexDocDirInNewIndex(req.body.indexName, req.body.type, req.body.rootDir, req.body.doClassifier, function (error, result) {
+        elasticProxy.indexDocDirInNewIndex(req.body.indexName, req.body.type, req.body.rootDir, req.body.doClassifier, null, function (error, result) {
             processResponse(response, error, result)
         });
     else if (req.body && req.body.indexDirInExistingIndex)
-        elasticProxy.indexDirInExistingIndex(req.body.indexName, req.body.type, req.body.rootDir, req.body.doClassifier, function (error, result) {
+        elasticProxy.indexDirInExistingIndex(req.body.indexName, req.body.type, req.body.rootDir, req.body.doClassifier, null, function (error, result) {
             processResponse(response, error, result)
         });
 
@@ -171,7 +171,7 @@ router.post(serverParams.routesRootUrl + '/elastic', function (req, response) {
         });
 
     else if (req.body && req.body.indexJsonArray)
-        elasticProxy.indexJsonArray(req.body.index, req.body.type, req.body.array, function (error, result) {
+        elasticProxy.indexJsonArray(req.body.index, req.body.type, req.body.array, options, function (error, result) {
             processResponse(response, error, result)
         });
     else if (req.body && req.body.getMappingsFields)
@@ -190,9 +190,20 @@ router.post(serverParams.routesRootUrl + '/elastic', function (req, response) {
         });
 
 
-
-
 });
+router.post(serverParams.routesRootUrl + '/neo2Elastic', function (req, response) {
+    if (req.body && req.body.indexNeoNodes2Elastic) {
+        neo2Elastic.indexNeoNodes2Elastic(req.body.subGraph,req.body.where,req.body.index, function (error, result) {
+            processResponse(response, error, result)
+        });
+    }
+    else if (req.body && req.body.elasticQuery2NeoNodes) {
+        neo2Elastic.elasticQuery2NeoNodes(req.body.index,req.body.queryString,req.body.resultSize, function (error, result) {
+            processResponse(response, error, result)
+        });
+    }
+});
+
 
 router.post(serverParams.routesRootUrl + '/elasticIndexJson', function (req, response) {
     fileUpload.upload(req, "jsonArray", function (err, req) {
@@ -202,7 +213,7 @@ router.post(serverParams.routesRootUrl + '/elasticIndexJson', function (req, res
         } catch (e) {
             processResponse(response, e, null);
         }
-        elasticProxy.indexJsonArray(req.body.jsonIndexName, req.body.jsonType, data, function (error, result) {
+        elasticProxy.indexJsonArray(req.body.jsonIndexName, req.body.jsonType, data, options, function (error, result) {
             processResponse(response, error, result)
         });
 

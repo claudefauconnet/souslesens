@@ -268,17 +268,18 @@ var paint = (function () {
         var filterObjectType = $("#propertiesSelectionDialog_ObjectTypeInput").val();
         var operator = $("#propertiesSelectionDialog_operatorSelect").val();
         var type = $("#propertiesSelectionDialog_ObjectNameInput").val();
-        self.currentLabel = $("#paintDialog_labelSelect").val();
-
+       // self.currentLabel = $("#paintDialog_labelSelect").val();
+        self.currentLabel=$("#propertiesSelectionDialog_ObjectNameInput").val();
 
         var legendStr = "";
+
         if (Gparams.useVisjsNetworkgraph) {
-            if (true || self.currentLabel) {
+            if (self.currentLabel) {
 
                 var ids = [];
                 for (var key in visjsGraph.nodes._data) {
                     var nodeData = visjsGraph.nodes._data[key];
-                    if (property == "" && nodeData.labelNeo == self.currentLabel) {
+                    if (value == "" && nodeData.labelNeo == self.currentLabel) {
                         ids.push(key);
                         legendStr = " All " + self.currentLabel;
                     }
@@ -351,6 +352,9 @@ var paint = (function () {
 
 
         if (property && property.length > 0) {
+
+            if(!value || value=="")
+                return false;
 
             if (!data.neoAttrs[property])
                 return false;

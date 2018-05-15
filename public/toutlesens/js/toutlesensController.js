@@ -308,16 +308,19 @@ var toutlesensController = (function () {
      */
 
     self.searchNodesUI = function (resultType, limit, from, callback) {
+        $("#searchResultMessage").html("")
 
-
-        if (!startSearchNodesTime) {// temporisateur
+  /*      if (!startSearchNodesTime) {// temporisateur
             startSearchNodesTime = new Date();
             return;
         } else {
             var now = new Date();
             if (now - startSearchNodesTime < Gparams.searchInputKeyDelay)
                 return;
-        }
+        }*/
+
+
+
         var word = "";
         $("#nodesLabelsSelect").val("")
         currentLabel = null;
@@ -326,13 +329,84 @@ var toutlesensController = (function () {
         if (word && word.length < Gparams.searchInputMinLength && label && label.length == "") {
             return;
         }
-        if (label == "" && word == "")
+        if (label == "" && word == "") {
             return;
-        toutlesensData.searchNodes(subGraph, label, word, resultType, limit, from, callback);
+        }
+        var word0=word.toLowerCase()
+        if (word.match(/.* /))
+            word = word.substring(word.length - 2)
+
+        word += "*";
+
+
+
+        if ( Gparams.queryInElasticSearch) {
+            if(word.length<3)
+                return;
+            var payload = {
+                elasticQuery2NeoNodes: 1,
+                queryString: word,
+                index: subGraph.toLowerCase(),
+                resultSize:Gparams.ElasticResultMaxSize
+            }
+
+            $.ajax({
+                type: "POST",
+                url: "../../../neo2Elastic",
+                data: payload,
+                dataType: "json",
+                success: function (data, textStatus, jqXHR) {
+                    if(data.length>=  Gparams.ElasticResultMaxSize){
+                        $("#searchResultMessage").html("cannot show all data : max :" +Gparams.ElasticResultMaxSize);
+                    }
+                    else{
+                        $("#searchResultMessage").html(data.length +" nodes found");
+                    }
+                      return   infoGenericDisplay.loadTreeFromNeoResult("treeContainer",data,function(jsTree){
+                          var xx=jsTree;
+                          setTimeout(function(){
+
+
+                               $('.jstree-leaf').each(function(){
+                                    var id   = $(this).attr('id');
+                                    var text = $(this).children('a').text();
+                                    for( var i=0;i<data.length;i++){
+                                        var properties=data[i].n.properties;
+                                     //   console.log(id+"-"+text);
+                                        if(properties[Gparams.defaultNodeNameProperty]==text){
+                                            for( var key in properties ){
+                                                if(properties[Gparams.defaultNodeNameProperty].toLowerCase().indexOf(word0)>-1)
+                                                    continue;
+                                                if( properties[key] && typeof properties[key] !="object" && properties[key].indexOf && properties[key].toLowerCase().indexOf(word0)>-1){
+                                                    var xx=key;
+                                                    var yy=properties[key]
+                                                  //  console.log(xx+"-"+yy);
+                                                    //$("#"+infoGenericDisplay.jsTreeDivId).jstree().create_node(id ,  { "id" : (id+"_"+key), "text" : ("<span class='jstreeWordProp'">+xx+":"+yy+"</span>")}, "last", function(){
+                                                        $("#"+infoGenericDisplay.jsTreeDivId).jstree().create_node(id ,  { "id" : (id+"_"+key), "text" : (xx+":"+yy),"type":"prop"}, "last", function(){
+
+
+                                                        });
+                                                }
+                                            }
+                                        }
+                                    }
+
+                                });
+                              $("#"+infoGenericDisplay.jsTreeDivId).jstree("open_all");
+                          },1000)
+                      });
+                }, error: function (err) {
+                    return callback(err)
+                }
+            });
+        }
+        else {
+            toutlesensData.searchNodes(subGraph, label, word, resultType, limit, from, callback);
+        }
         setTimeout(function () {
-            self.setRightPanelAppearance(true);
-            infoGenericDisplay.expandAll("treeContainer");
-        }, 500)
+             self.setRightPanelAppearance(true);
+             infoGenericDisplay.expandAll("treeContainer");
+         }, 500)
 
     }
 
@@ -450,8 +524,7 @@ var toutlesensController = (function () {
         var id;
         if (currentObject && currentObject.id)
             id = currentObject.id;
-        else
-            id = currentObject.id
+
 
         if (!currentObject.label && currentObject.nodeType) {
             currentObject.label = currentObject.nodeType;
@@ -470,12 +543,13 @@ var toutlesensController = (function () {
                     str += "<tr><td><a href='javascript:graphicController.dispatchAction(\"graph\")'>Graph  all neighbours</a>"
 
 
-                    str += "<tr><td><a href='javascript:graphicController.dispatchAction(\"startLabel\")'>Graph from...</a></td></tr>"
-                    if (graphicController.startLabel && graphicController.startLabel.label) {
-                        str += "<tr><td><a href='javascript:graphicController.dispatchAction(\"endLabel\")'>Graph to...</a></td></tr>"
+                    str += "<tr><td><a href='javascript:graphicController.dispatchAction(\"transitivePath-start-exec\")'>Graph from...</a></td></tr>"
+                    if (graphicController.startLabel) {
+                        str += "<tr><td><a href='javascript:graphicController.dispatchAction(\"transitivePath-end-exec\")'>Graph to...</a></td></tr>"
                         //    str += "<tr><td><a href='javascript:graphicController.dispatchAction(\"shortestPath\")'>Shortest Path</a></td></tr>"
                     }
                     $("#graphPopup").html(str);
+                    $("#nodeInfoMenuDiv").css("visibility","visible");
                     $("#nodeInfoMenuDiv").html(str);
 
 
@@ -494,7 +568,8 @@ var toutlesensController = (function () {
                         $("#nodeInfoMenuDiv").html(toutlesensDialogsController.setPopupMenuNodeInfoContent());
                         self.setRightPanelAppearance(false);
                         $("#graphPopup").html(toutlesensDialogsController.setPopupMenuNodeInfoContent());
-                        $("#nodeInfoMenuDiv").html(str);
+ //$("#nodeInfoMenuDiv").html(str)
+
 
                     }
                     else {
@@ -526,23 +601,26 @@ var toutlesensController = (function () {
             toutlesensController.generateGraph(currentObject.id, {applyFilters: false, addToPreviousQuery: true});
         }
         else if (action == 'expandNodeWithLabel') {
-            var labels=Schema.getPermittedLabels(currentObject.labelNeo,true,true);
-            labels.splice(0,0,"");
-            var str="labels<br><select onchange=' toutlesensController.dispatchAction(\"expandNodeWithLabelExecute\",$(this).val())'>";
-            for(var i=0;i<labels.length;i++){
-                str+="<option>"+labels[i]+"</option>>";
+            var labels = Schema.getPermittedLabels(currentObject.labelNeo, true, true);
+            labels.splice(0, 0, "");
+            var str = "labels<br><select onchange=' toutlesensController.dispatchAction(\"expandNodeWithLabelExecute\",$(this).val())'>";
+            for (var i = 0; i < labels.length; i++) {
+                str += "<option>" + labels[i] + "</option>>";
             }
             $("#graphPopup").append(str);
-            $("#graphPopup").css("visibility","visible");
+            $("#graphPopup").css("visibility", "visible");
 
         }
         else if (action == 'expandNodeWithLabelExecute') {
-            if(objectId!="" && objectId!="ALL")
-                currentLabel=objectId;
+            if (objectId != "" && objectId != "ALL")
+                currentLabel = objectId;
             else
-                currentLabel=null;
-            toutlesensController.generateGraph(currentObject.id, {applyFilters: false, addToPreviousQuery: true},function(err, result){
-                currentLabel=null;
+                currentLabel = null;
+            toutlesensController.generateGraph(currentObject.id, {
+                applyFilters: false,
+                addToPreviousQuery: true
+            }, function (err, result) {
+                currentLabel = null;
             });
         }
 
@@ -785,6 +863,10 @@ var toutlesensController = (function () {
 
         }
         else if (action == "showSchema") {
+           var storedSchema= localStorage.getItem("schemaGraph_" + subGraph)
+           if(event.ctrlKey &&  storedSchema) {
+               localStorage.removeItem("schemaGraph_" + subGraph);
+           }
             currentActionObj.graphType = "schema";
             $("#dialogLarge").dialog("close");
 
@@ -814,8 +896,9 @@ var toutlesensController = (function () {
 
             }
             else {
+
                 var graphStr = localStorage.getItem("schemaGraph_" + subGraph);
-                if (graphStr) {
+                if (  graphStr) {
                     Schema.currentGraph = JSON.parse(graphStr);
                     dataModel.getDBstats(subGraph, function () {
                         visjsGraph.importGraph(Schema.currentGraph, graphOptions);
@@ -825,10 +908,17 @@ var toutlesensController = (function () {
                     dataModel.getDBstats(subGraph, function () {
                         var data = connectors.toutlesensSchemaToVisjs(Schema.schema);
                         self.setRightPanelAppearance(false);
-                        visjsGraph.draw("graphDiv", data, graphOptions);
+                        visjsGraph.draw("graphDiv", data, graphOptions,function(){
+                        Schema.currentGraph = visjsGraph.exportGraph();
+                        localStorage.setItem("schemaGraph_" + subGraph, JSON.stringify(Schema.currentGraph, null, 2));
+                        });
                     });
                 }
             }
+        }
+        else if (action == "clearLocalStorageSchema") {
+            localStorage.removeItem("schemaGraph_" + subGraph);
+            toutlesensController.dispatchAction('showSchema')
         }
 
 

@@ -1,15 +1,15 @@
 var graphicController = (function () {
 
     var self = {};
-    self.startLabel = {};
-    self.endLabel = {};
+    self.startLabel=null;
+
 
     self.dispatchAction = function (action) {
         $("#graphPopup").css("visibility", "hidden");
 
 
-      //  visjsGraph.paintNodes([""+currentObject.id], "#af9d09",null,null,"box");
-        visjsGraph.nodes.update([{id:""+currentObject.id,borderWidth:6}]);
+        //  visjsGraph.paintNodes([""+currentObject.id], "#af9d09",null,null,"box");
+        visjsGraph.nodes.update([{id: "" + currentObject.id, borderWidth: 6}]);
 
         if (action == "list") {
             var options = {
@@ -45,27 +45,43 @@ var graphicController = (function () {
         }
 
 
-        else if (action == "startLabel") {
-            self.startLabel.label = currentObject.name;
+        else if (action.indexOf("transitivePath") >-1){
+
             var filterMovableDiv = $("#filterMovableDiv").detach();
             $("#dialog").html(filterMovableDiv);
 
             var str = "";
-            str += " <button id=\"advancedSearchDialog_searchButton\" onclick=\"graphicController.setStartLabelQuery()\">OK</button>";
+            if (action.indexOf("start") >-1) {
+                str += " <button id=\"advancedSearchDialog_searchButton\" onclick=\"traversalController.setStartLabelQuery()\">OK</button>";
+                $("#dialog").dialog("option", "title", "Start node Query ");
+            }
+            else   if (action.indexOf("end") >-1) {
+                str += " <button id=\"advancedSearchDialog_searchButton\" onclick=\"traversalController.setEndLabelQuery()\">OK</button>";
+                $("#dialog").dialog("option", "title", "End node Query ");
+            }
             $("#propertiesSelectionDialog_valueInput").focus();
             $("#propertiesSelectionDialog_valueInput").val("");
             $("#filterActionDiv").html(str);
-            $("#propertiesSelectionDialog_ObjectNameInput").val(currentObject.name)
 
+            var label = currentObject.name;
+            if (label) {
+                traversalController.context.start.label=label;
+
+            }
+
+            $("#propertiesSelectionDialog_ObjectNameInput").val(currentObject.name)
             advancedSearch.onChangeObjectName(currentObject.name);
-            $("#dialog").dialog("option", "title", "Start node Query ");
+
             $("#dialog").dialog({modal: false});
             $("#dialog").dialog("open");
         }
 
 
-        else if (action == "endLabel") {
-            self.endLabel.label = currentObject.name;
+      /*  else if (action == "endLabel" || action == "endLabelExec") {
+            var label = currentObject.name;
+            if (label) {
+                traversalController.context.end.label = label;
+            }
             var filterMovableDiv = $("#filterMovableDiv").detach();
             $("#dialog").html(filterMovableDiv);
 
@@ -84,56 +100,12 @@ var graphicController = (function () {
         }
         else if (action == "shortestPath") {
 
-        }
-
+        }*/
 
 
     }
 
-    self.setStartLabelQuery = function () {
-        advancedSearch.searchNodes("matchObject", function (queryObj) {
-            self.startLabel.queryObj = queryObj;
-            $("#dialog").dialog("close");
 
-            $("#waitImg").css("visibility","hidden")
-        })
-    }
-
-    self.setEndLabelQuery = function (options) {
-        if( !options){
-            options={};
-        }
-        advancedSearch.searchNodes("matchObject", function (queryObj) {
-            self.endLabel.queryObj = queryObj;
-            $("#dialog").dialog("close");
-
-            var relCardinality = Schema.getLabelsDistance(self.startLabel.label, self.endLabel.label);
-            if(relCardinality<0)
-                return console.log("no cardinalyty found between "+self.startLabel.label+" and" +self.endLabel.label)
-            toutlesensData.matchStatement = "(n:" + self.startLabel.label + ")-[r*" + relCardinality + "]-(m:" + self.endLabel.label + ")";
-            toutlesensData.whereFilter=self.startLabel.queryObj.where ;
-
-            if(self.endLabel.queryObj.where!=""){
-                if( toutlesensData.whereFilter!="")
-                    toutlesensData.whereFilter+= " and ";
-                toutlesensData.whereFilter+=   self.endLabel.queryObj.where.replace(/n\./, "m.");
-            }
-
-
-            $("#cypherDialog_matchInput").val(toutlesensData.matchStatement);
-            $("#cypherDialog_whereInput").val(toutlesensData.whereFilter);
-            toutlesensController.setRightPanelAppearance(true)
-         //   $("#findTabs").tabs("option", "active", 3);
-         //   $("#advancedQueriesAccordion").tabs("option", "active", 4);
-
-            var _options={ dragConnectedNodes:true};
-          if(relCardinality>1 && options.clusterIntermediateNodes)
-              _options.clusterIntermediateNodes=true;
-
-
-            toutlesensController.generateGraph(null,_options);
-        })
-    }
 
     return self;
 })()

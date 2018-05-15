@@ -42,7 +42,7 @@ var ATD_theques = {
     indexTheques: function (indexes, remoteUrl) {
 
         async.eachSeries(indexes, function (index, callbackEachIndex) {
-            var schema = elasticProxy.getSchema(index);
+            var schema = elasticProxy.getIndexMappings(index);
           if (remoteUrl)
                 elasticProxy.setElasticServerUrl(remoteUrl);
             var description = ATD_theques.indexDescriptions[index];

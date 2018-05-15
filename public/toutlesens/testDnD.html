@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+
+    <script src="../common/js/jquery/jquery.min.js"></script>
+    <script src="../common/js/jquery/jquery-ui.min.js"></script>
+    <script src="js/visjs/visjs.js"></script>
+
+    <link rel="stylesheet" type="text/css" href="js/visjs/vis-network.min.css.js"/>
+  <!--  <script src="js/visjs/visJsDragRect.js"></script>-->
+
+</head>
+<body>
+<div id="network" style="width: 500px;height: 500px;"></div>
+
+<script>
+
+    var nodes = new vis.DataSet([
+        {id: 1, label: 'Node 1'},
+        {id: 2, label: 'Node 2'},
+        {id: 3, label: 'Node 3'},
+        {id: 4, label: 'Node 4'},
+        {id: 5, label: 'Node 5'}
+    ]);
+
+    // create an array with edges
+    var edges = new vis.DataSet([
+        {from: 1, to: 3},
+        {from: 1, to: 2},
+        {from: 2, to: 4},
+        {from: 2, to: 5}
+    ]);
+
+    // create a network
+    var container = $("#network");
+    var data = {
+        nodes: nodes,
+        edges: edges
+    };
+    var options = {
+        layout: {randomSeed: 2},
+        interaction:{
+            dragView: false,
+            multiselect: true
+        }
+    };
+    var network;
+
+    var canvas;
+    var ctx;
+    var rect = {}, drag = false;
+    var drawingSurfaceImageData;
+
+    function saveDrawingSurface() {
+        drawingSurfaceImageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+    }
+
+    function restoreDrawingSurface() {
+        ctx.putImageData(drawingSurfaceImageData, 0, 0);
+    }
+
+    function selectNodesFromHighlight() {
+        var fromX, toX, fromY, toY;
+        var nodesIdInDrawing = [];
+        var xRange = getStartToEnd(rect.startX, rect.w);
+        var yRange = getStartToEnd(rect.startY, rect.h);
+
+        var allNodes = nodes.get();
+        for (var i = 0; i < allNodes.length; i++) {
+            var curNode = allNodes[i];
+            var nodePosition = network.getPositions([curNode.id]);
+            var nodeXY = network.canvasToDOM({x: nodePosition[curNode.id].x, y: nodePosition[curNode.id].y});
+            if (xRange.start <= nodeXY.x && nodeXY.x <= xRange.end && yRange.start <= nodeXY.y && nodeXY.y <= yRange.end) {
+                nodesIdInDrawing.push(curNode.id);
+            }
+        }
+        network.selectNodes(nodesIdInDrawing);
+    }
+
+    function getStartToEnd(start, theLen) {
+        return theLen > 0 ? {start: start, end: start + theLen} : {start: start + theLen, end: start};
+    }
+
+    $(document).ready(function() {
+        container.on("mousemove", function(e) {
+            if (drag) {
+                restoreDrawingSurface();
+                rect.w = (e.pageX - this.offsetLeft) - rect.startX;
+                rect.h = (e.pageY - this.offsetTop) - rect.startY ;
+
+                ctx.setLineDash([5]);
+                ctx.strokeStyle = "rgb(0, 102, 0)";
+                ctx.strokeRect(rect.startX, rect.startY, rect.w, rect.h);
+                ctx.setLineDash([]);
+                ctx.fillStyle = "rgba(0, 255, 0, 0.2)";
+                ctx.fillRect(rect.startX, rect.startY, rect.w, rect.h);
+            }
+        });
+
+        container.on("mousedown", function(e) {
+            if (e.button == 2) {
+                selectedNodes = e.ctrlKey ? network.getSelectedNodes() : null;
+                saveDrawingSurface();
+                var that = this;
+                rect.startX = e.pageX - this.offsetLeft;
+                rect.startY = e.pageY - this.offsetTop;
+                drag = true;
+                container[0].style.cursor = "crosshair";
+            }
+        });
+
+        container.on("mouseup", function(e) {
+            if (e.button == 2) {
+                restoreDrawingSurface();
+                drag = false;
+
+                container[0].style.cursor = "default";
+                selectNodesFromHighlight();
+            }
+        });
+
+        document.body.oncontextmenu = function() {return false;};
+        network = new vis.Network(container[0], data, options);
+        canvas = network.canvas.frame.canvas;
+        ctx = canvas.getContext('2d');
+
+    });
+
+</script>
+</body>
+</html>

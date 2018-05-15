@@ -235,7 +235,7 @@ var filters = (function () {
      * if( self.queriesIds.length>1 ||  toutlesensController.currentActionObj.type=="pathes") we filter directly on graph (self.filterGraphOnProperty)
      *
      * @param option : remove or add
-     * @param booleanOption : only , and ,all
+     * @param booleanOption : only , and ,all, not
      * @param objectType node or relation
      * @param objectName :value of the type
      * @param property
@@ -277,6 +277,8 @@ var filters = (function () {
 
             self.currentSelectdFilters = [];
         }
+
+
         else {
 
             ;
@@ -284,7 +286,7 @@ var filters = (function () {
 
         if (booleanOption != "removeAll") {
             var newFilter = null;
-            if (property == "" || option == "all") {
+            if (property == "" || option == "all" || value == "") {
                 newFilter = {
                     property: "all",
                     objectType: objectType,
@@ -313,8 +315,17 @@ var filters = (function () {
 
                 }
             }
-            if (newFilter)
+
+            if (newFilter){
+                if (booleanOption == "not") {
+                    newFilter.booleanOp = "NOT";
+                }
                 self.currentSelectdFilters.push(newFilter);
+            }
+
+
+
+
         }
         $("#dialog").dialog("close");
         self.setQueryFilters(true);
@@ -367,7 +378,9 @@ var filters = (function () {
             }
             else {// set property where clause
 
-                var where = ""
+                var where = "";
+
+
 
 
                 if (operator == "contains") {
@@ -401,19 +414,28 @@ var filters = (function () {
                         toutlesensData.whereFilter += "m." + property + operator + "\"" + value + "\" ";
 
                 }
+
+                if (filter.booleanOp) {
+                    toutlesensData.whereFilter=" "+ filter.booleanOp+" ("+toutlesensData.whereFilter+") ";
+                }
             }
 
         }
 
         if (allNodeLabelsStr.length > 0) {
-            toutlesensData.queryNodeLabelFilters = " and  (" + allNodeLabelsStr + ") ";
+            var notOp=""
+            if (filter.booleanOp) {
+                notOp= " NOT "
+            }
+            toutlesensData.queryNodeLabelFilters = " and  "+notOp+"(" + allNodeLabelsStr + ") ";
         }
 
         if (allRelTypesStr.length > 0)
             toutlesensData.queryRelTypeFilters = ":" + allRelTypesStr;
 
         if (generateGraph) {
-            toutlesensController.generateGraph(null, {applyFilters: true});
+            toutlesensController.generateGraph(null, {useCurrentStatement: true});
+          //  toutlesensController.generateGraph(null, {applyFilters: true});
             var message = self.printPropertyFilters() + "<br>" + self.printRelationsFilters
             $("filterMessage").html(message);
 

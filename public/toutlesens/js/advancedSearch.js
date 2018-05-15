@@ -4,7 +4,7 @@ var advancedSearch = (function () {
     self.filterLabelWhere = "";
     self.currentObject = {};
     self.neo4jProxyUrl = "../../.." + Gparams.neo4jProxyUrl;
-
+self.context={}
     self.showDialog = function (initialLabel) {
 
 
@@ -15,9 +15,21 @@ var advancedSearch = (function () {
         var str = "";
 
         //str += labelsCxbs;
-        str += " <button id=\"advancedSearchDialog_searchButton\" onclick=\"advancedSearch.searchNodes('matchStr')\">List nodes</button><br>";
-        str += ' <button id="advancedSearchDialog_searchAndGraphButton" onclick="advancedSearch.searchNodes(\'matchStr\',advancedSearch.nodesQueryToGraph)">Draw graph</button>';
 
+        if( self.context.pathType=="allTransitivePaths"){
+            if(self.context.target=="source")
+            str += " <button id=\"advancedSearchDialog_searchButton\" onclick=\"traversalController.setStartLabelQuery()\">OK</button>";
+            else if(self.context.target=="target") {
+                str += " <button id=\"advancedSearchDialog_searchButton\" onclick=\"traversalController.setEndLabelQuery({clusterIntermediateNodes:1})\">Graph only start and end</button><br>";
+                str += " <button id=\"advancedSearchDialog_searchButton\" onclick=\"traversalController.setEndLabelQuery({})\">Graph all nodes</button>";
+
+            }
+
+        }
+        else {
+            str += " <button id=\"advancedSearchDialog_searchButton\" onclick=\"advancedSearch.searchNodes('matchStr')\">List nodes</button><br>";
+            str += ' <button id="advancedSearchDialog_searchAndGraphButton" onclick="advancedSearch.searchNodes(\'matchStr\',advancedSearch.nodesQueryToGraph)">Draw graph</button>';
+        }
         $("#filterActionDiv").html(str);
 
         /*  $("#dialog").load("htmlSnippets/advancedSearchMenu.html", function () {*/
@@ -44,7 +56,7 @@ var advancedSearch = (function () {
     }
 
     self.onChangeObjectName = function (value) {
-        self.setPermittedLabelsCbxs(value);
+       // self.setPermittedLabelsCbxs(value);
         if(propertiesSelectionDialog_propsSelect);
         filters.initProperty(null, value, propertiesSelectionDialog_propsSelect)
     }
@@ -286,7 +298,7 @@ var advancedSearch = (function () {
             statement += where2;
         }
 
-        statement += " return n as sourceNode,m as similarNode, collect(labels(p)[0]) as similarLabels,collect(p) as similarNodes, count(*) as count order by count desc";
+        statement += " return n as sourceNode,m as similarNode, collect(labels(p)[0]) as similarLabels,collect(p) as commonNodes, count(*) as count order by count desc";
         console.log(statement);
         var payload = {match: statement};
 
@@ -304,6 +316,7 @@ var advancedSearch = (function () {
                     return;//messageDivId.html("nos similarities found");
                 }
                 self.currentObject.similarLabels=[]
+                self.currentObject.similarNodes=[node.id]
                 toutlesensData.cachedResultArray = data;
                 var str = "<ul>";
                 var max = data[0].count;
@@ -314,12 +327,15 @@ var advancedSearch = (function () {
                     var line = data[i]
                     if (line.count == max) {
                         var str2 = "<ul>";
-                        for (var j = 0; j < line.similarNodes.length; j++) {
+                        if(self.currentObject.similarNodes.indexOf(line.similarNode._id)<0)
+                            self.currentObject.similarNodes.push(line.similarNode._id)
+                        for (var j = 0; j < line.commonNodes.length; j++) {
+
                             if( self.currentObject.similarLabels.indexOf( line.similarLabels[j])<0){
                                 self.currentObject.similarLabels.push( line.similarLabels[j]);
                             }
-                            var linkstr2 = "javascript:toutlesensController.generateGraph(" + line.similarNodes[j]._id + ")";
-                            str2 += "<li>[" + line.similarLabels[j] + "]<a href='" + linkstr2 + "'>" + line.similarNodes[j].properties[Schema.getNameProperty()] + "</a> </li> "
+                            var linkstr2 = "javascript:toutlesensController.generateGraph(" + line.commonNodes[j]._id + ")";
+                            str2 += "<li>[" + line.similarLabels[j] + "]<a href='" + linkstr2 + "'>" + line.commonNodes[j].properties[Schema.getNameProperty()] + "</a> </li> "
                         }
                         str2 += "</ul>";
                         var linkstr = "javascript:toutlesensController.generateGraph(" + line.similarNode._id + ")";
@@ -327,8 +343,10 @@ var advancedSearch = (function () {
                     }
                 }
                 str += "</ul>"
-                str = data[0].sourceNode.properties[Schema.getNameProperty()] + " :<b>Most similar nodes</b><button onclick='advancedSearch.similarsDialogShowRefineDialog()'>Refine...</button><br>" + str;
-                $("#similarsDialogSimilarsDiv").html(str);
+                var str2 = data[0].sourceNode.properties[Schema.getNameProperty()] + " :<b>Most similar nodes</b><button onclick='advancedSearch.similarsDialogShowRefineDialog()'>Refine</button>" ;
+                str2+="&nbsp;<button onclick='advancedSearch.similarsGraphSimilars()'>Graph</button>"
+                str2+="<br>"+str
+                $("#similarsDialogSimilarsDiv").html(str2);
             },
             error: function (err) {
 
@@ -361,6 +379,21 @@ var advancedSearch = (function () {
             similarityTypes.push($(this).val());
         });
         self.searchSimilars(currentObject,similarityTypes);
+    }
+
+
+
+    self.similarsGraphSimilars=function(){
+        currentObject.id=null;
+        toutlesensData.setSearchByPropertyListStatement ("_id",self.currentObject.similarNodes, function(err,result){
+
+            toutlesensController.generateGraph(null, null,function(err,result){
+
+                visjsGraph.paintNodes(self.currentObject.similarNodes, null, null, null, "star")
+            })
+        })
+
+
     }
 
 

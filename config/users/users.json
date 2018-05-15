@@ -1,29 +1,30 @@
 {
-  "Claude": {
-    "login": "Claude",
-    "password": "CF1",
-    "groups":["ATD","ALL"]
-  },
-  "Jacques": {
-    "login": "Jacques",
-    "password": "JO1",
-    "groups":["ATD"]
-  },
-  "Chloe": {
-    "login": "Chloe",
-    "password": "CN1",
-    "groups":["ATD"]
-  }
-  ,
-  "Sebastien": {
-    "login": "Sebastien",
-    "password": "ST1",
-    "groups":["ATD"]
-  }
-  ,
-  "George":{
-    "login": "George",
-    "password": "GC1",
-    "groups":["ATD"]
-  }
+  "Erpicum":{"login":"Erpicum","password":"GabErpi17","groups":"ATD"},
+  "Razanakoto":{"login":"Razanakoto","password":"SopRaza17","groups":"ATD"},
+  "Kouamé":{"login":"Kouamé","password":"HonKoua17","groups":"ATD"},
+  "Ugarte":{"login":"Ugarte","password":"SilUgar17","groups":"ATD"},
+  "Aussedat":{"login":"Aussedat","password":"MicAuss17","groups":"ATD"},
+  "Bernas":{"login":"Bernas","password":"DomBern17","groups":"ATD"},
+  "François":{"login":"François","password":"RosFran17","groups":"ATD"},
+  "Macedo":{"login":"Macedo","password":"RosMace17","groups":"ATD"},
+  "Ortega":{"login":"Ortega","password":"SarOrte17","groups":"ATD"},
+  "Chanal":{"login":"Chanal","password":"VinChan17","groups":"ATD"},
+  "Aussedat":{"login":"Aussedat","password":"CarAuss17","groups":"ATD"},
+  "Tardieu":{"login":"Tardieu","password":"BruTard17","groups":"ATD"},
+  "LeSonneur":{"login":"LeSonneur","password":"BerLeSo17","groups":"ATD"},
+  "Fayard":{"login":"Fayard","password":"DanFaya17","groups":"ATD"},
+  "Noyer":{"login":"Noyer","password":"BeaNoye17","groups":"ATD"},
+  "Jaboureck":{"login":"Jaboureck","password":"JamJabo17","groups":"ATD"},
+  "Egner":{"login":"Egner","password":"HyaEgne17","groups":"ATD"},
+  "Thouvenin":{"login":"Thouvenin","password":"SebThou17","groups":"ATD"},
+  "Cailleteau":{"login":"Cailleteau","password":"GeoCail17","groups":"ATD"},
+  "Fauconnet":{"login":"Fauconnet","password":"ClaFauc17","groups":["ATD","ADMIN"]},
+  "Najera":{"login":"Najera","password":"ChlNaje17","groups":"ATD"},
+  "Ogier":{"login":"Ogier","password":"JacOgie17","groups":["ATD","ADMIN"]},
+  "Thouvenin":{"login":"Thouvenin","password":"SebThou17","groups":["ATD","ADMIN"]},
+  "Rene-Bazin":{"login":"Rene-Bazin","password":"PauRene17","groups":"ATD"},
+  "Bonkoungou":{"login":"Bonkoungou","password":"JosBonk17","groups":"ATD"}
+
+
+
 }

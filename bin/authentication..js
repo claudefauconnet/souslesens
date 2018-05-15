@@ -10,7 +10,7 @@ var authentication={
             if(err)
                 return callback(err)
             if(users[login] && users[login].password==password)
-                callback(null, true);
+                callback(null, users[login].groups);
             else
                 callback(null, false);
 

@@ -73,7 +73,7 @@
     <script src="js/graphicController.js"></script>
     <script src="js/filters.js"></script>
     <script src="js/paint.js"></script>
-    <script src="js/traversalMenu.js"></script>
+    <script src="js/traversalController.js"></script>
 
     <script src="js/paramsController.js"></script>
 
@@ -122,7 +122,7 @@
 
     <script src="js/selection.js"></script>
     <script src="js/statistics.js"></script>
-    <script src="js/graphTraversalQueries.js"></script>
+    <script src="js/traversalQueries.js"></script>
 
     <script src="./js/schema.js"></script>
     <script src="../common/js/jsTree/jstree.min.js"></script>
@@ -154,6 +154,7 @@
     <script src="js/visjs/visjs.js"></script>
     <script src="js/visjs/visJsGraph.js"></script>
     <script src="../common/js/connectors.js"></script>
+    <script src="js/visjs/visJsDragRect.js"></script>
     <link rel="stylesheet" type="text/css" href="js/visjs/vis-network.min.css.js"/>
 
     <!-- test visjs---------------------------------------->
@@ -184,6 +185,7 @@
         #treeContainer {
             width: 500px;
             overflow: auto;
+            background-color: #f6f6f6;
 
         }
 
@@ -262,12 +264,16 @@
         .importantMessage {
             color: #f8893f;
         }
-        #graphPopup{
+
+        #graphPopup {
             border: #261803;
             border-width: 1px;
             border-radius: 5px;
             border-style: solid;
-           background-color:  #cdd0d6
+            background-color: #cdd0d6
+        }
+        .jstreeWordProp{
+            color:red;
         }
 
 
@@ -359,12 +365,14 @@
                     if (index == 1) {
                         toutlesensController.currentActionObj.mode = "filter";
                         var filterMovableDiv = $("#filterMovableDiv").detach();
+
                         $("#filterDiv").append(filterMovableDiv);
                         $("#filterActionDiv").html(
-                            "<button onclick=\"filters.filterOnProperty(null,'only')\">Apply</button>" +
-                            //  "<button onclick=\"filters.filterOnProperty(null,'add')\">Add</button>" +
-                            "<button onclick=\"filters.filterOnProperty(null,'removeAll')\">Clear</button>"
+                            "<button onclick=\"filters.filterOnProperty(null,'only')\">Only</button>" +
+                              "<button onclick=\"filters.filterOnProperty(null,'not')\">Not</button>" +
+                            "<button onclick=\"filters.filterOnProperty(null,'removeAll')\">Clear Filter</button>"
                         );
+                        filters.setLabelsOrTypes("node");
                     }
                     if (index == 2) {
                         toutlesensController.currentActionObj.mode = "highlight";
@@ -372,6 +380,7 @@
                         $("#highlightDiv").append(filterMovableDiv);
                         $("#filterActionDiv").load("htmlSnippets/paintDialog.html", function () {
                             paint.initColorsPalette(10, "paintDialogPalette");
+                            filters.setLabelsOrTypes("node");
                         });
 
                     }
@@ -394,7 +403,9 @@
                     var index = ui.newTab.index();
                     if (index == 0) {
                         toutlesensController.currentActionObj = {type: "findNode"}
+                        advancedSearch.context = {pathType: "neighbour"};
                         var nodeDivDetach = $("#nodeDivDetachable").detach();
+
                         $("#nodeDiv").append(nodeDivDetach);
 
                     }
@@ -623,7 +634,7 @@
     <input type="image" title="Next display" height="20px" onclick="toutlesensController.dispatchAction('addNode')"
            class="canModify" ; id="newNodeButton" src="images/newNode.png"/>
 
-<br><span id="graphInfosSpan" style="font-size:8px"></span>
+    <br><span id="graphInfosSpan" style="font-size:8px"></span>
 
 </div>
 <div id="graphLegendDiv"></div>
@@ -653,7 +664,8 @@
                                     <tr align="center">
                                         <td><span id='lang_1'>Node</span></td>
                                         <td><input id="word"
-                                                   onkeyup="toutlesensController.searchNodesUI('matchStr',null,null, infoGenericDisplay.loadSearchResultIntree);"
+                                                   onkeydown="if (event.keyCode == 13)
+                       toutlesensController.searchNodesUI('matchStr',null,null, infoGenericDisplay.loadSearchResultIntree)"
                                                    size="10"></td>
                                         <td><input type="image" height="20px" src="images/erase.png"
                                                    onclick="$('#word').val('')"></td>
@@ -674,7 +686,12 @@
                             </td>
 
                         </tr>
+                        </tr>
+                        <td colspan="2">
+                            <div id="searchResultMessage" style="color: #0000cc"></div>
+                        </td>
 
+                        <tr>
 
                         <tr>
                             <td colspan="2">
@@ -709,13 +726,19 @@
                 <table>
                     <tr>
                         <td colspan="3">
+
+
                             <select id="pathType">
+                                <option value="allTransitivePaths">
+                                    All paths
+                                </option>
                                 <option value="shortestPath">
                                     Shortest path
                                 </option>
-                                <option value="allSimplePaths">
-                                    All paths
-                                </option>
+
+                                <!--   <option value="allSimplePaths">
+                                       All paths
+                                   </option>-->
                                 <!--   <option>
                                       Advanced pathes
                                    </option>-->
@@ -725,9 +748,9 @@
                     <tr>
 
                         <td>
-                            <button onclick="traversalMenu.findTraversalNode('source'); ">Between node</button>
+                            <button onclick="traversalController.showSearchMenu('source'); ">Between node</button>
                         </td>
-                        <td><span id="shortestPath_sourceNode"></span></td>
+                        <td><span id="pathes_sourceNode"></span></td>
                         <td></td>
 
                     </tr>
@@ -735,9 +758,9 @@
 
 
                         <td>
-                            <button onclick="traversalMenu.findTraversalNode('target'); ">And node</button>
+                            <button onclick="traversalController.showSearchMenu('target'); ">And node</button>
                         </td>
-                        <td><span id="shortestPath_targetNode" class="targetNode"></span></td>
+                        <td><span id="pathes_targetNode" class="targetNode"></span></td>
                         <td></td>
 
                     </tr>
@@ -745,15 +768,17 @@
 
                     <tr>
                         <td colspan="1">
-                            <button onclick="traversalMenu.executePathesUI()"
+
+                            <div id="pathes_buttonsDiv"></div>
+                          <!--  <button onclick="traversalController.executePathesUI()"
                                     id="executeShortestPathButton" style="visibility:hidden">Search
                             </button>
-                            <button onclick="traversalMenu.executeMoreOrLessShortestPathTraversalSearch(true)"
+                            <button onclick="traversalController.executeMoreOrLessShortestPathTraversalSearch(true)"
                                     id="executeLessShortestPathButton" style="visibility:hidden">-
                             </button>
-                            <button onclick="traversalMenu.executeMoreOrLessShortestPathTraversalSearch()"
+                            <button onclick="traversalController.executeMoreOrLessShortestPathTraversalSearch()"
                                     id="executeMoreShortestPathButton" style="visibility:hidden">+
-                            </button>
+                            </button>-->
 
 
                         </td>
@@ -781,12 +806,12 @@
                     <div>
                         <div id="pivotsDiv" style="height:450px"></div>
                     </div>
-                 <!--   <h3>Count by label</h3>
-                    <div>
-                        <div id="countByLabelDiv" style="height:450px"></div>
-                    </div>
-                    <h3>transitive relations</h3>
-                    <div id="transitiveRelationsDiv" style="height:450px"></div>-->
+                    <!--   <h3>Count by label</h3>
+                       <div>
+                           <div id="countByLabelDiv" style="height:450px"></div>
+                       </div>
+                       <h3>transitive relations</h3>
+                       <div id="transitiveRelationsDiv" style="height:450px"></div>-->
                     <h3>Cypher query</h3>
 
                     <div id="cypherQueryDiv" style="height:450px"></div>

@@ -27,6 +27,9 @@
 var   serverRootUrl="";
 var Gparams = {
 
+    queryInElasticSearch:true,
+    ElasticResultMaxSize:1000,
+
 
     //init defaults*******************************
     defaultSubGraph:"DB_",
@@ -63,9 +66,10 @@ var Gparams = {
     showLabelsMaxNumOfNodes:500,
 
 
+
     shortestPathMaxDistanceTest:8,
     graphDefaultLayout:"random",
-
+    graphDefaultShape:"dot",
 
     //urls************************
     httpProxyUrl: serverRootUrl+"/http",

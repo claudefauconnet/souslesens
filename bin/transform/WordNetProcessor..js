@@ -59,7 +59,7 @@ var file = "D:\\NLP\\wonef-fscore-0.1.xml";
 
 
 WordNetProcessor.parseFile(file, function (err, result) {
-    elasticProxy.indexJsonArray("wordnet_score_fr","wordnet",result,function (err, result){
+    elasticProxy.indexJsonArray("wordnet_score_fr","wordnet",result,{},function (err, result){
 if(err)
     return console.log(err);
         return console.log(result);

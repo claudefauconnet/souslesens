@@ -15,6 +15,7 @@ var visjsGraph = (function () {
         self.previousGraphs.index = -1;
         self.currentLayoutType = "random";
         self.currentLayoutDirection = "";
+        self.currentShape=Gparams.graphDefaultShape;
         self.clusters = []
         self.scaleToShowLabels = 0.6;
         self.context=null;
@@ -29,7 +30,7 @@ var visjsGraph = (function () {
         var options = {};
 
 
-        self.draw = function (divId, visjsData, _options) {
+        self.draw = function (divId, visjsData, _options,callback) {
             if (!_options)
                 _options = {};
 
@@ -75,6 +76,12 @@ var visjsGraph = (function () {
                 manipulation: {
                     enabled: false
                 },
+                interaction:{
+                    dragView: false,
+                    multiselect: true
+                },
+
+
 
                 nodes: {
                     shape: 'dot',
@@ -142,6 +149,7 @@ var visjsGraph = (function () {
             if (firstNode && firstNode.x)
                 self.physicsOn = false;
             network = new vis.Network(container, data, options);
+          //  network.dragView=false;
             self.network = network;
 
 
@@ -270,16 +278,21 @@ var visjsGraph = (function () {
             network.on("beforeDrawing", function (ctx) {
              self.context=ctx;
              });
+            network.on("afterDrawing", function (ctx) {
+                self.context=ctx;
+                if(callback)
+                    callback();
+            });
+
             network.on("dragStart", function (params) {
+                 dragPosition = params.pointer.DOM;
 
-                dragPosition = params.pointer.DOM;
-
-                self.dragRect("dragStart",dragPosition.x,dragPosition.y);
+             //   self.dragRect("dragStart",dragPosition.x,dragPosition.y);
             });
 
             network.on("drag", function (params) {
                 dragPosition = params.pointer.DOM;
-                self.dragRect("drag",dragPosition.x,dragPosition.y);
+              //  self.dragRect("drag",dragPosition.x,dragPosition.y);
             });
 
             network.on("dragEnd", function (params) {
@@ -323,12 +336,61 @@ var visjsGraph = (function () {
             network.on("deselectEdge", function (params) {
                 console.log('deselectEdge Event:', params);
             });
+            network.on(" afterDrawing", function (params) {
+                onVisjsGraphReady();
+                console.log('graph loaded Event');
+            });
+
+            if(true){// rightclick drag to select by rect drag
+                container=$("#graphDiv");
+                container.on("mousemove", function(e) {
+                    if (drag) {
+                        restoreDrawingSurface();
+                        rect.w = (e.pageX - this.offsetLeft) - rect.startX;
+                        rect.h = (e.pageY - this.offsetTop) - rect.startY ;
+
+                        ctx.setLineDash([5]);
+                        ctx.strokeStyle = "rgb(0, 102, 0)";
+                        ctx.strokeRect(rect.startX, rect.startY, rect.w, rect.h);
+                        ctx.setLineDash([]);
+                       //ctx.fillStyle = "rgba(0, 255, 0, 0.02)";
+                        ctx.fillStyle = "rgba(0, 0, 0, 0.02)";
+                        ctx.fillRect(rect.startX, rect.startY, rect.w, rect.h);
+                    }
+                });
+
+                container.on("mousedown", function(e) {
+                    if (e.button == 2) {
+                        selectedNodes = e.ctrlKey ? network.getSelectedNodes() : null;
+                        saveDrawingSurface();
+                        var that = this;
+                        rect.startX = e.pageX - this.offsetLeft;
+                        rect.startY = e.pageY - this.offsetTop;
+                        drag = true;
+                        container[0].style.cursor = "crosshair";
+                    }
+                });
+
+                container.on("mouseup", function(e) {
+                    if (e.button == 2) {
+                        restoreDrawingSurface();
+                        drag = false;
+
+                        container[0].style.cursor = "default";
+                        selectNodesFromHighlight();
+                    }
+                });
+
+
+
+            }
 
 
         }
 
 
         self.setShapeOption = function (shape) {
+            self.currentShape=shape;
             var nodes = [];
             for (var key in self.nodes._data) {
                 nodes.push(key)
@@ -431,6 +493,9 @@ var visjsGraph = (function () {
              node.color = {background: color};
              nodes.push(node);
              }*/
+            for (var i=0;i< nodeIds.length;i++){// transform ids in string
+                nodeIds[i]=""+nodeIds[i];
+            }
             for (var key in  self.nodes._data) {
                 var node = self.nodes._data[key];
                 if (nodeIds.indexOf(key) > -1) {
@@ -472,6 +537,7 @@ var visjsGraph = (function () {
                     else {
                         // node.shape = null;
                         node.size = 15;
+                        node.shape=self.currentShape;
                     }
                 }
                 nodes.push(node);

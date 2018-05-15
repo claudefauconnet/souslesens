@@ -17,7 +17,7 @@ var lemmatizerProcessor = {
             })
             .on('done', function () {
                 var x = jsonArray;
-                elasticProxy.indexJsonArray("lemmatization_fr", "lemmatization", jsonArray, function (err, result) {
+                elasticProxy.indexJsonArray("lemmatization_fr", "lemmatization", jsonArray,options, function (err, result) {
                    var xx=err;
                 });
             });

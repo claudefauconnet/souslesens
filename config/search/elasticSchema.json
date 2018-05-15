@@ -6,7 +6,10 @@
       "ocr",
       "audiotheque"
     ]
-  },
+  ,"TEST":
+    ["framatome"]
+  }
+,
   "_settings": {
     "ATD": {
       "analysis": {
@@ -27,8 +30,42 @@
           }
         }
       }
+    },
+    "BASIC": {"settings":
+    {"analysis":
+    {
+      "analyzer": {
+        "BASIC": {
+          "tokenizer": "standard",
+          "filter": [
+            "lowercase",
+            "asciifolding"
+
+          ]
+        }
+      }
     }
-  ,
+    },
+
+      "mappings": {
+        "doc": {
+          "dynamic_templates": [
+            {
+              "objectField": {
+                "path_match":   "*",
+
+                "mapping": {
+                  "analyzer": "BASIC"
+                }
+              }
+            }
+          ]
+        }
+      }
+
+    }
+    ,
+
 
     "SYNONYMS_FR": {
       "analysis": {

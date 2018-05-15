@@ -37,8 +37,8 @@ var infoGenericDisplay = (function () {
     self.jsTreeDivId = "treeContainer";
     var ids = {};
     self.subGraph;
-    self.ignoredFields=['subGraph','id','color']
-   // self.userRole = "write";
+    self.ignoredFields = ['subGraph', 'id', 'color']
+    // self.userRole = "write";
     var currentNameProperty;
     var currentMenuData;
     self.selectedNodeData;
@@ -236,13 +236,14 @@ var infoGenericDisplay = (function () {
 
     }
 
-    self.loadTreeFromNeoResult = function (parentId, data) {
+    self.loadTreeFromNeoResult = function (parentId, data,callback) {
         $("#waitImg").css("visibility", "hidden")
         $("#treeContainer").css("visibility", "visible");
         var treeJson = self.formatResultToJtreeData(data, parentId);
-        self.initTree(treeJson);
+         var jsTree=self.initTree(treeJson);
 
-
+        if(callback)
+            return callback(jsTree);
     }
 
     self.initTree = function (treeJson) {
@@ -257,11 +258,14 @@ var infoGenericDisplay = (function () {
         var types = {};
 
         var types = {};
-        var labels = Schema.schema.labels;
+        types["label"] = {icon: "images/labelIcon.png" };
+        types["node"] = {icon: "images/nodeIcon.png" };
+        types["prop"] = {icon: "images/propIcon.png" };
+        /*  var labels = Schema.schema.labels;
         for (var label in labels) {
 
-            types[label] = {icon: "/toutlesens/icons/" + labels[label].icon}
-        }
+             types[label] = {icon: "/toutlesens/icons/" + labels[label].icon}
+         }*/
 
         $('#' + self.jsTreeDivId).jstree("destroy").empty();
         var jsTree = $('#' + self.jsTreeDivId)
@@ -329,6 +333,9 @@ var infoGenericDisplay = (function () {
 
 
             });
+
+        return jsTree;
+
     }
 
     function customMenu(node) {
@@ -658,6 +665,7 @@ var infoGenericDisplay = (function () {
         var labels = [];
         var jsonData = [];
         var names = [];
+        ids = {};
         var nameKey = Schema.getNameProperty();
         for (var i = 0; i < data.length; i++) {
             var label = data[i].n.labels[0];
@@ -665,7 +673,7 @@ var infoGenericDisplay = (function () {
                 labels.push(label);
 
 
-                jsonData.push({parent: "#", text: label, id: label})
+                jsonData.push({parent: "#", text: label, id: label,type:"label"})
                 for (var j = 0; j < data.length; j++) {
 
                     var childLabel = data[j].n.labels[0];
@@ -677,13 +685,15 @@ var infoGenericDisplay = (function () {
 
                             properties.label = label;
                             properties.neoId = data[j].n._id;
-
+                            var jstreeId = (""+label + "-" + j)
+                            ids[jstreeId] = properties;
 
                             jsonData.push({
                                 parent: label,
                                 text: name,
-                                id: (i + "-" + j),
-                                data: properties
+                                id: jstreeId,
+                                data: properties,
+                                type:"node"
                             });
                         }
                     }
@@ -809,38 +819,45 @@ var infoGenericDisplay = (function () {
         if (node.parent == "#") {//label node
 
             currentLabel = node.text;
-            if( currentObject)
-            currentObject.id = null;
+            if (currentObject)
+                currentObject.id = null;
             return toutlesensController.generateGraph(null, {applyFilters: true});
         }
-
+        currentLabel =null;
         self.selectedNodeData = node.data;
         self.selectedNodeData.parent = parent;
         var label = node.label
         var parentId = node.data.neoId;
 
 
-        var parentJstreeId = parseInt(node.id);
-        if (node.parent != "#")
+        var parentJstreeId =node.id;// parseInt(node.id);
+    /*    if (node.parent != "#")
             parentJstreeId = parentJstreeId + "_" + node.parent;
-        // var  parentJstreeId=node.id
+        // var  parentJstreeId=node.id*/
         var parentId = node.data.neoId;
 
 
-
-
-            if (toutlesensController.currentActionObj.type == "findNode") {
-                node = ids[parentJstreeId];
+        if (toutlesensController.currentActionObj.type == "findNode") {
+            node = ids[parentJstreeId];
             //    $("#tabs-radarRight").tabs("enable", 2);
-                self.showNodeData(node);
-             //   toutlesensController.addToHistory = true;
-                toutlesensController.generateGraph(parentId, {});
-               $("#tabs-analyzePanel").tabs("option", "active",0);
-                return;
-            } else if (toutlesensController.currentActionObj.type == 'findShortestPath') {
-                traversalMenu.setTraversalNode(toutlesensController.currentActionObj.stage, node.data);
-                return;
-            }
+            self.showNodeData(node);
+            //   toutlesensController.addToHistory = true;
+            toutlesensController.generateGraph(parentId, {});
+            $("#tabs-analyzePanel").tabs("option", "active", 0);
+            currentObject=node;
+            currentObject.id=node.neoId;
+            $("#nodeInfoMenuDiv").css("visibility","visible");
+            toutlesensController.dispatchAction("nodeInfos", parentId);
+
+
+            return;
+        } else if (toutlesensController.currentActionObj.type == 'shortestPath') {
+            traversalController.setTraversalNode(toutlesensController.currentActionObj.stage, node.data);
+            return;
+        } else if (toutlesensController.currentActionObj.type == 'allTransitivePaths') {
+            traversalController.setTraversalNode(toutlesensController.currentActionObj.stage, node.data);
+            return;
+        }
         toutlesensController.checkMaxNumberOfNodeRelations(parentId, Gparams.jsTreeMaxChildNodes, function () {
             currentObject = node.data;
             currentObject.id = parentId;
@@ -980,7 +997,7 @@ var infoGenericDisplay = (function () {
                     node.label = node.name
                     visjsGraph.updateNode(node);
 
-                   return callback(node);
+                    return callback(node);
 
                 }
                 //  toutlesensController.replayGraph("same");
@@ -1072,7 +1089,7 @@ var infoGenericDisplay = (function () {
                 self.clearNodePropertiesDiv();
                 visjsGraph.removeNode(self.selectedNodeData.neoId);
                 $("#dialog").dialog("close");
-                    // toutlesensController.replayGraph("same");
+                // toutlesensController.replayGraph("same");
             });
 
         }
@@ -1113,18 +1130,18 @@ var infoGenericDisplay = (function () {
         })
     }
     self.deleteRelationById = function (id, callback) {
-        var payload={
-            id:id
+        var payload = {
+            id: id
         }
         self.callAPIproxy(payload, "deleteRelationById", function (err, result) {
             if (err) {
-                if(callback)
+                if (callback)
                     return callback(err);
                 $("#message").html(err);
                 return;
             }
-            if(callback)
-                return callback(null,result)
+            if (callback)
+                return callback(null, result)
 
 
         });
@@ -1146,6 +1163,8 @@ var infoGenericDisplay = (function () {
 
     /********************************************************************************/
     self.callAPIproxy = function (payload, operation, callback) {
+
+
         if (self.Neo4jStorage) {
             $.ajax(Gparams.restProxyUrl + '/?' + operation + '=1', {
                 data: payload,
@@ -1172,7 +1191,7 @@ var infoGenericDisplay = (function () {
         var strHidden = "";
 
         for (var key in attrObject) {
-            if(self.ignoredFields.indexOf(key)>-1)
+            if (self.ignoredFields.indexOf(key) > -1)
                 continue;
 
             var strVal = attrObject[key].value;

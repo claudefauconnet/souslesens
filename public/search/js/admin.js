@@ -343,7 +343,7 @@ var admin = (function () {
                 var name = thesaurusName + "_" + ontology;
                 $("#skosInput1").val(name);
                 $("#treeDiv1").jstree("destroy");
-                skosTree.loadTree("treeDiv1", 'skosInput1')
+                skosTree.loadTree({"treeDiv1", 'skosInput1')
                 $("#treeDiv1").jstree('open_all');
 
                 skosTree.createTree(name, 'treeDiv2')

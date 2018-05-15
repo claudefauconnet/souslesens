@@ -67,18 +67,24 @@ var elasticProxy = {
         baseUrl = url;
     },
 
-    getSchema: function (index) {
-        if (!elasticSchema) {
-            var str = fs.readFileSync(path.resolve(__dirname, "../config/search/elasticSchema.json"));
 
-            try {
-                //  console.log("" + str)
-                elasticSchema = JSON.parse("" + str);
-            }
-            catch (e) {
-                console.log(e)
-                return null;
-            }
+    loadConfigFile: function () {
+        var str = fs.readFileSync(path.resolve(__dirname, "../config/search/elasticSchema.json"));
+
+        try {
+            elasticSchema = JSON.parse("" + str);
+            return elasticSchema;
+        }
+        catch (e) {
+            console.log(e)
+            return null;
+        }
+    }
+    ,
+
+    getIndexMappings: function (index) {
+        if (!elasticSchema) {
+            elasticProxy.loadConfigFile()
         }
         if (!index)
             return null;
@@ -91,6 +97,14 @@ var elasticProxy = {
             elasticProxy.initSchema(index);
             return schema;
         }
+    },
+
+    getIndexSettings: function (settings) {
+        if (!elasticSchema) {
+            elasticProxy.loadConfigFile()
+        }
+        var settings = elasticSchema["_settings"][settings];
+        return settings;
     },
 
     initSchema: function (index, type) {
@@ -601,7 +615,7 @@ var elasticProxy = {
             var hitIndex = hits[i]._index;
 
             if (!indexesInfos[hitIndex]) {
-                var indexSchema = elasticProxy.getSchema(hitIndex);
+                var indexSchema = elasticProxy.getIndexMappings(hitIndex);
                 var indexInfos = {}
                 if (indexSchema.uiMappings)
                     indexInfos.uiMappings = indexSchema.uiMappings;
@@ -1291,8 +1305,17 @@ var elasticProxy = {
 
     }
     ,
-
-    indexJsonArray: function (indexName, type, _array, callback) {
+    /**
+     *
+     * @param indexName
+     * @param type
+     * @param _array
+     * @param options id_attr attr to use as elasticId else if not set use randomId
+     * @param callback
+     */
+    indexJsonArray: function (indexName, type, _array, options, callback) {
+        if (!options)
+            options = {};
         var array = _array;
         elasticPayload = [];
         var startId = Math.round(Math.random() * 100000000);
@@ -1311,10 +1334,20 @@ var elasticProxy = {
         }
 
 
-        var partitionIndex = 0
+        var partitionIndex = 0;
+
         async.eachSeries(partitions, function (array, callbackSeries) {
+                var id = null;
                 for (var i = 0; i < array.length; i++) {
-                    elasticPayload.push({index: {_index: indexName, _type: type, _id: "_" + (startId++)}})
+                    if (!options.id_attr)
+                        id = startId++;
+                    else {
+                        id = array[i][id_attr];
+                        if (!id)
+                            id = startId++;
+                    }
+
+                    elasticPayload.push({index: {_index: indexName, _type: type, _id: "_" + id}})
                     // var payload = {"content": array[i]};
                     var payload = array[i]
                     elasticPayload.push(payload);
@@ -1330,8 +1363,8 @@ var elasticProxy = {
                         return callbackSeries(err)
 
                     } else {
-                        if (errors) {
-                            return callback(errors);
+                        if (resp.errors) {
+                            return callback(resp.errors);
                         }
                         console.log("partition " + (partitionIndex++))
                         return callbackSeries();
@@ -1630,7 +1663,7 @@ var elasticProxy = {
             if (err)
                 return callback(err);
 
-            var schemaJson = elasticProxy.getSchema(indexName);
+            var schemaJson = elasticProxy.getIndexMappings(indexName);
             schemaJson = elasticProxy.removeSchemaMappingsCustomProperties(schemaJson);
             var indexSettings = elasticSchema._settings[settingsType];
 
@@ -1652,6 +1685,37 @@ var elasticProxy = {
         })
 
     },
+
+    createSimpleIndex: function (index, settings, callback) {
+        var settingsObj = {};
+        var mappingsObj = {};
+        var analyser;
+        var json = {}
+
+        if (settings) {
+            settingsObj = elasticProxy.getIndexSettings(settings)
+            if (!settingsObj)
+                return callback("settings does not exist :" + settings);
+            json.settings = settingsObj.settings;
+        }
+        mappingsObj = elasticProxy.getIndexMappings(index)
+        if (mappingsObj &&( settingsObj && !settingsObj.mappings))
+            json.mappings = mappingsObj.mappings;
+
+        var options = {
+            method: 'PUT',
+            description: "init mapping on attachment content",
+            url: baseUrl + index + "/",
+            json: json
+        };
+        request(options, function (error, response, body) {
+            if (error)
+                return callback(error);
+            callback(null, "index " + index + " created");
+
+        })
+    },
+
     initDocIndex: function (index, settings, callback) {
 
         elasticProxy.deleteIndex(index, true, function (err) {
@@ -1681,7 +1745,7 @@ var elasticProxy = {
 
 //******************************* init content Mapping*******************************
 
-                var schemaJson = elasticProxy.getSchema("officeDocument");
+                var schemaJson = elasticProxy.getIndexMappings("officeDocument");
                 schemaJson = elasticProxy.removeSchemaMappingsCustomProperties(schemaJson);
                 var settingsJson = elasticSchema._settings[settings];
                 var options = {
@@ -1944,7 +2008,8 @@ var elasticProxy = {
                                     elasticProxy.sendMessage(message);
                                 })
                             }
-                            return callback(null, message);
+                            if (callback)
+                                return callback(null, message);
 
                         });
                     });
@@ -2052,17 +2117,17 @@ var elasticProxy = {
             var _index = indexes[i];
             var fields = [];
             var fieldObjs = [];
-            var schema = elasticProxy.getSchema(_index);
+            var schema = elasticProxy.getIndexMappings(_index);
             if (!schema || !schema.mappings)
                 fields = ["path", "title", "date"];
             else {
                 fields = elasticSchema._indexes[_index].fields;
                 fieldObjs = elasticSchema._indexes[_index].fields.fieldObjs;
             }
-            if (schema.titleField)
+            if (schema && schema.titleField)
                 fields.push(schema.titleField);
 
-            if (type == "CSV"  && schema.mappings) {
+            if (type == "CSV" && schema.mappings) {
                 for (var key in fieldObjs) {
                     if (fieldObjs[key].inCSV) {
                         if (allFields.indexOf(key) < 0)
@@ -2070,7 +2135,7 @@ var elasticProxy = {
                     }
                 }
 
-            }else {
+            } else {
                 for (var j = 0; j < fields.length; j++) {
                     if (allFields.indexOf(fields[j]) < 0)
                         allFields.push(fields[j])
@@ -2095,7 +2160,7 @@ var elasticProxy = {
 
         }
         if (!elasticSchema)
-            elasticProxy.getSchema();
+            elasticProxy.getIndexMappings();
         var userObj = users[user];
         if (!userObj)
             return callback("no registred user :" + user);

@@ -492,34 +492,34 @@ var Schema = (function () {
             for (var key in nodesChildren) {
                 var labels2 = [];
                 for (var i = 0; i < nodesChildren[key].length; i++) {
-                    labels2.push({name: nodesChildren[key][i]});
+                    if (nodesChildren[key][i] != key)
+                        labels2.push({name: nodesChildren[key][i]});
 
                 }
                 nodesChildren[key] = labels2;
             }
 
 
-
-
             var nodesSerie = []
 
 
             //premier noeud
-            nodesSerie.push({name:startNode, isVisited:true,level:0})
+            nodesSerie.push({name: startNode, isVisited: true, level: 0})
 
             var distance;
-            var i=0;
-            while (nodesSerie.length > 0 && (i++)<1000) {
+            var i = 0;
+            while (nodesSerie.length > 0 && (i++) < 1000) {
 
                 var node = nodesSerie[nodesSerie.length - 1];//take the last Node
                 nodesSerie.splice(nodesSerie.length - 1, 1)//remove the last node;
 
                 for (var i = 0; i < nodesChildren[node.name].length; i++) {// for each related node
                     var child = nodesChildren[node.name][i];
+
                     if (!child.isVisited) {
-                        nodesSerie.push({name:child.name, isVisited:true,level:node.level + 1})
+                        nodesSerie.push({name: child.name, isVisited: true, level: node.level + 1})
                         if (child.name == endNode) {
-                           distance=node.level + 1;
+                            distance = node.level + 1;
                             return distance;
 
                         }
@@ -528,8 +528,6 @@ var Schema = (function () {
 
 
             }
-
-
 
 
             return distance;

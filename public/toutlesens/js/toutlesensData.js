@@ -38,6 +38,7 @@ var toutlesensData = (function () {
         self.queryExcludeNodeFilters = "";
         self.whereFilter = "";
         self.matchStatement = null;
+        self.currentStatement = null;
 
         self.queriesIds = [];
 
@@ -56,7 +57,6 @@ var toutlesensData = (function () {
             if (str.indexOf("DELETE") < 0 && str.toLowerCase().indexOf("limit ") < 0) {
                 str += " limit " + limitResult;
             }
-
 
             if (queryType == QUERY_TYPE_MATCH) {
                 var payload = {match: str};
@@ -149,7 +149,7 @@ var toutlesensData = (function () {
                 subGraphWhere = "  n.subGraph=\"" + subGraph + "\" "
 
             var whereStatement = "";
-            if (id) {
+            if (id && self.whereFilter.indexOf("ID(n)") < 0) {
 
                 if (id > 0) {
                     whereStatement = " WHERE (ID(n)=" + id + ")";//+" OR  ID(m)="+id+")"
@@ -162,7 +162,7 @@ var toutlesensData = (function () {
                 }
             }
             if (subGraphWhere) {
-                if (id)
+                if (whereStatement.length > 0)
                     whereStatement += " AND ";
                 else
                     whereStatement += " WHERE ";
@@ -235,6 +235,8 @@ var toutlesensData = (function () {
                 + toutlesensData.queryExcludeNodeFilters
                 + toutlesensData.queryExcludeRelFilters
 
+            graphQueryUnionStatement = "";
+
 
             var statement = statementBase + returnStatement;
 
@@ -267,12 +269,28 @@ var toutlesensData = (function () {
                     console.log(statement);
             }
 
+
+            if (options.useCurrentStatement && self.currentStatement) {
+                var p= self.currentStatement.indexOf("WHERE")
+                if(p>-1 && self.whereFilter.length>0)
+                    statement=statement.substring(0,p)+" "+self.whereFilter+" "+statement.substring(p+1);
+
+
+            } else
+                self.currentStatement = statement;
+
+
+
+
+
             toutlesensData.queryNodeLabelFilters = "";
             toutlesensData.queryRelTypeFilters = "";
             toutlesensData.queryExcludeNodeFilters = "";
             toutlesensData.queryExcludeRelFilters = "";
             toutlesensData.matchStatement = ""
-            graphQueryUnionStatement = "";
+
+
+
 
             var payload = {match: statement};
 
@@ -283,7 +301,7 @@ var toutlesensData = (function () {
                 dataType: "json",
                 success: function (data, textStatus, jqXHR) {
 
-                    if (data.length == 0 && options.addToPreviousQuery){
+                    if (data.length == 0 && options.addToPreviousQuery) {
                         data = [];
                     }
                     else if (data.length == 0) {
@@ -1261,6 +1279,7 @@ var toutlesensData = (function () {
             if (whereStr && whereStr.length > 0 && whereStr.toUpperCase().indexOf("WHERE") < 0)
                 whereStr = " WHERE " + whereStr;
             str = "MATCH (n" + labelStr + ") " + whereStr + subGraphWhere + returnStr;
+
             if (resultType == "matchStr" && callback) {
                 return callback(null, str);
             }
