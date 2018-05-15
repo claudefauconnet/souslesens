@@ -27,7 +27,7 @@
 var   serverRootUrl="";
 var Gparams = {
 
-    queryInElasticSearch:true,
+    queryInElasticSearch:false,
     ElasticResultMaxSize:1000,
 
 

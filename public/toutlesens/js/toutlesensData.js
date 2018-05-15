@@ -333,7 +333,7 @@ var toutlesensData = (function () {
                                 message += "<a href='javascript:toutlesensController.increaseGraphLimit()'>increase Graph display limit</a> (display wil be slower)";
                                 message += "<br> <a href='javascript:advancedSearch.showDialog()'>or set a filter on nodes or relations</a>";
 
-                                $("#graphCommentDiv").append(message);
+                                $("#graphCommentDiv").html(message);
                             }
                         })
                     }

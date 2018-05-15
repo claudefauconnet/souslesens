@@ -15,11 +15,11 @@ var visjsGraph = (function () {
         self.previousGraphs.index = -1;
         self.currentLayoutType = "random";
         self.currentLayoutDirection = "";
-        self.currentShape=Gparams.graphDefaultShape;
+        self.currentShape = Gparams.graphDefaultShape;
         self.clusters = []
         self.scaleToShowLabels = 0.6;
-        self.context=null;
-        self.dragRect={x:0,y:0,w:0,h:0};
+        self.context = null;
+        self.dragRect = {x: 0, y: 0, w: 0, h: 0};
 
         var stopPhysicsTimeout = 5000;
         var lastClick = new Date();
@@ -30,7 +30,7 @@ var visjsGraph = (function () {
         var options = {};
 
 
-        self.draw = function (divId, visjsData, _options,callback) {
+        self.draw = function (divId, visjsData, _options, callback) {
             if (!_options)
                 _options = {};
 
@@ -76,11 +76,10 @@ var visjsGraph = (function () {
                 manipulation: {
                     enabled: false
                 },
-                interaction:{
+                interaction: {
                     dragView: false,
                     multiselect: true
                 },
-
 
 
                 nodes: {
@@ -149,7 +148,7 @@ var visjsGraph = (function () {
             if (firstNode && firstNode.x)
                 self.physicsOn = false;
             network = new vis.Network(container, data, options);
-          //  network.dragView=false;
+            //  network.dragView=false;
             self.network = network;
 
 
@@ -185,7 +184,6 @@ var visjsGraph = (function () {
                 }
 
             }, stopPhysicsTimeout);
-
 
 
             network.on("zoom", function (params) {
@@ -276,29 +274,29 @@ var visjsGraph = (function () {
                 }
             });
             network.on("beforeDrawing", function (ctx) {
-             self.context=ctx;
-             });
+                self.context = ctx;
+            });
             network.on("afterDrawing", function (ctx) {
-                self.context=ctx;
-                if(callback)
+                self.context = ctx;
+                if (callback)
                     callback();
             });
 
             network.on("dragStart", function (params) {
-                 dragPosition = params.pointer.DOM;
+                dragPosition = params.pointer.DOM;
 
-             //   self.dragRect("dragStart",dragPosition.x,dragPosition.y);
+                //   self.dragRect("dragStart",dragPosition.x,dragPosition.y);
             });
 
             network.on("drag", function (params) {
                 dragPosition = params.pointer.DOM;
-              //  self.dragRect("drag",dragPosition.x,dragPosition.y);
+                //  self.dragRect("drag",dragPosition.x,dragPosition.y);
             });
 
             network.on("dragEnd", function (params) {
 
                 var dragEndPos = params.pointer.DOM;
-                self.dragRect("dragEnd",dragPosition.x,dragPosition.y);
+                self.dragRect("dragEnd", dragPosition.x, dragPosition.y);
                 if (_options.dragConnectedNodes && params.event.srcEvent.ctrlKey) {
                     self.dragConnectedNodes(params.nodes[0], {
                         x: dragEndPos.x - dragPosition.x,
@@ -341,25 +339,25 @@ var visjsGraph = (function () {
                 console.log('graph loaded Event');
             });
 
-            if(true){// rightclick drag to select by rect drag
-                container=$("#graphDiv");
-                container.on("mousemove", function(e) {
+            if (true) {// rightclick drag to select by rect drag
+                container = $("#graphDiv");
+                container.on("mousemove", function (e) {
                     if (drag) {
                         restoreDrawingSurface();
                         rect.w = (e.pageX - this.offsetLeft) - rect.startX;
-                        rect.h = (e.pageY - this.offsetTop) - rect.startY ;
+                        rect.h = (e.pageY - this.offsetTop) - rect.startY;
 
                         ctx.setLineDash([5]);
                         ctx.strokeStyle = "rgb(0, 102, 0)";
                         ctx.strokeRect(rect.startX, rect.startY, rect.w, rect.h);
                         ctx.setLineDash([]);
-                       //ctx.fillStyle = "rgba(0, 255, 0, 0.02)";
+                        //ctx.fillStyle = "rgba(0, 255, 0, 0.02)";
                         ctx.fillStyle = "rgba(0, 0, 0, 0.02)";
                         ctx.fillRect(rect.startX, rect.startY, rect.w, rect.h);
                     }
                 });
 
-                container.on("mousedown", function(e) {
+                container.on("mousedown", function (e) {
                     if (e.button == 2) {
                         selectedNodes = e.ctrlKey ? network.getSelectedNodes() : null;
                         saveDrawingSurface();
@@ -371,7 +369,7 @@ var visjsGraph = (function () {
                     }
                 });
 
-                container.on("mouseup", function(e) {
+                container.on("mouseup", function (e) {
                     if (e.button == 2) {
                         restoreDrawingSurface();
                         drag = false;
@@ -382,7 +380,6 @@ var visjsGraph = (function () {
                 });
 
 
-
             }
 
 
@@ -390,7 +387,7 @@ var visjsGraph = (function () {
 
 
         self.setShapeOption = function (shape) {
-            self.currentShape=shape;
+            self.currentShape = shape;
             var nodes = [];
             for (var key in self.nodes._data) {
                 nodes.push(key)
@@ -493,8 +490,8 @@ var visjsGraph = (function () {
              node.color = {background: color};
              nodes.push(node);
              }*/
-            for (var i=0;i< nodeIds.length;i++){// transform ids in string
-                nodeIds[i]=""+nodeIds[i];
+            for (var i = 0; i < nodeIds.length; i++) {// transform ids in string
+                nodeIds[i] = "" + nodeIds[i];
             }
             for (var key in  self.nodes._data) {
                 var node = self.nodes._data[key];
@@ -537,7 +534,7 @@ var visjsGraph = (function () {
                     else {
                         // node.shape = null;
                         node.size = 15;
-                        node.shape=self.currentShape;
+                        node.shape = self.currentShape;
                     }
                 }
                 nodes.push(node);
@@ -984,22 +981,29 @@ var visjsGraph = (function () {
             self.importGraph(data);
         }
 
-        self.filterGraph = function (objectType, property, operator, value, type) {
+        self.filterGraph = function (objectType, booleanOption, property, operator, value, type) {
             self.saveGraph();
             if (objectType == "node") {
                 for (var key in  self.nodes._data) {
+
                     var node = self.nodes._data[key];
-                    if (!paint.isLabelNodeOk(node, property, operator, value, type)) {
+                    if (currentObject && currentObject.id && currentObject.id == node.id)
+                        ;
+                    else {
+                        var nodeOk = paint.isLabelNodeOk(node, property, operator, value, type);
+                        if ((booleanOption != "not" && !nodeOk) || (booleanOption != "not" && nodeOk)) {
 
-                        self.nodes.remove({id: key})
-                        var connectedEdges = network.getConnectedEdges(key);
-                        for (var i = 0; i < connectedEdges.length; i++) {
-                            var connectedEdgeId = connectedEdges[i];
-                            self.edges.remove({id: connectedEdgeId})
+
+                            var connectedEdges = network.getConnectedEdges(key);
+                            for (var i = 0; i < connectedEdges.length; i++) {
+                                var connectedEdgeId = connectedEdges[i];
+                                self.edges.remove({id: connectedEdgeId})
+                            }
+                            self.nodes.remove({id: key})
                         }
+
+
                     }
-
-
                 }
             }
             else if (objectType == "relation") {
@@ -1062,8 +1066,7 @@ var visjsGraph = (function () {
         }
 
 
-
-        self.dragRect=function(action,x,y) {
+        self.dragRect = function (action, x, y) {
             var ctx = self.context;
             if (action == "dragStart") {
                 self.dragRect.x = x;
@@ -1073,13 +1076,12 @@ var visjsGraph = (function () {
             else if (action.indexOf("drag") == 0) {
                 self.dragRect.w = x - self.dragRect.x;
                 self.dragRect.h = y - self.dragRect.y;
-                self.dragRect.w =200;
-                self.dragRect.h =300;
-
+                self.dragRect.w = 200;
+                self.dragRect.h = 300;
 
 
                 if (action == "dragEnd") {
-                    var ctx=self.context;
+                    var ctx = self.context;
                     ctx.strokeStyle = '#A6D5F7';
                     ctx.fillStyle = '#294475';
                     ctx.rect(self.dragRect.x, self.dragRect.y, self.dragRect.w, self.dragRect.h);

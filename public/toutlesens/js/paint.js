@@ -350,11 +350,15 @@ var paint = (function () {
 
     self.isLabelNodeOk = function (data, property, operator, value, type) {
 
+        if(type && (!value || value=="")) {
+            if (data.labelNeo == type)
+                return true;
+            return false;
+        }
 
         if (property && property.length > 0) {
 
-            if(!value || value=="")
-                return false;
+
 
             if (!data.neoAttrs[property])
                 return false;

@@ -222,7 +222,7 @@ var filters = (function () {
 
         }
         else {
-            visjsGraph.filterGraph(objectType, property, operator, value, objectName);
+            visjsGraph.filterGraph(objectType,booleanOption, property, operator, value, objectName);
         }
 
     }
@@ -256,7 +256,7 @@ var filters = (function () {
         if (!objectName)
             objectName = $("#propertiesSelectionDialog_ObjectNameInput").val();
 
-        if (toutlesensData.queriesIds.length > 1 || toutlesensController.currentActionObj.type == "pathes") {
+        if (true || toutlesensData.queriesIds.length > 1 || toutlesensController.currentActionObj.type == "pathes") {
             self.filterGraphOnProperty(option, booleanOption, objectType, objectName, property, operator, value);
             return;
         }
