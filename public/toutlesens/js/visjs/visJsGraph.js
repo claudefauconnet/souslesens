@@ -991,7 +991,7 @@ var visjsGraph = (function () {
                         ;
                     else {
                         var nodeOk = paint.isLabelNodeOk(node, property, operator, value, type);
-                        if ((booleanOption != "not" && !nodeOk) || (booleanOption != "not" && nodeOk)) {
+                        if ((booleanOption != "not" && !nodeOk) || (booleanOption == "not" && nodeOk) ){
 
 
                             var connectedEdges = network.getConnectedEdges(key);
