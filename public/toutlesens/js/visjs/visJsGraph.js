@@ -83,6 +83,7 @@ var visjsGraph = (function () {
 
 
                 nodes: {
+                    borderWidthSelected:6,
                     shape: 'dot',
                     size: 10,
                     font: {size: 14},
@@ -107,6 +108,7 @@ var visjsGraph = (function () {
                 },
                 edges:
                     {
+                        selectionWidth:5,
                         smooth: smoothRelLine,
                         font:
                             {
@@ -239,6 +241,7 @@ var visjsGraph = (function () {
                 }
                 else if (params.nodes.length == 1) {
                     var nodeId = params.nodes[0];
+                   // self.outlineNodeEdges(nodeId);
                     currentObject = self.nodes._data[nodeId];
                     /*   var now=new Date().getTime();
                      //  console.log(params.event.timeStamp+" "+now.getTime())
@@ -384,6 +387,20 @@ var visjsGraph = (function () {
 
 
         }
+        self.outlineNodeEdges=function(nodeId) {
+            self.edges.setOption({width: 1})
+
+
+            var connectedEdges = network.getConnectedEdges(nodeId);
+            var nodeEdges = [];
+            for (var i = 0; i < connectedEdges.length; i++) {
+                var connectedEdgeId = connectedEdges[i];
+                nodeEdges.push[{id:""+connectedEdgeId,width:5}]
+
+            }
+            self.edges.update(nodeEdges)
+        }
+
 
 
         self.setShapeOption = function (shape) {
@@ -983,28 +1000,53 @@ var visjsGraph = (function () {
 
         self.filterGraph = function (objectType, booleanOption, property, operator, value, type) {
             self.saveGraph();
+
+
             if (objectType == "node") {
+
+
+
+                var selectedNodes=[];
+                var selectedEdges=[];
                 for (var key in  self.nodes._data) {
 
-                    var node = self.nodes._data[key];
-                    if (currentObject && currentObject.id && currentObject.id == node.id)
-                        ;
-                    else {
-                        var nodeOk = paint.isLabelNodeOk(node, property, operator, value, type);
-                        if ((booleanOption != "not" && !nodeOk) || (booleanOption == "not" && nodeOk) ){
 
 
-                            var connectedEdges = network.getConnectedEdges(key);
-                            for (var i = 0; i < connectedEdges.length; i++) {
-                                var connectedEdgeId = connectedEdges[i];
-                                self.edges.remove({id: connectedEdgeId})
-                            }
-                            self.nodes.remove({id: key})
-                        }
+                       var node = self.nodes._data[key];
+                       if (currentObject && currentObject.id && currentObject.id == node.id)
+                           ;
+                       else {
+                           var connectedEdges = network.getConnectedEdges(key);
+                           var nodeEdges=[];
+                           for (var i = 0; i < connectedEdges.length; i++) {
+                               var connectedEdgeId = connectedEdges[i];
+                               nodeEdges.push(connectedEdgeId);
+
+                           }
+
+                           var nodeOk = paint.isLabelNodeOk(node, property, operator, value, type);
+                           if (nodeOk || booleanOption=="all") {
+                               selectedNodes.push({id: "" + node.id, hidden: false});
+                               for (var i = 0; i < nodeEdges.length; i++) {
+                                   selectedEdges.push({id: "" + nodeEdges[i], hidden: false})
+                               }
+                           }
+                           else {
+                               selectedNodes.push({id: "" + node.id, hidden: true});
+                               for (var i = 0; i < nodeEdges.length; i++) {
+                                   selectedEdges.push({id: "" + nodeEdges[i], hidden: true})
+                               }
+                           }
 
 
-                    }
+
+
+
+
+                   }
                 }
+                self.nodes.update(selectedNodes);
+                self.edges.update(selectedEdges);
             }
             else if (objectType == "relation") {
 

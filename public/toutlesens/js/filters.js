@@ -205,6 +205,7 @@ var filters = (function () {
 
     }
 
+
     /**
      *
      *  method filtering visJs graph directly without executing a cypher query
@@ -218,7 +219,7 @@ var filters = (function () {
      */
     self.filterGraphOnProperty = function (option, booleanOption, objectType, objectName, property, operator, value) {
         if (booleanOption == "removeAll") {
-            visjsGraph.previousGraph();
+            visjsGraph.filterGraph(objectType,"all");
 
         }
         else {

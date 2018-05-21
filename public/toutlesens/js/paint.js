@@ -179,7 +179,9 @@ var paint = (function () {
 
         var colorClasses = {};
         var allIds = [];
-        var targetNodes=[]
+        var targetNodes=[];
+        var shapes=["dot","diamond","triangle","trangleDown","square","star"];
+        var shapeIndex=0;
         for (var i = 0; i < data.length; i++) {
             allIds.push("" + data[i].id)
             var color;
@@ -201,7 +203,11 @@ var paint = (function () {
                 /*  colorClasses[color] = [];
                 }
               colorClasses[color].push("" + data[i].id);*/
-                targetNodes.push({id: "" + data[i].id, color: color,size:size});
+
+
+                targetNodes.push({id: "" + data[i].id, color: color,size:size,shape:shapes[shapeIndex]});
+            if( i%nClasses==0)
+                shapeIndex+=1
 
 
         }
@@ -252,6 +258,8 @@ var paint = (function () {
 
         var str = "<table>"
         var color;
+        var shapes=["dot","diamond","triangle","trangleDown","square","star"];
+        var shapeIndex=0;
         for (var i = 0; i < ticksColors.length; i++) {
             var onClick = " onclick='paint.onLegendItemClick(\"" + ticksColors[i].tick + "\")'";
 

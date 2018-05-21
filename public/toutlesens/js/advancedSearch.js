@@ -66,6 +66,7 @@ var advancedSearch = (function () {
 
     self.onChangeObjectName = function (value) {
         // self.setPermittedLabelsCbxs(value);
+        $("#propertiesSelectionDialog_valueInput").val("");
         if (propertiesSelectionDialog_propsSelect) ;
         filters.initProperty(null, value, propertiesSelectionDialog_propsSelect)
     }
