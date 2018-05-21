@@ -297,7 +297,7 @@ var visjsGraph = (function () {
 
                 var dragEndPos = params.pointer.DOM;
                 self.dragRect("dragEnd", dragPosition.x, dragPosition.y);
-                if (_options.dragConnectedNodes && params.event.srcEvent.ctrlKey) {
+                if ((true ||_options.dragConnectedNodes) && params.event.srcEvent.ctrlKey) {
                     self.dragConnectedNodes(params.nodes[0], {
                         x: dragEndPos.x - dragPosition.x,
                         y: dragEndPos.y - dragPosition.y
@@ -910,7 +910,7 @@ var visjsGraph = (function () {
             for (var i = 0; i < connectedNodes.length; i++) {
                 var connectedId = connectedNodes[i];
 
-                if (toutlesensData && toutlesensData.queriesIds.indexOf(connectedId) < 0) {
+                if (true || toutlesensData && toutlesensData.queriesIds.indexOf(connectedId) < 0) {
                     var node = self.nodes._data["" + connectedId];
                     node.x = positions[connectedId].x + offset.x;
                     node.y = positions[connectedId].y + offset.y;

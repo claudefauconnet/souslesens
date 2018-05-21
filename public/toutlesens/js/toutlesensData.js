@@ -331,7 +331,7 @@ var toutlesensData = (function () {
                             success: function (data, textStatus, jqXHR) {
                                 var message = "<br><span class='importantMessage'>" + data[0].countRel + "  relations in the graph</span> "
                                 message += "<a href='javascript:toutlesensController.increaseGraphLimit()'>increase Graph display limit</a> (display wil be slower)";
-                                message += "<br> <a href='javascript:advancedSearch.showDialog()'>or set a filter on nodes or relations</a>";
+                                message += "<br> <a href='$(\"#propertiesSelectionDialog_ObjectNameInput\").val(\"\");javascript:advancedSearch.showDialog()'>or set a filter on nodes or relations</a>";
 
                                 $("#graphCommentDiv").html(message);
                             }
@@ -1283,7 +1283,8 @@ var toutlesensData = (function () {
             if (resultType == "matchStr" && callback) {
                 return callback(null, str);
             }
-            else if (resultType == "matchObject" && callback) {
+            else if ((resultType == "matchObject" || resultType == "matchSearchClause" ) && callback) {
+
                 var obj = {
                     nodelabel: label,
                     where: whereStrRaw

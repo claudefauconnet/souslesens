@@ -1,7 +1,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/4.2.2/d3.min.js"></script>
 
 
-<div id="paintDialogPaletteDiv"  class="paintDialogDiv"  >
+<div id="<br>paintDialogPaletteDiv"  class="paintDialogDiv"  >
 
     Color
     <div id="paintDialogPalette"></div>
@@ -9,15 +9,16 @@
 </div>
 
 <button onclick="paint.clearHighlight()"> Clear</button>
+<br> <button onclick="paint.showBIdialog()"> Outline properties...</button>
 
 
 <div id="paintDialog_classesDiv"  style="visibility: hidden" >
-    Nclasses <input id="paintDialog_NclassesInput" style="width:30px" value="5">
+    Nclasses <input id="paintDialog_NclassesInputOld" style="width:30px" value="5">
     <button onclick="paint.paintClasses()">Paint classes</button>
 </div>
 
 <div id="paintDialog_GraphicAttrsDiv"   style="visibility: hidden">
-circleRadius <input id="paintDialog_circleRadiusInput" style="width:30px" value="15">
+circleRadius <input id="paintDialog_circleRadiusInputOld>" style="width:30px" value="15">
 lineWidth <input id="paintDialog_lineWidthInput" style="width:30px" value="3"><br>
 
 <!-- <button onclick="filters.filterOnProperty('remove')">Remove filter</button> <br>-->

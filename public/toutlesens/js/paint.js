@@ -56,6 +56,7 @@ var paint = (function () {
             //   $("#filtersDiv").css("visibility", "hidden")
             if (true || label) {
 
+
                 //  filters.initLabelProperty(label, paintDialog_propsSelect);
                 $("#paintDialog_clusterNodesButton").css("visibility", "visible");
                 $("#paintDialogTypeSpan").html("Node label :" + label)
@@ -106,19 +107,29 @@ var paint = (function () {
     }
 
 
+    self.showBIdialog=function(){
+        $("#dialog").css("visibility", "visible");
+        $("#dialog").load("htmlSnippets/BIdialog.html", function () {
+            $("#dialog").dialog("option", "title", "Outline Properties");
+            $("#dialog").dialog({modal: false});
+            $("#dialog").dialog("open");
+        });
+    }
+
     self.paintClasses = function () {
 
         var nClasses = parseInt($("#paintDialog_NclassesInput").val());
-        var radius = $("#paintDialog_circleRadiusInput").val();
-        var property = $("#paintDialog_propsSelect").val();
+        var size = parseInt($("#paintDialog_circleRadiusInput").val()*2);
+        var property = $("#propertiesSelectionDialog_propsSelect").val();
         if (property == "")
             return toutlesensController.setMessage("choose a property", "red");
 
 
         var data = [];
 
-        for (var key in visjsGraph.nodesMap) {
-            var nodeData = visjsGraph.nodesMap[key];
+        var nodes=visjsGraph.nodes.get()
+        for (var i=0;i<nodes.length;i++){
+            var nodeData = nodes[i];
             var value = nodeData.neoAttrs[property];
             if (value)
                 data.push({id: nodeData.id, value: value});
@@ -168,12 +179,14 @@ var paint = (function () {
 
         var colorClasses = {};
         var allIds = [];
+        var targetNodes=[]
         for (var i = 0; i < data.length; i++) {
             allIds.push("" + data[i].id)
             var color;
             if (scaleType == "ordinal") {
                 color = scale(data[i].value);
                 color = self.rgb2hex(color);
+
             }
             else {
                 var index = Math.round(domain(data[i].value));
@@ -182,17 +195,27 @@ var paint = (function () {
                 color = self.rgb2hex(color);
             }
             //   console.log(data[i].value+"  "+color)
-            if (!colorClasses[color])
-                colorClasses[color] = [];
-            colorClasses[color].push("" + data[i].id);
+            if (!color) {
+                color="#333";
+            }
+                /*  colorClasses[color] = [];
+                }
+              colorClasses[color].push("" + data[i].id);*/
+                targetNodes.push({id: "" + data[i].id, color: color,size:size});
+
 
         }
-        visjsGraph.paintNodes(allIds, "#333", null, null);
-        for (var key in colorClasses) {
+      //  visjsGraph.paintNodes(allIds ,"#333", null, null);
+
+
+
+        visjsGraph.nodes.update(targetNodes);
+
+      /*  for (var key in colorClasses) {
             visjsGraph.paintNodes(colorClasses[key], key, null, radius);
-        }
-        $("#paintDiv").css("height", 300);
-        $("#paintDiv").css("overflow", "auto");
+        }*/
+      /*  $("#paintDiv").css("height", 300);
+        $("#paintDiv").css("overflow", "auto");*/
         // colorlegend  ("#paintDiv", scale, scaleType,  {vertical:true, boxHeight: 10, boxWidth: 20});
         self.drawPaletteColorLegend(scale, domain, palette, nClasses);
     }
@@ -235,13 +258,14 @@ var paint = (function () {
             str += "<tr><td" + onClick + "><span style='background-color: " + ticksColors[i].color + ";'>&nbsp;&nbsp;&nbsp;</span></td><td>" + ticksColors[i].tick + "</td></tr>"
 
         }
-        $("#paintDiv").css("height", 300);
+        $("#BIlegendDiv").html(str);
+      /*  $("#paintDiv").css("height", 300);
         $("#paintDiv").html(str);
         jQuery("#dialog").dialog('option', 'position', {
             my: "left bottom",
             at: "left bottom",
          //   of: "#mainPanel"
-        });
+        });*/
 
 
     }
@@ -274,7 +298,8 @@ var paint = (function () {
         var legendStr = "";
 
         if (Gparams.useVisjsNetworkgraph) {
-            if (self.currentLabel) {
+            var xxx=$("#propertiesSelectionDialog_ObjectTypeInput").val();
+            if ($("#propertiesSelectionDialog_ObjectTypeInput").val()=="node" ) {
 
                 var ids = [];
                 for (var key in visjsGraph.nodes._data) {
@@ -290,8 +315,9 @@ var paint = (function () {
                 }
                 visjsGraph.paintNodes(ids, self.currentColor, "#eee", radius);
                 legendStr = "<span style='background-color: " + self.currentColor + ";'>&nbsp;&nbsp;&nbsp;</span></td><td>" + legendStr + "</td></tr>"
-                $("#paintDiv").css("height", 100);
-                $("#paintDiv").html(legendStr);
+               /* $("#paintDiv").css("height", 100);
+                $("#paintDiv").html(legendStr);*/
+
 
 
             } else {// relation
@@ -311,10 +337,11 @@ var paint = (function () {
                 }
                 visjsGraph.paintEdges(ids, self.currentColor, "#eee", radius);
                 legendStr = "<span style='background-color: " + self.currentColor + ";'>&nbsp;&nbsp;&nbsp;</span></td><td>" + legendStr + "</td></tr>"
-                $("#paintDiv").css("height", 100);
-                $("#paintDiv").html(legendStr);
+             /*   $("#paintDiv").css("height", 100);
+                $("#paintDiv").html(legendStr);*/
+                $("#BIlegendDiv").html(legendStr);
 
-                return;
+
 
             }
 

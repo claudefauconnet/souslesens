@@ -40,7 +40,7 @@ var graphicController = (function () {
 
         else if (action == "search") {
             currentObject.id = null;
-            advancedSearch.showDialog(currentObject.name);
+            advancedSearch.showDialog({initialLabel:currentObject.name});
 
         }
 

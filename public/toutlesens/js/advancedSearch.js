@@ -4,10 +4,19 @@ var advancedSearch = (function () {
     self.filterLabelWhere = "";
     self.currentObject = {};
     self.neo4jProxyUrl = "../../.." + Gparams.neo4jProxyUrl;
-self.context={}
-    self.showDialog = function (initialLabel) {
-
-
+    self.context = {}
+    self.searchClauses = [];
+    self.showDialog = function (options) {
+        if (!options)
+            options = {};
+        var initialLabel = options.initialLabel;
+        self.searchClauses = [];
+        // $("#searchCriteriaTextDiv").html("");
+        $("#searchCriteriatextSelect").find('option').remove();
+        if(options.multipleClauses)
+            $("#searchCriteriaTextDiv").css("visibility","visible");
+        else
+            $("#searchCriteriaTextDiv").css("visibility","hidden");
         var filterMovableDiv = $("#filterMovableDiv").detach();
         $("#dialog").html(filterMovableDiv);
         advancedSearch.onChangeObjectName(currentObject.name);
@@ -16,10 +25,10 @@ self.context={}
 
         //str += labelsCxbs;
 
-        if( self.context.pathType=="allTransitivePaths"){
-            if(self.context.target=="source")
-            str += " <button id=\"advancedSearchDialog_searchButton\" onclick=\"traversalController.setStartLabelQuery()\">OK</button>";
-            else if(self.context.target=="target") {
+        if (self.context.pathType == "allTransitivePaths") {
+            if (self.context.target == "source")
+                str += " <button id=\"advancedSearchDialog_searchButton\" onclick=\"traversalController.setStartLabelQuery()\">OK</button>";
+            else if (self.context.target == "target") {
                 str += " <button id=\"advancedSearchDialog_searchButton\" onclick=\"traversalController.setEndLabelQuery({clusterIntermediateNodes:1})\">Graph only start and end</button><br>";
                 str += " <button id=\"advancedSearchDialog_searchButton\" onclick=\"traversalController.setEndLabelQuery({})\">Graph all nodes</button>";
 
@@ -43,7 +52,7 @@ self.context={}
         }
         $("#propertiesSelectionDialog_valueInput").val("")
         $("#propertiesSelectionDialog_valueInput").focus()
-        if(initialLabel){
+        if (initialLabel) {
             $("#propertiesSelectionDialog_ObjectNameInput").val(initialLabel)
         }
 
@@ -56,32 +65,102 @@ self.context={}
     }
 
     self.onChangeObjectName = function (value) {
-       // self.setPermittedLabelsCbxs(value);
-        if(propertiesSelectionDialog_propsSelect);
+        // self.setPermittedLabelsCbxs(value);
+        if (propertiesSelectionDialog_propsSelect) ;
         filters.initProperty(null, value, propertiesSelectionDialog_propsSelect)
     }
     self.setPermittedLabelsCbxs = function (label) {
         var labelsCxbs = "<br><b>Show nodes with label </b><ul>";
-        var labels = Schema.getPermittedLabels(label,true,true);
+        var labels = Schema.getPermittedLabels(label, true, true);
         for (var i = 0; i < labels.length; i++) {
-            var label2=labels[i];//.replace(/^-/,"");
+            var label2 = labels[i];//.replace(/^-/,"");
             labelsCxbs += "<li><input type='checkbox' checked='checked' name='advancedSearchDialog_LabelsCbx' value='" + label2 + "'>" + label2 + "</li>"
         }
         labelsCxbs += "<ul>";
         $("#filterOptionsDiv").html(labelsCxbs);
     }
 
+    self.addClause = function (operator) {
+        self.searchNodes("matchSearchClause", function (clause) {
+            for (var i = 0; i < self.searchClauses.length; i++) {
+                if (clause.nodeLabel != "" && self.searchClauses[i].nodeLabel != "" && clause.nodeLabel != self.searchClauses[i].nodeLabel)
+                    return alert("you cannot add criteria on different labels :" + clause.nodeLabel != "" && self.searchClauses[i].nodeLabel)
+            }
+            // clause.operator=operator;
+            self.searchClauses.push(clause);
+            if (!clause.neoLabel)
+                clause.neoLabel = "all labels";
+            var clauseText = clause.neoLabel + " : " + clause.where;
+            //   $("#searchCriteriaTextDiv").append(clauseText);
+            $("#searchCriteriatextSelect").append($('<option>', {
+                value: clauseText,
+                text: clauseText
+            }));
+        })
+    }
+
+    self.clearClauses = function () {
+        self.searchClauses = [];
+        $('#searchCriteriatextSelect option').each(function() {
+                $(this).remove();
+        });
+
+    }
+    self.clearClause = function (select) {
+        var value = $(select).val();
+        self.searchClauses.splice(select.selectedIndex, 1);
+        $('#searchCriteriatextSelect option').each(function() {
+            if ( $(this).val() == value ) {
+                $(this).remove();
+            }
+        });
+
+
+    }
+    self.searchNodesWithClauses = function () {
+        var labelStr = "";
+        var whereStr = "";
+        var label = self.searchClauses[0].nodeLabel;
+        if (label && label.length > 0)
+            labelStr = ":" + label;
+
+
+        for (var i = 0; i < self.searchClauses.length; i++) {
+            if (self.searchClauses[i].where != "") {
+                if (whereStr == "")
+                    whereStr = " WHERE ";
+                else
+                    whereStr += " AND ";
+                whereStr += self.searchClauses[i].where;
+            }
+
+        }
+        var query = "MATCH (n" + labelStr + ") " + whereStr + " RETURN n";
+
+console.log(query);
+        self.nodesQueryToGraph(query)
+
+
+    }
+
 
     /**
-     * 
-     * 
+     *
+     *
      * @param resultType "string" or "object"
      * @param callback
      */
 
-    self.searchNodes = function (resultType,callback) {
-        currentObject.id = null;
+    self.searchNodes = function (resultType, callback) {
+
+
         $("#waitImg").css("visibility", "visible")
+        if (resultType != "matchSearchClause" && self.searchClauses.length > 0) {// multiple clauses
+
+            return self.searchNodesWithClauses();
+        }
+        currentObject.id = null;
+
         var searchObj = {};
         self.filterLabelWhere = ""
 
@@ -128,7 +207,7 @@ self.context={}
                     resultType: resultType,
                     limit: Gparams.jsTreeMaxChildNodes,
                     from: 0,
-                    resultType:resultType
+                    resultType: resultType
                 }
                 toutlesensData.searchNodesWithOption(options, function (err, result) {
                     //   toutlesensData.searchNodes(subGraph, searchObj.label, null, "matchStr", Gparams.jsTreeMaxChildNodes, 0, function (err, result) {
@@ -148,45 +227,45 @@ self.context={}
 
             }
 
-          /*  if(false) {
-                var data = [];// stack all results and then draw tree
-                var index = 0;
-                var countOptions = $('#propertiesSelectionDialog_propsSelect').children('option').length - 1;
-                $("#propertiesSelectionDialog_propsSelect option").each(function () {
-                    var property = $(this).val();
+            /*  if(false) {
+                  var data = [];// stack all results and then draw tree
+                  var index = 0;
+                  var countOptions = $('#propertiesSelectionDialog_propsSelect').children('option').length - 1;
+                  $("#propertiesSelectionDialog_propsSelect option").each(function () {
+                      var property = $(this).val();
 
-                    if (property != "") {
-                        var value = property + ":~ " + searchObj.value;
-                        var options = {
-                            subGraph: subGraph,
-                            label: searchObj.label,
-                            word: value,
-                            resultType: "list",
-                            limit: Gparams.jsTreeMaxChildNodes,
-                            from: 0
-                        }
-                        toutlesensData.searchNodesWithOption(options, function (err, result) {
-                            //  toutlesensData.searchNodes(subGraph, searchObj.label, value, "list", Gparams.jsTreeMaxChildNodes, 0, function (err, result) {
-                            index += 1;
-                            for (var i = 0; i < result.length; i++) {
-                                data.push(result[i])
-                            }
-                            if (index >= countOptions) {
-                                if (callback) {
-                                    return callback(data);
-                                }
-                                infoGenericDisplay.loadTreeFromNeoResult("#", data);
-                            }
-                            setTimeout(function () {
+                      if (property != "") {
+                          var value = property + ":~ " + searchObj.value;
+                          var options = {
+                              subGraph: subGraph,
+                              label: searchObj.label,
+                              word: value,
+                              resultType: "list",
+                              limit: Gparams.jsTreeMaxChildNodes,
+                              from: 0
+                          }
+                          toutlesensData.searchNodesWithOption(options, function (err, result) {
+                              //  toutlesensData.searchNodes(subGraph, searchObj.label, value, "list", Gparams.jsTreeMaxChildNodes, 0, function (err, result) {
+                              index += 1;
+                              for (var i = 0; i < result.length; i++) {
+                                  data.push(result[i])
+                              }
+                              if (index >= countOptions) {
+                                  if (callback) {
+                                      return callback(data);
+                                  }
+                                  infoGenericDisplay.loadTreeFromNeoResult("#", data);
+                              }
+                              setTimeout(function () {
 
-                                toutlesensController.setRightPanelAppearance(true);
-                                infoGenericDisplay.expandAll("treeContainer");
-                            }, 500)
+                                  toutlesensController.setRightPanelAppearance(true);
+                                  infoGenericDisplay.expandAll("treeContainer");
+                              }, 500)
 
-                        })
-                    }
-                });
-            }*/
+                          })
+                      }
+                  });
+              }*/
 
         } else {
             if (searchObj.operator == "contains")
@@ -210,11 +289,11 @@ self.context={}
                     toutlesensController.setRightPanelAppearance(true);
                     infoGenericDisplay.expandAll("treeContainer");
                 }, 500)
+                $("#dialog").dialog("close");
 
 
             })
         }
-        $("#dialog").dialog("close");
 
 
     }
@@ -273,7 +352,7 @@ self.context={}
     }
 
 
-    self.searchSimilars = function (node,similarityTypes) {
+    self.searchSimilars = function (node, similarityTypes) {
         $("#similarsDialogSimilarsDiv").html("");
         var messageDivId = $("#similarsDialogMessageDiv");
         messageDivId.html("");
@@ -287,14 +366,14 @@ self.context={}
         //  var statement = "match(n:" + label + ")-->(r)<--(m)";
         statement += " where id(n)=" + node.id + " ";
 
-        if(similarityTypes && similarityTypes.length>0){
-             var where2=" and labels(p) in ["
-            for (var i=0;i<similarityTypes.length;i++){
-                 if( i>0)
-                     where2+=","
-                where2+='"'+similarityTypes[i]+'"';
+        if (similarityTypes && similarityTypes.length > 0) {
+            var where2 = " and labels(p) in ["
+            for (var i = 0; i < similarityTypes.length; i++) {
+                if (i > 0)
+                    where2 += ","
+                where2 += '"' + similarityTypes[i] + '"';
             }
-            where2+="] "
+            where2 += "] "
             statement += where2;
         }
 
@@ -315,24 +394,23 @@ self.context={}
                     $("#similarsDialogSimilarsDiv").html("nos similarities found");
                     return;//messageDivId.html("nos similarities found");
                 }
-                self.currentObject.similarLabels=[]
-                self.currentObject.similarNodes=[node.id]
+                self.currentObject.similarLabels = []
+                self.currentObject.similarNodes = [node.id]
                 toutlesensData.cachedResultArray = data;
                 var str = "<ul>";
                 var max = data[0].count;
                 for (var i = 0; i < data.length; i++) {
 
 
-
                     var line = data[i]
                     if (line.count == max) {
                         var str2 = "<ul>";
-                        if(self.currentObject.similarNodes.indexOf(line.similarNode._id)<0)
+                        if (self.currentObject.similarNodes.indexOf(line.similarNode._id) < 0)
                             self.currentObject.similarNodes.push(line.similarNode._id)
                         for (var j = 0; j < line.commonNodes.length; j++) {
 
-                            if( self.currentObject.similarLabels.indexOf( line.similarLabels[j])<0){
-                                self.currentObject.similarLabels.push( line.similarLabels[j]);
+                            if (self.currentObject.similarLabels.indexOf(line.similarLabels[j]) < 0) {
+                                self.currentObject.similarLabels.push(line.similarLabels[j]);
                             }
                             var linkstr2 = "javascript:toutlesensController.generateGraph(" + line.commonNodes[j]._id + ")";
                             str2 += "<li>[" + line.similarLabels[j] + "]<a href='" + linkstr2 + "'>" + line.commonNodes[j].properties[Schema.getNameProperty()] + "</a> </li> "
@@ -343,9 +421,9 @@ self.context={}
                     }
                 }
                 str += "</ul>"
-                var str2 = data[0].sourceNode.properties[Schema.getNameProperty()] + " :<b>Most similar nodes</b><button onclick='advancedSearch.similarsDialogShowRefineDialog()'>Refine</button>" ;
-                str2+="&nbsp;<button onclick='advancedSearch.similarsGraphSimilars()'>Graph</button>"
-                str2+="<br>"+str
+                var str2 = data[0].sourceNode.properties[Schema.getNameProperty()] + " :<b>Most similar nodes</b><button onclick='advancedSearch.similarsDialogShowRefineDialog()'>Refine</button>";
+                str2 += "&nbsp;<button onclick='advancedSearch.similarsGraphSimilars()'>Graph</button>"
+                str2 += "<br>" + str
                 $("#similarsDialogSimilarsDiv").html(str2);
             },
             error: function (err) {
@@ -357,37 +435,36 @@ self.context={}
 
     }
 
-    self.similarsDialogShowRefineDialog=function(){
+    self.similarsDialogShowRefineDialog = function () {
         $("#similarsDialogSimilarsDiv").html("");
-        var labelsCxbs="Select aspects of the similarities<ul>"
-        for(var i=0;i<self.currentObject.similarLabels.length;i++){
-                var label2=self.currentObject.similarLabels[i];
-                labelsCxbs += "<li><input type='checkbox' checked='checked' name='advancedSearchDialog_LabelsCbx' value='" + label2 + "'>" + label2 + "</li>"
+        var labelsCxbs = "Select aspects of the similarities<ul>"
+        for (var i = 0; i < self.currentObject.similarLabels.length; i++) {
+            var label2 = self.currentObject.similarLabels[i];
+            labelsCxbs += "<li><input type='checkbox' checked='checked' name='advancedSearchDialog_LabelsCbx' value='" + label2 + "'>" + label2 + "</li>"
         }
         labelsCxbs += "<ul>";
 
-        var str=labelsCxbs+"<br><button onclick='advancedSearch.similarsDialogExecRefine()'>refine</button>";
+        var str = labelsCxbs + "<br><button onclick='advancedSearch.similarsDialogExecRefine()'>refine</button>";
         $("#dialog").html(str);
         $("#dialog").dialog({modal: false});
         $("#dialog").dialog("option", "title", "Refine similar");
         $("#dialog").dialog("open");
 
     }
-    self.similarsDialogExecRefine=function(){
+    self.similarsDialogExecRefine = function () {
         var similarityTypes = [];
         $('[name=advancedSearchDialog_LabelsCbx]:checked').each(function () {
             similarityTypes.push($(this).val());
         });
-        self.searchSimilars(currentObject,similarityTypes);
+        self.searchSimilars(currentObject, similarityTypes);
     }
 
 
+    self.similarsGraphSimilars = function () {
+        currentObject.id = null;
+        toutlesensData.setSearchByPropertyListStatement("_id", self.currentObject.similarNodes, function (err, result) {
 
-    self.similarsGraphSimilars=function(){
-        currentObject.id=null;
-        toutlesensData.setSearchByPropertyListStatement ("_id",self.currentObject.similarNodes, function(err,result){
-
-            toutlesensController.generateGraph(null, null,function(err,result){
+            toutlesensController.generateGraph(null, null, function (err, result) {
 
                 visjsGraph.paintNodes(self.currentObject.similarNodes, null, null, null, "star")
             })
@@ -558,8 +635,6 @@ self.context={}
         });
 
 
-
-
     }
     /**
      * execute node query to get ids ans then build a graph query and display it
@@ -587,11 +662,14 @@ self.context={}
 
 
                 toutlesensData.setSearchByPropertyListStatement("_id", ids, function (err, result) {
-                  /*  if(toutlesensData.whereFilter!="")
-                        toutlesensData.whereFilter+= " and " + self.filterLabelWhere;
-                    else*/
-                      //  toutlesensData.whereFilter =self.filterLabelWhere;
-                    toutlesensController.generateGraph(null, {applyFilters: true,  dragConnectedNodes:true}, function () {
+                    /*  if(toutlesensData.whereFilter!="")
+                          toutlesensData.whereFilter+= " and " + self.filterLabelWhere;
+                      else*/
+                    //  toutlesensData.whereFilter =self.filterLabelWhere;
+                    toutlesensController.generateGraph(null, {
+                        applyFilters: true,
+                        dragConnectedNodes: true
+                    }, function () {
 
                         $("#filtersDiv").html("");
                         $("#graphMessage").html("");

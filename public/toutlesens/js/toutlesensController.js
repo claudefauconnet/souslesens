@@ -845,6 +845,7 @@ var toutlesensController = (function () {
             Gparams.showRelationNames = false;
 
             self.generateGraph(null, {applyFilters: true, hideNodesWithoutRelations: false});
+            self.setRightPanelAppearance(false);
         }
 
         else if (action == "zoomOnNode") {
@@ -1196,7 +1197,7 @@ var toutlesensController = (function () {
 
         //   $("#mainButtons").width(rightPanelWidth).height(50).css("position", "absolute").css("left", $("#graphDiv").width() - 200).css("top", 50).css("visibility", "hidden");
         $("#mainButtons").css(".max-width", 300).height(50).css("position", "absolute").css("left", 20).css("top", 10);//.css("visibility", "hidden");
-        $("#graphCommentDiv").css("max-width", "500").css("position", "absolute").css("left", 20).css("top", totalHeight - 50);
+        $("#graphCommentDiv").css("max-width", "500").css("position", "absolute").css("left", 20).css("top", totalHeight - 70);
 
 
         $("#fullScreenButton").css("position", "absolute").css("top", 5).css("left", (totalWidth - rightPanelWidth) - 10);
@@ -1248,6 +1249,7 @@ var toutlesensController = (function () {
         var increase = prompt("Enter new graph display limit");
         if (increase && increase != "") {
             Gparams.maxResultSupported = parseInt(increase);
+            toutlesensController.generateGraph();
         }
     }
 
