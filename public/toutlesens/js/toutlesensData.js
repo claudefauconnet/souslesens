@@ -276,6 +276,7 @@ var toutlesensData = (function () {
                     statement=self.currentStatement.substring(0,p)+" "+self.whereFilter+" "+self.currentStatement.substring(p+1);
 
 
+
             } else
                 self.currentStatement = statement;
 
@@ -381,6 +382,16 @@ var toutlesensData = (function () {
 
             });
 
+
+        }
+        self.getCurrentWhereClause=function(){
+            if(!self.currentStatement)
+                return "";
+            var p= self.currentStatement.indexOf("WHERE")
+            var q= self.currentStatement.indexOf(" RETURN")
+            if(p>-1  && q>-1)
+               return self.currentStatement.substring(p,q);
+            return "";
 
         }
         self.setSearchByPropertyListStatement = function (property, idsList, callback) {

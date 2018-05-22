@@ -806,7 +806,7 @@
                 <div id="advancedQueriesAccordion">
                     <h3>Pivots nodes</h3>
                     <div>
-                        <div id="pivotsDiv" style="height:450px"></div>
+                        <div id="pivotsDiv"style="height:450px"></div>
                     </div>
                     <!--   <h3>Count by label</h3>
                        <div>
@@ -905,7 +905,7 @@
                 </select>
             </td>
             <td>
-                <input id="propertiesSelectionDialog_valueInput" size="15">
+                <input id="propertiesSelectionDialog_valueInput" size="15" onchange="$('#searchCriteriaTextDiv').css('visibility','visible')">
             </td>
             <td>
                 <input type="image" height="20px" src="images/erase.png"
@@ -915,7 +915,7 @@
 
 
     </table>
-    <div id="searchCriteriaTextDiv">
+    <div id="searchCriteriaTextDiv" style ="visibility:hidden">
         <button onclick="advancedSearch.addClause()">add criteria</button>  <button onclick="advancedSearch.clearClauses()">clear criteria</button>
         <BR>
         <select id="searchCriteriatextSelect" onclick="advancedSearch.clearClause(this)" size="4"></select>

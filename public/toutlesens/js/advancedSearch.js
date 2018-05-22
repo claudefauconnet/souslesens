@@ -13,10 +13,10 @@ var advancedSearch = (function () {
         self.searchClauses = [];
         // $("#searchCriteriaTextDiv").html("");
         $("#searchCriteriatextSelect").find('option').remove();
-        if(options.multipleClauses)
-            $("#searchCriteriaTextDiv").css("visibility","visible");
-        else
-            $("#searchCriteriaTextDiv").css("visibility","hidden");
+       /* if (options.multipleClauses)
+           ;// $("#searchCriteriaTextDiv").css("visibility", "visible");
+        else*/
+            $("#searchCriteriaTextDiv").css("visibility", "hidden");
         var filterMovableDiv = $("#filterMovableDiv").detach();
         $("#dialog").html(filterMovableDiv);
         advancedSearch.onChangeObjectName(currentObject.name);
@@ -36,8 +36,8 @@ var advancedSearch = (function () {
 
         }
         else {
-            str += " <button id=\"advancedSearchDialog_searchButton\" onclick=\"advancedSearch.searchNodes('matchStr')\">List nodes</button><br>";
-            str += ' <button id="advancedSearchDialog_searchAndGraphButton" onclick="advancedSearch.searchNodes(\'matchStr\',advancedSearch.nodesQueryToGraph)">Draw graph</button>';
+            str += " <button id=\"advancedSearchDialog_searchButton\" onclick=\"advancedSearch.searchNodes('matchStr', infoGenericDisplay.loadSearchResultIntree);$('#dialog').dialog('close')\">List nodes</button><br>";
+            str += " <button id=\"advancedSearchDialog_searchAndGraphButton\" onclick=\"advancedSearch.searchNodes('matchStr',advancedSearch.nodesQueryToGraph);$('#dialog').dialog('close')\">Draw graph</button>";
         }
         $("#filterActionDiv").html(str);
 
@@ -102,16 +102,16 @@ var advancedSearch = (function () {
 
     self.clearClauses = function () {
         self.searchClauses = [];
-        $('#searchCriteriatextSelect option').each(function() {
-                $(this).remove();
+        $('#searchCriteriatextSelect option').each(function () {
+            $(this).remove();
         });
 
     }
     self.clearClause = function (select) {
         var value = $(select).val();
         self.searchClauses.splice(select.selectedIndex, 1);
-        $('#searchCriteriatextSelect option').each(function() {
-            if ( $(this).val() == value ) {
+        $('#searchCriteriatextSelect option').each(function () {
+            if ($(this).val() == value) {
                 $(this).remove();
             }
         });
@@ -138,7 +138,7 @@ var advancedSearch = (function () {
         }
         var query = "MATCH (n" + labelStr + ") " + whereStr + " RETURN n";
 
-console.log(query);
+        console.log(query);
         self.nodesQueryToGraph(query)
 
 
@@ -283,7 +283,7 @@ console.log(query);
             toutlesensData.searchNodesWithOption(options, function (err, result) {
                 // toutlesensData.searchNodes(subGraph, searchObj.label, value, "matchStr", Gparams.jsTreeMaxChildNodes, 0, function (err, result) {
                 if (callback) {
-                    return callback(result);
+                    return callback(err,result);
                 }
                 infoGenericDisplay.loadSearchResultIntree(err, result);
                 setTimeout(function () {
@@ -466,8 +466,12 @@ console.log(query);
         toutlesensData.setSearchByPropertyListStatement("_id", self.currentObject.similarNodes, function (err, result) {
 
             toutlesensController.generateGraph(null, null, function (err, result) {
-
-                visjsGraph.paintNodes(self.currentObject.similarNodes, null, null, null, "star")
+                var selectedNodes = []
+                for (var i = 0; i < self.currentObject.similarNodes.length; i++) {
+                    selectedNodes.push({id: self.currentObject.similarNodes[i], shape: "star", size: 50,color:"red"})
+                }
+                visjsGraph.nodes.update(selectedNodes)
+                //  visjsGraph.paintNodes(self.currentObject.similarNodes, null, null, null, "star")
             })
         })
 
@@ -475,18 +479,18 @@ console.log(query);
     }
 
 
+
+
     self.searchLabelsPivots = function (sourceLabel, pivotLabel, sourceNodeId, pivotNumber, messageDivId) {
+
+        var scope = $("#pivotsDialogScopeSelect").val();
         if (!sourceLabel) {
             return $(messageDivId).html("require source label");
 
         }
         var whereStatement = "";
-        if (subGraph) {
-            whereStatement = " where n.subGraph='" + subGraph + "' "
-        }
-        if (sourceNodeId) {
-            whereStatement = " and Id(n)=" + sourceNodeId + " ";
-        }
+
+
         var inverseRel = false;
         var pivotLabelStr = "";
         if (pivotLabel && pivotLabel != "") {
@@ -503,7 +507,9 @@ console.log(query);
         var limit = pivotNumber;
         if (sourceNodeId)
             strWhere = ' where id(n)=' + sourceNodeId + ' ';
-        if (subGraph) {
+        else if (scope == "currentGraph" && toutlesensData.currentStatement != null)
+            strWhere = toutlesensData.getCurrentWhereClause()
+        else if (subGraph) {
             if (strWhere == "")
                 strWhere = ' where n.subGraph="' + subGraph + '" ';
             else
@@ -579,7 +585,7 @@ console.log(query);
                             var offsety = (offsetY / 2) + 20;
                             var count0 = pivotIds[0].countR;
                             for (var i = 0; i < Math.min(pivotIds.length, 20); i++) {
-                                var node = {id: pivotIds[i].p._id, shape: "star", size: 18}
+                                var node = {id: pivotIds[i].p._id, shape: "star", shape: "star", size: 50,color:"red"}
                                 if (i == 0 || count0 == pivotIds[i].countR) {
                                     node.size = 20;
                                 }
@@ -644,7 +650,7 @@ console.log(query);
 
      * @param query
      */
-    self.nodesQueryToGraph = function (query) {
+    self.nodesQueryToGraph = function (err,query) {
 
         var payload = {
             match: query

@@ -1,5 +1,5 @@
-
-<input type="image" onclick='$("#pivotsDialogPivotInfosDiv").css("visibility","visible")' width="20px" src="images/infos.png">
+<input type="image" onclick='$("#pivotsDialogPivotInfosDiv").css("visibility","visible")' width="20px"
+       src="images/infos.png">
 source nodes Label<select id="pivotsDialogSourceLabelsSelect" onchange="setAllowedLabels()"></select>
 
 <br>
@@ -7,18 +7,27 @@ source nodes Label<select id="pivotsDialogSourceLabelsSelect" onchange="setAllow
 pivot nodes Label<select id="pivotsDialogPivotLabelsSelect"></select>
 
 <br>
-number of pivots<input id="pivotsDialogPivotNodesNumber" value="20" size="3"></input><button onclick='advancedSearch.searchLabelsPivots($("#pivotsDialogSourceLabelsSelect").val(),$("#pivotsDialogPivotLabelsSelect").val(),null,parseInt($("#pivotsDialogPivotNodesNumber").val()),pivotsDialogMessageDiv)' >search</button>
+number of pivots<input id="pivotsDialogPivotNodesNumber" value="20" size="3"></input>
+
+<br>
+scope<select id="pivotsDialogScopeSelect">
+    <option>All</option>
+    <option>currentGraph</option>
+</select>
+<button onclick='advancedSearch.searchLabelsPivots($("#pivotsDialogSourceLabelsSelect").val(),$("#pivotsDialogPivotLabelsSelect").val(),null,parseInt($("#pivotsDialogPivotNodesNumber").val()),pivotsDialogMessageDiv)'>
+    search
+</button>
 
 <br>
 filter source node
-<select id="pivotsDialogSourceNodeSelect" onchange='advancedSearch.searchLabelsPivots($("#pivotsDialogSourceLabelsSelect").val(),$("#pivotsDialogPivotLabelsSelect").val(),$(this).val(),parseInt($("#pivotsDialogPivotNodesNumber").val()),pivotsDialogMessageDiv)'></select>
-
-
+<select id="pivotsDialogSourceNodeSelect"
+        onchange='advancedSearch.searchLabelsPivots($("#pivotsDialogSourceLabelsSelect").val(),$("#pivotsDialogPivotLabelsSelect").val(),$(this).val(),parseInt($("#pivotsDialogPivotNodesNumber").val()),pivotsDialogMessageDiv)'></select>
 
 
 <div id="pivotsDialogMessageDiv"></div>
-<div id="pivotsDialogPivotInfosDiv" style="background-color: #ddd;color:#0000cc;font-style: italic;visibility: hidden" >
-    Pivot analyze allows to outline nodes (pivot nodes) that are are most connected to  nodes having a certain label(source nodes label)
+<div id="pivotsDialogPivotInfosDiv" style="background-color: #ddd;color:#0000cc;font-style: italic;visibility: hidden">
+    Pivot analyze allows to outline nodes (pivot nodes) that are are most connected to nodes having a certain
+    label(source nodes label)
     <ul>
         <li>A label can be precised for the pivot nodes</li>
         <li>After the first analysis run it is possible to zoom on a a specific source node( filter source node)
@@ -27,14 +36,21 @@ filter source node
 </div>
 <script>
 
-    function setAllowedLabels(){
-        var label=$("#pivotsDialogSourceLabelsSelect").val();
-var pivotLabels=[];
-        if( label!=""){
-            var labels=Schema.getPermittedLabels(label,true);
-            labels.splice(0,0,"")
-            common.fillSelectOptionsWithStringArray(pivotsDialogPivotLabelsSelect,labels)
+    function setAllowedLabels() {
+        var label = $("#pivotsDialogSourceLabelsSelect").val();
+        var pivotLabels = [];
+        if (label != "") {
+            var labels = Schema.getPermittedLabels(label, true);
+            labels.splice(0, 0, "")
+            common.fillSelectOptionsWithStringArray(pivotsDialogPivotLabelsSelect, labels)
         }
+        var value = null;
+        if (toutlesensData.currentStatement)
+            value = "currentGraph"
+        else
+            value = "All"
+        $("#pivotsDialogScopeSelect").val(value);
+
 
 
 
