@@ -160,6 +160,7 @@ var toutlesensController = (function () {
         options.output = currentDisplayType;
         /*----------------------------------------------------------------------------------------------------*/
         $("#waitImg").css("visibility", "visible");
+        $("#BIlegendDiv").html("");
         toutlesensData.getNodeAllRelations(id, options, function (err, data) {
             toutlesensData.whereFilter = "";
             if (err) {
@@ -260,6 +261,8 @@ var toutlesensController = (function () {
 
             visjsGraph.draw("graphDiv", json, options);
             visjsGraph.drawLegend(filters.currentLabels);
+            if(paint.currentBIproperty && paint.currentBIproperty!="")
+                paint.paintClasses(paint.currentBIproperty)
 
         }
 
@@ -1173,7 +1176,11 @@ var toutlesensController = (function () {
 
         $("#graphDiv").width(totalWidth - rightPanelWidth).height(totalHeight - 0)
 
-        $("#graphLegendDiv").width(400).height(40).css("position", "absolute").css("top", 0).css("left", (totalWidth - rightPanelWidth) - 450).css("background-color", "#eee")
+        $("#graphLegendDiv").width(400).height(40).css("position", "absolute").css("top", 0).css("left", (totalWidth - rightPanelWidth) - 450).css("background-color", "#eee");
+        $("#graphInfosDiv").width(400).height(40).css("position", "absolute").css("top", 0).css("left", (totalWidth - rightPanelWidth) - 450).css("top", 50).css("background-color", "#eee");
+        $("#BIlegendDiv").css("position", "absolute").css("top", 0).css("left", (totalWidth - rightPanelWidth) - 80).css("top", 80).css("background-color", "#eee");
+
+
 
 
         $("#treeContainer").width(rightPanelWidth - 15);
@@ -1212,8 +1219,10 @@ var toutlesensController = (function () {
 
         if (!self.hasRightPanel)
             toutlesensController.setResponsiveDimensions(0);
-        else
+        else {
             toutlesensController.setResponsiveDimensions(rightPanelWidth);
+            toutlesensController.setRightPanelAppearance(false);
+        }
         $("#mainButtons").css("visibility", "visible");
 
     }
@@ -1249,7 +1258,7 @@ var toutlesensController = (function () {
         var increase = prompt("Enter new graph display limit");
         if (increase && increase != "") {
             Gparams.maxResultSupported = parseInt(increase);
-            toutlesensController.generateGraph();
+            toutlesensController.generateGraph(null,{useCurrentStatement:true});
         }
     }
 

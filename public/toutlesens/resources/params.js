@@ -87,7 +87,7 @@ var Gparams = {
 
     //divs size*************************
         rightPanelTotalWidthRatio: .3,
-    infosanalyzePanelHeight:300,
+    infosanalyzePanelHeight:350,
 
 
 

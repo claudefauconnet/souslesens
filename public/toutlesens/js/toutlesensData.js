@@ -53,6 +53,7 @@ var toutlesensData = (function () {
 
 
         self.executeNeoQuery = function (queryType, str, successFunction) {
+
             currentQueryType = queryType;
             if (str.indexOf("DELETE") < 0 && str.toLowerCase().indexOf("limit ") < 0) {
                 str += " limit " + limitResult;
@@ -74,6 +75,7 @@ var toutlesensData = (function () {
                 data: payload,
                 dataType: "json",
                 success: function (data, textStatus, jqXHR) {
+
                     currentDataStructure = "flat";
                     //  toutlesensData.cachedResultArray = data;
                     if (!data || data.length == 0) {
@@ -318,9 +320,11 @@ var toutlesensData = (function () {
                         }
 
                     }
-                    if (data.length >= Gparams.maxResultSupported) {// query too get the real number of relations
+                    if (data.length/2 >= Gparams.maxResultSupported/2) {// query too get the real number of relations
+                        var matchStr="MATCH path=(n)-[r]->(m) "+statementBase.substring(statementBase.indexOf("WHERE"))+ "return count(r) as countRel;"
                         var payload = {
-                            match: statementBase + "return count(r) as countRel;"
+                            match:matchStr
+                           // match: "MATCH path=(n)-[r]->(m) "+ self.getCurrentWhereClause() + "return count(r) as countRel;"
                         }
 
 

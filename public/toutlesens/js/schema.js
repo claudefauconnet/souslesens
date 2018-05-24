@@ -515,6 +515,9 @@ var Schema = (function () {
 
                 for (var i = 0; i < nodesChildren[node.name].length; i++) {// for each related node
                     var child = nodesChildren[node.name][i];
+                    if(child.name==node.name)
+                        nodesSerie.push({name: child.name, isVisited: true, level: node.level + 1})
+                        continue;
 
                     if (!child.isVisited) {
                         nodesSerie.push({name: child.name, isVisited: true, level: node.level + 1})

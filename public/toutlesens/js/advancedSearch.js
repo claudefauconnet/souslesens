@@ -10,15 +10,26 @@ var advancedSearch = (function () {
         if (!options)
             options = {};
         var initialLabel = options.initialLabel;
-        self.searchClauses = [];
-        // $("#searchCriteriaTextDiv").html("");
-        $("#searchCriteriatextSelect").find('option').remove();
-       /* if (options.multipleClauses)
-           ;// $("#searchCriteriaTextDiv").css("visibility", "visible");
-        else*/
-            $("#searchCriteriaTextDiv").css("visibility", "hidden");
+        if(false) {
+            self.searchClauses = [];
+            $("#searchCriteriatextSelect").find('option').remove();
+        }
+
+
+
+       if (options.multipleClauses) {
+           $("#searchCriteriaAddButton").css("visibility", "visible");
+           if( self.searchClauses.length>0){
+               $("#searchCriteriaTextDiv").css("visibility", "visible");
+           }
+       }
+
+
+        else
+            $("#searchCriteriaAddButton").css("visibility", "hidden");
         var filterMovableDiv = $("#filterMovableDiv").detach();
         $("#dialog").html(filterMovableDiv);
+        $("#BIlegendDiv").html("");
         advancedSearch.onChangeObjectName(currentObject.name);
 
         var str = "";
@@ -29,17 +40,19 @@ var advancedSearch = (function () {
             if (self.context.target == "source")
                 str += " <button id=\"advancedSearchDialog_searchButton\" onclick=\"traversalController.setStartLabelQuery()\">OK</button>";
             else if (self.context.target == "target") {
-                str += " <button id=\"advancedSearchDialog_searchButton\" onclick=\"traversalController.setEndLabelQuery({clusterIntermediateNodes:1})\">Graph only start and end</button><br>";
+                str += " <button id=\"advancedSearchDialog_searchButton\" onclick=\"traversalController.setEndLabelQuery({clusterIntermediateNodes:1})\">Graph only start and end</button>";
                 str += " <button id=\"advancedSearchDialog_searchButton\" onclick=\"traversalController.setEndLabelQuery({})\">Graph all nodes</button>";
 
             }
 
         }
         else {
-            str += " <button id=\"advancedSearchDialog_searchButton\" onclick=\"advancedSearch.searchNodes('matchStr', infoGenericDisplay.loadSearchResultIntree);$('#dialog').dialog('close')\">List nodes</button><br>";
-            str += " <button id=\"advancedSearchDialog_searchAndGraphButton\" onclick=\"advancedSearch.searchNodes('matchStr',advancedSearch.nodesQueryToGraph);$('#dialog').dialog('close')\">Draw graph</button>";
-        }
+            str += " <button id=\"advancedSearchDialog_searchAndGraphButton\"  onclick=\"advancedSearch.searchNodes('matchStr',advancedSearch.nodesQueryToGraph);$('#dialog').dialog('close')\">Draw graph</button>&nbsp;";
+            str += " <button id=\"advancedSearchDialog_searchButton\" onclick=\"advancedSearch.searchNodes('matchStr', infoGenericDisplay.loadSearchResultIntree);$('#dialog').dialog('close')\">List nodes</button>";
+                 }
         $("#filterActionDiv").html(str);
+
+        $("#advancedSearchDialog_searchAndGraphButton").css("background-color","#5F5F5F");
 
         /*  $("#dialog").load("htmlSnippets/advancedSearchMenu.html", function () {*/
         $("#dialog").dialog("option", "title", "Advanced search");
@@ -82,7 +95,12 @@ var advancedSearch = (function () {
     }
 
     self.addClause = function (operator) {
-        self.searchNodes("matchSearchClause", function (clause) {
+        $("#searchCriteriaTextDiv").css("visibility", "visible").css("height","120px");;
+        var clauseText =$("#propertiesSelectionDialog_propsSelect").val()+" "+$("#propertiesSelectionDialog_operatorSelect").val()+" "+$("#propertiesSelectionDialog_valueInput").val();
+        self.searchNodes("matchSearchClause", function (err,clause) {
+            if(err)
+                return;
+            $("#propertiesSelectionDialog_valueInput").val("");
             for (var i = 0; i < self.searchClauses.length; i++) {
                 if (clause.nodeLabel != "" && self.searchClauses[i].nodeLabel != "" && clause.nodeLabel != self.searchClauses[i].nodeLabel)
                     return alert("you cannot add criteria on different labels :" + clause.nodeLabel != "" && self.searchClauses[i].nodeLabel)
@@ -91,7 +109,7 @@ var advancedSearch = (function () {
             self.searchClauses.push(clause);
             if (!clause.neoLabel)
                 clause.neoLabel = "all labels";
-            var clauseText = clause.neoLabel + " : " + clause.where;
+            clauseText = clause.neoLabel + " : " + clauseText
             //   $("#searchCriteriaTextDiv").append(clauseText);
             $("#searchCriteriatextSelect").append($('<option>', {
                 value: clauseText,
@@ -118,13 +136,16 @@ var advancedSearch = (function () {
 
 
     }
-    self.searchNodesWithClauses = function () {
+    self.searchNodesWithClauses = function (callback) {
         var labelStr = "";
         var whereStr = "";
         var label = self.searchClauses[0].nodeLabel;
         if (label && label.length > 0)
             labelStr = ":" + label;
 
+
+        if(subGraph)
+            whereStr=" WHERE n.subGraph=\""+subGraph+"\" ";
 
         for (var i = 0; i < self.searchClauses.length; i++) {
             if (self.searchClauses[i].where != "") {
@@ -136,10 +157,14 @@ var advancedSearch = (function () {
             }
 
         }
+        $("#graphInfosDiv").html(whereStr)
+
         var query = "MATCH (n" + labelStr + ") " + whereStr + " RETURN n";
 
         console.log(query);
-        self.nodesQueryToGraph(query)
+        if(callback)
+            return callback(null,query)
+        self.nodesQueryToGraph(null,query)
 
 
     }
@@ -158,7 +183,7 @@ var advancedSearch = (function () {
         $("#waitImg").css("visibility", "visible")
         if (resultType != "matchSearchClause" && self.searchClauses.length > 0) {// multiple clauses
 
-            return self.searchNodesWithClauses();
+            return self.searchNodesWithClauses(callback);
         }
         currentObject.id = null;
 
@@ -174,6 +199,7 @@ var advancedSearch = (function () {
         searchObj.property = $("#propertiesSelectionDialog_propsSelect").val();
         searchObj.operator = $("#propertiesSelectionDialog_operatorSelect").val();
         searchObj.value = $("#propertiesSelectionDialog_valueInput").val();
+
 
         var selectedLabels = [];
         $('[name=advancedSearchDialog_LabelsCbx]:checked').each(function () {
@@ -213,7 +239,7 @@ var advancedSearch = (function () {
                 toutlesensData.searchNodesWithOption(options, function (err, result) {
                     //   toutlesensData.searchNodes(subGraph, searchObj.label, null, "matchStr", Gparams.jsTreeMaxChildNodes, 0, function (err, result) {
                     if (callback) {
-                        return callback(result);
+                        return callback(err,result);
                     }
                     infoGenericDisplay.loadSearchResultIntree(err, result);
                     setTimeout(function () {
@@ -651,7 +677,8 @@ var advancedSearch = (function () {
      * @param query
      */
     self.nodesQueryToGraph = function (err,query) {
-
+if(err)
+    return console.log(err);
         var payload = {
             match: query
         }

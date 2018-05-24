@@ -68,7 +68,9 @@ var visjsGraph = (function () {
                 edges: self.edges
             };
 
-
+            var physicsTimeStep=0.5;
+            if(data.length<2000)
+                physicsTimeStep=0.2
             options = {
 
 
@@ -138,11 +140,8 @@ var visjsGraph = (function () {
             else {
                 self.physicsOn = true;
                 options.physics = {
-
                     stabilization: false,
-                    timestep: 0.46
-
-
+                    timestep: physicsTimeStep
                 }
             }
             var firstNode = data.nodes._data[Object.keys(data.nodes._data)[0]];
@@ -313,7 +312,7 @@ var visjsGraph = (function () {
                     fn();
                 }
                 else {
-                    network.fit()
+                   ;// network.fit()
                 }
 
 

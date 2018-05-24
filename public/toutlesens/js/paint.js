@@ -11,7 +11,12 @@ var paint = (function () {
 
     self.initialNodesattrs = {};
     self.initialLinksattrs = {};
+    self.currentBIproperty=null;
     var currentAction = "";
+
+    var clickedLegendItem=false;
+
+    var ordinalLegendMap={}
 
 
     self.init = function (data) {
@@ -116,15 +121,19 @@ var paint = (function () {
         });
     }
 
-    self.paintClasses = function () {
-
+    self.paintClasses = function (_property) {
+        ordinalLegendMap={};
         var nClasses = parseInt($("#paintDialog_NclassesInput").val());
         var size = parseInt($("#paintDialog_circleRadiusInput").val()*2);
         var property = $("#propertiesSelectionDialog_propsSelect").val();
+        if(_property )
+            property=_property;
+
+
         if (property == "")
             return toutlesensController.setMessage("choose a property", "red");
 
-
+        self.currentBIproperty=property;
         var data = [];
 
         var nodes=visjsGraph.nodes.get()
@@ -134,6 +143,10 @@ var paint = (function () {
             if (value)
                 data.push({id: nodeData.id, value: value});
         }
+        if(data.length==0)
+            return;
+
+
         var min = d3.min(data, function (d) {
             return d.value;
         });
@@ -183,6 +196,8 @@ var paint = (function () {
         var shapes=["dot","diamond","triangle","trangleDown","square","star"];
         var shapeIndex=0;
         for (var i = 0; i < data.length; i++) {
+
+
             allIds.push("" + data[i].id)
             var color;
             if (scaleType == "ordinal") {
@@ -200,13 +215,12 @@ var paint = (function () {
             if (!color) {
                 color="#333";
             }
-                /*  colorClasses[color] = [];
-                }
-              colorClasses[color].push("" + data[i].id);*/
+            if(!ordinalLegendMap[data[i].value])
+                ordinalLegendMap[data[i].value]=color;
 
 
-                targetNodes.push({id: "" + data[i].id, color: color,size:size,shape:shapes[shapeIndex]});
-            if( i%nClasses==0)
+                targetNodes.push({id: "" + data[i].id, color: color,size:size,shape:shapes[shapeIndex],hidden:false});
+            if(false &&  i%nClasses==0)
                 shapeIndex+=1
 
 
@@ -228,6 +242,7 @@ var paint = (function () {
 
 
     self.drawPaletteColorLegend = function (scale, domain, palette, nClasses) {
+        $("#BIlegendDiv").html("");
 
         var ticks;
         var type;
@@ -244,7 +259,10 @@ var paint = (function () {
         }
 
         if (!ticks) {
-            type = "ordinal";
+            for(var key in ordinalLegendMap){
+                ticksColors.push({color: ordinalLegendMap[key], tick: key});
+            }
+          /*  type = "ordinal";
             ticks = scale.domain();
 
             for (var i = 0; i < ticks.length; i++) {
@@ -252,28 +270,24 @@ var paint = (function () {
                 color = scale(ticks[i]);
                 color = self.rgb2hex(color);
                 ticksColors.push({color: color, tick: ticks[i]});
-            }
+            }*/
 
         }
 
-        var str = "<table>"
+        var str = "<b>"+self.currentBIproperty+"<b></b><br><table style='font-size: 10px;font-weight: normal'>"
         var color;
         var shapes=["dot","diamond","triangle","trangleDown","square","star"];
         var shapeIndex=0;
         for (var i = 0; i < ticksColors.length; i++) {
             var onClick = " onclick='paint.onLegendItemClick(\"" + ticksColors[i].tick + "\")'";
 
-            str += "<tr><td" + onClick + "><span style='background-color: " + ticksColors[i].color + ";'>&nbsp;&nbsp;&nbsp;</span></td><td>" + ticksColors[i].tick + "</td></tr>"
+            str += "<tr" + onClick + "><td><span  class='BIlegendSpan' id='BIlegendSpan_"+ticksColors[i].tick +"' style='background-color: " + ticksColors[i].color + ";width:20px;height: 20px'>&nbsp;&nbsp;&nbsp;</span></td><td>" + ticksColors[i].tick + "</td></tr>"
 
         }
         $("#BIlegendDiv").html(str);
-      /*  $("#paintDiv").css("height", 300);
-        $("#paintDiv").html(str);
-        jQuery("#dialog").dialog('option', 'position', {
-            my: "left bottom",
-            at: "left bottom",
-         //   of: "#mainPanel"
-        });*/
+        var left= (totalWidth - rightPanelWidth) -  $("#BIlegendDiv").width()-10
+        $("#BIlegendDiv").css("left",left)
+
 
 
     }
@@ -506,13 +520,28 @@ var paint = (function () {
 
         return "#" + hex(rgb[1]) + hex(rgb[2]) + hex(rgb[3]);
     }
-    self.onLegendItemClick = function (tick) {
-        var nodes = visjsGraph.nodesMap;
-        for (var key in nodes) {
-            if (nodes[key].label == tick) {
-                visjsGraph.selectNode([nodes[key].id])
+    self.onLegendItemClick = function (value) {
+
+        var selectedNodes=[];
+        var nodes = visjsGraph.nodes.get();
+        for (var i=0;i<nodes.length;i++){
+            if(clickedLegendItem!=value) {//hide other nodes than value
+                if (nodes[i].neoAttrs[self.currentBIproperty] == value)
+                    selectedNodes.push({id: nodes[i].id, hidden: false})
+                else
+                    selectedNodes.push({id: nodes[i].id, hidden: true})
+            }
+            else {//remove hidden on all nodes
+                selectedNodes.push({id: nodes[i].id, hidden: false})
+
             }
         }
+        if(clickedLegendItem!=value)
+        clickedLegendItem=value;
+        else
+            clickedLegendItem = "";
+
+        visjsGraph.nodes.update(selectedNodes)
 
     }
 
