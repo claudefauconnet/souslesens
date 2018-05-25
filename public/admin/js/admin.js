@@ -877,13 +877,10 @@ function loadRequest(requestName, changeTab) {
 
             }
             if (changeTab && requestName.startsWith("Node"))
-                $("#accordionPanel").tabs({
-                    active: 1
-                });
+                $( "#accordion" ).accordion( "option", "active",1 );
+
             else if (changeTab && requestName.startsWith("Rel"))
-                $("#accordionPanel").tabs({
-                    active: 2
-                });
+                $( "#accordion" ).accordion( "option", "active",2 );
 
             return;
         }

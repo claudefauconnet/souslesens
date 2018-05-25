@@ -136,11 +136,13 @@ var restAPI = {
                     jsonArray.push(json);
                 })
                 .on('done', function () {
-                    var path = "./uploads/" + fileName + ".json";
-                    //4 delete old csv data
-                    if (fs.existsSync(path))
-                        fs.unlinkSync(path);
-                    fs.writeFileSync(path, JSON.stringify(jsonArray));
+                    if(fileName) {
+                        var path = "./uploads/" + fileName + ".json";
+                        //4 delete old csv data
+                        if (fs.existsSync(path))
+                            fs.unlinkSync(path);
+                        fs.writeFileSync(path, JSON.stringify(jsonArray));
+                    }
                     execNeoUpdate("CSV", fileName, subGraph, nodeLabels, relTypes, mappings, function (err, result) {
                         return callback(null, result);
                     })

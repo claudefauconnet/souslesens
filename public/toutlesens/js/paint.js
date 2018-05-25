@@ -180,6 +180,8 @@ var paint = (function () {
             scale = d3.scaleQuantize().domain([min, max]).nice().range(palette);
         }
         else {
+
+            domain = d3.scalePoint().domain(data).range([0, palette.length]);
             domain = d3.scaleOrdinal().domain(data).range([0, palette.length]);
             scaleType = "ordinal"
             scale = d3.scaleOrdinal().domain(data).range(palette);
