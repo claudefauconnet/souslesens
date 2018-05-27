@@ -27,8 +27,12 @@
 var   serverRootUrl="";
 var Gparams = {
 
+    displayVersion:"1_googleLike",
+
+    searchNodeAutocompletion:true,
     queryInElasticSearch:false,
     ElasticResultMaxSize:1000,
+
 
 
     //init defaults*******************************

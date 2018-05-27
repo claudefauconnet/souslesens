@@ -21,6 +21,7 @@
           <button onclick=" toutlesensController.dispatchAction('showSchemaConfigDialog');$('#dialog').dialog('close');">Graph Schema...</button>
             <button onclick="toutlesensController.dispatchAction('showSchema')">draw schema</button>
             <button onclick="toutlesensController.dispatchAction(' clearLocalStorageSchema')">reset schema</button>
+          <br>display version <select id="displayVersionsSelect" onchange="versionController.onDisplayVersionsSelect(this)"></select>
 
             &nbsp;<br>  <button onclick=" toutlesensController.dispatchAction('showParamsConfigDialog');$('#dialog').dialog('close');">Parameters...</button>
             &nbsp;<input type="image" onclick='$("#souslesensGeneralInfosDiv").css("visibility","visible")' width="20px" src="images/infos.png">
@@ -59,5 +60,10 @@
 
 
 </table>
+<script>
+
+
+    versionController.initDisplayVersionsSelect();
+</script>
 
 

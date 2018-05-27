@@ -171,7 +171,11 @@ var toutlesensController = (function () {
                 return;
             }
 
+
             if (data.length == 0) {
+                if(callback){
+                    return callback(err,data);
+                }
                 self.setGraphMessage("No  result");
                 $("#waitImg").css("visibility", "hidden");
                 $("#tabs-analyzePanel").tabs("enable", 0);
@@ -311,19 +315,27 @@ var toutlesensController = (function () {
      */
 
     self.searchNodesUI = function (resultType, limit, from, callback) {
-        $("#searchResultMessage").html("")
+        $("#searchResultMessage").html("");
+//********************************************************
+//trigger search depending on mode and keys
+       if(Gparams.searchNodeAutocompletion) {
+           if (!startSearchNodesTime) {// temporisateur
+               startSearchNodesTime = new Date();
+               return;
+           } else {
+               var now = new Date();
+               if (now - startSearchNodesTime < Gparams.searchInputKeyDelay)
+                   return;
+           }
 
-  /*      if (!startSearchNodesTime) {// temporisateur
-            startSearchNodesTime = new Date();
-            return;
-        } else {
-            var now = new Date();
-            if (now - startSearchNodesTime < Gparams.searchInputKeyDelay)
-                return;
-        }*/
+
+       }else
+           if( event.keyCode !=13)
+               return;
 
 
 
+//********************************************************
         var word = "";
         $("#nodesLabelsSelect").val("")
         currentLabel = null;
@@ -343,7 +355,9 @@ var toutlesensController = (function () {
 
 
 
-        if ( Gparams.queryInElasticSearch) {
+
+//********************************************************
+        if ( Gparams.queryInElasticSearch ) {
             if(word.length<3)
                 return;
             var payload = {
@@ -404,6 +418,7 @@ var toutlesensController = (function () {
             });
         }
         else {
+
             toutlesensData.searchNodes(subGraph, label, word, resultType, limit, from, callback);
         }
         setTimeout(function () {

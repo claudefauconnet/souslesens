@@ -146,6 +146,7 @@
     <script src="resources/lang_FR.js"></script>
     <script src="resources/lang_EN.js"></script>
     <script src="js/functionalities.js"></script>
+    <script src="js/versionController.js"></script>
 
     <script src="js/d3graphCreation.js"></script>
     <script src="../common/js/others/async.js"></script>
@@ -297,6 +298,7 @@
             if (!subGraph)
                 subGraph = Gparams.defaultSubGraph;
             functionalities.hideFunctionalities();
+
             lang.setLangage();
 
 
@@ -548,7 +550,13 @@
 
             })
 
-
+            versionController.initVersions();
+            var version=null;
+            if(queryParams.displayVersion){
+                version=queryParams.displayVersion;
+                Gparams.displayVersion=queryParams.displayVersion
+            }
+            versionController.applyVersion(version);
         })
 
         function onLabelActionSelect(select) {
@@ -598,6 +606,7 @@
 
             }
         }
+
 
 
     </script>
@@ -665,7 +674,7 @@
                 <li><a href="#nodeDiv"><span id='lang_60'>Node  </span></a></li>
                 <li><a href="#relationDiv"><span id='lang_60'>Relation </span></a></li>
                 <li><a href="#pathDiv"><span id='lang_60'>Pathes </span></a></li>
-                <li><a href="#advancedQueriesDiv"><span id='lang_60'>Advanced </span></a></li>
+                <li><a href="#advancedQueriesDiv" id="advancedQueriesTabLi"><span id='lang_60'>Advanced </span></a></li>
                 <!--  <li><a href="#requestDiv"><span id='lang_60'>Request </span></a></li>-->
 
 
@@ -682,7 +691,7 @@
                                     <tr align="center">
                                         <td><span id='lang_1'>Node</span></td>
                                         <td><input id="word"
-                                                   onkeydown="if (event.keyCode == 13)
+                                                   onkeydown="
                        toutlesensController.searchNodesUI('matchStr',null,null, infoGenericDisplay.loadSearchResultIntree)"
                                                    size="10"></td>
                                         <td><input type="image" height="20px" src="images/erase.png"
@@ -932,6 +941,7 @@
 
 
     </table>
+    <div id="filterActionDiv"></div>
     <button onclick="advancedSearch.addClause()" id="searchCriteriaAddButton">And...</button>
     <div id="searchCriteriaTextDiv" style ="visibility:hidden;background-color:#FFFFFF; margin:2px;padding:2px">
         <BR>
@@ -939,7 +949,7 @@
         <button onclick="advancedSearch.clearClauses()">clear criteria</button>
 
     </div>
-    <div id="filterActionDiv"></div>
+
     <div id="filterOptionsDiv"></div>
 
 

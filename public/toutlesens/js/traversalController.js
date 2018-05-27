@@ -15,6 +15,8 @@ var traversalController = (function () {
             pathType: ''
         }
 
+        var currentTransitivityLevel = null;
+
         /**
          *
          * in path context when click on jtree node set self.context for nodes (start and end)
@@ -25,16 +27,17 @@ var traversalController = (function () {
          */
 
         self.setTraversalNode = function (stage, data) {
+            $("#traversalFindDiv").css("visibility", "visible");
             var nodeName = data[Gparams.defaultNodeNameProperty];
-            var obj= {id: data.neoId, type: "node", name: nodeName,label:data.label}
+            var obj = {id: data.neoId, type: "node", name: nodeName, label: data.label}
             if (stage == 'source') {
                 $("#pathes_sourceNode").html(nodeName);
-                traversalController.context.start =obj;
+                traversalController.context.start = obj;
 
             }
             if (stage == 'target') {
                 $("#pathes_targetNode").html(nodeName);
-                traversalController.context.end =obj;
+                traversalController.context.end = obj;
             }
 
             if (traversalController.context.start.id && traversalController.context.end.id) {
@@ -67,39 +70,61 @@ var traversalController = (function () {
 
         self.setStartLabelQuery = function () {
 
-            advancedSearch.searchNodes("matchObject", function (queryObj) {
+            advancedSearch.searchNodes("matchObject", function (err, queryObj) {
+                if (err)
+                    return console.log(err)
                 traversalController.context.start.queryObj = queryObj;
                 $("#dialog").dialog("close");
                 $("#pathes_sourceNode").html(JSON.stringify(queryObj));
-                graphicController.startLabel=queryObj.nodelabel;
+                graphicController.startLabel = queryObj.nodelabel;
 
                 $("#waitImg").css("visibility", "hidden")
+                $("#traversalFindDiv").css("visibility", "hidden");
             })
         }
 
-        self.setEndLabelQuery = function (options) {
+        self.setEndLabelQuery = function () {
+            var str = "";
+            str += " <button id=\"advancedSearchDialog_searchButton\" onclick=\"traversalController.execTransitivePathQuery({clusterIntermediateNodes:1})\">Graph only start and end</button>";
+            str += " <button id=\"advancedSearchDialog_searchButton\" onclick=\"traversalController.execTransitivePathQuery({})\">Graph all nodes</button>";
+            $("#pathes_buttonsDiv").html(str);
+            $("#traversalFindDiv").css("visibility", "hidden");
+            $("#dialog").dialog("close");
+        }
+
+
+        self.execTransitivePathQuery = function (options) {
             if (!options) {
                 options = {};
             }
-            advancedSearch.searchNodes("matchObject", function (queryObj) {
+            advancedSearch.searchNodes("matchObject", function (err, queryObj) {
+                if (err)
+                    return console.log(err)
                 traversalController.context.end.queryObj = queryObj;
                 $("#pathes_targetNode").html(JSON.stringify(queryObj));
 
                 $("#dialog").dialog("close");
                 traversalController.searchAllTransitiveNodes(options);
+                $("#traversalFindDiv").css("visibility", "hidden");
             })
         }
 
 
         self.showSearchMenu = function (target) {
+            $("#traversalFindDiv").css("visibility", "visible");
             var pathType = $("#pathType").val();
-            advancedSearch.context = {pathType: pathType, target: target}
+            advancedSearch.context = {pathType: pathType, target: target};
             toutlesensController.currentActionObj = {type: pathType, stage: target}
-            toutlesensController.setRightPanelAppearance(true);
-            var nodeDivDetach = $("#nodeDivDetachable").detach();
-            $("#traversalFindDiv").append(nodeDivDetach);
-            $("#word").focus();
+            if(pathType=="shortestPath") {
 
+                toutlesensController.setRightPanelAppearance(true);
+                var nodeDivDetach = $("#nodeDivDetachable").detach();
+                $("#traversalFindDiv").append(nodeDivDetach);
+                $("#word").focus();
+            }
+            else    if(pathType=="allTransitivePaths") {
+                advancedSearch.showDialog({multipleClauses:true});
+            }
 
         }
 
@@ -159,29 +184,76 @@ var traversalController = (function () {
                 where = " ID(n)=" + self.context.start.id + " and ID(m)=" + self.context.end.id
             }
             toutlesensData.whereFilter = where;
+            var transitivityLevel;
+            if (options=="incrementTransitivityLevel") {
+                transitivityLevel =currentTransitivityLevel+1;
+            }
+            else if (options=="decrementTransitivityLevel") {
+                transitivityLevel =currentTransitivityLevel-1;
+            }
+            else {
+                 transitivityLevel = Schema.getLabelsDistance(self.context.start.label, self.context.end.label);
+                if (!transitivityLevel)
+                    transitivityLevel = 1;
+
+            }
+            currentTransitivityLevel = transitivityLevel;
+
+            /*   if (relCardinality < 0)
+                   return console.log("no cardinality found between " + self.context.start.label + " and" + self.context.end.label)*/
+
+            var dataAsync = [];
+            var maxDistanceLimit = Gparams.shortestPathMaxDistanceTest;
+            async.doWhilst(function (callback) {
+
+                    var startLabelStr = "";
+                    if (self.context.start.label && self.context.start.label.length > 0)
+                        startLabelStr = ":" + self.context.start.label;
+                    var endLabelStr = "";
+                    if (self.context.end.label && self.context.end.label.length > 0)
+                        endLabelStr = ":" + self.context.end.label;
 
 
-            var relCardinality = Schema.getLabelsDistance(self.context.start.label, self.context.end.label);
-            if (relCardinality < 0)
-                return console.log("no cardinality found between " + self.context.start.label + " and" + self.context.end.label)
-            toutlesensData.matchStatement = "(n:" + self.context.start.label + ")-[r*" + relCardinality + "]-(m:" + self.context.end.label + ")";
+                    toutlesensData.matchStatement = "(n" + startLabelStr + ")-[r*" + transitivityLevel + "]-(m" + endLabelStr + ")";
+
+                    $("#cypherDialog_matchInput").val(toutlesensData.matchStatement);
+                    $("#cypherDialog_whereInput").val(toutlesensData.whereFilter);
+                    $("#shortestPathDistance").html("Transitivity level :" + transitivityLevel)
 
 
-            $("#cypherDialog_matchInput").val(toutlesensData.matchStatement);
-            $("#cypherDialog_whereInput").val(toutlesensData.whereFilter);
-            toutlesensController.setRightPanelAppearance(true)
-            //   $("#findTabs").tabs("option", "active", 3);
-            //   $("#advancedQueriesAccordion").tabs("option", "active", 4);
-
-            var _options = {dragConnectedNodes: true};
-            if (relCardinality > 1 && options.clusterIntermediateNodes)
-                _options.clusterIntermediateNodes = true;
+                    var _options = {dragConnectedNodes: true};
+                    if (transitivityLevel > 1 && options.clusterIntermediateNodes)
+                        _options.clusterIntermediateNodes = true;
 
 
-            toutlesensController.generateGraph(null, _options);
-            //  $("#shortestPathDistance").text("All transitive pathes between " + self.context.start.name + " and " + self.context.end.name )
-            var nodeDivDetach = $("#nodeDivDetachable").detach();
-            $("#nodeDiv").append(nodeDivDetach);
+                    toutlesensController.generateGraph(null, _options, function (err, data) {
+                        if (err)
+                            return err;
+                        dataAsync = data;
+                        return callback();
+
+                    })
+                }, function () {//test
+                    if (dataAsync.length == 0 && transitivityLevel >= maxDistanceLimit) {
+                        $("#shortestPathDistance").html("No relations found until Transitivity level :" + transitivityLevel);
+                        return true;
+                    } else {
+                        if(transitivityLevel>1)
+                            str += "&nbsp;<button onclick='traversalController.searchAllTransitiveNodes(\"decrementTransitivityLevel\")'>decrease</button>"
+                        var str = "&nbsp;<button onclick='traversalController.searchAllTransitiveNodes(\"incrementTransitivityLevel\")'>increase</button>'"
+
+                        $("#shortestPathDistance").html("Transitivity level :" + transitivityLevel+ str);
+                        return false;
+                    }
+
+
+                },
+                function (resp) {// at the end
+
+                    var nodeDivDetach = $("#nodeDivDetachable").detach();
+                    $("#nodeDiv").append(nodeDivDetach);
+                    toutlesensController.setRightPanelAppearance(false)
+                })
 
 
         }

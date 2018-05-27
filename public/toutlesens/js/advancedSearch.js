@@ -10,9 +10,10 @@ var advancedSearch = (function () {
         if (!options)
             options = {};
         var initialLabel = options.initialLabel;
-        if(false) {
+        if(self.context && self.context.pathType) {
             self.searchClauses = [];
             $("#searchCriteriatextSelect").find('option').remove();
+            $("#searchCriteriaTextDiv").css("visibility", "hidden");
         }
 
 
@@ -40,8 +41,8 @@ var advancedSearch = (function () {
             if (self.context.target == "source")
                 str += " <button id=\"advancedSearchDialog_searchButton\" onclick=\"traversalController.setStartLabelQuery()\">OK</button>";
             else if (self.context.target == "target") {
-                str += " <button id=\"advancedSearchDialog_searchButton\" onclick=\"traversalController.setEndLabelQuery({clusterIntermediateNodes:1})\">Graph only start and end</button>";
-                str += " <button id=\"advancedSearchDialog_searchButton\" onclick=\"traversalController.setEndLabelQuery({})\">Graph all nodes</button>";
+                str += " <button id=\"advancedSearchDialog_searchButton\" onclick=\"traversalController.setEndLabelQuery()\">OK</button>";
+
 
             }
 

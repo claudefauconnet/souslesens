@@ -473,6 +473,8 @@ var Schema = (function () {
         }
 
         self.getLabelsDistance = function (startNode, endNode) {
+            if(!startNode || !endNode || startNode.length==0 || endNode.length==0)
+                return null;
             var relations = self.schema.relations;
             var nodesChildren = {};
 
@@ -515,9 +517,9 @@ var Schema = (function () {
 
                 for (var i = 0; i < nodesChildren[node.name].length; i++) {// for each related node
                     var child = nodesChildren[node.name][i];
-                    if(child.name==node.name)
+                    if (child.name == node.name)
                         nodesSerie.push({name: child.name, isVisited: true, level: node.level + 1})
-                        continue;
+                    continue;
 
                     if (!child.isVisited) {
                         nodesSerie.push({name: child.name, isVisited: true, level: node.level + 1})
@@ -532,7 +534,14 @@ var Schema = (function () {
 
             }
 
+            /*if( !distance)
+                var distanceStr=prompt ("max number of relations between nodes ")
+                        try{
+                            distance=parseInt(distanceStr)
+                        }
+                        catch(e){
 
+                        }*/
             return distance;
 
 

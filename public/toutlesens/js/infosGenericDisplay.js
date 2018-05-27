@@ -852,9 +852,11 @@ var infoGenericDisplay = (function () {
 
             return;
         } else if (toutlesensController.currentActionObj.type == 'shortestPath') {
+            $("#traversalFindDiv").css("visibility","hidden");
             traversalController.setTraversalNode(toutlesensController.currentActionObj.stage, node.data);
             return;
         } else if (toutlesensController.currentActionObj.type == 'allTransitivePaths') {
+            $("#traversalFindDiv").css("visibility","hidden");
             traversalController.setTraversalNode(toutlesensController.currentActionObj.stage, node.data);
             return;
         }
