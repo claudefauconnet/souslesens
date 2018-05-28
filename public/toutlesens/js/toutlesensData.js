@@ -1296,6 +1296,7 @@ var toutlesensData = (function () {
             str = "MATCH (n" + labelStr + ") " + whereStr + subGraphWhere + returnStr;
 
             if (resultType == "matchStr" && callback) {
+           //     console.log("search nodes  "+str);
                 return callback(null, str);
             }
             else if ((resultType == "matchObject" || resultType == "matchSearchClause" ) && callback) {
@@ -1308,7 +1309,7 @@ var toutlesensData = (function () {
             }
 
             str += cursorStr;
-            //    console.log(str);
+
             var payload = {match: str};
 
 

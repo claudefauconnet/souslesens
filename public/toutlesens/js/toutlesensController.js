@@ -329,9 +329,10 @@ var toutlesensController = (function () {
            }
 
 
-       }else
-           if( event.keyCode !=13)
+       }else {
+           if (event.keyCode != 13)
                return;
+       }
 
 
 
@@ -351,15 +352,17 @@ var toutlesensController = (function () {
         if (word.match(/.* /))
             word = word.substring(word.length - 2)
 
-        word += "*";
 
+console.log("-----"+word);
 
 
 
 //********************************************************
         if ( Gparams.queryInElasticSearch ) {
+
             if(word.length<3)
                 return;
+            word += "*";
             var payload = {
                 elasticQuery2NeoNodes: 1,
                 queryString: word,
@@ -883,9 +886,7 @@ var toutlesensController = (function () {
         }
         else if (action == "showSchema") {
            var storedSchema= localStorage.getItem("schemaGraph_" + subGraph)
-           if(event.ctrlKey &&  storedSchema) {
-               localStorage.removeItem("schemaGraph_" + subGraph);
-           }
+
             currentActionObj.graphType = "schema";
             $("#dialogLarge").dialog("close");
 

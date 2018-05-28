@@ -31,6 +31,7 @@ var infoGenericDisplay = (function () {
     self.MongoStorage = false;
     self.synchronizeNeoToMongo = false;
     self.currentLabel = null;
+    self.currentNodesSelection=[];
 
 
     var limit = Gparams.jsTreeMaxChildNodes;
@@ -662,18 +663,20 @@ var infoGenericDisplay = (function () {
     }
 
     self.formatResultToJtreeData = function (data, parentId, ancestors) {
+        self.currentNodesSelection=[];
         var labels = [];
         var jsonData = [];
         var names = [];
         ids = {};
         var nameKey = Schema.getNameProperty();
+        jsonData.push({parent: "#", text: "all results", id: "all",type:"root"})
         for (var i = 0; i < data.length; i++) {
             var label = data[i].n.labels[0];
             if (labels.indexOf(label) < 0) {
                 labels.push(label);
 
 
-                jsonData.push({parent: "#", text: label, id: label,type:"label"})
+                jsonData.push({parent: "all", text: label, id: label,type:"label"})
                 for (var j = 0; j < data.length; j++) {
 
                     var childLabel = data[j].n.labels[0];
@@ -685,6 +688,7 @@ var infoGenericDisplay = (function () {
 
                             properties.label = label;
                             properties.neoId = data[j].n._id;
+                            self.currentNodesSelection.push(data[j].n._id);
                             var jstreeId = (""+label + "-" + j)
                             ids[jstreeId] = properties;
 
@@ -816,7 +820,24 @@ var infoGenericDisplay = (function () {
 
     self.onSelect = function (node) {
         var node = node;
-        if (node.parent == "#") {//label node
+
+        if (node.parent == "#") {
+            toutlesensData.setSearchByPropertyListStatement("_id", self.currentNodesSelection, function (err, result) {
+                toutlesensController.generateGraph(null, {
+                    applyFilters: true,
+                    dragConnectedNodes: true
+                }, function () {
+
+                    $("#filtersDiv").html("");
+                    $("#graphMessage").html("");
+
+
+                });
+
+            })
+
+        }
+        if (node.parent == "all") {//label node
 
             currentLabel = node.text;
             if (currentObject)

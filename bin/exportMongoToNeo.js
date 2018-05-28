@@ -274,10 +274,12 @@ var exportMongoToNeo = {
 
 
         //retrieve in Neo4j mappings between neoIds and name field
-        var sourceNodeMappingsStatement = "match (n) where n.subGraph=\"" + subGraph + "\" and n:" + neoSourceLabel + " or n:" + neoTargetLabel + ") return n.id as mongoId, id(n) as neoId, labels(n)[0] as label; "
+        var sourceNodeMappingsStatement = "match (n) where n.subGraph=\"" + subGraph + "\" and n:" + neoSourceLabel + " or n:" + neoTargetLabel + " return n.id as mongoId, id(n) as neoId, labels(n)[0] as label; "
 
         //var sourceNodeMappingsStatement = "match (n) where n.subGraph=\"" + subGraph + "\" and labels(n) in [\"" + neoSourceLabel + "\",\"" + neoTargetLabel + "\"] return n.id as mongoId, id(n) as neoId, labels(n)[0] as label; "
         neoProxy.match(sourceNodeMappingsStatement, function (err, result) {
+            if(err)
+                return callback(err);
             var sourceNodeMappings = [];
             var targetNodeMappings = [];
 

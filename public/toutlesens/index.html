@@ -127,7 +127,7 @@
     <script src="./js/schema.js"></script>
     <script src="../common/js/jsTree/jstree.min.js"></script>
     <!--<script src="./js/jsTree/treeController.js"></script>-->
-    <script src="./js/infosGenericDisplay.js"></script>
+    <script src="./js/treeController.js"></script>
 
     <script src="./js/neoToMongo.js"></script>
 
@@ -321,6 +321,15 @@
                 }
 
             });
+            $("#schemaButton").click(function (e) {
+                var storedSchema= localStorage.getItem("schemaGraph_" + subGraph)
+                if(e.ctrlKey &&  storedSchema) {
+                    localStorage.removeItem("schemaGraph_" + subGraph);
+                }
+                toutlesensController.dispatchAction("showSchema")
+
+            });
+
 
 
             $("#graphDiv").click(function (e) {
@@ -628,7 +637,7 @@
 <div id="mainButtons">
     <img id="waitImg" src="images/waitAnimated.gif" width="20px" style="visibility: hidden;">
     <input type="image" title="<span id='lang_XX'>schema</span>" height="20px"
-           onclick="toutlesensController.dispatchAction('showSchema')"
+
            id="schemaButton" src="images/cube.png"/>
     <input type="image" title="<span id='lang_XX'>search</span>" height="20px" onclick="advancedSearch.showDialog({multipleClauses:true})"
            id="searchButton2" src="images/advancedSearch2.png"/>

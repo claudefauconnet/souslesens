@@ -7,6 +7,9 @@ var advancedSearch = (function () {
     self.context = {}
     self.searchClauses = [];
     self.showDialog = function (options) {
+
+
+        $("#word").val("");
         if (!options)
             options = {};
         var initialLabel = options.initialLabel;
@@ -419,7 +422,7 @@ var advancedSearch = (function () {
 
 
                 if (data.length == 0) {
-                    $("#similarsDialogSimilarsDiv").html("nos similarities found");
+                    $("#similarsDialogSimilarsDiv").html("no similarities found");
                     return;//messageDivId.html("nos similarities found");
                 }
                 self.currentObject.similarLabels = []
