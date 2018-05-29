@@ -173,8 +173,8 @@ var toutlesensController = (function () {
 
 
             if (data.length == 0) {
-                if(callback){
-                    return callback(err,data);
+                if (callback) {
+                    return callback(err, data);
                 }
                 self.setGraphMessage("No  result");
                 $("#waitImg").css("visibility", "hidden");
@@ -212,6 +212,7 @@ var toutlesensController = (function () {
                 $("#mainButtons").css("visibility", "visible");
                 $("#waitImg").css("visibility", "hidden");
                 $(".graphDisplayed").css("visibility", "visible");
+                $( "#tabs-analyzePanel" ).tabs( "option", "active", 2 );//highlight
 
                 if (toutlesensData && toutlesensData.queriesIds.length > 1)
                     options.dragConnectedNodes = true;
@@ -265,7 +266,7 @@ var toutlesensController = (function () {
 
             visjsGraph.draw("graphDiv", json, options);
             visjsGraph.drawLegend(filters.currentLabels);
-            if(paint.currentBIproperty && paint.currentBIproperty!="")
+            if (paint.currentBIproperty && paint.currentBIproperty != "")
                 paint.paintClasses(paint.currentBIproperty)
 
         }
@@ -316,58 +317,35 @@ var toutlesensController = (function () {
 
     self.searchNodesUI = function (resultType, limit, from, callback) {
         $("#searchResultMessage").html("");
-//********************************************************
-//trigger search depending on mode and keys
-       if(Gparams.searchNodeAutocompletion) {
-           if (!startSearchNodesTime) {// temporisateur
-               startSearchNodesTime = new Date();
-               return;
-           } else {
-               var now = new Date();
-               if (now - startSearchNodesTime < Gparams.searchInputKeyDelay)
-                   return;
-           }
-
-
-       }else {
-           if (event.keyCode != 13)
-               return;
-       }
-
 
 
 //********************************************************
         var word = "";
         $("#nodesLabelsSelect").val("")
+
         currentLabel = null;
         var label = $("#nodesLabelsSelect").val();
         word = $("#word").val();
-        if (word && word.length < Gparams.searchInputMinLength && label && label.length == "") {
+
+        if (word && word.length < Gparams.searchInputMinLength) {
             return;
         }
-        if (label == "" && word == "") {
-            return;
-        }
-        var word0=word.toLowerCase()
+
+        var word0 = word.toLowerCase()
         if (word.match(/.* /))
             word = word.substring(word.length - 2)
 
 
-console.log("-----"+word);
-
-
-
 //********************************************************
-        if ( Gparams.queryInElasticSearch ) {
+        if (Gparams.queryInElasticSearch) {
 
-            if(word.length<3)
-                return;
+
             word += "*";
             var payload = {
                 elasticQuery2NeoNodes: 1,
                 queryString: word,
                 index: subGraph.toLowerCase(),
-                resultSize:Gparams.ElasticResultMaxSize
+                resultSize: Gparams.ElasticResultMaxSize
             }
 
             $.ajax({
@@ -376,45 +354,49 @@ console.log("-----"+word);
                 data: payload,
                 dataType: "json",
                 success: function (data, textStatus, jqXHR) {
-                    if(data.length>=  Gparams.ElasticResultMaxSize){
-                        $("#searchResultMessage").html("cannot show all data : max :" +Gparams.ElasticResultMaxSize);
+                    if (data.length >= Gparams.ElasticResultMaxSize) {
+                        $("#searchResultMessage").html("cannot show all data : max :" + Gparams.ElasticResultMaxSize);
                     }
-                    else{
-                        $("#searchResultMessage").html(data.length +" nodes found");
+                    else {
+                        $("#searchResultMessage").html(data.length + " nodes found");
                     }
-                      return   infoGenericDisplay.loadTreeFromNeoResult("treeContainer",data,function(jsTree){
-                          var xx=jsTree;
-                          setTimeout(function(){
+                    return infoGenericDisplay.loadTreeFromNeoResult("treeContainer", data, function (jsTree) {
+                        var xx = jsTree;
+                        setTimeout(function () {
 
 
-                               $('.jstree-leaf').each(function(){
-                                    var id   = $(this).attr('id');
-                                    var text = $(this).children('a').text();
-                                    for( var i=0;i<data.length;i++){
-                                        var properties=data[i].n.properties;
-                                     //   console.log(id+"-"+text);
-                                        if(properties[Gparams.defaultNodeNameProperty]==text){
-                                            for( var key in properties ){
-                                                if(properties[Gparams.defaultNodeNameProperty].toLowerCase().indexOf(word0)>-1)
-                                                    continue;
-                                                if( properties[key] && typeof properties[key] !="object" && properties[key].indexOf && properties[key].toLowerCase().indexOf(word0)>-1){
-                                                    var xx=key;
-                                                    var yy=properties[key]
-                                                  //  console.log(xx+"-"+yy);
-                                                    //$("#"+infoGenericDisplay.jsTreeDivId).jstree().create_node(id ,  { "id" : (id+"_"+key), "text" : ("<span class='jstreeWordProp'">+xx+":"+yy+"</span>")}, "last", function(){
-                                                        $("#"+infoGenericDisplay.jsTreeDivId).jstree().create_node(id ,  { "id" : (id+"_"+key), "text" : (xx+":"+yy),"type":"prop"}, "last", function(){
+                            $('.jstree-leaf').each(function () {
+                                var id = $(this).attr('id');
+                                var text = $(this).children('a').text();
+                                for (var i = 0; i < data.length; i++) {
+                                    var properties = data[i].n.properties;
+                                    //   console.log(id+"-"+text);
+                                    if (properties[Gparams.defaultNodeNameProperty] == text) {
+                                        for (var key in properties) {
+                                            if (properties[Gparams.defaultNodeNameProperty].toLowerCase().indexOf(word0) > -1)
+                                                continue;
+                                            if (properties[key] && typeof properties[key] != "object" && properties[key].indexOf && properties[key].toLowerCase().indexOf(word0) > -1) {
+                                                var xx = key;
+                                                var yy = properties[key]
+                                                //  console.log(xx+"-"+yy);
+                                                //$("#"+infoGenericDisplay.jsTreeDivId).jstree().create_node(id ,  { "id" : (id+"_"+key), "text" : ("<span class='jstreeWordProp'">+xx+":"+yy+"</span>")}, "last", function(){
+                                                $("#" + infoGenericDisplay.jsTreeDivId).jstree().create_node(id, {
+                                                    "id": (id + "_" + key),
+                                                    "text": (xx + ":" + yy),
+                                                    "type": "prop"
+                                                }, "last", function () {
 
 
-                                                        });
-                                                }
+                                                });
                                             }
                                         }
                                     }
+                                }
 
-                                });
-                              $("#"+infoGenericDisplay.jsTreeDivId).jstree("open_all");
-                          },1000)
-                      });
+                            });
+                            $("#" + infoGenericDisplay.jsTreeDivId).jstree("open_all");
+                        }, 1000)
+                    });
                 }, error: function (err) {
                     return callback(err)
                 }
@@ -425,9 +407,10 @@ console.log("-----"+word);
             toutlesensData.searchNodes(subGraph, label, word, resultType, limit, from, callback);
         }
         setTimeout(function () {
-             self.setRightPanelAppearance(true);
-             infoGenericDisplay.expandAll("treeContainer");
-         }, 500)
+            $("#searchResultMessage").html("click on tree...")
+            self.setRightPanelAppearance(true);
+            infoGenericDisplay.expandAll("treeContainer");
+        }, 500)
 
     }
 
@@ -570,7 +553,7 @@ console.log("-----"+word);
                         //    str += "<tr><td><a href='javascript:graphicController.dispatchAction(\"shortestPath\")'>Shortest Path</a></td></tr>"
                     }
                     $("#graphPopup").html(str);
-                    $("#nodeInfoMenuDiv").css("visibility","visible");
+                    $("#nodeInfoMenuDiv").css("visibility", "visible");
                     $("#nodeInfoMenuDiv").html(str);
 
 
@@ -589,7 +572,7 @@ console.log("-----"+word);
                         $("#nodeInfoMenuDiv").html(toutlesensDialogsController.setPopupMenuNodeInfoContent());
                         self.setRightPanelAppearance(false);
                         $("#graphPopup").html(toutlesensDialogsController.setPopupMenuNodeInfoContent());
- //$("#nodeInfoMenuDiv").html(str)
+                        //$("#nodeInfoMenuDiv").html(str)
 
 
                     }
@@ -885,7 +868,7 @@ console.log("-----"+word);
 
         }
         else if (action == "showSchema") {
-           var storedSchema= localStorage.getItem("schemaGraph_" + subGraph)
+            var storedSchema = localStorage.getItem("schemaGraph_" + subGraph)
 
             currentActionObj.graphType = "schema";
             $("#dialogLarge").dialog("close");
@@ -918,7 +901,7 @@ console.log("-----"+word);
             else {
 
                 var graphStr = localStorage.getItem("schemaGraph_" + subGraph);
-                if (  graphStr) {
+                if (graphStr) {
                     Schema.currentGraph = JSON.parse(graphStr);
                     dataModel.getDBstats(subGraph, function () {
                         visjsGraph.importGraph(Schema.currentGraph, graphOptions);
@@ -928,9 +911,9 @@ console.log("-----"+word);
                     dataModel.getDBstats(subGraph, function () {
                         var data = connectors.toutlesensSchemaToVisjs(Schema.schema);
                         self.setRightPanelAppearance(false);
-                        visjsGraph.draw("graphDiv", data, graphOptions,function(){
-                        Schema.currentGraph = visjsGraph.exportGraph();
-                        localStorage.setItem("schemaGraph_" + subGraph, JSON.stringify(Schema.currentGraph, null, 2));
+                        visjsGraph.draw("graphDiv", data, graphOptions, function () {
+                            Schema.currentGraph = visjsGraph.exportGraph();
+                            localStorage.setItem("schemaGraph_" + subGraph, JSON.stringify(Schema.currentGraph, null, 2));
                         });
                     });
                 }
@@ -1197,8 +1180,6 @@ console.log("-----"+word);
         $("#BIlegendDiv").css("position", "absolute").css("top", 0).css("left", (totalWidth - rightPanelWidth) - 80).css("top", 80).css("background-color", "#eee");
 
 
-
-
         $("#treeContainer").width(rightPanelWidth - 15);
         // $("#graphLegendDiv").width(rightPanelWidth - 50).height(totalHeight)
         $("#findDiv").width(rightPanelWidth - 10).height((totalHeight)).css("position", "absolute").css("top", "0px").css("left", (totalWidth - rightPanelWidth) + 20)
@@ -1274,7 +1255,7 @@ console.log("-----"+word);
         var increase = prompt("Enter new graph display limit");
         if (increase && increase != "") {
             Gparams.maxResultSupported = parseInt(increase);
-            toutlesensController.generateGraph(null,{useCurrentStatement:true});
+            toutlesensController.generateGraph(null, {useCurrentStatement: true});
         }
     }
 

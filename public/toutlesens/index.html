@@ -147,8 +147,9 @@
     <script src="resources/lang_EN.js"></script>
     <script src="js/functionalities.js"></script>
     <script src="js/versionController.js"></script>
+    <script src="js/eventsController.js"></script>
 
-    <script src="js/d3graphCreation.js"></script>
+   <!-- <script src="js/d3graphCreation.js"></script>-->
     <script src="../common/js/others/async.js"></script>
 
     <!-- test visjs------------------------------------------>
@@ -291,243 +292,31 @@
     <script>
 
         $(function () {
-
             queryParams = common.getQueryParams(document.location.search);
             customizeUI.init();
             subGraph = queryParams.subGraph;
             if (!subGraph)
                 subGraph = Gparams.defaultSubGraph;
             functionalities.hideFunctionalities();
-
             lang.setLangage();
-
+            eventsController.initInputEvents();
+            eventsController.initcomponentEvents()
 
             var mode = queryParams.mode;
             if (mode == "write")
                 Gparams.readOnly = false;
-
-            $("#tabs").tabs();
-            ///$("#advancedQueriesDiv").tabs(); see advancedSearch.js
-            $(".fillScreenHeight").css("bottom", 600);
-
-
-            for (var i = 0; i < Gparams.palette.length; i++) {
-                /*	$("#colorTest").append("<div style='background-color:"+palette[i]+"'>"+palette[i]+"</div>");*/
-            }
-            $("body").click(function (e) {
-                currentMousePosition = {
-                    x: e.pageX,
-                    y: e.pageY
-                }
-
-            });
-            $("#schemaButton").click(function (e) {
-                var storedSchema= localStorage.getItem("schemaGraph_" + subGraph)
-                if(e.ctrlKey &&  storedSchema) {
-                    localStorage.removeItem("schemaGraph_" + subGraph);
-                }
-                toutlesensController.dispatchAction("showSchema")
-
-            });
-
-
-
-            $("#graphDiv").click(function (e) {
-                if (currentDisplayType = "VISJS-NETWORK")
-                    return;
-                var dat = e.target.__data__;
-                if (!dat) {
-                    toutlesensController.hidePopupMenu();
-                    return;
-                }
-                if (dat.id == null || dat.id == "")
-                    toutlesensController.hidePopupMenu();
-
-            });
 
 
             totalWidth = $(window).width() - 20;
             totalHeight = $(window).height() - 20;
 
             $("body").height(totalHeight);
-
             rightPanelWidth = Math.round(totalWidth * Gparams.rightPanelTotalWidthRatio)
-            //  toutlesensController.setResponsiveDimensions(rightPanelWidth); see customizeUI
-
-
-            //   $("#nodeInfosDiv").height(totalHeight - 200).width(totalWidth - 650)
-
-            $("#advancedQueriesAccordion").accordion(
-                {
-                    active: false,
-                    collapsible: true,
-                    activate: function (event, ui) {
-                        $("#dialog").dialog("close");
-                        $("#graphPopup").css("visibility", "hidden");
-                    }
-                });
-            ;
-
-            $("#tabs-analyzePanel").tabs({
-
-
-                activate: function (event, ui) {
-                    $("#dialog").dialog("close");
-                    $("#graphPopup").css("visibility", "hidden");
-
-                    var index = ui.newTab.index();
-
-                    if (index == 0) {
-                        toutlesensController.currentActionObj.mode = "infos";
-
-                    }
-                    if (index == 1) {
-                        toutlesensController.currentActionObj.mode = "filter";
-                        var filterMovableDiv = $("#filterMovableDiv").detach();
-                        $("#searchCriteriaTextDiv").css("visibility","hidden");
-                        $("#searchCriteriaAddButton").css("visibility", "hidden");
-
-                        $("#filterDiv").append(filterMovableDiv);
-                        $("#filterActionDiv").html(
-                            "<button onclick=\"filters.filterOnProperty(null,'only')\">Only</button>" +
-                              "<button onclick=\"filters.filterOnProperty(null,'not')\">Not</button>" +
-                            "<button onclick=\"filters.filterOnProperty(null,'removeAll')\">Clear Filter</button>"
-                        );
-                        filters.setLabelsOrTypes("node");
-                    }
-                    if (index == 2) {
-                        toutlesensController.currentActionObj.mode = "highlight";
-
-                        $("#searchCriteriaTextDiv").css("visibility","hidden").css("height","10px");
-                        $("#searchCriteriaAddButton").css("visibility", "hidden");
-                        $("#propertiesSelectionDialog_propsSelect").val("");
-                        var filterMovableDiv = $("#filterMovableDiv").detach();
-                        $("#highlightDiv").append(filterMovableDiv);
-                        $("#filterActionDiv").load("htmlSnippets/paintDialog.html", function () {
-                            paint.initColorsPalette(10, "paintDialogPalette");
-                            filters.setLabelsOrTypes("node");
-                        });
-
-                    }
-
-                    if (index == 3) {
-                        advancedSearch.searchSimilars(currentObject);
-                    }
-
-
-                }
-            });
-            $("#findTabs").tabs({
-                load: function (event, ui) {
-
-                },
-                activate: function (event, ui) {
-                    $("#dialog").dialog("close");
-                    $("#graphPopup").css("visibility", "hidden");
-                    toutlesensController.setRightPanelAppearance(true);
-                    var index = ui.newTab.index();
-                    if (index == 0) {
-                        toutlesensController.currentActionObj = {type: "findNode"}
-                        advancedSearch.context = {pathType: "neighbour"};
-                        var nodeDivDetach = $("#nodeDivDetachable").detach();
-
-                        $("#nodeDiv").append(nodeDivDetach);
-
-                    }
-
-                    if (index == 1)
-                        toutlesensController.currentActionObj = {type: "relation"}
-                    if (index == 2)
-                        toutlesensController.currentActionObj = {type: "pathes"}
-                },
-                create: function (event, ui) {
-                    toutlesensController.currentActionObj = {type: "findNode"}
-
-                }
-            });
-
-
-            $("#table_Graph").tabs();
-            /*  $("#linkNodesDivAccordion").accordion({
-                  heightStyle: "content"
-              });
-
-
-              $("#accordionModifyPanel").accordion();
-
-              $("#accordionRepresentation").accordion({
-                  active: function (eee) {
-                      return -1
-                  }
-                  ,
-
-                  beforeActivate: function (event, ui) {
-                      var panel = ui.newPanel[0].id;
-
-                      h = totalHeight / 2;
-                      $(".accordionLeft .ui-accordion-content").height(h);
-                  },
-                  activate: function (event, ui) {
-
-                      var panel = ui.newPanel[0].id;
-                      $(".accordionLeft .ui-accordion-content").height($("#" + panel).height());
-
-
-                  }
-
-        });*/
-
-            $('#visJsSearchGraphButton').on('keypress', function (e) {
-                if (e.which === 13) {
-                    var expression = $("#visJsSearchGraphButton").val();
-                    visjsGraph.findNode(expression, "blue", 15);
-                }
-            });
-
-
             filterDiv = "radarFiltersDiv";
             bcsTreeDiv = "#bcsTreeDiv";
             radarDiv = "#radarDiv";
             attrsIFrame = "#attrsIframe";
 
-
-            if (Gparams.readOnly === true) {
-                //   $("#li_modify").detach();
-                $("#li_nodeDetails").detach();
-                $("#li_neoQueries").detach();
-
-
-            }
-
-
-            $("#dialog").dialog({
-                autoOpen: false,
-                height: Gparams.smallDialogSize.h,
-                width: Gparams.smallDialogSize.w,
-
-                modal: true,
-                position: {my: "left top", at: "left bottom", of: $("#mainButtons")}
-
-
-            });
-
-            $("#dialogLarge").dialog({
-                autoOpen: false,
-                height: Gparams.bigDialogSize.h,
-                width: Gparams.bigDialogSize.w,
-                modal: true
-
-            });
-
-            $("#BIlegendDiv" ).draggable();
-
-
-            /*   $("#nodeInfoDiv").mouseleave(function () {
-                   $(this).hide();
-               });*/
-
-
-            //  advancedSearch.init();
 
             var afterLoadModelTasks = [
                 infoGenericDisplay.initLabels,
@@ -568,53 +357,7 @@
             versionController.applyVersion(version);
         })
 
-        function onLabelActionSelect(select) {
-            var value = $(select).val();
-            if (value == "displayGraphForLabel") {
-                currentDisplayType = "SIMPLE_FORCE_GRAPH";
-                currentLabel = $("#nodeLabelSelect").val();
-                currentObject = {};
-                if (currentLabel != "")
-                    toutlesensController.generateGraph(null, {applyFilters: false});
 
-            }
-
-            if (value == "listNodes") {
-
-                currentDisplayType = "FLOWER";
-
-                currentLabel = null;//$("#nodeLabelSelect").val();
-
-
-            }
-
-        }
-
-        function onLabelSelect(select) {
-            var value = $(select).val();
-            /*  if (value == "")
-             $("#onLabelActionSelect").val("displayGraphForLabel");
-             else
-             $("#onLabelActionSelect").val("listNodes");*/
-            var actionType = $("#onLabelActionSelect").val();
-            if (actionType == "listNodes") {
-                infoGenericDisplay.clearNodePropertiesDiv();
-                // $("#treeHeader").css("visibility", "hidden");
-
-                //  initUI();
-                //  dbName = $("#dbName").val();
-
-                if (value != "")
-                    infoGenericDisplay.loadTreeFromNeoMatchQuery(value);
-            }
-
-            else if (actionType == "displayGraphForLabel") {
-                currentLabel = value;
-                currentDisplayType = "SIMPLE_FORCE_GRAPH";
-                toutlesensController.generateGraph(null, {applyFilters: false});
-
-            }
-        }
 
 
 
@@ -700,17 +443,14 @@
                                     <tr align="center">
                                         <td><span id='lang_1'>Node</span></td>
                                         <td><input id="word"
-                                                   onkeydown="
-                       toutlesensController.searchNodesUI('matchStr',null,null, infoGenericDisplay.loadSearchResultIntree)"
+
                                                    size="10"></td>
-                                        <td><input type="image" height="20px" src="images/erase.png"
-                                                   onclick="$('#word').val('')"></td>
+                                        <td><input type="image" id="eraseWordButton"  height="20px" src="images/erase.png"></td>
 
 
-                                        <td><input type="image" title="<span id='lang_XX'>search</span>"
+                                        <td><input type="image"   title="<span id='lang_XX'>search</span>"
                                                    height="30px"
-                                                   onclick="advancedSearch.showDialog({multipleClauses:true})"
-                                                   id="searchButton"
+                                                   id="advancedSearchButton"
                                                    src="images/advancedSearch2.png"/>
 
 
@@ -724,7 +464,7 @@
                         </tr>
                         </tr>
                         <td colspan="2">
-                            <div id="searchResultMessage" style="color: #0000cc"></div>
+                            <div id="searchResultMessage" style="color: #0000cc;font-size: 10px;font-style: italic"></div>
                         </td>
 
                         <tr>
@@ -765,19 +505,13 @@
 
 
                             <select id="pathType">
-                                <option value="allTransitivePaths">
-                                    All paths
-                                </option>
                                 <option value="shortestPath">
                                     Shortest path
                                 </option>
+                                <option value="allTransitivePaths">
+                                    All paths
+                                </option>
 
-                                <!--   <option value="allSimplePaths">
-                                       All paths
-                                   </option>-->
-                                <!--   <option>
-                                      Advanced pathes
-                                   </option>-->
                             </select>
                         </td>
                     </tr>

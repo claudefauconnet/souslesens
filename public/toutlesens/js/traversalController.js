@@ -48,9 +48,8 @@ var traversalController = (function () {
 
                     $("#pathes_buttonsDiv").html(str);
 
-                } else if (toutlesensController.currentActionObj.type == 'allTransitivePaths') {
-                    var str = $("#executeShortestPathButton").css("visibility", "visible")
-                    " <button onclick=\"traversalController.executePathesUI()\"id=\"executeShortestPathButton\" style=\"visibility:hidden\">Search";
+                } else if (toutlesensController.currentActionObj.type == 'shortestPath') {
+                    var str =" <button onclick=\"traversalController.executePathesUI()\"id=\"executeShortestPathButton\" style=\"visibility:visible\">Search</button>";
                     $("#pathes_buttonsDiv").html(str);
                 }
 
@@ -238,9 +237,10 @@ var traversalController = (function () {
                         $("#shortestPathDistance").html("No relations found until Transitivity level :" + transitivityLevel);
                         return true;
                     } else {
+                        var str="";
                         if(transitivityLevel>1)
                             str += "&nbsp;<button onclick='traversalController.searchAllTransitiveNodes(\"decrementTransitivityLevel\")'>decrease</button>"
-                        var str = "&nbsp;<button onclick='traversalController.searchAllTransitiveNodes(\"incrementTransitivityLevel\")'>increase</button>'"
+                         str += "&nbsp;<button onclick='traversalController.searchAllTransitiveNodes(\"incrementTransitivityLevel\")'>increase</button>"
 
                         $("#shortestPathDistance").html("Transitivity level :" + transitivityLevel+ str);
                         return false;
@@ -315,7 +315,7 @@ var traversalController = (function () {
 
                     currentDisplayType = "VISJS-NETWORK";
 
-                    $("#shortestPathDistance").text("Pathes between " + self.context.start.name + " and " + self.context.end.name + " distance : " + self.context.currentDistance)
+                  //  $("#shortestPathDistance").text("Pathes between " + self.context.start.name + " and " + self.context.end.name + " distance : " + self.context.currentDistance)
 
                     visjsGraph.draw("graphDiv", connectors.neoResultsToVisjs(data));
                     toutlesensController.setRightPanelAppearance();

@@ -14,8 +14,8 @@ var versionController = (function () {
                 ($("#findTabs").find("li")[3]),
                 $("#advancedQueriesDiv"),
                 //highlightDiv
-                ($("#tabs-analyzePanel").find("li")[2]),
-                $("#highlightDiv"),
+              //  ($("#tabs-analyzePanel").find("li")[2]),
+              //  $("#highlightDiv"),
                 //highlightDiv
                 ($("#tabs-analyzePanel").find("li")[1]),
                 $("#filterDiv"),
@@ -23,6 +23,10 @@ var versionController = (function () {
 
                 /*  $("#paintAccordion").find("h3")[1],
                   $("#paintAccordion").find("div")[1],*/
+                $("#paintAccordion").find("h3")[1],
+                $("#paintAccordion").find("div")[1],
+            $("#paintAccordion").find("h3")[2],
+            $("#paintAccordion").find("div")[2],
 
             ]
 

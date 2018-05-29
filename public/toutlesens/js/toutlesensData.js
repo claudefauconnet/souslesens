@@ -1323,7 +1323,7 @@ var toutlesensData = (function () {
                         return callback(null, data);
                     }
                     if (!resultType == "count")
-                        startSearchNodesTime = null;
+                        eventsController.startSearchNodesTime = null;
                     if (!data || data.length == 0) {
 
                         $("#waitImg").css("visibility", "hidden");
@@ -1355,7 +1355,7 @@ var toutlesensData = (function () {
                         return callback(null);
                     }
                     if (!resultType == "count")
-                        startSearchNodesTime = null;
+                        eventsController.startSearchNodesTime = null;
                     console.log(xhr);
                     console.log(err);
                     console.log(msg);

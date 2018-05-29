@@ -2,37 +2,60 @@
 
 
 <div id="paintAccordion" style="height:450px">
-    <h3>color outline</h3>
-    <div>
 
-        <div id="paintDialogPalette"></div>
-        <button onclick="paint.clearHighlight()"> Clear</button>
+    <h3>color scale</h3>
+
+        <div id="paintDialog_colorScaleSimple">
+
+            Highlight property values range<select id="paintDialog_highlightPropertySelect" onchange="paint.paintClasses($(this).val())"></select>
+
+            Nclasses <input  type="hidden" id="paintDialog_NclassesInput" style="width:30px" value="10">
+
 
     </div>
-    <h3>color sclale</h3>
-    <div>
-        <div id="paintDialog_GraphicAttrsDiv">
-            circleRadius <input id="paintDialog_circleRadiusInput" style="width:30px" value="20">
-            lineWidth <input id="paintDialog_lineWidthInput" style="width:30px" value="3"><br>
-        </div>
 
-        <div id="paintDialog_classesDiv">
-            Nclasses <input id="paintDialog_NclassesInput" style="width:30px" value="8">
-            <button onclick="paint.paintClasses()">Paint classes</button>
-        </div>
 
-        <div id="BIlegendDiv"></div>
-    </div>
-</div>
+
+    <!--   <h3>color outline</h3>
+     <div>
+
+         <div id="paintDialogPalette"></div>
+         <button onclick="paint.clearHighlight()"> Clear</button>
+
+     </div>
+   <h3>color scale advanced</h3>
+     <div>
+         <div id="paintDialog_GraphicAttrsDiv">
+             circleRadius <input id="paintDialog_circleRadiusInput" style="width:30px" value="20">
+             lineWidth <input id="paintDialog_lineWidthInput" style="width:30px" value="3"><br>
+         </div>
+
+         <div id="paintDialog_classesDiv">
+             Nclasses <input id="paintDialog_NclassesInput" style="width:30px" value="8">
+             <button onclick="paint.paintClasses()">Paint classes</button>
+         </div>
+
+     </div>
+ </div>-->
 <br>
 
 
 
 <script>
+    var properties = [""];
 
+        var labels =filters.currentLabels;
+        for (var i = 0; i < labels.length; i++) {
+            var props=Schema.schema.properties[labels[i]];
+            for(var key in props)
+            if(properties.indexOf(key)<0)
+            properties.push(key)
+        }
+        properties.sort();
+    common.fillSelectOptionsWithStringArray(paintDialog_highlightPropertySelect,properties);
     $("#paintAccordion").accordion(
         {
-            active: 1,
+            active: 0,
             collapsible: false,
             activate: function (event, ui) {
 

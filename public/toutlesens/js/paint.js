@@ -175,13 +175,15 @@ var paint = (function () {
         if (common.isNumber(data[0].value)) {
             scaleType = "linear"
             domain = d3.scaleLinear().domain([min, max]).nice().range([0, nClasses]);
-
-            //   scale = d3.scaleLinear().domain().interpolator(d3.interpolateRainbow);
+if(false && d3.scaleLinear)
+            scale = d3.scaleLinear().domain().interpolator(d3.interpolateRainbow);
+else
             scale = d3.scaleQuantize().domain([min, max]).nice().range(palette);
         }
         else {
-
+if( false && d3.scalePoint)
             domain = d3.scalePoint().domain(data).range([0, palette.length]);
+else
             domain = d3.scaleOrdinal().domain(data).range([0, palette.length]);
             scaleType = "ordinal"
             scale = d3.scaleOrdinal().domain(data).range(palette);

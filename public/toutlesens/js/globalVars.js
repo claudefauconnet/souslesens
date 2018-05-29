@@ -193,7 +193,6 @@ var currentSourceNode=null;
 
 var currentRelationActionTargetNode=null;
 
-var startSearchNodesTime=null;
 var nodeTypes=null;
 var oldRightTabIndex=null;
 var popopuPosition = {

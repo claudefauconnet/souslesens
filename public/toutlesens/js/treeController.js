@@ -835,6 +835,7 @@ var infoGenericDisplay = (function () {
                 });
 
             })
+            return;
 
         }
         if (node.parent == "all") {//label node
