@@ -122,6 +122,7 @@ var paint = (function () {
     }
 
     self.paintClasses = function (_property) {
+
         ordinalLegendMap={};
         var nClasses = parseInt($("#paintDialog_NclassesInput").val());
         var size = parseInt($("#paintDialog_circleRadiusInput").val()*2);

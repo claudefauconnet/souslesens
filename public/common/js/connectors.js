@@ -150,7 +150,7 @@ if(!options)
 
 
             }
-    var rel = rels[j];
+            var rel ;
             if (options.clusterIntermediateNodes) {
                 //link first node to last
                 for (var j = 1; j < ids.length; j++) {
@@ -161,6 +161,7 @@ if(!options)
 
 
             for (var j = 0; j < rels.length; j++) {
+                rel = rels[j];
                 var startLabel = startLabels[j][0];
                 var from, to, queryId;
 
