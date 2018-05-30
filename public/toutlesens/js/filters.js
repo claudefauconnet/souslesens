@@ -105,6 +105,7 @@ var filters = (function () {
     }
 
 
+
     /**
      *
      * reinitialize toutlesensData filters

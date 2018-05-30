@@ -8,7 +8,7 @@ var advancedSearch = (function () {
     self.searchClauses = [];
     self.showDialog = function (options) {
 
-
+        filters.setLabelsOrTypes ("node");
         $("#word").val("");
         if (!options)
             options = {};
