@@ -33,7 +33,7 @@ var toutlesensData = (function () {
         self.cachedResultArray = null;
         self.cachedResultTree = null;
         self.queryExcludeRelFilters = "";
-        self.queryNodeLabelFilters = "";
+        self.querynodeLabelFilters = "";
         self.queryRelTypeFilters = "";
         self.queryExcludeNodeFilters = "";
         self.whereFilter = "";
@@ -142,7 +142,7 @@ var toutlesensData = (function () {
             var hasMclause = false;
             excludedLabels = [];
             currentRootId = Math.abs(id);
-            legendNodeLabels = {}
+            legendnodeLabels = {}
             legendRelTypes = {};
 
             //*******************************************************where***********************************************
@@ -233,7 +233,7 @@ var toutlesensData = (function () {
                 + matchStatement
                 + whereStatement
                 + graphQueryTargetFilter
-                + toutlesensData.queryNodeLabelFilters
+                + toutlesensData.querynodeLabelFilters
                 + toutlesensData.queryExcludeNodeFilters
                 + toutlesensData.queryExcludeRelFilters
 
@@ -250,7 +250,7 @@ var toutlesensData = (function () {
                   graphQueryUnionStatement = " MATCH path=(n" + node1Label + ") "// for nodes without relations
                       + whereStatement
                       + graphQueryTargetFilter
-                      + toutlesensData.queryNodeLabelFilters
+                      + toutlesensData.querynodeLabelFilters
                       + toutlesensData.queryExcludeNodeFilters
                       + toutlesensData.queryExcludeRelFilters;
 
@@ -274,8 +274,10 @@ var toutlesensData = (function () {
 
             if (options.useCurrentStatement && self.currentStatement) {
                 var p= self.currentStatement.indexOf("WHERE")
-                if(p>-1 && self.whereFilter.length>0)
-                    statement=self.currentStatement.substring(0,p)+" "+self.whereFilter+" "+self.currentStatement.substring(p+1);
+                if(p>-1 && self.whereFilter.length>0) {
+                    statement = self.currentStatement.substring(0, p) + " " + self.whereFilter + " " + self.currentStatement.substring(p + 1);
+
+                }
 
 
 
@@ -286,7 +288,7 @@ var toutlesensData = (function () {
 
 
 
-            toutlesensData.queryNodeLabelFilters = "";
+            toutlesensData.querynodeLabelFilters = "";
             toutlesensData.queryRelTypeFilters = "";
             toutlesensData.queryExcludeNodeFilters = "";
             toutlesensData.queryExcludeRelFilters = "";
@@ -602,7 +604,7 @@ var toutlesensData = (function () {
             var linksMap = {}
             var linkId = 1000;
             legendRelTypes = {};
-            legendNodeLabels = {}
+            legendnodeLabels = {}
             var nodeIndex = 0;
             var maxLevels = parseInt($("#depth").val());
             var previousId;
@@ -635,8 +637,8 @@ var toutlesensData = (function () {
 
 
                     }
-                    if (!legendNodeLabels[nodeObj.label]) {
-                        legendNodeLabels[nodeObj.label] = {
+                    if (!legendnodeLabels[nodeObj.label]) {
+                        legendnodeLabels[nodeObj.label] = {
                             label: nodeObj.label
                         }
                     }
@@ -734,7 +736,7 @@ var toutlesensData = (function () {
 
                 }
                 if (currentActionObj) {
-                    legendNodeLabels.currentActionObj = currentActionObj;
+                    legendnodeLabels.currentActionObj = currentActionObj;
                 }
             }
 
@@ -890,8 +892,8 @@ var toutlesensData = (function () {
                     }
                     if (!legendRelTypes)
                         legendRelTypes = {};
-                    if (!legendNodeLabels)
-                        legendNodeLabels = {};
+                    if (!legendnodeLabels)
+                        legendnodeLabels = {};
 
                     if (!legendRelTypes[nodeObj.relType]) {
                         legendRelTypes[nodeObj.relType] = {
@@ -899,8 +901,8 @@ var toutlesensData = (function () {
                             index: legendRelIndex++
                         }
                     }
-                    if (!legendNodeLabels[nodeObj.label]) {
-                        legendNodeLabels[nodeObj.label] = {
+                    if (!legendnodeLabels[nodeObj.label]) {
+                        legendnodeLabels[nodeObj.label] = {
                             label: nodeObj.label
                         }
                     }
@@ -909,7 +911,7 @@ var toutlesensData = (function () {
 
             }
             if (resultArray.currentActionObj) {
-                legendNodeLabels.currentActionObj = currentActionObj;
+                legendnodeLabels.currentActionObj = currentActionObj;
             }
             foldedTreeChildren = [];
             // removeExcludedLabels(nodesMap);
@@ -1296,13 +1298,13 @@ var toutlesensData = (function () {
             str = "MATCH (n" + labelStr + ") " + whereStr + subGraphWhere + returnStr;
 
             if (resultType == "matchStr" && callback) {
-           //     console.log("search nodes  "+str);
                 return callback(null, str);
             }
+
             else if ((resultType == "matchObject" || resultType == "matchSearchClause" ) && callback) {
 
                 var obj = {
-                    nodelabel: label,
+                    nodeLabel: label,
                     where: whereStrRaw
                 }
                 return callback(null, obj);

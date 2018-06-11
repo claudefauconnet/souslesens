@@ -8,25 +8,24 @@ var advancedSearch = (function () {
     self.searchClauses = [];
     self.showDialog = function (options) {
 
-        filters.setLabelsOrTypes ("node");
+        filters.setLabelsOrTypes("node");
         $("#word").val("");
         if (!options)
             options = {};
         var initialLabel = options.initialLabel;
-        if(self.context && self.context.pathType) {
+        if (self.context && self.context.pathType) {
             self.searchClauses = [];
             $("#searchCriteriatextSelect").find('option').remove();
             $("#searchCriteriaTextDiv").css("visibility", "hidden");
         }
 
 
-
-       if (options.multipleClauses) {
-           $("#searchCriteriaAddButton").css("visibility", "visible");
-           if( self.searchClauses.length>0){
-               $("#searchCriteriaTextDiv").css("visibility", "visible");
-           }
-       }
+        if (options.multipleClauses) {
+            $("#searchCriteriaAddButton").css("visibility", "visible");
+            if (self.searchClauses.length > 0) {
+                $("#searchCriteriaTextDiv").css("visibility", "visible");
+            }
+        }
 
 
         else
@@ -51,12 +50,15 @@ var advancedSearch = (function () {
 
         }
         else {
-            str += " <button id=\"advancedSearchDialog_searchAndGraphButton\"  onclick=\"advancedSearch.searchNodes('matchStr',advancedSearch.nodesQueryToGraph);$('#dialog').dialog('close')\">Draw graph</button>&nbsp;";
-            str += " <button id=\"advancedSearchDialog_searchButton\" onclick=\"advancedSearch.searchNodes('matchStr', infoGenericDisplay.loadSearchResultIntree);$('#dialog').dialog('close')\">List nodes</button>";
-                 }
+            str+="<b>Graph</b>"
+            str += " <button id=\"advancedSearchDialog_searchAndGraphButton\"  onclick=\"advancedSearch.searchNodes('matchStr',advancedSearch.nodesQueryToGraph);$('#dialog').dialog('close')\">Neighbours</button>&nbsp;";
+            str += " <button id=\"advancedSearchDialog_searchAndGraphButton\"  onclick=\"advancedSearch.graphOnly();$('#dialog').dialog('close')\">Only</button>&nbsp;";
+            str+="<br><b></b>"
+            str += " <button id=\"advancedSearchDialog_searchButton\" onclick=\"advancedSearch.searchNodes('matchStr',infoGenericDisplay.loadSearchResultIntree);$('#dialog').dialog('close')\">List</button>";
+        }
         $("#filterActionDiv").html(str);
 
-        $("#advancedSearchDialog_searchAndGraphButton").css("background-color","#5F5F5F");
+        $("#advancedSearchDialog_searchAndGraphButton").css("background-color", "#5F5F5F");
 
         /*  $("#dialog").load("htmlSnippets/advancedSearchMenu.html", function () {*/
         $("#dialog").dialog("option", "title", "Advanced search");
@@ -99,10 +101,11 @@ var advancedSearch = (function () {
     }
 
     self.addClause = function (operator) {
-        $("#searchCriteriaTextDiv").css("visibility", "visible").css("height","120px");;
-        var clauseText =$("#propertiesSelectionDialog_propsSelect").val()+" "+$("#propertiesSelectionDialog_operatorSelect").val()+" "+$("#propertiesSelectionDialog_valueInput").val();
-        self.searchNodes("matchSearchClause", function (err,clause) {
-            if(err)
+        $("#searchCriteriaTextDiv").css("visibility", "visible").css("height", "120px");
+        ;
+        var clauseText = $("#propertiesSelectionDialog_propsSelect").val() + " " + $("#propertiesSelectionDialog_operatorSelect").val() + " " + $("#propertiesSelectionDialog_valueInput").val();
+        self.searchNodes("matchSearchClause", function (err, clause) {
+            if (err)
                 return;
             $("#propertiesSelectionDialog_valueInput").val("");
             for (var i = 0; i < self.searchClauses.length; i++) {
@@ -140,37 +143,95 @@ var advancedSearch = (function () {
 
 
     }
-    self.searchNodesWithClauses = function (callback) {
-        var labelStr = "";
+
+    self.getMultiCriteriaClauses = function () {
         var whereStr = "";
         var label = self.searchClauses[0].nodeLabel;
-        if (label && label.length > 0)
-            labelStr = ":" + label;
-
-
-        if(subGraph)
-            whereStr=" WHERE n.subGraph=\""+subGraph+"\" ";
+        if (subGraph)
+            whereStr = "  n.subGraph=\"" + subGraph + "\" ";
 
         for (var i = 0; i < self.searchClauses.length; i++) {
             if (self.searchClauses[i].where != "") {
                 if (whereStr == "")
-                    whereStr = " WHERE ";
+                    whereStr = "";
                 else
                     whereStr += " AND ";
                 whereStr += self.searchClauses[i].where;
             }
-
         }
-        $("#graphInfosDiv").html(whereStr)
+        $("#graphInfosDiv").html(whereStr);
+        return {where:whereStr,nodeLabel:label};
+    }
 
-        var query = "MATCH (n" + labelStr + ") " + whereStr + " RETURN n";
+
+
+
+    self.searchNodesWithClauses = function (callback) {
+        var clauses=self.getMultiCriteriaClauses();
+        var whereStr = clauses.where;
+        var label = clauses.nodeLabel;
+        var labelStr = "";
+        if (label && label.length > 0)
+            labelStr = ":" + label;
+        var query = "MATCH (n" + labelStr + ") " + " WHERE "+whereStr + " RETURN n";
 
         console.log(query);
-        if(callback)
-            return callback(null,query)
-        self.nodesQueryToGraph(null,query)
+        if (callback)
+            return callback(null, query)
+        self.nodesQueryToGraph(null, query)
 
 
+    }
+
+
+    /**
+     *
+     *
+     * Graph only nodes that match the query (n and m match teh query)
+     *
+     */
+
+    self.graphOnly = function () {
+        var where = "";
+        var label="";
+        function execGraph() {
+            var labelStr = "";
+            if (label)
+                labelStr = ":" + label;
+            query = "MATCH path=(n" + labelStr + ")-[r]-(m" + labelStr + ") WHERE " + where + " AND " + where.replace(/n\./g, "m.") + " " + toutlesensData.standardReturnStatement;
+
+            console.log(query);
+            var payload = {match: query};
+            $.ajax({
+                type: "POST",
+                url: toutlesensData.neo4jProxyUrl,
+                data: payload,
+                dataType: "json",
+                success: function (data, textStatus, jqXHR) {
+                    toutlesensController.displayGraph(data);
+                },
+                error: function (err) {
+                    console.log(err);
+                }
+            })
+        }
+
+        if (self.searchClauses.length > 0) {
+            var clauses=self.getMultiCriteriaClauses();
+            label = clauses.nodeLabel;
+            where = clauses.where;
+            execGraph();
+
+
+        } else {
+            self.searchNodes("matchObject", function (err, result) {
+               label=result.nodeLabel;
+                where = result.where;
+                execGraph();
+            })
+
+
+        }
     }
 
 
@@ -243,7 +304,7 @@ var advancedSearch = (function () {
                 toutlesensData.searchNodesWithOption(options, function (err, result) {
                     //   toutlesensData.searchNodes(subGraph, searchObj.label, null, "matchStr", Gparams.jsTreeMaxChildNodes, 0, function (err, result) {
                     if (callback) {
-                        return callback(err,result);
+                        return callback(err, result);
                     }
                     infoGenericDisplay.loadSearchResultIntree(err, result);
                     setTimeout(function () {
@@ -313,7 +374,7 @@ var advancedSearch = (function () {
             toutlesensData.searchNodesWithOption(options, function (err, result) {
                 // toutlesensData.searchNodes(subGraph, searchObj.label, value, "matchStr", Gparams.jsTreeMaxChildNodes, 0, function (err, result) {
                 if (callback) {
-                    return callback(err,result);
+                    return callback(err, result);
                 }
                 infoGenericDisplay.loadSearchResultIntree(err, result);
                 setTimeout(function () {
@@ -498,7 +559,7 @@ var advancedSearch = (function () {
             toutlesensController.generateGraph(null, null, function (err, result) {
                 var selectedNodes = []
                 for (var i = 0; i < self.currentObject.similarNodes.length; i++) {
-                    selectedNodes.push({id: self.currentObject.similarNodes[i], shape: "star", size: 50,color:"red"})
+                    selectedNodes.push({id: self.currentObject.similarNodes[i], shape: "star", size: 50, color: "red"})
                 }
                 visjsGraph.nodes.update(selectedNodes)
                 //  visjsGraph.paintNodes(self.currentObject.similarNodes, null, null, null, "star")
@@ -507,8 +568,6 @@ var advancedSearch = (function () {
 
 
     }
-
-
 
 
     self.searchLabelsPivots = function (sourceLabel, pivotLabel, sourceNodeId, pivotNumber, messageDivId) {
@@ -615,7 +674,7 @@ var advancedSearch = (function () {
                             var offsety = (offsetY / 2) + 20;
                             var count0 = pivotIds[0].countR;
                             for (var i = 0; i < Math.min(pivotIds.length, 20); i++) {
-                                var node = {id: pivotIds[i].p._id, shape: "star", shape: "star", size: 50,color:"red"}
+                                var node = {id: pivotIds[i].p._id, shape: "star", shape: "star", size: 50, color: "red"}
                                 if (i == 0 || count0 == pivotIds[i].countR) {
                                     node.size = 20;
                                 }
@@ -680,9 +739,9 @@ var advancedSearch = (function () {
 
      * @param query
      */
-    self.nodesQueryToGraph = function (err,query) {
-if(err)
-    return console.log(err);
+    self.nodesQueryToGraph = function (err, query) {
+        if (err)
+            return console.log(err);
         var payload = {
             match: query
         }

@@ -843,7 +843,7 @@ var toutlesensController = (function () {
         else if (action == "showAll") {
             currentObject.id = null;
             currentLabel = null;
-            currentDisplayType = "SIMPLE_FORCE_GRAPH";
+            currentDisplayType = "VISJS-NETWORK";
             // $("#showRelationTypesCbx").remove("checked");
             //  visjsGraph.displayRelationNames({show:false})
             Gparams.showRelationNames = false;

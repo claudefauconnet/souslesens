@@ -75,7 +75,7 @@ var traversalController = (function () {
                 traversalController.context.start.queryObj = queryObj;
                 $("#dialog").dialog("close");
                 $("#pathes_sourceNode").html(JSON.stringify(queryObj));
-                graphicController.startLabel = queryObj.nodelabel;
+                graphicController.startLabel = queryObj.nodeLabel;
 
                 $("#waitImg").css("visibility", "hidden")
                 $("#traversalFindDiv").css("visibility", "hidden");
@@ -168,8 +168,8 @@ var traversalController = (function () {
 
             var where = "";
             if (self.context.start.queryObj) {//pathes with search query
-                self.context.start.label = self.context.start.queryObj.nodelabel;
-                self.context.end.label = self.context.end.queryObj.nodelabel;
+                self.context.start.label = self.context.start.queryObj.nodeLabel;
+                self.context.end.label = self.context.end.queryObj.nodeLabel;
 
                 where = self.context.start.queryObj.where;
                 if (self.context.end.queryObj.where != "") {

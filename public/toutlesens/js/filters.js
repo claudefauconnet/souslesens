@@ -114,9 +114,9 @@ var filters = (function () {
      */
 
     self.removeAllFilters = function () {
-        toutlesensData.queryNodeLabelFilters = "";
+        toutlesensData.querynodeLabelFilters = "";
         toutlesensData.whereFilter = "";
-        toutlesensData.queryNodeLabelFilters = "";
+        toutlesensData.querynodeLabelFilters = "";
     }
 
 
@@ -349,7 +349,7 @@ var filters = (function () {
 
         var ok = true;
         var allRelTypesStr = "";
-        var allNodeLabelsStr = "";
+        var allnodeLabelsStr = "";
         for (var i = 0; i < self.currentSelectdFilters.length; i++) {
             var filter = self.currentSelectdFilters[i];
             value = filter.value;
@@ -366,9 +366,9 @@ var filters = (function () {
 
                 objectName = filter.objectName;
                 if (objectType == "node" && objectName != "") {
-                    if (allNodeLabelsStr.length > 0)
-                        allNodeLabelsStr += " OR ";
-                    allNodeLabelsStr += "m:" + objectName;
+                    if (allnodeLabelsStr.length > 0)
+                        allnodeLabelsStr += " OR ";
+                    allnodeLabelsStr += "m:" + objectName;
                 }
                 else if (objectType == "relation") {
                     if (allRelTypesStr.length > 0)
@@ -424,12 +424,12 @@ var filters = (function () {
 
         }
 
-        if (allNodeLabelsStr.length > 0) {
+        if (allnodeLabelsStr.length > 0) {
             var notOp=""
             if (filter.booleanOp) {
                 notOp= " NOT "
             }
-            toutlesensData.queryNodeLabelFilters = " and  "+notOp+"(" + allNodeLabelsStr + ") ";
+            toutlesensData.querynodeLabelFilters = " and  "+notOp+"(" + allnodeLabelsStr + ") ";
         }
 
         if (allRelTypesStr.length > 0)

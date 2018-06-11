@@ -203,9 +203,9 @@ var skosToNeo = {
              var SAs=nodes[i].SA;
              for(var i=0;i<SAs.length;i++) {
              var payload= {
-             sourceNodeLabel: "skosConcept",
+             sourcenodeLabel: "skosConcept",
              sourceNodeQuery:{name:nodes[i].prefLabel},
-             targetNodeLabel: "skosConcept",
+             targetnodeLabel: "skosConcept",
              targetNodeQuery:{name:SAs[j]}
              relType:"SA",
              subGraph: subGraph

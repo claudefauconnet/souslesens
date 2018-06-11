@@ -252,7 +252,7 @@ var restAPI = {
         where += " AND " + getNeoKeyValuePairs(rel.targetNodeQuery, " and ", "m")
 
 
-        var matchStr = "MATCH (n" + rel.sourceNodeLabel + ") , (m" + rel.targetNodeLabel + ") " + where + " CREATE (n)-[r:" + rel.relType + "]->(m) return n,r,m";
+        var matchStr = "MATCH (n" + rel.sourcenodeLabel + ") , (m" + rel.targetnodeLabel + ") " + where + " CREATE (n)-[r:" + rel.relType + "]->(m) return n,r,m";
         neoProxy.match(matchStr, function (err, result) {
             if (err)
                 return callback(err)
@@ -326,7 +326,7 @@ var restAPI = {
             where += " AND " + getNeoKeyValuePairs(rel.targetNodeQuery, " and ", "m")
 
 
-        var matchStr = "MATCH (n" + rel.sourceNodeLabel + ")-[r]-(m" + rel.targetNodeLabel + ")" + where + " delete r return \"relation deleted\"";
+        var matchStr = "MATCH (n" + rel.sourcenodeLabel + ")-[r]-(m" + rel.targetnodeLabel + ")" + where + " delete r return \"relation deleted\"";
         neoProxy.match(matchStr, function (err, result) {
             if (err)
                 return callback(err)
@@ -398,22 +398,22 @@ function getRelObj(params) {
         rel.sourceNodeQuery = JSON.parse(rel.sourceNodeQuery);
 
 
-    rel.sourceNodeLabel = params.sourceNodeLabel;
-    if (rel.sourceNodeLabel && rel.sourceNodeLabel.length > 0)
-        rel.sourceNodeLabel = ":" + rel.sourceNodeLabel;
+    rel.sourcenodeLabel = params.sourcenodeLabel;
+    if (rel.sourcenodeLabel && rel.sourcenodeLabel.length > 0)
+        rel.sourcenodeLabel = ":" + rel.sourcenodeLabel;
     else
-        rel.sourceNodeLabel = "";
+        rel.sourcenodeLabel = "";
 
 
     rel.targetNodeQuery = params.targetNodeQuery;
     if (( rel.targetNodeQuery && typeof rel.targetNodeQuery !== "object"))
         rel.targetNodeQuery = JSON.parse(rel.targetNodeQuery);
 
-    rel.targetNodeLabel = params.targetNodeLabel;
-    if (rel.targetNodeLabel && rel.targetNodeLabel.length > 0)
-        rel.targetNodeLabel = ":" + rel.targetNodeLabel;
+    rel.targetnodeLabel = params.targetnodeLabel;
+    if (rel.targetnodeLabel && rel.targetnodeLabel.length > 0)
+        rel.targetnodeLabel = ":" + rel.targetnodeLabel;
     else
-        rel.targetNodeLabel = "";
+        rel.targetnodeLabel = "";
 
     rel.relType = params.relType;
     if (!rel.relType)

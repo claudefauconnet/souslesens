@@ -281,6 +281,7 @@
         .BIlegendSpan{
            // border-style: solid;
          //   border-width: 2px;
+
         }
 
 
@@ -417,7 +418,7 @@
 <div id="graphLegendDiv"></div>
 <div id="graphInfosDiv" style="font-size: 8px"></div>
 <div id="graphCommentDiv" style="position: absolute;background-color: white;margin: 2px;padding: 2px"></div>
-<div id="BIlegendDiv" style="border: 1px;border-style: solid;padding: 5px;background-color: #fafafa;"></div>
+<div id="BIlegendDiv" style="z-index:20;border: 1px;border-style: solid;padding: 5px;background-color: #fafafa;"></div>
 
 <div id="findDiv">
     <div id="findDivInner">
@@ -682,7 +683,7 @@
 
 
     </table>
-    <div id="filterActionDiv"></div>
+
     <button onclick="advancedSearch.addClause()" id="searchCriteriaAddButton">And...</button>
     <div id="searchCriteriaTextDiv" style ="visibility:hidden;background-color:#FFFFFF; margin:2px;padding:2px">
         <BR>
@@ -692,6 +693,7 @@
     </div>
 
     <div id="filterOptionsDiv"></div>
+    <div id="filterActionDiv"></div>
 
 
 

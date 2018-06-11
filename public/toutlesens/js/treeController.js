@@ -839,7 +839,12 @@ var infoGenericDisplay = (function () {
 
         }
         if (node.parent == "all") {//label node
+            return;
+   /*        var currentNodesSelectionWithLabel=[];
+for( var i=0;i<self.currentNodesSelection.length;i++){
 
+
+}*/
             currentLabel = node.text;
             if (currentObject)
                 currentObject.id = null;
