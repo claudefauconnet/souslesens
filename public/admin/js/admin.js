@@ -505,6 +505,7 @@ function exportNeoLinks(execute, save) {
     if (execute) {
         $("#exportResultDiv").html("");
         callExportToNeo("relation", data,function(err, result){
+            loadLabels();
             admin.drawVisjsGraph();
         });
 
@@ -771,8 +772,8 @@ function loadRequests() {
                  obj.request=JSON.parse( obj.request);
                  currentRequests.push(obj);
                  }*/
-             //   common.common.fillSelectOptions(requests, currentRequests, "name", "name");
-                setRequestSubGraphFilterOptions();
+            common.fillSelectOptions(requests, currentRequests, "name", "name");
+               // setRequestSubGraphFilterOptions();
             },
 
             error: function (xhr, err, msg) {
@@ -832,7 +833,7 @@ function setRequestSubGraphFilterOptions() {
 
     }
     requestSubGraphs.splice(0, 0, "")
-    common.fillSelectOptionsWithStringArray(requestsFilter, requestSubGraphs);
+ //   common.fillSelectOptionsWithStringArray(requestsFilter, requestSubGraphs);
 }
 
 function filterRequests(select) {
@@ -875,7 +876,13 @@ function loadRequest(requestName, changeTab) {
                     $("#distinctValues").prop('checked', 'checked');
                 }
 
+
             }
+
+            $("#neoTargetKey").html("").append('<option>'+obj["neoTargetKey"]+'</option>');
+            $("#neoSourceKey").html("").append('<option>'+obj["neoSourceKey"]+'</option>');
+
+
             if (changeTab && requestName.startsWith("Node"))
                 $( "#accordion" ).accordion( "option", "active",1 );
 

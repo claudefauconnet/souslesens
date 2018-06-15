@@ -18,6 +18,13 @@ var eventsController = (function () {
                 advancedSearch.showDialog({multipleClauses: true});
             });
 
+            $("#tagCloudButton").click(function (e) {
+                toutlesensController.searchNodesUI('exec', null, null, tagCloud.drawCloud);
+
+            });
+
+
+
 
             $("#schemaButton").click(function (e) {
                 var storedSchema = localStorage.getItem("schemaGraph_" + subGraph)

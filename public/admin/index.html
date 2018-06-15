@@ -227,6 +227,7 @@
                     if (message.indexOf("listCsvFields") > 0) {
 
                         setCsvImportFields(JSON.parse(message));
+                        loadRequests();
                         return;
                     }
                     var color = "green";

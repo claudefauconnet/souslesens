@@ -1,0 +1,24 @@
+<html>
+<head>
+
+    <script src="../../common/js/jquery/jquery.min.js"></script>
+    <script src="../../common/js/jquery/jquery-ui.min.js"></script>
+    <script src="../../common/js/d3/d3.js"></script>
+    <script src="../js/tagCloud/cloudD3.js"></script>
+    <script src="../js/tagCloud/tagCloud.js"></script>
+
+
+</head>
+<body>
+
+<div id="cloudDiv" style="width: 400px;height: 500px"></div>
+<script>
+  // var height= window.parent;
+var height=$("#tagCloudDiv",window.parent.document).height()-20;
+  var width=$("#tagCloudDiv",window.parent.document).width();
+    $("#cloudDiv").height(height);
+  $("#cloudDiv").width(width);
+</script>
+</body>
+</html>
+

@@ -10,6 +10,8 @@ var advancedSearch = (function () {
 
         filters.setLabelsOrTypes("node");
         $("#word").val("");
+
+
         if (!options)
             options = {};
         var initialLabel = options.initialLabel;
@@ -50,10 +52,10 @@ var advancedSearch = (function () {
 
         }
         else {
-            str+="<b>Graph</b>"
+            str += "<b>Graph</b>"
             str += " <button id=\"advancedSearchDialog_searchAndGraphButton\"  onclick=\"advancedSearch.searchNodes('matchStr',advancedSearch.nodesQueryToGraph);$('#dialog').dialog('close')\">Neighbours</button>&nbsp;";
             str += " <button id=\"advancedSearchDialog_searchAndGraphButton\"  onclick=\"advancedSearch.graphOnly();$('#dialog').dialog('close')\">Only</button>&nbsp;";
-            str+="<br><b></b>"
+            str += "<br><b></b>"
             str += " <button id=\"advancedSearchDialog_searchButton\" onclick=\"advancedSearch.searchNodes('matchStr',infoGenericDisplay.loadSearchResultIntree);$('#dialog').dialog('close')\">List</button>";
         }
         $("#filterActionDiv").html(str);
@@ -70,17 +72,21 @@ var advancedSearch = (function () {
 
         }
         $("#propertiesSelectionDialog_valueInput").val("")
-        $("#propertiesSelectionDialog_valueInput").focus()
+        $("#propertiesSelectionDialog_valueInput").focus();
         if (initialLabel) {
             $("#propertiesSelectionDialog_ObjectNameInput").val(initialLabel)
         }
 
         $("#filterOptionsDiv").html("");
-        /*    toutlesensController.initLabels(advancedSearchDialog_LabelSelect);
-            filters.initLabelProperty("",advancedSearchDialog__propsSelect)
-            $("#advancedSearchDialog__propsSelect").val(Schema.getNameProperty())
 
-        })*/
+        if (options.setValueInput)
+            $("#propertiesSelectionDialog_valueInput").val(options.setValueInput)
+        if (options.addClauses) {
+            for (var i = 0; i < options.addClauses.length; i++) {
+                self.addClause(options.addClauses[i]);
+            }
+        }
+
     }
 
     self.onChangeObjectName = function (value) {
@@ -100,8 +106,8 @@ var advancedSearch = (function () {
         $("#filterOptionsDiv").html(labelsCxbs);
     }
 
-    self.addClause = function (operator) {
-        $("#searchCriteriaTextDiv").css("visibility", "visible").css("height", "120px");
+    self.addClauseUI = function (operator) {
+
         ;
         var clauseText = $("#propertiesSelectionDialog_propsSelect").val() + " " + $("#propertiesSelectionDialog_operatorSelect").val() + " " + $("#propertiesSelectionDialog_valueInput").val();
         self.searchNodes("matchSearchClause", function (err, clause) {
@@ -112,17 +118,24 @@ var advancedSearch = (function () {
                 if (clause.nodeLabel != "" && self.searchClauses[i].nodeLabel != "" && clause.nodeLabel != self.searchClauses[i].nodeLabel)
                     return alert("you cannot add criteria on different labels :" + clause.nodeLabel != "" && self.searchClauses[i].nodeLabel)
             }
+            self.addClause(clause);
             // clause.operator=operator;
-            self.searchClauses.push(clause);
-            if (!clause.neoLabel)
-                clause.neoLabel = "all labels";
-            clauseText = clause.neoLabel + " : " + clauseText
-            //   $("#searchCriteriaTextDiv").append(clauseText);
-            $("#searchCriteriatextSelect").append($('<option>', {
-                value: clauseText,
-                text: clauseText
-            }));
+
         })
+    }
+
+    self.addClause = function (clause) {
+
+        self.searchClauses.push(clause);
+        if (!clause.neoLabel)
+            clause.neoLabel = "all labels";
+        var clauseText = clause.neoLabel + " : " + clause.where;
+        //   $("#searchCriteriaTextDiv").append(clauseText);
+        $("#searchCriteriaTextDiv").css("visibility", "visible").css("height", "120px");
+        $("#searchCriteriatextSelect").append($('<option>', {
+            value: clauseText,
+            text: clauseText
+        }));
     }
 
     self.clearClauses = function () {
@@ -160,20 +173,18 @@ var advancedSearch = (function () {
             }
         }
         $("#graphInfosDiv").html(whereStr);
-        return {where:whereStr,nodeLabel:label};
+        return {where: whereStr, nodeLabel: label};
     }
 
 
-
-
     self.searchNodesWithClauses = function (callback) {
-        var clauses=self.getMultiCriteriaClauses();
+        var clauses = self.getMultiCriteriaClauses();
         var whereStr = clauses.where;
         var label = clauses.nodeLabel;
         var labelStr = "";
         if (label && label.length > 0)
             labelStr = ":" + label;
-        var query = "MATCH (n" + labelStr + ") " + " WHERE "+whereStr + " RETURN n";
+        var query = "MATCH (n" + labelStr + ") " + " WHERE " + whereStr + " RETURN n";
 
         console.log(query);
         if (callback)
@@ -193,7 +204,8 @@ var advancedSearch = (function () {
 
     self.graphOnly = function () {
         var where = "";
-        var label="";
+        var label = "";
+
         function execGraph() {
             var labelStr = "";
             if (label)
@@ -217,7 +229,7 @@ var advancedSearch = (function () {
         }
 
         if (self.searchClauses.length > 0) {
-            var clauses=self.getMultiCriteriaClauses();
+            var clauses = self.getMultiCriteriaClauses();
             label = clauses.nodeLabel;
             where = clauses.where;
             execGraph();
@@ -225,7 +237,7 @@ var advancedSearch = (function () {
 
         } else {
             self.searchNodes("matchObject", function (err, result) {
-               label=result.nodeLabel;
+                label = result.nodeLabel;
                 where = result.where;
                 execGraph();
             })

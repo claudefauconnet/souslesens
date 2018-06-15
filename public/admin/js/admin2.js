@@ -93,6 +93,7 @@ self.drawVisjsGraph= function (){
     }
 
     self.setNeoKey=function(select,targetSelect,columnSelect){
+
         var label=$(select).val();
         var column=$(columnSelect).val();
 

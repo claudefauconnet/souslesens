@@ -4,7 +4,7 @@
             Neo4j subGraph&nbsp;
 
             <br>
-            <select id="subGraphSelect" onchange="onSubGraphSelect(this,false)"></select>
+            <select id="subGraphSelect" onchange="onSubGraphSelect(this,false);filterRequests(this)"></select>
             <button onclick="addSubGraph()">New</button>
             <br>
             <button onclick="deleteNeoSubgraph()">Delete subgraph</button>

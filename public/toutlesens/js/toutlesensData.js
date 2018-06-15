@@ -1291,12 +1291,14 @@ var toutlesensData = (function () {
             }
 
 
-            console.log(str);
+
             var whereStrRaw = whereStr;
             if (whereStr && whereStr.length > 0 && whereStr.toUpperCase().indexOf("WHERE") < 0)
                 whereStr = " WHERE " + whereStr;
             str = "MATCH (n" + labelStr + ") " + whereStr + subGraphWhere + returnStr;
 
+
+            console.log(str);
             if (resultType == "matchStr" && callback) {
                 return callback(null, str);
             }

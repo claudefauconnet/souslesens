@@ -1180,7 +1180,14 @@ var toutlesensController = (function () {
         $("#BIlegendDiv").css("position", "absolute").css("top", 0).css("left", (totalWidth - rightPanelWidth) - 80).css("top", 80).css("background-color", "#eee");
 
 
+
+
+
         $("#treeContainer").width(rightPanelWidth - 15);
+      $("#tagCloudIframe").height(totalHeight);
+
+
+
         // $("#graphLegendDiv").width(rightPanelWidth - 50).height(totalHeight)
         $("#findDiv").width(rightPanelWidth - 10).height((totalHeight)).css("position", "absolute").css("top", "0px").css("left", (totalWidth - rightPanelWidth) + 20)
         $("#findDivInner").width(rightPanelWidth - 10).height((totalHeight))
