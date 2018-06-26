@@ -4,12 +4,15 @@
       "phototheque",
       "bordereaux",
       "ocr",
-      "audiotheque"
+      "audiotheque",
+      "artotheque",
+      "videotheque"
+
+    ],
+    "TEST": [
+      "framatome"
     ]
-  ,"TEST":
-    ["framatome"]
-  }
-,
+  },
   "_settings": {
     "ATD": {
       "analysis": {
@@ -31,29 +34,26 @@
         }
       }
     },
-    "BASIC": {"settings":
-    {"analysis":
-    {
-      "analyzer": {
-        "BASIC": {
-          "tokenizer": "standard",
-          "filter": [
-            "lowercase",
-            "asciifolding"
-
-          ]
+    "BASIC": {
+      "settings": {
+        "analysis": {
+          "analyzer": {
+            "BASIC": {
+              "tokenizer": "standard",
+              "filter": [
+                "lowercase",
+                "asciifolding"
+              ]
+            }
+          }
         }
-      }
-    }
-    },
-
+      },
       "mappings": {
         "doc": {
           "dynamic_templates": [
             {
               "objectField": {
-                "path_match":   "*",
-
+                "path_match": "*",
                 "mapping": {
                   "analyzer": "BASIC"
                 }
@@ -62,11 +62,7 @@
           ]
         }
       }
-
-    }
-    ,
-
-
+    },
     "SYNONYMS_FR": {
       "analysis": {
         "filter": {
@@ -92,10 +88,6 @@
       }
     }
   },
-
-
-
-
   "_indexes": {
     "web_page": {
       "mappings": {
@@ -104,15 +96,15 @@
             "crawlDate": {
               "type": "date",
               "format": "yyyy-MM-dd",
-              "inCSV":true
+              "inCSV": true
             },
             "title": {
               "type": "text",
-              "inCSV":true
+              "inCSV": true
             },
             "url": {
               "type": "text",
-              "inCSV":true
+              "inCSV": true
             },
             "content": {
               "type": "text",
@@ -141,7 +133,7 @@
           "properties": {
             "author": {
               "type": "text",
-              "inCSV":true
+              "inCSV": true
             },
             "content": {
               "type": "text",
@@ -157,21 +149,20 @@
             },
             "date": {
               "type": "date",
-              "inCSV":true
+              "inCSV": true
             },
             "path": {
               "type": "text"
             },
             "title": {
               "type": "text",
-              "inCSV":true
+              "inCSV": true
             }
           }
         }
       }
     },
     "audiotheque": {
-
       "mappings": {
         "audiotheque": {
           "properties": {
@@ -182,11 +173,11 @@
             "indexCIJW": {
               "type": "keyword",
               "isTitle": true,
-              "inCSV":true
+              "inCSV": true
             },
             "Cote": {
               "type": "keyword",
-              "inCSV":true
+              "inCSV": true
             },
             "Type": {
               "type": "keyword"
@@ -206,7 +197,7 @@
             "Titre1": {
               "type": "text",
               "analyzer": "ATD",
-              "inCSV":true
+              "inCSV": true
             },
             "Titre2": {
               "type": "text"
@@ -228,7 +219,6 @@
             },
             "DateConformation": {
               "type": "text"
-
             },
             "Conformation": {
               "type": "text"
@@ -247,20 +237,18 @@
             },
             "DateEnregistrement": {
               "type": "text",
-              "inCSV":true
-
+              "inCSV": true
             },
             "MoisEnregistrement": {
               "type": "integer",
-              "inCSV":true
+              "inCSV": true
             },
             "AnneeEnregistrement": {
               "type": "integer",
-              "inCSV":true
+              "inCSV": true
             },
             "dateMaj": {
               "type": "date"
-
             },
             "redacteur": {
               "type": "keyword"
@@ -282,7 +270,6 @@
       }
     },
     "phototheque": {
-
       "mappings": {
         "phototheque": {
           "properties": {
@@ -293,19 +280,19 @@
             "indexCIJW": {
               "type": "keyword",
               "isTitle": true,
-              "inCSV":true
+              "inCSV": true
             },
             "dossier": {
               "type": "keyword",
-              "inCSV":true
+              "inCSV": true
             },
             "sousdossier": {
               "type": "keyword",
-              "inCSV":true
+              "inCSV": true
             },
             "document": {
               "type": "keyword",
-              "inCSV":true
+              "inCSV": true
             },
             "versement": {
               "type": "integer"
@@ -334,7 +321,7 @@
             },
             "date": {
               "type": "date",
-              "inCSV":true
+              "inCSV": true
             },
             "lieu": {
               "type": "text"
@@ -371,65 +358,84 @@
         }
       }
     },
-    "archivesATD": {
-
+    "artotheque": {
       "mappings": {
-        "archive": {
+        "artotheque": {
           "properties": {
-            "anneeDebut": {
+            "id": {
+              "isId": true,
               "type": "integer"
             },
-            "anneeFin": {
-              "type": "integer"
+            "indexCIJW": {
+              "type": "keyword",
+              "inCSV": true
             },
-            "auteur": {
-              "type": "text"
-            },
-            "coteBoite": {
+            "lien": {
               "type": "keyword"
             },
-            "coteSerie": {
+            "fonds": {
               "type": "keyword"
             },
-            "commentaire": {
-              "type": "text"
-            },
-            "confidentiel": {
+            "collection": {
               "type": "keyword"
             },
-            "dateStr": {
-              "type": "text"
-            },
-            "destinataire": {
-              "type": "text"
-            },
-            "format": {
-              "type": "text"
-            },
-            "genre": {
+            "document": {
               "type": "keyword"
             },
-            "lieu": {
-              "type": "text"
+            "type": {
+              "type": "keyword",
+              "inCSV": true
             },
-            "nbFeuilles": {
-              "type": "text"
+            "createur": {
+              "type": "keyword",
+              "inCSV": true
             },
-            "source": {
-              "type": "text"
+            "titre": {
+              "type": "keyword",
+              "isTitle": true,
+              "inCSV": true
             },
-            "coteSousSerie": {
+            "epoque": {
               "type": "keyword"
             },
-            "title": {
+            "materiaux": {
+              "type": "keyword",
+              "inCSV": true
+            },
+            "dimensions": {
+              "type": "keyword"
+            },
+            "provenance": {
+              "type": "keyword"
+            },
+            "description": {
               "type": "text"
             },
-            "mongodId": {
+            "localisation": {
+              "type": "keyword"
+            },
+            "temoin_ref": {
+              "type": "keyword"
+            },
+            "liens": {
+              "type": "keyword"
+            },
+            "mots_cles": {
+              "type": "keyword"
+            },
+            "divers": {
+              "type": "keyword"
+            },
+            "dateMaj": {
+              "type": "date"
+            },
+            "redacteur": {
               "type": "keyword"
             },
             "content": {
               "type": "text",
               "index_options": "offsets",
+              "analyzer": "ATD",
               "fielddata": true,
               "fields": {
                 "contentKeyWords": {
@@ -439,36 +445,172 @@
               }
             }
           }
-        },
-        "general_document": {
-          "properties": {
-            "author": {
-              "type": "text"
-            },
-            "content": {
-              "type": "text",
-              "index_options": "offsets",
-              "fields": {
-                "contentKeyWords": {
-                  "type": "keyword",
-                  "ignore_above": 256
-                }
-              },
-              "fielddata": true
-            },
-            "date": {
-              "type": "text"
-            },
-            "path": {
-              "type": "text"
-            },
-            "title": {
-              "type": "text"
+        }
+      }
+    }
+  ,
+  "videotheque": {
+    "mappings": {
+      "videotheque": {
+        "properties": {
+          "id": {
+           "isId":true,
+            "type": "integer"
+          },
+          "indexCIJW": {
+            "type": "keyword",
+            "inCSV": true
+          },
+          "projet": {
+            "type": "keyword"
+          },
+          "lien": {
+            "type": "keyword"
+          },
+          "cote": {
+            "type": "keyword"
+          },
+          "document": {
+            "type": "keyword"
+          },
+          "date_creation": {
+            "type": "keyword"
+          },
+          "titre": {
+            "type": "text",
+            "inCSV": true,
+            "isTitle":true
+          },
+          "fonds": {
+            "type": "keyword",
+            "inCSV": true
+          },
+          "depot": {
+            "type": "keyword"
+          },
+          "droits": {
+            "type": "keyword",
+            "inCSV": true
+          },
+          "local": {
+            "type": "keyword"
+          },
+          "standard": {
+            "type": "keyword"
+          },
+          "observations": {
+            "type": "text"
+          },
+          "edition": {
+            "type": "text",
+            "inCSV": true
+          },
+          "langue": {
+            "type": "keyword",
+            "inCSV": true
+          },
+          "qualification": {
+            "type": "keyword",
+            "inCSV": true
+          },
+          "exploitation": {
+            "type": "keyword"
+          },
+          "notes_conjoncture": {
+            "type": "text"
+          },
+          "dateMaj": {
+            "type": "date"
+          },
+          "redacteur": {
+            "type": "keyword",
+            "inCSV": true
+          },
+          "content": {
+            "type": "text",
+            "index_options": "offsets",
+            "analyzer": "ATD",
+            "fielddata": true,
+            "fields": {
+              "contentKeyWords": {
+                "type": "keyword",
+                "ignore_above": 256
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "archivesATD": {
+    "mappings": {
+      "archive": {
+        "properties": {
+          "anneeDebut": {
+            "type": "integer"
+          },
+          "anneeFin": {
+            "type": "integer"
+          },
+          "auteur": {
+            "type": "text"
+          },
+          "coteBoite": {
+            "type": "keyword"
+          },
+          "coteSerie": {
+            "type": "keyword"
+          },
+          "commentaire": {
+            "type": "text"
+          },
+          "confidentiel": {
+            "type": "keyword"
+          },
+          "dateStr": {
+            "type": "text"
+          },
+          "destinataire": {
+            "type": "text"
+          },
+          "format": {
+            "type": "text"
+          },
+          "genre": {
+            "type": "keyword"
+          },
+          "lieu": {
+            "type": "text"
+          },
+          "nbFeuilles": {
+            "type": "text"
+          },
+          "source": {
+            "type": "text"
+          },
+          "coteSousSerie": {
+            "type": "keyword"
+          },
+          "title": {
+            "type": "text"
+          },
+          "mongodId": {
+            "type": "keyword"
+          },
+          "content": {
+            "type": "text",
+            "index_options": "offsets",
+            "fielddata": true,
+            "fields": {
+              "contentKeyWords": {
+                "type": "keyword",
+                "ignore_above": 256
+              }
             }
           }
         }
       },
-      "mail": {
+      "general_document": {
         "properties": {
           "author": {
             "type": "text"
@@ -496,69 +638,97 @@
         }
       }
     },
-    "wikipediacategories": {
-      "mappings": {
-        "category": {
-          "properties": {
-            "parent": {
-              "type": "text"
-            },
-            "child": {
-              "type": "text"
-            },
-            "count": {
-              "type": "integer"
-            }
-          }
-        }
-      }
-    },
-    "jsonIndex": {
-      "mappings": {
-        "json": {
-          "properties": {
-            "content": {
-              "type": "text",
-              "index_options": "offsets",
-              "fields": {
-                "contentKeyWords": {
-                  "type": "keyword",
-                  "ignore_above": 256
-                }
-              },
-              "fielddata": true
-            }
-          }
-        }
-      }
-    },
-    "graph": {
-      "mappings": {
-        "node": {
-          "properties": {
-            "label": {
-              "type": "text"
-            },
-            "name": {
-              "type": "text"
-            }
-          }
+    "mail": {
+      "properties": {
+        "author": {
+          "type": "text"
         },
-        "edge": {
-          "properties": {
-            "type": {
-              "type": "text"
-            },
-            "source": {
-              "type": "text"
-            },
-            "target": {
-              "type": "text"
+        "content": {
+          "type": "text",
+          "index_options": "offsets",
+          "fields": {
+            "contentKeyWords": {
+              "type": "keyword",
+              "ignore_above": 256
             }
+          },
+          "fielddata": true
+        },
+        "date": {
+          "type": "text"
+        },
+        "path": {
+          "type": "text"
+        },
+        "title": {
+          "type": "text"
+        }
+      }
+    }
+  },
+  "wikipediacategories": {
+    "mappings": {
+      "category": {
+        "properties": {
+          "parent": {
+            "type": "text"
+          },
+          "child": {
+            "type": "text"
+          },
+          "count": {
+            "type": "integer"
+          }
+        }
+      }
+    }
+  },
+  "jsonIndex": {
+    "mappings": {
+      "json": {
+        "properties": {
+          "content": {
+            "type": "text",
+            "index_options": "offsets",
+            "fields": {
+              "contentKeyWords": {
+                "type": "keyword",
+                "ignore_above": 256
+              }
+            },
+            "fielddata": true
+          }
+        }
+      }
+    }
+  },
+  "graph": {
+    "mappings": {
+      "node": {
+        "properties": {
+          "label": {
+            "type": "text"
+          },
+          "name": {
+            "type": "text"
+          }
+        }
+      },
+      "edge": {
+        "properties": {
+          "type": {
+            "type": "text"
+          },
+          "source": {
+            "type": "text"
+          },
+          "target": {
+            "type": "text"
           }
         }
       }
     }
   }
+}
 }
 

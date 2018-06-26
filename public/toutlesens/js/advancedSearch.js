@@ -56,7 +56,7 @@ var advancedSearch = (function () {
             str += " <button id=\"advancedSearchDialog_searchAndGraphButton\"  onclick=\"advancedSearch.searchNodes('matchStr',advancedSearch.nodesQueryToGraph);$('#dialog').dialog('close')\">Neighbours</button>&nbsp;";
             str += " <button id=\"advancedSearchDialog_searchAndGraphButton\"  onclick=\"advancedSearch.graphOnly();$('#dialog').dialog('close')\">Only</button>&nbsp;";
             str += "<br><b></b>"
-            str += " <button id=\"advancedSearchDialog_searchButton\" onclick=\"advancedSearch.searchNodes('matchStr',infoGenericDisplay.loadSearchResultIntree);$('#dialog').dialog('close')\">List</button>";
+            str += " <button id=\"advancedSearchDialog_searchButton\" onclick=\"advancedSearch.searchNodes('matchStr',infoGenericDisplay.loadSearchResultIntree);$('#dialog').dialog('close'); $('#findTabs').tabs({active:0});\">List</button>";
         }
         $("#filterActionDiv").html(str);
 

@@ -12,7 +12,8 @@ var traversalController = (function () {
             end: {},
             currentNode: "",
             currentDistance: 0,
-            pathType: ''
+            pathType: '',
+            clusterIntermediateNodes:false
         }
 
         var currentTransitivityLevel = null;
@@ -96,6 +97,11 @@ var traversalController = (function () {
             if (!options) {
                 options = {};
             }
+            if(options.clusterIntermediateNodes  )
+                self.context.clusterIntermediateNodes = true;
+            else
+                self.context.clusterIntermediateNodes = false;
+
             advancedSearch.searchNodes("matchObject", function (err, queryObj) {
                 if (err)
                     return console.log(err)
@@ -221,8 +227,10 @@ var traversalController = (function () {
 
 
                     var _options = {dragConnectedNodes: true};
-                    if (transitivityLevel > 1 && options.clusterIntermediateNodes)
+                    if (transitivityLevel > 1 && options.clusterIntermediateNodes || self.context.clusterIntermediateNodes==true) {
                         _options.clusterIntermediateNodes = true;
+
+                    }
 
 
                     toutlesensController.generateGraph(null, _options, function (err, data) {

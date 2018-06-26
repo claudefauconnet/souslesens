@@ -46,7 +46,7 @@ var searchUI = (function () {
     }
 
     self.setUserIndexes = function () {
-        var user = "Claude";
+        var user = "Fauconnet";
         var payload = {
             getUserIndexes: 1,
             user: user

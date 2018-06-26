@@ -129,7 +129,7 @@ var neo2Elastic = {
 
 
 }
-if (true) {
+if (false) {
     neo2Elastic.indexNeoNodes2Elastic("keosphere3", null, "keosphere3", function (err, result) {
         var xx = err;
     })
