@@ -33,7 +33,7 @@ cardsInfosControlsDiv{
 }
 
 .child,.childLabel{
-    min-width:100px;
+    min-width:280px;
     min-height:50px;
     background-color: #68a1d6;
     margin: 10px;

@@ -9,10 +9,14 @@
 
             Highlight property values range<select id="paintDialog_highlightPropertySelect" onchange="paint.paintClasses($(this).val())"></select>
 
-            Nclasses <input  type="hidden" id="paintDialog_NclassesInput" style="width:30px" value="10">
+             <input  type="hidden" id="paintDialog_NclassesInput" style="width:30px" value="10">
 
+            <button onclick="paint.clusterByClass()" id="paint_clusterButton"> cluster</button>
+            <button onclick="paint.unClusterByClass()" id="paint_unClusterButton"> unCluster</button>
 
     </div>
+
+
 
 
 

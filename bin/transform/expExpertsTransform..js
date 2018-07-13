@@ -12,9 +12,10 @@ function toCsv(file) {
     var data = "" + fs.readFileSync(file);
 
 
-    var strExperts = "name\tlevel\tBU\tdivision\tsite\tcountry\tManagerName\tdomain\tdomainId\n";
+    var strExperts = "name\tjobTitle\tage2018\tlevel\tBU\tdivision\tsite\tcountry\tManagerName\tdomainId\tdomain\tCompetences\tCompetencesIn\n";
     var strKeyWords = "name\tkeyword\n";
     var strSubDomains = "name\tdomain\tsubDomain\n";
+    var strCompetences = "name\tdomain\tsubDomain\n";
     var lines = data.split("\n");
 
     for (var i = 1; i < lines.length; i++) {
@@ -25,14 +26,15 @@ function toCsv(file) {
             break;
 
         var cols = line.split("\t");
-        if (cols.length < 8) {
-             console.log("errors cols");
-             continue;
-        }
-        var domainId=cols[8].substring(0,cols[8].indexOf("-")).trim();
-        //   for (var j = 0; j < cols.length; j++) {
 
-        strExperts += cols[0] + "\t" + cols[2] + "\t" + cols[3] + "\t" + cols[4] + "\t" + cols[5] + "\t" + cols[6] + "\t" + cols[7]+ "\t" + cols[8]  + "\t" + domainId  + "\n";
+
+        for( var k=0;k<cols.length;k++){
+
+            if(k!=1 && k!=12)
+            strExperts += cols[k] + "\t"
+        }
+        strExperts+= domainId  + "\n";
+      //  strExperts += cols[0] + "\t" + cols[2] + "\t" + cols[3] + "\t" + cols[4] + "\t" + cols[5] + "\t" + cols[6] + "\t" + cols[7]+ "\t" + cols[8]  + "\t" + domainId  + "\n";
 
 
         var colKeyWords = cols[1];
@@ -44,19 +46,42 @@ function toCsv(file) {
                 strKeyWords += cols[0] + "\t" + keywords[k] + "\n"
         }
 
-        var colSubDomains = cols[9];
-        // colSubDomains = colSubDomains.replace(/[,//]/g, ";");
 
-        var subDomains = colSubDomains.split(";")
+        if (cols.length >12) {
+            //  console.log("errors cols");
 
 
-        for (var k = 0; k < subDomains.length; k++) {
-            if (subDomains[k].length > 0) {
-                var subDomain = subDomains[k];
+            var domainId = cols[12].substring(0, cols[12].indexOf("-")).trim();
+            //   for (var j = 0; j < cols.length; j++) {
+            var colSubDomains = cols[12];
+            var subDomains = colSubDomains.split(";")
+            for (var k = 0; k < subDomains.length; k++) {
+                if (subDomains[k].length > 0) {
+                    var subDomain = subDomains[k];
+                    //  subDomain = subDomain.replace(/ - XXX/g, "").trim();
+                    var p = subDomain.indexOf(".")
+                    if (p > 0) {
+                        strSubDomains += cols[0] + "\t" + subDomain.substring(0, p) + "\t" + subDomain + "\n"
+                    }
+                    else {
+                        strSubDomains += cols[0] + "\t" + "" + "\t" + subDomain + "\n"
+                        console.log("no domain for subdomain " + subDomain + "user " + cols[0]);
+                    }
+
+                }
+
+            }
+        }
+
+      /*  var colCompetences = cols[12];
+        var competences = colCompetences.split(";")
+        for (var k = 0; k < competences.length; k++) {
+            if (competences[k].length > 0) {
+                var competence = competences[k];
                 //  subDomain = subDomain.replace(/ - XXX/g, "").trim();
-                var p = subDomain.indexOf(".")
+                var p = competence.indexOf(".")
                 if (p > 0) {
-                    strSubDomains += cols[0] + "\t" + subDomain.substring(0, p) + "\t" + subDomain + "\n"
+                    strCompetences += cols[0] + "\t" + subDomain.substring(0, p) + "\t" + subDomain + "\n"
                 }
                 else{
                     strSubDomains += cols[0] + "\t" + "" + "\t" + subDomain + "\n"
@@ -65,7 +90,7 @@ function toCsv(file) {
 
             }
 
-        }
+        }*/
 
 
         // }
