@@ -667,7 +667,7 @@ function loadAndFetchDataToImport(params, importFn, _rootCallBack) {
                     return rootCallBack(err);
                 var message = "";
                 if (params.label) {//nodes
-                    rootCallBack(null, message);
+
                     ;
 
                 } else {

@@ -51,10 +51,7 @@ var cards = (function () {
 
     self.init = function () {
         cardsInfosControlsDivHtml = $("#cardsInfosControlsDiv").html();
-        var width=$("#graphDiv").width();
-        var heigth=$("#graphDiv").height();
-        $("#graphDiv").html("<div id='cardDiv' style='width:100%,height:100%;overflow:auto'></div>");
-        $("#cardDiv").html("");
+        $("#backgroundDiv").html("");
         if (Schema)
             self.defaultNodeNameProperty = Schema.getNameProperty();
         self.currentState = {
@@ -244,14 +241,13 @@ var cards = (function () {
     }
 
     self.drawCards = function (label, id, displayMode, newNodes) {
-      //  infoGenericDisplay.userRole = self.wr
-        self.init();
+        infoGenericDisplay.userRole = self.wr
         if (label)
             self.currentLabel = label;
 
 
         function execute(newNodes) {
-            var oldHtml = $("#cardDiv").html();
+            var oldHtml = $("#backgroundDiv").html();
 
 
             function getChildNodeHtml(child) {
@@ -372,7 +368,7 @@ var cards = (function () {
                 var html = "";
                 var lists = [];
                 var sort = $("#sortSelect").val();
-                $("#cardDiv").html("");
+                $("#backgroundDiv").html("");
 
                 for (var key in  newNodes) {
                     var node = newNodes[key];
@@ -465,7 +461,7 @@ var cards = (function () {
 
 
                         html += '</div>';
-                        $("#cardDiv").append(html);
+                        $("#backgroundDiv").append(html);
                     }
 
                 }

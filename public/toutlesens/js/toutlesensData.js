@@ -220,13 +220,11 @@ var toutlesensData = (function () {
                         relCardinalityStr = "*0..1";
 
                 }
-
-                var matchStatement = "(n" + node1Label
+                matchStatement = "(n" + node1Label
                     + ")-[r"
                     + toutlesensData.queryRelTypeFilters
                     + relCardinalityStr
                     + "]-(m" + node2Label + ") "
-
             }
 
 
@@ -275,15 +273,19 @@ var toutlesensData = (function () {
 
 
             if (options.useCurrentStatement && self.currentStatement) {
-                var p = self.currentStatement.indexOf("WHERE")
-                if (p > -1 && self.whereFilter.length > 0) {
+                var p= self.currentStatement.indexOf("WHERE")
+                if(p>-1 && self.whereFilter.length>0) {
                     statement = self.currentStatement.substring(0, p) + " " + self.whereFilter + " " + self.currentStatement.substring(p + 1);
 
                 }
 
 
+
             } else
                 self.currentStatement = statement;
+
+
+
 
 
             toutlesensData.querynodeLabelFilters = "";
@@ -291,6 +293,8 @@ var toutlesensData = (function () {
             toutlesensData.queryExcludeNodeFilters = "";
             toutlesensData.queryExcludeRelFilters = "";
             toutlesensData.matchStatement = ""
+
+
 
 
             var payload = {match: statement};
@@ -318,11 +322,11 @@ var toutlesensData = (function () {
                         }
 
                     }
-                    if (data.length / 2 >= Gparams.maxResultSupported / 2) {// query too get the real number of relations
-                        var matchStr = "MATCH path=(n)-[r]->(m) " + statementBase.substring(statementBase.indexOf("WHERE")) + "return count(r) as countRel;"
+                    if (data.length/2 >= Gparams.maxResultSupported/2) {// query too get the real number of relations
+                        var matchStr="MATCH path=(n)-[r]->(m) "+statementBase.substring(statementBase.indexOf("WHERE"))+ "return count(r) as countRel;"
                         var payload = {
-                            match: matchStr
-                            // match: "MATCH path=(n)-[r]->(m) "+ self.getCurrentWhereClause() + "return count(r) as countRel;"
+                            match:matchStr
+                           // match: "MATCH path=(n)-[r]->(m) "+ self.getCurrentWhereClause() + "return count(r) as countRel;"
                         }
 
 
@@ -332,7 +336,7 @@ var toutlesensData = (function () {
                             data: payload,
                             dataType: "json",
                             success: function (data, textStatus, jqXHR) {
-                                var message = "<br><span class='importantMessage'>" + data[0].countRel + "  relations in the graph only " + Gparams.maxResultSupported + " are currently displayed</span> "
+                                var message = "<br><span class='importantMessage'>" + data[0].countRel + "  relations in the graph only "+Gparams.maxResultSupported+" are currently displayed</span> "
                                 message += "<a href='javascript:toutlesensController.increaseGraphLimit()'>increase Graph display limit</a> (display wil be slower)";
                                 message += "<br> <a href='$(\"#propertiesSelectionDialog_ObjectNameInput\").val(\"\");javascript:advancedSearch.showDialog()'>or set a filter on nodes or relations</a>";
 
@@ -386,13 +390,13 @@ var toutlesensData = (function () {
 
 
         }
-        self.getCurrentWhereClause = function () {
-            if (!self.currentStatement)
+        self.getCurrentWhereClause=function(){
+            if(!self.currentStatement)
                 return "";
-            var p = self.currentStatement.indexOf("WHERE")
-            var q = self.currentStatement.indexOf(" RETURN")
-            if (p > -1 && q > -1)
-                return self.currentStatement.substring(p, q);
+            var p= self.currentStatement.indexOf("WHERE")
+            var q= self.currentStatement.indexOf(" RETURN")
+            if(p>-1  && q>-1)
+               return self.currentStatement.substring(p,q);
             return "";
 
         }
@@ -1269,28 +1273,23 @@ var toutlesensData = (function () {
             if (label && label.length > 0)
                 labelStr = ":" + label;
 
-            var whereStr = "";
-
-            if (options.where)
-                whereStr = options.where;
-            else {
-                whereStr = advancedSearch.getWhereProperty(word, "n")
+            var whereStr = advancedSearch.getWhereProperty(word, "n")
 
 
-                if (additionalWhere && additionalWhere != "") {
-                    if (whereStr.length == 0)
-                        whereStr += " where " + additionalWhere + " ";
-                    else
-                        whereStr += " and " + additionalWhere + " ";
-                }
-
-                if (subGraph) {
-                    if (whereStr.length == 0)
-                        subGraphWhere += " where  n.subGraph='" + subGraph + "' ";
-                    else
-                        subGraphWhere += " and  n.subGraph='" + subGraph + "' ";
-                }
+            if (additionalWhere && additionalWhere != "") {
+                if (whereStr.length == 0)
+                    whereStr += " where " + additionalWhere + " ";
+                else
+                    whereStr += " and " + additionalWhere + " ";
             }
+
+            if (subGraph) {
+                if (whereStr.length == 0)
+                    subGraphWhere += " where  n.subGraph='" + subGraph + "' ";
+                else
+                    subGraphWhere += " and  n.subGraph='" + subGraph + "' ";
+            }
+
 
 
             var whereStrRaw = whereStr;
@@ -1304,7 +1303,7 @@ var toutlesensData = (function () {
                 return callback(null, str);
             }
 
-            else if ((resultType == "matchObject" || resultType == "matchSearchClause") && callback) {
+            else if ((resultType == "matchObject" || resultType == "matchSearchClause" ) && callback) {
 
                 var obj = {
                     nodeLabel: label,
