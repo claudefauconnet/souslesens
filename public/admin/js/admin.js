@@ -36,6 +36,8 @@ var toutlesensData=null;
 var currentObject=null;
 var toutlesensController=null;
 var messageDivId=null;
+
+var drag=false;
 var help = {
 
     mongoField: "field that will give its name attribute to the created node in Neo",

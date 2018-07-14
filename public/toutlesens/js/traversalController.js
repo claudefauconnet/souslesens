@@ -70,7 +70,7 @@ var traversalController = (function () {
 
         self.setStartLabelQuery = function () {
 
-            advancedSearch.searchNodes("matchObject", function (err, queryObj) {
+            advancedSearch.searchNodes("matchObject",null, function (err, queryObj) {
                 if (err)
                     return console.log(err)
                 traversalController.context.start.queryObj = queryObj;
@@ -102,7 +102,7 @@ var traversalController = (function () {
             else
                 self.context.clusterIntermediateNodes = false;
 
-            advancedSearch.searchNodes("matchObject", function (err, queryObj) {
+            advancedSearch.searchNodes("matchObject",null, function (err, queryObj) {
                 if (err)
                     return console.log(err)
                 traversalController.context.end.queryObj = queryObj;

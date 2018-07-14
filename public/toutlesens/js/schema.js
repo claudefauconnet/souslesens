@@ -376,7 +376,7 @@ var Schema = (function () {
 
         self.getAllLabelNames = function () {
             var labels = [];//[""];
-            for (var label in self.schema.labels) {
+            for (var label in Schema.schema.labels) {
                 labels.push(label);
             }
             labels.sort();
@@ -421,11 +421,11 @@ var Schema = (function () {
                 var relation = relations[key];
 
 
-                if (relation.startLabel == startLabel)
+                if (relation.startLabel == startLabel || !startLabel || startLabel=="")
                     if (labels.indexOf(relation.endLabel) < 0)
                         labels.push(relation.endLabel);
 
-                if (inverseRelAlso && relation.endLabel == startLabel)
+                if (inverseRelAlso && (relation.endLabel == startLabel  || !startLabel || startLabel==""))
                     if (labels.indexOf(relation.startLabel) < 0) {
                         if (withoutInverseSign)
                             labels.push(relation.startLabel);
