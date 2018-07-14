@@ -221,8 +221,10 @@
                 socket.emit('join', 'Hello World from client');
             });
             socket.on('messages', function (message) {
+
                 if (!message || message.length == 0)
                     return;
+                $("#waitImg").css("visibility","hidden");
                 if (typeof message == 'string') {
                     if (message.indexOf("listCsvFields") > 0) {
 
@@ -238,6 +240,7 @@
                         color = "red";
                     $("#message").css("color", color);
                     $("#message").html(message);
+
                 }
             })
 

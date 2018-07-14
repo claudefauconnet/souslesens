@@ -368,6 +368,7 @@
             },
             "indexCIJW": {
               "type": "keyword",
+              "isTitle": true,
               "inCSV": true
             },
             "lien": {
@@ -392,7 +393,6 @@
             },
             "titre": {
               "type": "keyword",
-              "isTitle": true,
               "inCSV": true
             },
             "epoque": {
@@ -459,7 +459,8 @@
           },
           "indexCIJW": {
             "type": "keyword",
-            "inCSV": true
+            "inCSV": true,
+            "isTitle":true
           },
           "projet": {
             "type": "keyword"
@@ -478,8 +479,8 @@
           },
           "titre": {
             "type": "text",
-            "inCSV": true,
-            "isTitle":true
+            "inCSV": true
+
           },
           "fonds": {
             "type": "keyword",

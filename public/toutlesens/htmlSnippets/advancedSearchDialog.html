@@ -1,0 +1,158 @@
+<style>
+    .searchPanel {
+        width: 300px;
+        height:400px;
+        overflow: auto;
+        position: absolute;
+        visibility: hidden;
+        margin: auto;
+        text-align: center;
+    }
+
+    #searchNavDiv {
+        width: 300px;
+        visibility: visible;
+        padding: 2px;
+        position: inherit;
+        margin: auto;
+        text-align: center;
+        top: 420px;
+        position: relative;
+
+    }
+
+    #searchCriteriaTextDiv {
+
+        width: 250px;
+    / / height: 30 px;
+
+        visibility: visible;
+    / / background-color: #9ca7b3;
+    / / border: 3 px solid green;
+        padding: 10px;
+        position: inherit;
+        margin: auto;
+        text-align: center;
+    }
+
+</style>
+
+
+<b>Start node query</b>
+
+
+<div class="searchPanel" style="flex-direction: column">
+
+
+    <div id="searchCriteriaDiv" style="visibility: visible;height:380px;overflow: hidden " class="searchPanel">
+        <div style="   overflow: auto;height: 60px">
+        <select id="searchCriteriatextSelect" size="1" onclick="advancedSearch.clearClause(this)"
+                style=" overflow-y: hidden;    border: none;"></select>
+        <input type="image" height="20px" src="images/erase.png"
+               onclick="advancedSearch.clearClauses()">
+        </div>
+        <div id="searchAccordion">
+
+            <h3>save Queries</h3>
+            <div style="min-height: 300px;">
+            </div>
+
+            <h3>new Query</h3>
+            <div style="min-height: 400px;overflow: auto">
+
+
+                <!--   object<select id="propertiesSelectionDialog_ObjectTypeInput" onchange="filters.setLabelsOrTypes(this)">
+                 <option selected="selected">node</option>
+                 <option>relation</option>
+             </select>-->
+                <input type="hidden" id="propertiesSelectionDialog_ObjectTypeInput" value="node">
+
+                <select id="propertiesSelectionDialog_ObjectNameInput"
+                        onchange="advancedSearch.onChangeObjectName($(this).val())"></select>
+                <br>
+                Property
+
+                <select id="propertiesSelectionDialog_propsSelect" style="background-color: #999999;">
+
+                </select>
+                <br>
+
+                <table>
+                    <tr>
+                        <td>
+                            <select id="propertiesSelectionDialog_operatorSelect">
+                                <option>=</option>
+                                <option>!=</option>
+                                <option>&lt;</option>
+                                <option>&gt;</option>
+                                <option selected="selected">contains</option>
+                            </select>
+                        </td>
+                        <td>
+                            <input id="propertiesSelectionDialog_valueInput" size="15"
+                                   onchange="$('#searchCriteriaAddButton').css('visibility','visible')">
+                        </td>
+                        <td>
+                            <button onclick="advancedSearch.addClauseUI()" id="searchCriteriaAddButton">+
+                            </button>
+                            <input type="image" height="20px" src="images/erase.png"
+                                   onclick="$('#propertiesSelectionDialog_valueInput').val('')">
+                        </td>
+                    </tr>
+
+
+                </table>
+
+
+                <!--  -->
+
+
+            </div>
+        </div>
+    </div>
+
+
+    <div id="searchActionDiv" class="searchPanel">
+        <b>Ouput type</b>
+        <br>
+        <select id='advancedSearchAction' size="7" onclick='searchMenu.onSearchAction($(this).val())'>
+            <option value='listNodes'>list nodes</option>
+            <option value='tagCloud'>tag Cloud</option>
+
+            <option value='graphSomeNeighbours'>graph some neigbours...</option>
+            <option value='graphAllNeighbours'>graph all neigbours</option>
+            <option value='graphNodes'>cards</option>
+            <option value='graphSimilars'>graph similars</option>
+        </select>
+
+    </div>
+
+    <div id="searchNeighboursLabelsDiv" class="searchPanel">
+        <b>Neighbours Types</b>
+        <br>
+        <div id='neighboursTypesDiv'></div>
+
+
+        <button onclick="searchMenu.graphNeighboursWithLabels()">OK</button>
+
+
+    </div>
+</div>
+
+
+<div id="searchNavDiv"
+     style="background-color: #eee; border-style: none; border-width: thin;margin-bottom: 20px">
+    <button style="visibility:hidden" id="searchMenupreviousPanelButton"
+            onclick="searchMenu.previousPanel();">
+        previous
+    </button>
+    <button onclick="searchMenu.nextPanel();">next</button>
+</div>
+</div>
+
+
+<script>
+
+
+</script>
+

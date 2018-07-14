@@ -19,6 +19,8 @@ if(!options)
             if (!rels)
                 rels = [];
             var nodes = resultArray[i].nodes;
+
+
             if (!nodes)
                 nodes = [];
             var relProperties = resultArray[i].relProperties;
@@ -69,6 +71,8 @@ if(!options)
 
                     if (resultArray.length<Gparams.showLabelsMaxNumOfNodes || (options && options.showNodesLabel) || !options) {
                         nodeObj.label = labelVisjs;
+                        nodeObj.title = labelVisjs;
+
 
                     }else{
                         nodeObj.hiddenLabel = labelVisjs;

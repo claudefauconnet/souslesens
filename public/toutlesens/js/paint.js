@@ -11,12 +11,16 @@ var paint = (function () {
 
     self.initialNodesattrs = {};
     self.initialLinksattrs = {};
-    self.currentBIproperty=null;
+    self.currentBIproperty = null;
     var currentAction = "";
 
-    var clickedLegendItem=false;
+    var clickedLegendItem = false;
+    var scale;
+    var domain;
+    var scaleType;
+    var ticksColors = []
 
-    var ordinalLegendMap={}
+    var ordinalLegendMap = {}
 
 
     self.init = function (data) {
@@ -112,7 +116,7 @@ var paint = (function () {
     }
 
 
-    self.showBIdialog=function(){
+    self.showBIdialog = function () {
         $("#dialog").css("visibility", "visible");
         $("#dialog").load("htmlSnippets/BIdialog.html", function () {
             $("#dialog").dialog("option", "title", "Outline Properties");
@@ -122,29 +126,29 @@ var paint = (function () {
     }
 
     self.paintClasses = function (_property) {
-
-        ordinalLegendMap={};
+        ticksColors = []
+        ordinalLegendMap = {};
         var nClasses = parseInt($("#paintDialog_NclassesInput").val());
-        var size = parseInt($("#paintDialog_circleRadiusInput").val()*2);
+        var size = parseInt($("#paintDialog_circleRadiusInput").val() * 2);
         var property = $("#propertiesSelectionDialog_propsSelect").val();
-        if(_property )
-            property=_property;
+        if (_property)
+            property = _property;
 
 
         if (property == "")
             return toutlesensController.setMessage("choose a property", "red");
 
-        self.currentBIproperty=property;
+        self.currentBIproperty = property;
         var data = [];
 
-        var nodes=visjsGraph.nodes.get()
-        for (var i=0;i<nodes.length;i++){
-            var nodeData = nodes[i];
+        var allGraphNodes = visjsGraph.nodes.get()
+        for (var i = 0; i < allGraphNodes.length; i++) {
+            var nodeData = allGraphNodes[i];
             var value = nodeData.neoAttrs[property];
             if (value)
                 data.push({id: nodeData.id, value: value});
         }
-        if(data.length==0)
+        if (data.length == 0)
             return;
 
 
@@ -154,8 +158,8 @@ var paint = (function () {
         var max = d3.max(data, function (d) {
             return d.value;
         });
-        var scale;
-        var scaleType;
+
+
         var palettes = [
             [], [], [],
             ["#fc8d59", "#ffffbf", "#91cf60"],
@@ -172,34 +176,32 @@ var paint = (function () {
         var palette = palettes[nClasses];
         // var palette=["#9e0142","#d53e4f","#f46d43","#fdae61","#fee08b","#ffffbf","#e6f598","#abdda4","#66c2a5","#3288bd","#5e4fa2"]
         //  var palette = ["#3366cc", "#dc3912", "#ff9900", "#109618", "#990099", "#0099c6", "#dd4477", "#66aa00", "#b82e2e", "#316395", "#994499", "#22aa99", "#aaaa11", "#6633cc", "#e67300", "#8b0707", "#651067", "#329262", "#5574a6", "#3b3eac"];
-        var domain;
+
         if (common.isNumber(data[0].value)) {
             scaleType = "linear"
             domain = d3.scaleLinear().domain([min, max]).nice().range([0, nClasses]);
-if(false && d3.scaleLinear)
-            scale = d3.scaleLinear().domain().interpolator(d3.interpolateRainbow);
-else
-            scale = d3.scaleQuantize().domain([min, max]).nice().range(palette);
+            if (false && d3.scaleLinear)
+                scale = d3.scaleLinear().domain().interpolator(d3.interpolateRainbow);
+            else
+                scale = d3.scaleQuantize().domain([min, max]).nice().range(palette);
         }
         else {
-if( false && d3.scalePoint)
-            domain = d3.scalePoint().domain(data).range([0, palette.length]);
-else
-            domain = d3.scaleOrdinal().domain(data).range([0, palette.length]);
+            if (false && d3.scalePoint)
+                domain = d3.scalePoint().domain(data).range([0, palette.length]);
+            else
+                domain = d3.scaleOrdinal().domain(data).range([0, palette.length]);
             scaleType = "ordinal"
             scale = d3.scaleOrdinal().domain(data).range(palette);
         }
 
 
-        //   console.log(domain.ticks(5));
-        /*  console.log(colorDomain(-490));
-         console.log(colorDomain(-491));*/
-
         var colorClasses = {};
         var allIds = [];
-        var targetNodes=[];
-        var shapes=["dot","diamond","triangle","trangleDown","square","star"];
-        var shapeIndex=0;
+        var targetNodes = [];
+        var targetIds = [];
+        var shapes = ["dot", "diamond", "triangle", "trangleDown", "square", "star"];
+        var shapeIndex = 0;
+        var size = 10;
         for (var i = 0; i < data.length; i++) {
 
 
@@ -218,31 +220,47 @@ else
             }
             //   console.log(data[i].value+"  "+color)
             if (!color) {
-                color="#333";
+                color = "#333";
             }
-            if(!ordinalLegendMap[data[i].value])
-                ordinalLegendMap[data[i].value]=color;
+            if (!ordinalLegendMap[data[i].value])
+                ordinalLegendMap[data[i].value] = color;
 
-
-                targetNodes.push({id: "" + data[i].id, color: color,size:size,shape:shapes[shapeIndex],hidden:false});
-            if(false &&  i%nClasses==0)
-                shapeIndex+=1
+            targetIds.push("" + data[i].id);
+            targetNodes.push({id: "" + data[i].id, color: color, size: size, shape: "dot", hidden: false});
+            if (false && i % nClasses == 0)
+                shapeIndex += 1
 
 
         }
-      //  visjsGraph.paintNodes(allIds ,"#333", null, null);
+        var neutralColor = "#eee";
+        var neutralSize = 3;
+        var neutralShape = "square";
 
+        for (var i = 0; i < allGraphNodes.length; i++) {
+            var id = allGraphNodes[i].id;
+            if (targetIds.indexOf("" + id) < 0) {
+                targetNodes.push({
+                    id: "" + id,
+                    color: neutralColor,
+                    size: neutralSize,
+                    shape: neutralShape,
+                    hidden: false
+                });
+            }
+        }
 
 
         visjsGraph.nodes.update(targetNodes);
 
-      /*  for (var key in colorClasses) {
-            visjsGraph.paintNodes(colorClasses[key], key, null, radius);
-        }*/
-      /*  $("#paintDiv").css("height", 300);
-        $("#paintDiv").css("overflow", "auto");*/
+        /*  for (var key in colorClasses) {
+              visjsGraph.paintNodes(colorClasses[key], key, null, radius);
+          }*/
+        /*  $("#paintDiv").css("height", 300);
+          $("#paintDiv").css("overflow", "auto");*/
         // colorlegend  ("#paintDiv", scale, scaleType,  {vertical:true, boxHeight: 10, boxWidth: 20});
         self.drawPaletteColorLegend(scale, domain, palette, nClasses);
+
+        $("#paint_clusterButton").css("visibility","visible")
     }
 
 
@@ -251,7 +269,7 @@ else
 
         var ticks;
         var type;
-        var ticksColors = []
+
         if (domain.ticks) {
             type = "linear";
             ticks = domain.ticks(nClasses);
@@ -264,35 +282,34 @@ else
         }
 
         if (!ticks) {
-            for(var key in ordinalLegendMap){
+            for (var key in ordinalLegendMap) {
                 ticksColors.push({color: ordinalLegendMap[key], tick: key});
             }
-          /*  type = "ordinal";
-            ticks = scale.domain();
+            /*  type = "ordinal";
+              ticks = scale.domain();
 
-            for (var i = 0; i < ticks.length; i++) {
-                var index = Math.round(domain(ticks[i] - 1));
-                color = scale(ticks[i]);
-                color = self.rgb2hex(color);
-                ticksColors.push({color: color, tick: ticks[i]});
-            }*/
+              for (var i = 0; i < ticks.length; i++) {
+                  var index = Math.round(domain(ticks[i] - 1));
+                  color = scale(ticks[i]);
+                  color = self.rgb2hex(color);
+                  ticksColors.push({color: color, tick: ticks[i]});
+              }*/
 
         }
 
-        var str = "<b>"+self.currentBIproperty+"<b></b><br><table style='font-size: 10px;font-weight: normal'>"
+        var str = "<b>" + self.currentBIproperty + "<b></b><br><table style='font-size: 10px;font-weight: normal'>"
         var color;
-        var shapes=["dot","diamond","triangle","trangleDown","square","star"];
-        var shapeIndex=0;
+        var shapes = ["dot", "diamond", "triangle", "trangleDown", "square", "star"];
+        var shapeIndex = 0;
         for (var i = 0; i < ticksColors.length; i++) {
             var onClick = " onclick='paint.onLegendItemClick(\"" + ticksColors[i].tick + "\")'";
 
-            str += "<tr" + onClick + "><td><span  class='BIlegendSpan' id='BIlegendSpan_"+ticksColors[i].tick +"' style='background-color: " + ticksColors[i].color + ";width:20px;height: 20px'>&nbsp;&nbsp;&nbsp;</span></td><td>" + ticksColors[i].tick + "</td></tr>"
+            str += "<tr" + onClick + "><td><span  class='BIlegendSpan' id='BIlegendSpan_" + ticksColors[i].tick + "' style='background-color: " + ticksColors[i].color + ";width:20px;height: 20px'>&nbsp;&nbsp;&nbsp;</span></td><td>" + ticksColors[i].tick + "</td></tr>"
 
         }
         $("#BIlegendDiv").html(str);
-        var left= (totalWidth - rightPanelWidth) -  $("#BIlegendDiv").width()-10
-        $("#BIlegendDiv").css("left",left)
-
+        var left = (totalWidth - rightPanelWidth) - $("#BIlegendDiv").width() - 10
+        $("#BIlegendDiv").css("left", left)
 
 
     }
@@ -319,14 +336,14 @@ else
         var filterObjectType = $("#propertiesSelectionDialog_ObjectTypeInput").val();
         var operator = $("#propertiesSelectionDialog_operatorSelect").val();
         var type = $("#propertiesSelectionDialog_ObjectNameInput").val();
-       // self.currentLabel = $("#paintDialog_labelSelect").val();
-        self.currentLabel=$("#propertiesSelectionDialog_ObjectNameInput").val();
+        // self.currentLabel = $("#paintDialog_labelSelect").val();
+        self.currentLabel = $("#propertiesSelectionDialog_ObjectNameInput").val();
 
         var legendStr = "";
 
         if (Gparams.useVisjsNetworkgraph) {
-            var xxx=$("#propertiesSelectionDialog_ObjectTypeInput").val();
-            if ($("#propertiesSelectionDialog_ObjectTypeInput").val()=="node" ) {
+            var xxx = $("#propertiesSelectionDialog_ObjectTypeInput").val();
+            if ($("#propertiesSelectionDialog_ObjectTypeInput").val() == "node") {
 
                 var ids = [];
                 for (var key in visjsGraph.nodes._data) {
@@ -342,9 +359,8 @@ else
                 }
                 visjsGraph.paintNodes(ids, self.currentColor, "#eee", radius);
                 legendStr = "<span style='background-color: " + self.currentColor + ";'>&nbsp;&nbsp;&nbsp;</span></td><td>" + legendStr + "</td></tr>"
-               /* $("#paintDiv").css("height", 100);
-                $("#paintDiv").html(legendStr);*/
-
+                /* $("#paintDiv").css("height", 100);
+                 $("#paintDiv").html(legendStr);*/
 
 
             } else {// relation
@@ -364,10 +380,9 @@ else
                 }
                 visjsGraph.paintEdges(ids, self.currentColor, "#eee", radius);
                 legendStr = "<span style='background-color: " + self.currentColor + ";'>&nbsp;&nbsp;&nbsp;</span></td><td>" + legendStr + "</td></tr>"
-             /*   $("#paintDiv").css("height", 100);
-                $("#paintDiv").html(legendStr);*/
+                /*   $("#paintDiv").css("height", 100);
+                   $("#paintDiv").html(legendStr);*/
                 $("#BIlegendDiv").html(legendStr);
-
 
 
             }
@@ -404,14 +419,13 @@ else
 
     self.isLabelNodeOk = function (data, property, operator, value, type) {
 
-        if(type && (!value || value=="")) {
+        if (type && (!value || value == "")) {
             if (data.labelNeo == type)
                 return true;
             return false;
         }
 
         if (property && property.length > 0) {
-
 
 
             if (!data.neoAttrs[property])
@@ -527,10 +541,10 @@ else
     }
     self.onLegendItemClick = function (value) {
 
-        var selectedNodes=[];
+        var selectedNodes = [];
         var nodes = visjsGraph.nodes.get();
-        for (var i=0;i<nodes.length;i++){
-            if(clickedLegendItem!=value) {//hide other nodes than value
+        for (var i = 0; i < nodes.length; i++) {
+            if (clickedLegendItem != value) {//hide other nodes than value
                 if (nodes[i].neoAttrs[self.currentBIproperty] == value)
                     selectedNodes.push({id: nodes[i].id, hidden: false})
                 else
@@ -541,13 +555,93 @@ else
 
             }
         }
-        if(clickedLegendItem!=value)
-        clickedLegendItem=value;
+        if (clickedLegendItem != value)
+            clickedLegendItem = value;
         else
             clickedLegendItem = "";
 
         visjsGraph.nodes.update(selectedNodes)
 
+    }
+
+    self.clusterByClass = function () {
+
+
+        var clusterOptionsByData;
+        for (var i = 1; i < ticksColors.length; i++) {
+            var tickColor = ticksColors[i].color;
+            clusterOptionsByData = {
+                joinCondition: function (childOptions) {
+                    return childOptions.color.background == tickColor; // the color is fully defined in the node.
+
+                },
+                /*   processProperties: function (clusterOptions, childNodes, childEdges) {
+                       var totalMass = 0;
+                       for (var i = 0; i < childNodes.length; i++) {
+                           totalMass += childNodes[i].mass;
+                       }
+                       clusterOptions.mass = totalMass;
+                       return clusterOptions;
+                   },*/
+                clusterNodeProperties: {
+                    id: 'cluster:' + tickColor,
+                   // borderWidth: 3,
+                    shape: 'circle',
+                    color: tickColor,
+                    label: 'color:' + ticksColors[i].tick
+                }
+            };
+            visjsGraph.network.cluster(clusterOptionsByData);
+            $("#paint_unClusterButton").css("visibility","visible")
+        }
+
+    }
+
+    self.unClusterByClass = function () {
+
+var x= visjsGraph.network;
+    }
+
+    self.dispatchAction=function(action) {
+
+
+        $("#graphPopup").css("visibility", "hidden");
+        toutlesensController.hidePopupMenu();
+        if(!currentObject.id && currentObject.type!="cluster" )
+            return;
+
+        if (action == "openCluster") {
+            visjsGraph.network.openCluster(currentObject.id, {
+                releaseFunction: function (clusterPosition, containedNodesPositions) {
+
+                    return containedNodesPositions;
+                }
+            })
+        }
+        else if (action == "listClusterNodes") {
+            var nodeIds=visjsGraph.network.getNodesInCluster(currentObject.id)
+            toutlesensData.setSearchByPropertyListStatement("_id", nodeIds, function (err, result) {
+
+                toutlesensController.generateGraph(null, {
+                    applyFilters: true,
+                    dragConnectedNodes: true
+                }, function () {
+
+                    $("#filtersDiv").html("");
+                    $("#graphMessage").html("");
+
+
+                });
+
+            })
+        }
+        else if (action == "graphClusterNodes") {
+
+        }
+        else if (action == "queryClusterNodes") {
+
+
+        }
     }
 
     return self;

@@ -20,11 +20,13 @@ var eventsController = (function () {
 
             $("#tagCloudButton").click(function (e) {
                 toutlesensController.searchNodesUI('exec', null, null, tagCloud.drawCloud);
-                $("#findTabs").tabs({active:4});
+              //  $("#findTabs").tabs({active:4});
 
             });
 
-
+            $("#graphDiv").click(function (e) {
+            var xx=e;
+            })
 
 
             $("#schemaButton").click(function (e) {
@@ -70,6 +72,12 @@ var eventsController = (function () {
                     visjsGraph.findNode(expression, "blue", 15);
                 }
             });
+           /* $('#advancedSearchAction').on('change', function (e) {
+                var option=this.val();
+               advancedSearch.onSearchAction(option)
+            });*/
+
+
 
 //*******************************************components**************************************
 //*****************************************************************************************

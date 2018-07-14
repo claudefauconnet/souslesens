@@ -92,6 +92,8 @@ var filters = (function () {
      */
 
     self.setLabelsOrTypes = function (type) {
+
+        return;
         // var type = $(select).val();
         if (self.currentLabels.length == 0) {
             self.currentLabels = Schema.getAllLabelNames();

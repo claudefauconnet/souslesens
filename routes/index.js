@@ -504,7 +504,7 @@ function processResponse(response, error, result) {
 
         }
         else if (!result) {
-            response.status(404).send("no result");
+            response.send({done: true});
         } else {
 
             if (typeof result == "string") {
