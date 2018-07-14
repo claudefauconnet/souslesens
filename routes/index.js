@@ -139,15 +139,6 @@ router.post(serverParams.routesRootUrl + '/elastic', function (req, response) {
             processResponse(response, error, result)
         });
 
-    else if (req.body && req.body.indexSqlTable)
-        elasticProxy.indexSqlTable( req.body.connection,  req.body.sql,  req.body.elasticIndex,  req.body.elasticType,  function (error, result) {
-            processResponse(response, error, result)
-        });
-    else if (req.body && req.body.indexSqlTableInNewIndex)
-        elasticProxy.indexSqlTableInNewIndex( req.body.connection,  req.body.sql,  req.body.elasticIndex,req.body.settings,  req.body.elasticType,  function (error, result) {
-            processResponse(response, error, result)
-        });
-
     else if (req.body && req.body.createIndexClassifierFromWordsListAndOntology)
         classifierManager.createIndexClassifierFromWordsListAndOntology(req.body.indexName, req.body.words, req.body.ontologies, req.body.lang, parseInt("" + req.body.nSkosAncestors), function (error, result) {
             processResponse(response, error, result)

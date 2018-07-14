@@ -20,7 +20,6 @@ var eventsController = (function () {
 
             $("#tagCloudButton").click(function (e) {
                 toutlesensController.searchNodesUI('exec', null, null, tagCloud.drawCloud);
-                $("#findTabs").tabs({active:4});
 
             });
 
@@ -157,8 +156,6 @@ var eventsController = (function () {
                             toutlesensController.currentActionObj = {type: "relation"}
                         if (index == 2)
                             toutlesensController.currentActionObj = {type: "pathes"}
-                        if (index == 3)
-                         ;//   toutlesensController.searchNodesUI('exec', null, null, tagCloud.drawCloud);
                     },
                     create: function (event, ui) {
                         toutlesensController.currentActionObj = {type: "findNode"}

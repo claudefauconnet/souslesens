@@ -1394,7 +1394,6 @@ for( var i=0;i<self.currentNodesSelection.length;i++){
 
     self.loadSearchResultIntree = (function (err, matchStr) {
         self.loadTree(null, null, matchStr);
-
     });
 
     self.cancelAddRelation = function () {

@@ -1484,36 +1484,8 @@ var elasticProxy = {
     }
     ,
 
-
-
-
-
-
-    indexSqlTableInNewIndex:function(connection, sql, elasticIndex,settings, elasticType, callback) {
-        elasticProxy.deleteIndex(elasticIndex, true, function (err, result) {
-            if (err) {
-
-                return callback(err)
-            }
-            console.log(result)
-            elasticProxy.createSimpleIndex(elasticIndex, settings, function (err, result) {
-                if (err) {
-                    return callback(err)
-                }
-                console.log(result)
-                elasticProxy.indexSqlTable(connection, sql, elasticIndex, elasticType, function (err, result) {
-                    if (err) {
-                        return callback(err)
-                    }
-                    return callback(null,result);
-                })
-
-            })
-        })
-    }
-    ,
-
     indexSqlTable: function (connection, sql, elasticIndex, elasticType, callback) {
+
         serverParams.mongoFetchSize = 300;
         var bulkStr = "";
         var mySQLproxy = require('./mySQLproxy..js');
@@ -1529,7 +1501,7 @@ var elasticProxy = {
             var field = elasticFields[i];
         }
         var offset = 0;
-     //   serverParams.mongoFetchSize=10;
+
         async.whilst(
             function () {//test
                 return resultSize > 0;
@@ -1583,33 +1555,13 @@ var elasticProxy = {
                                return callbackWhilst();
                            }*/
 
-
-
-
-                getClient().bulk({
-                    body: elasticPayload
-                }, function (err, resp) {
-                    if (err) {
-                        console.log("ERROR " + err)
-                      //  console.log(JSON.stringify(elasticPayload, null, 2))
-                        return callbackWhilst(null);
-
-                    } else {
-                        return callbackWhilst(null);
-                    }
-                });
-
-
-
-                      /*  var options = {
-                            method: 'POST',
+                        var options = {
+                            method: 'PUT',
                             url: baseUrl + index + "/_bulk",
-                            encoding: null,
-                           // json: elasticPayload
-                            body:JSON.stringify(elasticPayload,null,2)
+                            json: elasticPayload
                         }
 
-                        console.log(JSON.stringify(options,null,2))
+
                         request(options, function (error, response, body) {
                             if (error) {
 
@@ -1632,7 +1584,7 @@ var elasticProxy = {
                                 return callbackWhilst(null);
                             }
 
-                        });*/
+                        });
 
                     }
 
@@ -1744,25 +1696,21 @@ var elasticProxy = {
             settingsObj = elasticProxy.getIndexSettings(settings)
             if (!settingsObj)
                 return callback("settings does not exist :" + settings);
-            json.settings = settingsObj;
+            json.settings = settingsObj.settings;
         }
         mappingsObj = elasticProxy.getIndexMappings(index)
         if (mappingsObj &&( settingsObj && !settingsObj.mappings))
-            json.mappings = elasticProxy.removeSchemaMappingsCustomProperties(mappingsObj).mappings;
+            json.mappings = mappingsObj.mappings;
 
         var options = {
             method: 'PUT',
             description: "init mapping on attachment content",
             url: baseUrl + index + "/",
-            json:json
+            json: json
         };
-
-        console.log(   "*************Index Mappings and settings\n"+JSON.stringify(json,null,2));
         request(options, function (error, response, body) {
             if (error)
                 return callback(error);
-            if(body.error)
-                return callback(body.error);
             callback(null, "index " + index + " created");
 
         })
@@ -2216,8 +2164,6 @@ var elasticProxy = {
         var userObj = users[user];
         if (!userObj)
             return callback("no registred user :" + user);
-        if(!Array.isArray(userObj.groups))
-            userObj.groups=[userObj.groups];
         var output = {};
         for (var i = 0; i < userObj.groups.length; i++) {
             if (userObj.groups[i] != "ALL")
