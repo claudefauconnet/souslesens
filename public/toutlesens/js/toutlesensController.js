@@ -559,22 +559,6 @@ var toutlesensController = (function () {
 
                     return;
                 }
-                if (currentObject.type == "cluster") {
-                    var str = "Label " + currentObject.label + "<br><table>"
-
-                    str += "<tr><td><a href='javascript:paint.dispatchAction(\"openCluster\")'>open cluster</a>"
-                    str += "<tr><td><a href='javascript:paint.dispatchAction(\"listClusterNodes\")'>list cluster nodes</a>"
-                    str += "<tr><td><a href='javascript:paint.dispatchAction(\"graphClusterNodes\")'>list cluster nodes</a>"
-                    str += "<tr><td><a href='javascript:paint.dispatchAction(\"queryClusterNodes\")'>query cluster</a>"
-
-
-                    $("#graphPopup").html(str);
-                    $("#nodeInfoMenuDiv").css("visibility", "visible");
-                    $("#nodeInfoMenuDiv").html(str);
-
-
-                    return;
-                }
                 toutlesensData.getNodeInfos(id, function (obj) {
                     var $currentObj = currentObject;
                     if (self.hasRightPanel) {
@@ -1004,6 +988,7 @@ var toutlesensController = (function () {
 
 
 
+
     self.showPopupMenu = function (x, y, type) {
 
         $("#tabs-analyzePanel").tabs("option", "active", 0);
@@ -1084,13 +1069,6 @@ var toutlesensController = (function () {
 
 
         });
-
-        $("#queryDiv").load("htmlSnippets/advancedSearchDialog.html", function () {
-
-            searchMenu.init(Schema);
-        });
-
-
 
 
         $("#tabs-analyzePanel").tabs("option", "disabled", tabsanalyzePanelDisabledOptions);

@@ -30,11 +30,12 @@
 <head>
     <link rel="stylesheet" type="text/css" title="Design"
           href="../common/js/jquery/theme_humanity/jquery-ui.min.css"/>
-
+    <lin
     <script src="../common/js/jquery/jquery.min.js"></script>
     <script src="../common/js/jquery/jquery-ui.min.js"></script>
     <script src="./js/cards.js"></script>
     <script src="./js/schema.js"></script>
+    <script src="./js/treeController.js"></script>
     <script src="../common/js/common.js"></script>
     <script src="./resources/params.js"></script>
 
@@ -42,10 +43,10 @@
         var subGraph;
         var nodeColors={}
         $(function(){
-          //  infoGenericDisplay.initLabels(function(){
+            infoGenericDisplay.initLabels(function(){
                 cards.subGraph=$("#dbName").val();
                 cards.defaultNodeNameProperty=Schema.schema.defaultNodeNameProperty;
-         //   });
+            });
 
             $("#dialog").dialog({
                 autoOpen: false,
@@ -85,7 +86,7 @@ sort <select id="sortSelect">
     <option> alphabetic</option>
 </select>
 <span id="filterDiv"></span>
-<div id="graphDiv">
+<div id="backgroundDiv">
 
 <!--
 <div id="parent2" class="parent" ondrop="drop(event)" ondragover="allowDrop(event)" width="336" height="69" color="red">drop</div>

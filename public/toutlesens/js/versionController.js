@@ -17,8 +17,8 @@ var versionController = (function () {
               //  ($("#tabs-analyzePanel").find("li")[2]),
               //  $("#highlightDiv"),
                 //highlightDiv
-              //  ($("#tabs-analyzePanel").find("li")[1]),
-              //  $("#filterDiv"),
+                ($("#tabs-analyzePanel").find("li")[1]),
+                $("#filterDiv"),
 
 
                 /*  $("#paintAccordion").find("h3")[1],
