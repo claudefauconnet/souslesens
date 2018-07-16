@@ -1,7 +1,7 @@
 <style>
     .searchPanel {
         width: 300px;
-        height:400px;
+        height: 300px;
         overflow: auto;
         position: absolute;
         visibility: hidden;
@@ -13,11 +13,12 @@
         width: 300px;
         visibility: visible;
         padding: 2px;
-        position: inherit;
+        height: 200px;
+
         margin: auto;
         text-align: center;
-        top: 420px;
-        position: relative;
+        top: 350px;
+        position: absolute;
 
     }
 
@@ -38,27 +39,24 @@
 </style>
 
 
-<b>Start node query</b>
+<div id="searchAccordion">
 
+    <h3>save Queries</h3>
+    <div style="min-height: 300px;">
 
-<div class="searchPanel" style="flex-direction: column">
+        <select id="searchMenu_savedQueries" size="14" style="width:270px"
+                ondblclick="searchMenu.savedQueryExecute()"></select>
+        <br>
+        <button onclick="searchMenu.savedQueryDelete()">delete</button>
+        <button onclick="searchMenu.savedQueryExecute()">execute</button>
+    </div>
 
+    <h3>new Query</h3>
+    <div style="height: 450px;overflow: auto">
+        <b>Start node query</b>
+        <div class="searchPanel" style="flex-direction: column">
 
-    <div id="searchCriteriaDiv" style="visibility: visible;height:380px;overflow: hidden " class="searchPanel">
-        <div style="   overflow: auto;height: 60px">
-        <select id="searchCriteriatextSelect" size="1" onclick="advancedSearch.clearClause(this)"
-                style=" overflow-y: hidden;    border: none;"></select>
-        <input type="image" height="20px" src="images/erase.png"
-               onclick="advancedSearch.clearClauses()">
-        </div>
-        <div id="searchAccordion">
-
-            <h3>save Queries</h3>
-            <div style="min-height: 300px;">
-            </div>
-
-            <h3>new Query</h3>
-            <div style="min-height: 400px;overflow: auto">
+            <div id="searchCriteriaDiv" style="visibility: visible;overflow: hidden " class="searchPanel">
 
 
                 <!--   object<select id="propertiesSelectionDialog_ObjectTypeInput" onchange="filters.setLabelsOrTypes(this)">
@@ -108,48 +106,60 @@
 
 
             </div>
+
+
+            <div id="searchActionDiv" class="searchPanel">
+                <b>Ouput type</b>
+                <br>
+                <select id='advancedSearchAction' size="7" onclick='searchMenu.onSearchAction($(this).val())'>
+                    <option value='listNodes'>list nodes</option>
+                    <option value='tagCloud'>tag Cloud</option>
+
+                    <option value='graphSomeNeighboursList'>graph some neighbours...</option>
+                    <option value='graphAllNeighbours'>graph all neighbours</option>
+                    <option value='graphNodes'>cards</option>
+                    <option value='graphSimilars'>graph similars</option>
+                </select>
+
+            </div>
+
+            <div id="searchNeighboursLabelsDiv" class="searchPanel">
+                <b>Neighbours Types</b>
+                <br>
+                <div id='neighboursTypesDiv'></div>
+
+
+                <button onclick="searchMenu.graphNeighboursWithLabels()">OK</button>
+
+
+            </div>
+
         </div>
-    </div>
+        <div id="searchNavDiv">
+            <div style="background-color: #eee; border-style: solid; border-width: thin;margin-bottom: 20px">
+                <button style="visibility:hidden" id="searchMenuSaveQueryButton"
+                        onclick="searchMenu.savedQuerySave();">save query
+                </button>
 
-
-    <div id="searchActionDiv" class="searchPanel">
-        <b>Ouput type</b>
-        <br>
-        <select id='advancedSearchAction' size="7" onclick='searchMenu.onSearchAction($(this).val())'>
-            <option value='listNodes'>list nodes</option>
-            <option value='tagCloud'>tag Cloud</option>
-
-            <option value='graphSomeNeighbours'>graph some neigbours...</option>
-            <option value='graphAllNeighbours'>graph all neigbours</option>
-            <option value='graphNodes'>cards</option>
-            <option value='graphSimilars'>graph similars</option>
-        </select>
-
-    </div>
-
-    <div id="searchNeighboursLabelsDiv" class="searchPanel">
-        <b>Neighbours Types</b>
-        <br>
-        <div id='neighboursTypesDiv'></div>
-
-
-        <button onclick="searchMenu.graphNeighboursWithLabels()">OK</button>
+                <button style="visibility:hidden" id="searchMenupreviousPanelButton"
+                        onclick="searchMenu.previousPanel();">
+                    previous
+                </button>
+                <button onclick="searchMenu.nextPanel();">next</button>
+            </div>
+            <div id="searchMenuCriteriatext" style="  visibility: hidden; overflow: auto;height: 150px">
+                <select id="searchCriteriatextSelect" size="4" onclick="advancedSearch.clearClause(this)"
+                        style=" overflow-y: hidden;    border: none;"></select>
+                <input type="image" height="20px" src="images/erase.png"
+                       onclick="advancedSearch.clearClauses()">
+            </div>
+        </div>
 
 
     </div>
-</div>
 
 
-<div id="searchNavDiv"
-     style="background-color: #eee; border-style: none; border-width: thin;margin-bottom: 20px">
-    <button style="visibility:hidden" id="searchMenupreviousPanelButton"
-            onclick="searchMenu.previousPanel();">
-        previous
-    </button>
-    <button onclick="searchMenu.nextPanel();">next</button>
 </div>
-</div>
-
 
 <script>
 

@@ -72,10 +72,6 @@ var eventsController = (function () {
                     visjsGraph.findNode(expression, "blue", 15);
                 }
             });
-           /* $('#advancedSearchAction').on('change', function (e) {
-                var option=this.val();
-               advancedSearch.onSearchAction(option)
-            });*/
 
 
 

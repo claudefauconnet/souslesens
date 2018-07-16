@@ -11,7 +11,7 @@ var versionController = (function () {
         self.versions["1_googleLike"] = {
             hiddenElts: [
                 //advancedQueriesDiv
-                ($("#findTabs").find("li")[3]),
+                ($("#findTabs").find("li")[4]),
                 $("#advancedQueriesDiv"),
                 //highlightDiv
               //  ($("#tabs-analyzePanel").find("li")[2]),

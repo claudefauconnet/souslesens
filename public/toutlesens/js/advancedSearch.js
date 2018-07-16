@@ -11,10 +11,6 @@ var advancedSearch = (function () {
         self.filterLabelWhere = "";
 
 
-
-
-
-
         $("#dialog").load("htmlSnippets/advancedSearchDialog.html", function () {
 
             searchMenu.init(Schema);
@@ -25,13 +21,7 @@ var advancedSearch = (function () {
         $("#dialog").dialog("open");
 
 
-
-
     }
-
-
-
-
 
 
     self.showDialogOld = function (options) {
@@ -90,7 +80,7 @@ var advancedSearch = (function () {
 
 
         else {
-            str += "<select id='advancedSearchAction'   onchange='advancedSearch.onSearchAction($(this).val())'><option value=''>Choose...</option><option value='listNodes'>list nodes</option><option value='graphNodes'>graph nodes</option><option value='graphAllNeighbours'>graph all neigbours</option><option value='graphSomeNeighbours'>graph some neigbours...</option><option value='graphSimilars'>graph similars </option></select>";
+            str += "<select id='advancedSearchAction'   onchange='searchMenu.onSearchAction($(this).val())'><option value=''>Choose...</option><option value='listNodes'>list nodes</option><option value='graphNodes'>graph nodes</option><option value='graphAllNeighbours'>graph all neigbours</option><option value='graphSomeNeighbours'>graph some neigbours...</option><option value='graphSimilars'>graph similars </option></select>";
         }
 
 
@@ -125,60 +115,16 @@ var advancedSearch = (function () {
 
     }
 
-    self.onSearchAction = function (option) {
-
-        if (option == '')
-            return;
-        else if (option == 'listNodes') {
-            advancedSearch.searchNodes('matchStr', null, infoGenericDisplay.loadSearchResultIntree);
-            $("#findTabs").tabs("option", "active", 0);
-        }
-        else if (option == 'graphNodes') {
-            advancedSearch.searchNodes('matchStr', null, self.graphNodesOnly);
-        }
-        else if (option == 'graphAllNeighbours') {
-            advancedSearch.searchNodes('matchStr', null, self.graphNodesAndDirectRelations);
-        }
-        else if (option == 'graphSomeNeighbours') {
-            advancedSearch.searchNodes('matchStr', null, self.graphNodesAndDirectRelations);
-        }
-        else if (option == 'graphSimilars') {
-            advancedSearch.searchNodes('matchStr', null, self.graphNodesAndSimilarNodes);
-            // advancedSearch.graphOnly()
-        }
-        else if (option == 'tagCloud') {
-            advancedSearch.addClauseUI()
-            advancedSearch.searchNodes('matchStr', null, function(err,query){
-                var payload = {match: query};
-                $.ajax({
-                    type: "POST",
-                    url: self.neo4jProxyUrl,
-                    data: payload,
-                    dataType: "json",
-                    success: function (data, textStatus, jqXHR) {
-
-                        tagCloud.drawCloud(null, data);
-                    }
-                    ,error:function(err){
-                        $("#graphDiv".html(""))
-                    }
-                })
-            });
-        }
-        toutlesensController.setRightPanelAppearance();
-     //   $('#dialog').dialog('close')
-
-
-    }
 
     self.onChangeObjectName = function (value) {
         // self.setPermittedLabelsCbxs(value);
         $("#propertiesSelectionDialog_valueInput").val("");
+        $('#propertiesSelectionDialog_valueInput').focus();
         if (propertiesSelectionDialog_propsSelect) ;
         filters.initProperty(null, value, propertiesSelectionDialog_propsSelect)
     }
     self.setPermittedLabelsCbxs = function (label, selectId) {
-        var labelsCxbs = "<br><table style='text-align: left;background-color: #93aeca'>";
+        var labelsCxbs = "<br><table style='text-align: left;background-color: #eee; width: 300px;margin-bottom: 15px;'>";
         var labels = Schema.getPermittedLabels(label, true, true);
         for (var i = 0; i < labels.length; i++) {
             var label2 = labels[i];//.replace(/^-/,"");
@@ -202,7 +148,6 @@ var advancedSearch = (function () {
             }
 
 
-
             self.addClause(clause);
             // clause.operator=operator;
 
@@ -211,21 +156,31 @@ var advancedSearch = (function () {
 
     self.addClause = function (clause) {
 
+
+        var clauseText = clause.nodeLabel + " : " + clause.where;
+        if (clauseText == " : ")
+            return;
+        if (clause.where == "" && self.searchClauses.length > 0)
+            return;
+        $("#searchCriteriatextSelect option").each(function () {
+            if ($(this).val() == clauseText)
+                return; // already present
+        })
+
+        var clauseTextHuman = clauseText.replace("=~'(?i).*", " contains '")
+        var clauseTextHuman = clauseTextHuman.replace("*'", "'")
+        clause.title = clauseTextHuman;
+
         self.searchClauses.push(clause);
-        if (!clause.neoLabel)
-            clause.neoLabel = "all labels";
-        var clauseText = clause.neoLabel + " : " + clause.where;
-        //   $("#searchCriteriaTextDiv").append(clauseText);
-
-
-        var clauseTextHuman=clauseText.replace("=~'(?i).*"," contains '")
-        var clauseTextHuman=clauseTextHuman.replace("*'","'")
         $("#searchCriteriatextSelect").append($('<option>', {
             value: clauseText,
             text: clauseTextHuman
         }));
-        $("#searchCriteriatextSelect").attr("size",self.searchClauses.length);
-        $("#clearAllCreteriaButton").css("visibility","visible")
+        //  $("#searchCriteriatextSelect").attr("size", self.searchClauses.length);
+        $("#clearAllCreteriaButton").css("visibility", "visible");
+        $("#searchMenuSaveQueryButton").css("visibility", "visible")
+        $("#searchMenuCriteriatext").css("visibility", "visible");
+
 
     }
 
@@ -268,13 +223,16 @@ var advancedSearch = (function () {
     }
 
 
-    self.searchNodesWithClauses = function (callback) {
+    self.searchNodesWithClauses = function (options, callback) {
         var clauses = self.getMultiCriteriaClauses();
         var whereStr = clauses.where;
         var label = clauses.nodeLabel;
         var labelStr = "";
         if (label && label.length > 0)
             labelStr = ":" + label;
+
+
+
         var query = "MATCH (n" + labelStr + ") " + " WHERE " + whereStr + " RETURN n";
 
         console.log(query);
@@ -346,22 +304,11 @@ var advancedSearch = (function () {
      */
 
     self.searchNodes = function (resultType, _options, callback) {
-        if(!_options)
-            _options={}
+        if (!_options)
+            _options = {}
 
 
         $("#waitImg").css("visibility", "visible")
-        if (resultType != "matchSearchClause" && self.searchClauses.length > 0) {// multiple clauses
-
-            return self.searchNodesWithClauses(callback);
-        }
-        if(!currentObject)
-            currentObject={}
-        currentObject.id = null;
-
-        var searchObj = {};
-        self.filterLabelWhere = "";
-var options={};
 
         if (_options.targetNodesLabels) {
             var str = "[";
@@ -378,6 +325,19 @@ var options={};
             self.filterLabelWhere = " labels(m) in " + str + " ";
 
         }
+        if (resultType != "matchSearchClause" && self.searchClauses.length > 0) {// multiple clauses
+
+            return self.searchNodesWithClauses(_options, callback);
+        }
+        if (!currentObject)
+            currentObject = {}
+        currentObject.id = null;
+
+        var searchObj = {};
+        self.filterLabelWhere = "";
+        var options = {};
+
+
 
 
         var objectType = $("#propertiesSelectionDialog_ObjectTypeInput").val();
@@ -887,7 +847,7 @@ var options={};
 
 
                 toutlesensData.setSearchByPropertyListStatement("_id", ids, function (err, result) {
-                    if(self.filterLabelWhere.length>0) {
+                    if (self.filterLabelWhere.length > 0) {
                         if (toutlesensData.whereFilter != "")
                             toutlesensData.whereFilter += " and " + self.filterLabelWhere;
                         else

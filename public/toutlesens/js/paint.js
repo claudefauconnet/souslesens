@@ -260,7 +260,7 @@ var paint = (function () {
         // colorlegend  ("#paintDiv", scale, scaleType,  {vertical:true, boxHeight: 10, boxWidth: 20});
         self.drawPaletteColorLegend(scale, domain, palette, nClasses);
 
-        $("#paint_clusterButton").css("visibility","visible")
+        $("#paint_clusterButton").css("visibility", "visible")
     }
 
 
@@ -545,7 +545,10 @@ var paint = (function () {
         var nodes = visjsGraph.nodes.get();
         for (var i = 0; i < nodes.length; i++) {
             if (clickedLegendItem != value) {//hide other nodes than value
-                if (nodes[i].neoAttrs[self.currentBIproperty] == value)
+
+                if (!nodes[i].neoAttrs[self.currentBIproperty])
+                    selectedNodes.push({id: nodes[i].id, hidden: false})
+                else if (nodes[i].neoAttrs[self.currentBIproperty] == value)
                     selectedNodes.push({id: nodes[i].id, hidden: false})
                 else
                     selectedNodes.push({id: nodes[i].id, hidden: true})
@@ -570,6 +573,10 @@ var paint = (function () {
         var clusterOptionsByData;
         for (var i = 1; i < ticksColors.length; i++) {
             var tickColor = ticksColors[i].color;
+            var label= ticksColors[i].tick;
+
+            if(scaleType=="linear" && i < ticksColors.length-1)
+                label+= "-"+ticksColors[i+1].tick
             clusterOptionsByData = {
                 joinCondition: function (childOptions) {
                     return childOptions.color.background == tickColor; // the color is fully defined in the node.
@@ -583,31 +590,59 @@ var paint = (function () {
                        clusterOptions.mass = totalMass;
                        return clusterOptions;
                    },*/
+
+
                 clusterNodeProperties: {
                     id: 'cluster:' + tickColor,
-                   // borderWidth: 3,
+                    // borderWidth: 3,
                     shape: 'circle',
                     color: tickColor,
-                    label: 'color:' + ticksColors[i].tick
+                    label:  label,
+                    size:30
                 }
             };
             visjsGraph.network.cluster(clusterOptionsByData);
-            $("#paint_unClusterButton").css("visibility","visible")
+            $("#paint_unClusterButton").css("visibility", "visible")
         }
 
     }
 
     self.unClusterByClass = function () {
 
-var x= visjsGraph.network;
+        var x = visjsGraph.network;
     }
 
-    self.dispatchAction=function(action) {
+
+    self.initHighlight = function () {
+        var properties = [""];
+
+        var labels = filters.currentLabels;
+        for (var i = 0; i < labels.length; i++) {
+            var props = Schema.schema.properties[labels[i]];
+            for (var key in props)
+                if (properties.indexOf(key) < 0)
+                    properties.push(key)
+        }
+        properties.sort();
+        common.fillSelectOptionsWithStringArray(paintDialog_highlightPropertySelect, properties);
+        $("#paintAccordion").accordion(
+            {
+                active: 0,
+                collapsible: false,
+                activate: function (event, ui) {
+
+                }
+            });
+
+    }
+
+
+    self.dispatchAction = function (action) {
 
 
         $("#graphPopup").css("visibility", "hidden");
         toutlesensController.hidePopupMenu();
-        if(!currentObject.id && currentObject.type!="cluster" )
+        if (!currentObject.id && currentObject.type != "cluster")
             return;
 
         if (action == "openCluster") {
@@ -619,7 +654,7 @@ var x= visjsGraph.network;
             })
         }
         else if (action == "listClusterNodes") {
-            var nodeIds=visjsGraph.network.getNodesInCluster(currentObject.id)
+            var nodeIds = visjsGraph.network.getNodesInCluster(currentObject.id)
             toutlesensData.setSearchByPropertyListStatement("_id", nodeIds, function (err, result) {
 
                 toutlesensController.generateGraph(null, {

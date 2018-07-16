@@ -241,7 +241,7 @@ var visjsGraph = (function () {
                 else if (params.nodes.length == 1) {
                     var nodeId = params.nodes[0];
                     var clusterId = false;
-                    if (nodeId.indexOf("cluster") > -1) {
+                    if ((""+nodeId).indexOf("cluster") > -1) {
                         clusterId = nodeId;
                         currentObject = {
                             id: nodeId,

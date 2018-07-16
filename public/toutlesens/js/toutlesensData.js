@@ -368,8 +368,10 @@ var toutlesensData = (function () {
                             }
 
                         }
-
-                        resultArray = $.merge(resultArray, toutlesensData.cachedResultArray);
+                        if (resultArray)
+                            resultArray = $.merge(resultArray, toutlesensData.cachedResultArray);
+                        else
+                            resultArray = toutlesensData.cachedResultArray
 
                     }
 

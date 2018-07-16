@@ -82,6 +82,8 @@ var filters = (function () {
             $("#propertiesSelectionDialog_propsSelect").val(Schema.getNameProperty())
         }
 
+      //  paint.initHighlight();
+
     }
 
     /**

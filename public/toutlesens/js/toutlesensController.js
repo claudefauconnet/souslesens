@@ -266,7 +266,7 @@ var toutlesensController = (function () {
 
             visjsGraph.draw("graphDiv", json, options);
             visjsGraph.drawLegend(filters.currentLabels);
-            if (paint.currentBIproperty && paint.currentBIproperty != "")
+            if (false && paint.currentBIproperty && paint.currentBIproperty != "")
                 paint.paintClasses(paint.currentBIproperty)
 
         }
