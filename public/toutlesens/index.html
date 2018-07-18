@@ -164,6 +164,15 @@
     <script src="js/visjs/visJsDragRect.js"></script>
     <link rel="stylesheet" type="text/css" href="js/visjs/vis-network.min.css.js"/>
 
+
+
+   <!-- <script src="//cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="//cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css"/>-->
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/dt/dt-1.10.18/b-1.5.2/b-html5-1.5.2/b-print-1.5.2/datatables.min.css"/>
+    <script type="text/javascript" src="https://cdn.datatables.net/v/dt/dt-1.10.18/b-1.5.2/b-html5-1.5.2/b-print-1.5.2/datatables.min.js"></script>
+
+    <script src="js/dataTable.js"></script>
+
     <!-- test visjs---------------------------------------->
     <style>
         a {
@@ -287,6 +296,9 @@
            // border-style: solid;
          //   border-width: 2px;
 
+        }
+        .myDatatable  tr {
+            height: 20px!important;
         }
 
 
@@ -423,7 +435,7 @@
 <div id="graphLegendDiv"></div>
 <div id="graphInfosDiv" style="font-size: 8px"></div>
 <div id="graphCommentDiv" style="position: absolute;background-color: white;margin: 2px;padding: 2px"></div>
-<div id="BIlegendDiv" style="z-index:20;border: 1px;border-style: solid;padding: 5px;background-color: #fafafa;"></div>
+<div id="BIlegendDiv" style="visibility:hidden;z-index:20;border: 1px;border-style: solid;padding: 5px;background-color: #fafafa;max-height: 400px;max-width: 250px;overflow: auto"></div>
 
 <div id="findDiv">
     <div id="findDivInner">

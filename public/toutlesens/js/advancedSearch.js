@@ -115,11 +115,12 @@ var advancedSearch = (function () {
 
     }
 
-
     self.onChangeObjectName = function (value) {
         // self.setPermittedLabelsCbxs(value);
         $("#propertiesSelectionDialog_valueInput").val("");
         $('#propertiesSelectionDialog_valueInput').focus();
+        $("#searchMenuNextPanelButton").css('visibility', 'visible');
+        self.clearClauses();
         if (propertiesSelectionDialog_propsSelect) ;
         filters.initProperty(null, value, propertiesSelectionDialog_propsSelect)
     }
@@ -156,7 +157,7 @@ var advancedSearch = (function () {
 
     self.addClause = function (clause) {
 
-
+        $("#searchMenuNextPanelButton").css('visibility', 'visible');
         var clauseText = clause.nodeLabel + " : " + clause.where;
         if (clauseText == " : ")
             return;

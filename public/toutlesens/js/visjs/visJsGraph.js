@@ -193,6 +193,7 @@ var visjsGraph = (function () {
                 if (_options.showNodesLabel == false && scale > self.scaleToShowLabels) {
                     var nodes = [];
                     for (var key in self.nodes._data) {
+                        if(self.nodes._data[key].showLabel)
                         nodes.push({id: key, label: self.nodes._data[key].hiddenLabel});
                     }
                     self.nodes.update(nodes);
@@ -240,12 +241,16 @@ var visjsGraph = (function () {
                 }
                 else if (params.nodes.length == 1) {
                     var nodeId = params.nodes[0];
+
                     var clusterId = false;
                     if ((""+nodeId).indexOf("cluster") > -1) {
+                    //    var cluster =self.getClusterByClusterId(nodeId);
+                      //  var cluster = self.nodes._data[nodeId];
                         clusterId = nodeId;
                         currentObject = {
                             id: nodeId,
-                            type: "cluster"
+                            type: "cluster",
+                          //  name:cluster.label
                         }
                     }
 
@@ -1140,6 +1145,19 @@ var visjsGraph = (function () {
 
             }
         }
+    /*    self.getClusterByClusterId=function(clusterId){
+            var xx=self.nodes._data;
+            for( var key in self.network.clustering.clusteredNodes){
+
+                if(self.network.clustering.clusteredNodes[key].clusterId==clusterId) {
+                    var node = self.network.nodes.get("" + key);
+                    return self.network.clustering.clusteredNodes[key]
+                }
+            }
+            return null;
+
+
+        }*/
 
 
         return self;

@@ -368,9 +368,9 @@ var toutlesensData = (function () {
                             }
 
                         }
-                        if (resultArray)
+                        if (resultArray && toutlesensData.cachedResultArray)
                             resultArray = $.merge(resultArray, toutlesensData.cachedResultArray);
-                        else
+                        else if(toutlesensData.cachedResultArray)
                             resultArray = toutlesensData.cachedResultArray
 
                     }
@@ -1440,6 +1440,42 @@ var toutlesensData = (function () {
 
 
             })
+
+
+        }
+
+        self.neoNodeResultToColumnDataSet=function(json){
+            var dataSet = [];
+            var columns = [];
+            var excludedKeys=["subGraph"]
+            for (var i = 0; i < json.length; i++) {
+                for (var key in json[i].n.properties) {
+                    if (columns.indexOf(key) < 0 && excludedKeys.indexOf(key)<0)
+                        columns.push(key);
+                }
+            }
+
+            var nameColIndex=columns.indexOf(Schema.getNameProperty());
+            columns.splice(0,0,columns[nameColIndex]);
+            columns.splice(nameColIndex+1,1);
+
+
+            for (var i = 0; i < json.length; i++) {
+                var line = [];
+                for (var j = 0; j < columns.length; j++) {
+                    var value = json[i].n.properties[columns[j]];
+                    if (!value)
+                        value = "";
+
+                    line.push(value);
+                }
+                line.push(json[i].n._id);
+                dataSet.push(line);
+
+            }
+            columns.push("neoId")
+            return {columns:columns,dataSet:dataSet}
+
 
 
         }

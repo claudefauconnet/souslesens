@@ -246,6 +246,7 @@ var toutlesensController = (function () {
         d3NodesSelection = [];
         $("#textDiv").html("");
 
+
         if (currentDisplayType == "VISJS-NETWORK") {
 
             if (json.length > Gparams.limitToOptimizeGraphOptions) {
@@ -560,22 +561,25 @@ var toutlesensController = (function () {
                     return;
                 }
                 if (currentObject.type == "cluster") {
-                    var str = "Label " + currentObject.label + "<br><table>"
+                    var str = "Cluster <br><table>"
 
                     str += "<tr><td><a href='javascript:paint.dispatchAction(\"openCluster\")'>open cluster</a>"
-                    str += "<tr><td><a href='javascript:paint.dispatchAction(\"listClusterNodes\")'>list cluster nodes</a>"
-                    str += "<tr><td><a href='javascript:paint.dispatchAction(\"graphClusterNodes\")'>list cluster nodes</a>"
-                    str += "<tr><td><a href='javascript:paint.dispatchAction(\"queryClusterNodes\")'>query cluster</a>"
+                    str += "<tr><td><a href='javascript:paint.dispatchAction(\"listClusterNodes\")'>list nodes of cluster</a>"
+                    str += "<tr><td><a href='javascript:paint.dispatchAction(\"graphClusterNodes\")'>Graph  neighbours nodes of cluster</a>"
+                   // str += "<tr><td><a href='javascript:paint.dispatchAction(\"queryClusterNodes\")'>query cluster</a>"
 
 
                     $("#graphPopup").html(str);
                     $("#nodeInfoMenuDiv").css("visibility", "visible");
-                    $("#nodeInfoMenuDiv").html(str);
+                   // $("#nodeInfoMenuDiv").html(str);
 
 
                     return;
                 }
                 toutlesensData.getNodeInfos(id, function (obj) {
+                    currentObject=obj[0].n.properties;
+                    currentObject.id=obj[0].n._id;
+                    currentObject.label=obj[0].n.labels[0];
                     var $currentObj = currentObject;
                     if (self.hasRightPanel) {
                         var str = "<input type='image' src='images/back.png' height='15px' title='back' onclick='toutlesensController.restorePopupMenuNodeInfo()' ><br>"

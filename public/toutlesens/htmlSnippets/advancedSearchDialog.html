@@ -53,7 +53,7 @@
 
     <h3>new Query</h3>
     <div style="height: 450px;overflow: auto">
-        <b>Start node query</b>
+
         <div class="searchPanel" style="flex-direction: column">
 
             <div id="searchCriteriaDiv" style="visibility: visible;overflow: hidden " class="searchPanel">
@@ -63,6 +63,7 @@
                  <option selected="selected">node</option>
                  <option>relation</option>
              </select>-->
+                <b>Start node query</b><br>
                 <input type="hidden" id="propertiesSelectionDialog_ObjectTypeInput" value="node">
 
                 <select id="propertiesSelectionDialog_ObjectNameInput"
@@ -112,9 +113,9 @@
                 <b>Ouput type</b>
                 <br>
                 <select id='advancedSearchAction' size="7" onclick='searchMenu.onSearchAction($(this).val())'>
-                    <option value='listNodes'>list nodes</option>
+                    <option value='treeNodes'>list nodes</option>
                     <option value='tagCloud'>tag Cloud</option>
-
+                    <option value='tableNodes'>table</option>
                     <option value='graphSomeNeighboursList'>graph some neighbours...</option>
                     <option value='graphAllNeighbours'>graph all neighbours</option>
                     <option value='graphNodes'>cards</option>
@@ -124,12 +125,12 @@
             </div>
 
             <div id="searchNeighboursLabelsDiv" class="searchPanel">
-                <b>Neighbours Types</b>
+                <b>Neighbour Type</b>
                 <br>
-                <div id='neighboursTypesDiv'></div>
+                <div id='neighboursTypesDiv' style="max-height: 200px;overflow: auto"></div>
 
 
-                <button onclick="searchMenu.graphNeighboursWithLabels()">OK</button>
+
 
 
             </div>
@@ -142,10 +143,12 @@
                 </button>
 
                 <button style="visibility:hidden" id="searchMenupreviousPanelButton"
-                        onclick="searchMenu.previousPanel();">
-                    previous
-                </button>
-                <button onclick="searchMenu.nextPanel();">next</button>
+                        onclick="searchMenu.previousPanel();">previous </button>
+
+                <button onclick="searchMenu.nextPanel();" id="searchMenuNextPanelButton">next</button>
+
+                <button style="visibility:hidden" id="searchMenuExecuteButton"
+                       onclick="searchMenu.onSearchAction('execute')">OK </button>
             </div>
             <div id="searchMenuCriteriatext" style="  visibility: hidden; overflow: auto;height: 150px">
                 <select id="searchCriteriatextSelect" size="4" onclick="advancedSearch.clearClause(this)"
