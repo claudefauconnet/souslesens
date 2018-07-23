@@ -69,7 +69,7 @@ var graphicController = (function () {
 
             }
 
-            $("#propertiesSelectionDialog_ObjectNameInput").val(currentObject.name)
+            $("#propertiesSelectionDialog_NodeLabelInput").val(currentObject.name)
             advancedSearch.onChangeObjectName(currentObject.name);
 
             $("#dialog").dialog({modal: false});
@@ -92,7 +92,7 @@ var graphicController = (function () {
             $("#propertiesSelectionDialog_valueInput").val("");
             $("#filterActionDiv").html(str);
 
-            $("#propertiesSelectionDialog_ObjectNameInput").val(currentObject.name)
+            $("#propertiesSelectionDialog_NodeLabelInput").val(currentObject.name)
             advancedSearch.onChangeObjectName(currentObject.name);
             $("#dialog").dialog("option", "title", "End node Query ");
             $("#dialog").dialog({modal: false});

@@ -24,7 +24,7 @@ var tagCloud = (function () {
 
 
     self.onTagClick = function (text) {
-        var label = $("#propertiesSelectionDialog_ObjectNameInput").val();
+        var label = $("#searchDialog_NodeLabelInput").val();
         var clauses = [{
             nodeLabel: "",
             where: "n.name=~'(?i).*" + text + ".*'"
@@ -34,8 +34,8 @@ var tagCloud = (function () {
                 where: "n.name=~'(?i).*" + $("#word").val() + ".*'"
             }
         ]
-        $("#propertiesSelectionDialog_valueInput").val("")
-        $("#propertiesSelectionDialog_valueInput").focus();
+        $("#searchDialog_valueInput").val("")
+        $("#searchDialog_valueInput").focus();
 
         $("#filterOptionsDiv").html("");
         //   advancedSearch.clearClauses();

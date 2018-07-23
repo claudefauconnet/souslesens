@@ -50,6 +50,8 @@
                     cloudSprite(d, data, i);
                     if (d.hasText && place(board, d, bounds)) {
                         tags.push(d);
+                        if(!event.word)
+                            break;
                         event.word(d);
                         if (bounds) cloudBounds(bounds, d);
                         else bounds = [{x: d.x + d.x0, y: d.y + d.y0}, {x: d.x + d.x1, y: d.y + d.y1}];
@@ -60,6 +62,7 @@
                 }
                 if (i >= n) {
                     cloud.stop();
+                    if(event.end)
                     event.end(tags, bounds);
                 }
             }

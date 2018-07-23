@@ -92,21 +92,21 @@ var advancedSearch = (function () {
         $("#dialog").dialog("option", "title", "Advanced search");
         $("#dialog").dialog({modal: false});
         $("#dialog").dialog("open");
-        var objectNameInput = $("#propertiesSelectionDialog_ObjectNameInput").val();
+        var objectNameInput = $("#searchDialog_NodeLabelInput").val();
         if (!objectNameInput || objectNameInput == "") {
             filters.init();
 
         }
-        $("#propertiesSelectionDialog_valueInput").val("")
-        $("#propertiesSelectionDialog_valueInput").focus();
+        $("#searchDialog_valueInput").val("")
+        $("#searchDialog_valueInput").focus();
         if (initialLabel) {
-            $("#propertiesSelectionDialog_ObjectNameInput").val(initialLabel)
+            $("#searchDialog_NodeLabelInput").val(initialLabel)
         }
 
         $("#filterOptionsDiv").html("");
 
         if (options.setValueInput)
-            $("#propertiesSelectionDialog_valueInput").val(options.setValueInput)
+            $("#searchDialog_valueInput").val(options.setValueInput)
         if (options.addClauses) {
             for (var i = 0; i < options.addClauses.length; i++) {
                 self.addClause(options.addClauses[i]);
@@ -117,12 +117,13 @@ var advancedSearch = (function () {
 
     self.onChangeObjectName = function (value) {
         // self.setPermittedLabelsCbxs(value);
-        $("#propertiesSelectionDialog_valueInput").val("");
-        $('#propertiesSelectionDialog_valueInput').focus();
-        $("#searchMenuNextPanelButton").css('visibility', 'visible');
+        $("#searchDialog_valueInput").val("");
+        $('#searchDialog_valueInput').focus();
+        $("#searchDialog_NextPanelButton").css('visibility', 'visible');
         self.clearClauses();
-        if (propertiesSelectionDialog_propsSelect) ;
-        filters.initProperty(null, value, propertiesSelectionDialog_propsSelect)
+        if (searchDialog_propertySelect) ;
+        filters.initProperty(null, value, searchDialog_propertySelect);
+        $("#searchDialog_propertySelect").val(Schema.getNameProperty(value))
     }
     self.setPermittedLabelsCbxs = function (label, selectId) {
         var labelsCxbs = "<br><table style='text-align: left;background-color: #eee; width: 300px;margin-bottom: 15px;'>";
@@ -138,11 +139,11 @@ var advancedSearch = (function () {
     self.addClauseUI = function (operator) {
 
         ;
-        var clauseText = $("#propertiesSelectionDialog_propsSelect").val() + " " + $("#propertiesSelectionDialog_operatorSelect").val() + " " + $("#propertiesSelectionDialog_valueInput").val();
+        var clauseText = $("#searchDialog_propertySelect").val() + " " + $("#searchDialog_operatorSelect").val() + " " + $("#searchDialog_valueInput").val();
         self.searchNodes("matchSearchClause", null, function (err, clause) {
             if (err)
                 return;
-            $("#propertiesSelectionDialog_valueInput").val("");
+            $("#searchDialog_valueInput").val("");
             for (var i = 0; i < self.searchClauses.length; i++) {
                 if (clause.nodeLabel != "" && self.searchClauses[i].nodeLabel != "" && clause.nodeLabel != self.searchClauses[i].nodeLabel)
                     return alert("you cannot add criteria on different labels :" + clause.nodeLabel != "" && self.searchClauses[i].nodeLabel)
@@ -157,7 +158,7 @@ var advancedSearch = (function () {
 
     self.addClause = function (clause) {
 
-        $("#searchMenuNextPanelButton").css('visibility', 'visible');
+        $("#searchDialog_NextPanelButton").css('visibility', 'visible');
         var clauseText = clause.nodeLabel + " : " + clause.where;
         if (clauseText == " : ")
             return;
@@ -179,8 +180,8 @@ var advancedSearch = (function () {
         }));
         //  $("#searchCriteriatextSelect").attr("size", self.searchClauses.length);
         $("#clearAllCreteriaButton").css("visibility", "visible");
-        $("#searchMenuSaveQueryButton").css("visibility", "visible")
-        $("#searchMenuCriteriatext").css("visibility", "visible");
+        $("#searchDialog_SaveQueryButton").css("visibility", "visible")
+        $("#searchDialog_Criteriatext").css("visibility", "visible");
 
 
     }
@@ -231,7 +232,6 @@ var advancedSearch = (function () {
         var labelStr = "";
         if (label && label.length > 0)
             labelStr = ":" + label;
-
 
 
         var query = "MATCH (n" + labelStr + ") " + " WHERE " + whereStr + " RETURN n";
@@ -339,16 +339,14 @@ var advancedSearch = (function () {
         var options = {};
 
 
-
-
-        var objectType = $("#propertiesSelectionDialog_ObjectTypeInput").val();
+        var objectType = $("#searchDialog_ObjectTypeInput").val();
         if (objectType == "node")
-            searchObj.label = $("#propertiesSelectionDialog_ObjectNameInput").val();
+            searchObj.label = $("#searchDialog_NodeLabelInput").val();
         if (objectType == "relation")
-            searchObj.relType = $("#propertiesSelectionDialog_ObjectNameInput").val();
-        searchObj.property = $("#propertiesSelectionDialog_propsSelect").val();
-        searchObj.operator = $("#propertiesSelectionDialog_operatorSelect").val();
-        searchObj.value = $("#propertiesSelectionDialog_valueInput").val();
+            searchObj.relType = $("#searchDialog_NodeLabelInput").val();
+        searchObj.property = $("#searchDialog_propertySelect").val();
+        searchObj.operator = $("#searchDialog_operatorSelect").val();
+        searchObj.value = $("#searchDialog_valueInput").val();
 
 
         /*  var selectedLabels = [];
@@ -411,8 +409,8 @@ var advancedSearch = (function () {
             /*  if(false) {
                   var data = [];// stack all results and then draw tree
                   var index = 0;
-                  var countOptions = $('#propertiesSelectionDialog_propsSelect').children('option').length - 1;
-                  $("#propertiesSelectionDialog_propsSelect option").each(function () {
+                  var countOptions = $('#searchDialog_propertySelect').children('option').length - 1;
+                  $("#searchDialog_propertySelect option").each(function () {
                       var property = $(this).val();
 
                       if (property != "") {
@@ -828,7 +826,8 @@ var advancedSearch = (function () {
 
      * @param query
      */
-    self.graphNodesAndDirectRelations = function (err, query) {
+    self.graphNodesAndDirectRelations = function (err, query,callback) {
+
         if (err)
             return console.log(err);
         var payload = {
@@ -854,6 +853,9 @@ var advancedSearch = (function () {
                         else
                             toutlesensData.whereFilter = self.filterLabelWhere;
                     }
+                    if (callback) {
+                        return callback();
+                    }
                     toutlesensController.generateGraph(null, {
                         applyFilters: true,
                         dragConnectedNodes: true
@@ -871,6 +873,7 @@ var advancedSearch = (function () {
 
 
     }
+    
 
     self.graphNodesOnly = function (err, query) {
         if (err)

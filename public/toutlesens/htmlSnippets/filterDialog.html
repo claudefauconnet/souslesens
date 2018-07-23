@@ -1,0 +1,63 @@
+
+
+    <input type="hidden" id="#filterDialog_ObjectTypeInput" value="node">
+    label <select id="filterDialog_NodeLabelInput"
+                  onchange="filters.onChangeObjectName($(this).val())"></select>
+    <br>
+
+
+
+
+
+        Property
+
+        <select id="filterDialog_propertySelect" style="background-color: #999999;">
+
+        </select>
+        <br>
+
+        <table>
+            <tr>
+                <td>
+                    <select id="filterDialog_operatorSelect">
+                        <option>=</option>
+                        <option>!=</option>
+                        <option>&lt;</option>
+                        <option>&gt;</option>
+                        <option selected="selected">contains</option>
+                    </select>
+                </td>
+                <td>
+                    <input id="filterDialog_valueInput" size="15"
+                           onchange="$('#searchCriteriaAddButton').css('visibility','visible')">
+                </td>
+                <td>
+                    <button onclick="advancedSearch.addClauseUI()" id="searchCriteriaAddButton">+
+                    </button>
+                    <input type="image" height="20px" src="images/erase.png"
+                           onclick="$('##filterDialog_valueInput').val('')">
+                </td>
+            </tr>
+
+
+        </table>
+
+
+        <!--  -->
+
+
+
+    <div>
+
+        <button onclick="filters.filterOnProperty(null,'only')">Only</button>
+        <button onclick="filters.filterOnProperty(null,'not')">Not</button>
+        <button onclick="filters.filterOnProperty(null,'removeAll')">Clear Filter</button>
+
+
+    </div>
+
+    <script>
+
+
+    </script>
+

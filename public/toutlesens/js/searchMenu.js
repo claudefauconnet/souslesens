@@ -2,14 +2,15 @@ var searchMenu = (function () {
         var self = {};
         var savedQueries = {}
         var currentPanelIndex = 1;
+        self.currentAction = null;
         var previousAction = "";
         self.init = function (schema) {
             currentPanelIndex = 1;
-            toutlesensController.initLabels(propertiesSelectionDialog_ObjectNameInput, true);
-            $("#propertiesSelectionDialog_ObjectNameInput").val("");
-            $("#propertiesSelectionDialog_ObjectNameInput").attr("size", 8);
-            $("#propertiesSelectionDialog_propsSelect").append("<option></option><option selected='selected'>" + Schema.getNameProperty() + "</option>");
-            $("#propertiesSelectionDialog_valueInput").keypress(function (event) {
+            toutlesensController.initLabels(searchDialog_NodeLabelInput, true);
+            $("#searchDialog_NodeLabelInput").val("");
+            $("#searchDialog_NodeLabelInput").attr("size", 8);
+            $("#searchDialog_propertySelect").append("<option></option><option selected='selected'>" + Schema.getNameProperty() + "</option>");
+            $("#searchDialog_valueInput").keypress(function (event) {
                 if (event.which == 13) {
                     advancedSearch.addClauseUI()
                 }
@@ -30,7 +31,7 @@ var searchMenu = (function () {
 
             }
             names.sort();
-            common.fillSelectOptionsWithStringArray(searchMenu_savedQueries, names);
+            common.fillSelectOptionsWithStringArray(searchDialog_savedQueries, names);
         }
 
 
@@ -59,8 +60,8 @@ var searchMenu = (function () {
             currentPanelIndex += -1;
             self.showCurrentPanel();
             if (currentPanelIndex == 1)
-                $("#searchMenupreviousPanelButton").css('visibility', 'hidden');
-            $("#searchMenuExecuteButton").css('visibility', 'hidden');
+                $("#searchDialog_previousPanelButton").css('visibility', 'hidden');
+            $("#searchDialog_ExecuteButton").css('visibility', 'hidden');
         }
 
         self.nextPanel = function () {
@@ -70,10 +71,10 @@ var searchMenu = (function () {
 
 
             self.showCurrentPanel();
-            var xx = $("#searchMenupreviousPanelButton");
+            var xx = $("#searchDialog_previousPanelButton");
 
 
-            $("#searchMenupreviousPanelButton").css('visibility', 'visible');
+            $("#searchDialog_previousPanelButton").css('visibility', 'visible');
         }
         self.showCurrentPanel = function () {
             var visibility = "visible";
@@ -95,18 +96,27 @@ var searchMenu = (function () {
         }
 
         self.onSearchAction = function (option) {
-            advancedSearch.filterLabelWhere=""
+            advancedSearch.filterLabelWhere = "";
+            self.currentAction = option;
             if (option == '')
                 return;
-            $("#searchMenuNextPanelButton").css('visibility', 'hidden');
-            $("#searchMenuExecuteButton").css('visibility', 'hidden');
+            $("#searchDialog_NextPanelButton").css('visibility', 'hidden');
+            $("#searchDialog_ExecuteButton").css('visibility', 'hidden');
 
 
-            if (option == "graphSomeNeighboursList") {
+            if (option == "graphSomeNeighboursListLabels") {
                 self.nextPanel();
-                var currentLabel = $("#propertiesSelectionDialog_ObjectNameInput").val();
+                var currentLabel = $("#searchDialog_NodeLabelInput").val();
                 advancedSearch.setPermittedLabelsCbxs(currentLabel, "neighboursTypesDiv");
-                $("#searchMenuExecuteButton").css('visibility', 'visible');
+                $("#searchDialog_ExecuteButton").css('visibility', 'visible');
+
+
+            }
+            if (option == "treeMapSomeNeighboursListLabels") {
+                self.nextPanel();
+                var currentLabel = $("#searchDialog_NodeLabelInput").val();
+                advancedSearch.setPermittedLabelsCbxs(currentLabel, "neighboursTypesDiv");
+                $("#searchDialog_ExecuteButton").css('visibility', 'visible');
 
 
             }
@@ -128,13 +138,14 @@ var searchMenu = (function () {
                 })
 
             }
+
+
             else if (option == 'graphNodes') {
                 advancedSearch.searchNodes('matchStr', null, self.graphNodesOnly);
 
             }
             else if (option == 'graphAllNeighbours') {
-
-                advancedSearch.searchNodes('matchStr', null, self.graphNodesAndDirectRelations);
+                advancedSearch.searchNodes('matchStr', null, advancedSearch.graphNodesAndDirectRelations);
 
 
             }
@@ -164,10 +175,28 @@ var searchMenu = (function () {
                 });
             }
             else if (option == 'execute') {
-                if (previousAction == 'graphSomeNeighboursList') {
+                toutlesensController.setRightPanelAppearance();
+                $("#paintAccordion").accordion("option","active",1)
+                $( "#tabs-analyzePanel" ).tabs( "option", "active", 2 );//highlight
+
+                if (previousAction == 'graphSomeNeighboursListLabels') {
+                    self.currentAction = "graphSomeNeighbours";
                     self.graphNeighboursWithLabels()
-                  //  advancedSearch.searchNodes('matchStr', {targetNodesLabels:true}, self.graphNodesAndDirectRelations);
-                    $("#searchMenuExecuteButton").css('visibility', 'visible');
+                    //  advancedSearch.searchNodes('matchStr', {targetNodesLabels:true}, self.graphNodesAndDirectRelations);
+                    $("#searchDialog_ExecuteButton").css('visibility', 'visible');
+                }
+                if (previousAction == 'treeMapSomeNeighboursListLabels') {
+                    self.currentAction = "treeMapSomeNeighbours";
+                    var neighboursLabels = [];
+                    $('[name=advancedSearchDialog_LabelsCbx]:checked').each(function () {
+                        neighboursLabels.push($(this).val());
+                    });
+
+                    advancedSearch.searchNodes('matchStr', {targetNodesLabels: neighboursLabels}, function (err, query) {
+                        advancedSearch.graphNodesAndDirectRelations(err, query, treeMap.draw);
+                        paint.initHighlight();
+                        $("#searchDialog_ExecuteButton").css('visibility', 'visible');
+                    });
                 }
 
             }
@@ -176,33 +205,60 @@ var searchMenu = (function () {
             if (option != 'execute')
                 previousAction = option;
 
-            toutlesensController.setRightPanelAppearance();
+            toutlesensController.setRightPanelAppearance(true);
         }
 
         self.savedQuerySave = function () {
             //  advancedSearch.addClauseUI();
             var val = "";
+            var neighboursLabels = [];
+            var neighboursLabels=[]
             if (advancedSearch.searchClauses.length > 0)
                 val = advancedSearch.searchClauses[0].title;
             if (advancedSearch.searchClauses.length > 1)
                 val = advancedSearch.searchClauses[0].title.substring(0, 10) + "..."
-            var name = prompt("enter query name", val);
+            if (previousAction != "") {
+                val = previousAction.replace("SomeNeighboursListLabels","") + ":" + val
+            }
+            if (previousAction.indexOf("ListLabels") > -1) {
+
+                $('[name=advancedSearchDialog_LabelsCbx]:checked').each(function () {
+                    neighboursLabels.push($(this).val());
+                });
+                for(var i=0;i<neighboursLabels.length;i++){
+                    val+="/"+neighboursLabels[i];
+                }
+
+            }
+            var name = prompt("enter query name", val.trim());
+
+
             if (name && name != "") {
 
-                savedQueries[name] = {clauses: advancedSearch.searchClauses};
+                query = {clauses: advancedSearch.searchClauses};
+                if (previousAction != "") {
+                    query.outputType = $("#advancedSearchAction").val();
+                }
+                if (previousAction.indexOf("ListLabels") > -1) {
+
+                    query.neighboursLabels = neighboursLabels;
+                }
+
+                savedQueries[name] = query;
+
                 localStorage.setItem("savedQueries", JSON.stringify(savedQueries));
-                $("#searchMenu_savedQueries").prepend("<option>" + name + "</option>")
+                $("#searchDialog_savedQueries").prepend("<option>" + name + "</option>")
             }
 
 
         }
         self.savedQueryDelete = function () {
 
-            var name = $("#searchMenu_savedQueries").val();
+            var name = $("#searchDialog_savedQueries").val();
             if (name && name != "") {
                 delete savedQueries[name];
                 localStorage.setItem("savedQueries", JSON.stringify(savedQueries));
-                $("#searchMenu_savedQueries option").each(function () {
+                $("#searchDialog_savedQueries option").each(function () {
                     if ($(this).val() == name) {
                         $(this).remove();
                         return;
@@ -211,8 +267,8 @@ var searchMenu = (function () {
             }
         }
         self.savedQueryExecute = function () {
-
-            var name = $("#searchMenu_savedQueries").val();
+//$("#searchAccordion").accordion("option","active",1)
+            var name = $("#searchDialog_savedQueries").val();
             var query = savedQueries[name];
             var clauses = query.clauses;
 
@@ -220,14 +276,28 @@ var searchMenu = (function () {
             advancedSearch.clearClauses();
             for (var i = 0; i < clauses.length; i++) {
                 advancedSearch.addClause(clauses[i]);
-                $("#propertiesSelectionDialog_ObjectNameInput").val(clauses[i].nodeLabel);
+                $("#searchDialog_NodeLabelInput").val(clauses[i].nodeLabel);
             }
-            if (!query.outputType) {
-
-
+            if (!query.outputType) {// first screen only
                 self.activatePanel("searchActionDiv");
-                $("#searchMenupreviousPanelButton").css("visibility", "visible");
+                $("#searchDialog_previousPanelButton").css("visibility", "visible");
                 $("#searchAccordion").accordion("option", "active", 1);
+            }
+            else {//query panel+output type panel
+                $("#advancedSearchAction").val(query.outputType);
+            }
+            if (!query.neighboursLabels) {
+                self.onSearchAction(query.outputType)
+            }
+            else {
+
+                self.onSearchAction(query.outputType);
+                $('[name=advancedSearchDialog_LabelsCbx]').each(function () {
+                    if (query.neighboursLabels.indexOf(this.value) > -1)
+                        $(this).prop("checked", true);
+
+                });
+                self.onSearchAction("execute");
             }
 
 

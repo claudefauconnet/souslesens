@@ -73,6 +73,13 @@ var eventsController = (function () {
                 }
             });
 
+            $("#queryDiv").on('mousedown', function (e) {
+            toutlesensController.setRightPanelAppearance(true);
+            })
+;
+            $("#analyzePanel").on('mousedown', function (e) {
+                toutlesensController.setRightPanelAppearance(false);
+            })
 
 
 //*******************************************components**************************************
@@ -105,7 +112,7 @@ var eventsController = (function () {
                         }
                         if (index == 1) {
                             toutlesensController.currentActionObj.mode = "filter";
-                            var filterMovableDiv = $("#filterMovableDiv").detach();
+                        /*    var filterMovableDiv = $("#filterMovableDiv").detach();
                             $("#searchCriteriaTextDiv").css("visibility", "hidden");
                             $("#searchCriteriaAddButton").css("visibility", "hidden");
 
@@ -115,20 +122,20 @@ var eventsController = (function () {
                                 "<button onclick=\"filters.filterOnProperty(null,'not')\">Not</button>" +
                                 "<button onclick=\"filters.filterOnProperty(null,'removeAll')\">Clear Filter</button>"
                             );
-                            filters.setLabelsOrTypes("node");
+                            filters.setLabelsOrTypes("node");*/
                         }
                         if (index == 2) {
                             toutlesensController.currentActionObj.mode = "highlight";
 
                             /*   $("#searchCriteriaTextDiv").css("visibility","hidden").css("height","10px");
                                $("#searchCriteriaAddButton").css("visibility", "hidden");
-                               $("#propertiesSelectionDialog_propsSelect").val("");
+                               $("#propertiesSelectionDialog_propertySelect").val("");
                                var filterMovableDiv = $("#filterMovableDiv").detach();
                                $("#highlightDiv").append(filterMovableDiv);*/
-                            $("#highlightDiv").load("htmlSnippets/paintDialog.html", function () {
+                         /*   $("#highlightDiv").load("htmlSnippets/paintDialog.html", function () {
                                 paint.initColorsPalette(10, "paintDialogPalette");
                                 filters.setLabelsOrTypes("node");
-                            });
+                            });*/
 
                         }
 
@@ -156,12 +163,16 @@ var eventsController = (function () {
                             $("#nodeDiv").append(nodeDivDetach);
 
                         }
-
+                        if (index == 0)
+                            ;//toutlesensController.currentActionObj = {type: "findNode"}
                         if (index == 1)
-                            toutlesensController.currentActionObj = {type: "relation"}
+                        toutlesensController.currentActionObj = {type: "findNode"}
+
                         if (index == 2)
-                            toutlesensController.currentActionObj = {type: "pathes"}
+                            toutlesensController.currentActionObj = {type: "relation"}
                         if (index == 3)
+                            toutlesensController.currentActionObj = {type: "pathes"}
+                        if (index == 4)
                          ;//   toutlesensController.searchNodesUI('exec', null, null, tagCloud.drawCloud);
                     },
                     create: function (event, ui) {

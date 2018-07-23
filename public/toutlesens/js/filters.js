@@ -75,11 +75,11 @@ var filters = (function () {
         }
 
 
-        var select = document.getElementById("propertiesSelectionDialog_propsSelect")
+        var select = document.getElementById("filterDialog_propertySelect")
         if (select) {
             common.fillSelectOptionsWithStringArray(select, self.currentLabels);
-            filters.initLabelProperty("", propertiesSelectionDialog_propsSelect);
-            $("#propertiesSelectionDialog_propsSelect").val(Schema.getNameProperty())
+            filters.initLabelProperty("", filterDialog_propertySelect);
+            $("#filterDialog_propertySelect").val(Schema.getNameProperty())
         }
 
       //  paint.initHighlight();
@@ -87,7 +87,7 @@ var filters = (function () {
     }
 
     /**
-     * inititialize   select  propertiesSelectionDialog_ObjectNameInput with current objectsType  : node or relation
+     * inititialize   select  filterDialog_NodeLabelInput with current objectsType  : node or relation
      *
      *
      * @param select
@@ -102,9 +102,9 @@ var filters = (function () {
             self.currentLabels.splice(0, 0, "");
         }
         if (type == "node")
-            common.fillSelectOptionsWithStringArray(propertiesSelectionDialog_ObjectNameInput, self.currentLabels);
+            common.fillSelectOptionsWithStringArray(filterDialog_NodeLabelInput, self.currentLabels);
         else if (type == "relation")
-            common.fillSelectOptionsWithStringArray(propertiesSelectionDialog_ObjectNameInput, self.currentRelTypes);
+            common.fillSelectOptionsWithStringArray(filterDialog_NodeLabelInput, self.currentRelTypes);
 
     }
 
@@ -133,12 +133,21 @@ var filters = (function () {
      */
 
     self.initProperty = function (objectType, type, selectId) {
-        objectType = $('#propertiesSelectionDialog_ObjectTypeInput').val()
+        objectType="node";
+      //  objectType = $('#filterDialog_ObjectTypeInput').val()
         if (objectType == "node")
             self.initLabelProperty(type, selectId);
         else if (objectType == "relation")
             self.initRelationProperty(type, selectId);
 
+    }
+
+    self.onChangeObjectName = function (value) {
+        // self.setPermittedLabelsCbxs(value);
+        $("#filterDialog_valueInput").val("");
+        $('#filterDialog_valueInput').focus();
+        if (filterDialog_propertySelect) ;
+        filters.initProperty(null, value, filterDialog_propertySelect)
     }
 
 
@@ -166,7 +175,7 @@ var filters = (function () {
         propertiesArray.sort();
 
         if (!selectId)
-            selectId = document.getElementById("propertiesSelectionDialog_propsSelect")
+            selectId = document.getElementById("filterDialog_propertySelect")
         common.fillSelectOptionsWithStringArray(selectId, propertiesArray)
 
     }
@@ -200,13 +209,13 @@ var filters = (function () {
         propertiesArray.sort();
 
         $("#propertiesSelectionTypeSpan").html("Node label " + type);
-        $("#propertiesSelectionDialog_typeInput").val(type);
+        $("#filterDialog_typeInput").val(type);
 
 
         if (!selectId)
-            selectId = document.getElementById("propertiesSelectionDialog_propsSelect")
+            selectId = document.getElementById("filterDialog_propertySelect")
         common.fillSelectOptionsWithStringArray(selectId, propertiesArray)
-        $("#propertiesSelectionDialog_propsSelect").val(Schema.getNameProperty())
+        $("#filterDialog_propertySelect").val(Schema.getNameProperty())
 
     }
 
@@ -252,15 +261,16 @@ var filters = (function () {
 
         $("#graphPopup").css("visibility", "hidden");
         if (!property)
-            property = $("#propertiesSelectionDialog_propsSelect").val();
+            property = $("#filterDialog_propertySelect").val();
         if (!value)
-            value = $("#propertiesSelectionDialog_valueInput").val();
-        if (!objectType)
-            objectType = $("#propertiesSelectionDialog_ObjectTypeInput").val();
+            value = $("#filterDialog_valueInput").val();
+       /* if (!objectType)
+            objectType = $("#filterDialog_ObjectTypeInput").val();*/
+        objectType="node";
         if (!operator)
-            operator = $("#propertiesSelectionDialog_operatorSelect").val();
+            operator = $("#filterDialog_operatorSelect").val();
         if (!objectName)
-            objectName = $("#propertiesSelectionDialog_ObjectNameInput").val();
+            objectName = $("#filterDialog_NodeLabelInput").val();
 
         if (true || toutlesensData.queriesIds.length > 1 || toutlesensController.currentActionObj.type == "pathes") {
             self.filterGraphOnProperty(option, booleanOption, objectType, objectName, property, operator, value);

@@ -55,10 +55,17 @@ var dataTable = (function () {
                     scrollY: height - 100,
                     fixedColumns: {
                         heightMatch: 'none'
-                    }, buttons: [
-                        'copy', 'csv'
+                    },
+                    dom: 'Bfrtip',
+                    buttons: [
+                        //'copyHtml5',
+                        'excelHtml5',
+                        'csvHtml5',
+                        'pdfHtml5'
                     ]
                 })
+             /*   table.buttons().container()
+                    .appendTo( $('.col-sm-6:eq(0)', table.table().container() ) );*/
 
 
                 $('#dataTable tbody').on('click', 'tr', function (event) {

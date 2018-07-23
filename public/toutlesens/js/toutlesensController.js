@@ -208,7 +208,7 @@ var toutlesensController = (function () {
                 self.setRightPanelAppearance(false);
 
                 //   paint.init(data);
-                filters.init(data);
+
                 $("#mainButtons").css("visibility", "visible");
                 $("#waitImg").css("visibility", "hidden");
                 $(".graphDisplayed").css("visibility", "visible");
@@ -244,6 +244,7 @@ var toutlesensController = (function () {
         if (!options)
             options = {}
         d3NodesSelection = [];
+        filters.init(json);
         $("#textDiv").html("");
 
 
@@ -267,7 +268,11 @@ var toutlesensController = (function () {
 
             visjsGraph.draw("graphDiv", json, options);
             visjsGraph.drawLegend(filters.currentLabels);
-            if (false && paint.currentBIproperty && paint.currentBIproperty != "")
+            paint.initHighlight();
+            filters.init()
+            common.fillSelectOptionsWithStringArray(filterDialog_NodeLabelInput, filters.currentLabels);
+
+            if (paint.currentBIproperty && paint.currentBIproperty != "")
                 paint.paintClasses(paint.currentBIproperty)
 
         }
@@ -1093,7 +1098,10 @@ var toutlesensController = (function () {
 
             searchMenu.init(Schema);
         });
+        $("#filterDiv").load("htmlSnippets/filterDialog.html", function () {
 
+          //  searchMenu.init(Schema);
+        });
 
 
 
@@ -1106,6 +1114,12 @@ var toutlesensController = (function () {
             $(".canModify").css("visibility", "hidden");
 
         filters.setLabelsOrTypes("node");
+
+        $("#highlightDiv").load("htmlSnippets/paintDialog.html", function () {
+            paint.initColorsPalette(10, "paintDialogPalette");
+            paint.initHighlight();
+            filters.setLabelsOrTypes("node");
+        });
     }
 
     /**
@@ -1204,7 +1218,7 @@ var toutlesensController = (function () {
         $("#graphLegendDiv").width(400).height(40).css("position", "absolute").css("top", 0).css("left", (totalWidth - rightPanelWidth) - 450).css("background-color", "#eee");
         $("#graphInfosDiv").width(400).height(40).css("position", "absolute").css("top", 0).css("left", (totalWidth - rightPanelWidth) - 450).css("top", 50).css("background-color", "#eee");
         $("#BIlegendDiv").css("position", "absolute").css("top", 0).css("left", (totalWidth - rightPanelWidth) - 80).css("top", 80).css("background-color", "#eee");
-
+        $("#graphInfosDiv").css("visibility", "hidden")
 
 
 
@@ -1269,7 +1283,7 @@ var toutlesensController = (function () {
     self.setRightPanelAppearance = function (expandTree) {
         var analyzePanelHeight = Gparams.infosanalyzePanelHeight;
         if (expandTree === true) {
-            analyzePanelHeight = 0;
+            analyzePanelHeight = 50;
         }
 
 

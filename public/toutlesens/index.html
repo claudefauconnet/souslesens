@@ -107,7 +107,7 @@
 
     <script src="../common/js/common.js"></script>
     <script src="../common/js/util.js"></script>
-
+    <script src="js/d3.treemap2.js"></script>
 
     <!--<script src="js//d3.forceGraphClass.js"></script>
     <script src="js//d3.dndTreeClass.js"></script>
@@ -166,12 +166,10 @@
 
 
 
-   <!-- <script src="//cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
-    <link rel="stylesheet" type="text/css" href="//cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css"/>-->
-    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/dt/dt-1.10.18/b-1.5.2/b-html5-1.5.2/b-print-1.5.2/datatables.min.css"/>
-    <script type="text/javascript" src="https://cdn.datatables.net/v/dt/dt-1.10.18/b-1.5.2/b-html5-1.5.2/b-print-1.5.2/datatables.min.js"></script>
+   <script src="//cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="//cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css"/>
+    <script src="js/dataTable.js"></script>-->
 
-    <script src="js/dataTable.js"></script>
 
     <!-- test visjs---------------------------------------->
     <style>
@@ -433,7 +431,7 @@
 
 </div>
 <div id="graphLegendDiv"></div>
-<div id="graphInfosDiv" style="font-size: 8px"></div>
+<div id="graphInfosDiv" style="font-size: 8px" ></div>
 <div id="graphCommentDiv" style="position: absolute;background-color: white;margin: 2px;padding: 2px"></div>
 <div id="BIlegendDiv" style="visibility:hidden;z-index:20;border: 1px;border-style: solid;padding: 5px;background-color: #fafafa;max-height: 400px;max-width: 250px;overflow: auto"></div>
 
@@ -441,9 +439,10 @@
     <div id="findDivInner">
         <div id="findTabs">
             <ul>
+                <li><a href="#queryDiv"><span id='lang_60'>Query </span></a></li>
                 <li><a href="#nodeDiv"><span id='lang_60'>Node  </span></a></li>
                 <li><a href="#relationDiv"><span id='lang_60'>Relation </span></a></li>
-                <li><a href="#queryDiv"><span id='lang_60'>Query </span></a></li>
+
                 <li><a href="#pathDiv"><span id='lang_60'>Pathes </span></a></li>
                 <li><a href="#advancedQueriesDiv" id="advancedQueriesTabLi"><span id='lang_60'>Advanced </span></a></li>
            <!--     <li><a href="#tagCloudDiv" id="tagCloudLi"><span id='lang_60'>tagCloud</span></a></li>-->

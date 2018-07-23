@@ -1,6 +1,6 @@
 text {
   //      pointer-events: none;
-    font-size: 12px;
+    font-size: 8px;
 }
 
 .grandparent text {
@@ -37,4 +37,9 @@ rect.parent,
 
 .children:hover rect.child {
     fill: #bbb;
+}
+.ptext{
+   font-weight: bold;
+    fill:blue;
+    font-size: 12px;
 }

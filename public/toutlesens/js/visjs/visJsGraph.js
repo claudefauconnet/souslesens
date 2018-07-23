@@ -193,8 +193,8 @@ var visjsGraph = (function () {
                 if (_options.showNodesLabel == false && scale > self.scaleToShowLabels) {
                     var nodes = [];
                     for (var key in self.nodes._data) {
-                        if(self.nodes._data[key].showLabel)
-                        nodes.push({id: key, label: self.nodes._data[key].hiddenLabel});
+                        if (self.nodes._data[key].showLabel)
+                            nodes.push({id: key, label: self.nodes._data[key].hiddenLabel});
                     }
                     self.nodes.update(nodes);
 
@@ -243,14 +243,14 @@ var visjsGraph = (function () {
                     var nodeId = params.nodes[0];
 
                     var clusterId = false;
-                    if ((""+nodeId).indexOf("cluster") > -1) {
-                    //    var cluster =self.getClusterByClusterId(nodeId);
-                      //  var cluster = self.nodes._data[nodeId];
+                    if (("" + nodeId).indexOf("cluster") > -1) {
+                        //    var cluster =self.getClusterByClusterId(nodeId);
+                        //  var cluster = self.nodes._data[nodeId];
                         clusterId = nodeId;
                         currentObject = {
                             id: nodeId,
                             type: "cluster",
-                          //  name:cluster.label
+                            //  name:cluster.label
                         }
                     }
 
@@ -724,7 +724,7 @@ var visjsGraph = (function () {
                 if (!str)
                     str = node.neoAttrs[Schema.getNameProperty()]
                 if (str.match(regex)) {
-                    self.nodes.update({id: node.id, shape: "star", label: Schema.getNameProperty()});
+                    self.nodes.update({id: node.id, shape: "star"});
                     network.focus(node.id,
                         {
                             scale: 1.0,
@@ -935,6 +935,8 @@ var visjsGraph = (function () {
 
             var connectedNodes = network.getConnectedNodes(nodeId);
             var connectedEdges = network.getConnectedEdges(nodeId);
+
+
             var positions = network.getPositions()
             var nodes = [];
             var edges = []
@@ -954,7 +956,8 @@ var visjsGraph = (function () {
             for (var i = 0; i < connectedEdges.length; i++) {
                 var connectedEdgeId = connectedEdges[i];
 
-
+                if (connectedEdgeId.indexOf("cluster") > -1)
+                    connectedEdgeId = connectedEdgeId.substring(8);
                 var edge = self.edges._data["" + connectedEdgeId];
                 //  if(toutlesensData.queriesIds.indexOf(edge.from)<0) {
                 edge.smooth = {
@@ -1145,19 +1148,19 @@ var visjsGraph = (function () {
 
             }
         }
-    /*    self.getClusterByClusterId=function(clusterId){
-            var xx=self.nodes._data;
-            for( var key in self.network.clustering.clusteredNodes){
+        /*    self.getClusterByClusterId=function(clusterId){
+                var xx=self.nodes._data;
+                for( var key in self.network.clustering.clusteredNodes){
 
-                if(self.network.clustering.clusteredNodes[key].clusterId==clusterId) {
-                    var node = self.network.nodes.get("" + key);
-                    return self.network.clustering.clusteredNodes[key]
+                    if(self.network.clustering.clusteredNodes[key].clusterId==clusterId) {
+                        var node = self.network.nodes.get("" + key);
+                        return self.network.clustering.clusteredNodes[key]
+                    }
                 }
-            }
-            return null;
+                return null;
 
 
-        }*/
+            }*/
 
 
         return self;
