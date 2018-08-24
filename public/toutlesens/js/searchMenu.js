@@ -3,6 +3,7 @@ var searchMenu = (function () {
         var savedQueries = {}
         var currentPanelIndex = 1;
         self.currentAction = null;
+        self.selectedQuery = null;
         var previousAction = "";
         self.init = function (schema) {
             currentPanelIndex = 1;
@@ -15,23 +16,127 @@ var searchMenu = (function () {
                     advancedSearch.addClauseUI()
                 }
             })
-
+            self.loadQueries()
             $("#searchAccordion").accordion({});
+            var tab = 1
+            if (Object.keys(savedQueries).length > 0)
+                tab = 0
+            $("#searchAccordion").accordion("option", "active", tab);
 
-            $("#searchAccordion").accordion("option", "active", 1);
-            //  localStorage.removeItem("savedQueries")
-            savedQueries = localStorage.getItem("savedQueries");
+
+        }
+
+        self.loadQueries = function () {
+
+            function loadToJsTree(savedQueries) {
+                var treeData = [];
+                var allPaths = [];
+                var types = ["graph", "table", "treemap", "graphAllNeighbours"]
+                var i = 0;
+                for (var key in savedQueries) {
+                    i++;
+                    var levels = key.split(/[:?]/);
+                    var path = "";
+
+                    for (var j = 0; j < levels.length; j++) {
+                        var parent = "#"
+                        var type = "";
+                        if (j > 0)
+                            var parent = (levels[j - 1].trim());
+
+                        levels[j] = levels[j].trim();
+
+
+                        if (j == 0)
+                            type = "label";
+                        else if (levels[j].indexOf("n.") == 0)
+                            type = "whereN";
+                        else if (nodeColors[levels[j].split("/")[0]])
+                            type = "targetLabels";
+                        else if (types.indexOf(levels[j]) > -1) {
+                            type = levels[j];
+                        }
+
+                        path += ":" + parent;
+                        if (j == levels.length - 1) {
+                            path += ":" + levels[j]
+                        }
+
+                        if (allPaths.indexOf(path) < 0) {
+                            allPaths.push(path);
+                            var text=levels[j];
+
+
+
+                            treeData.push({text: text, id: levels[j], type: type, data: key, parent: parent})
+                        }
+                    }
+                }
+                $("#searchDialog_savedQueriesJstree").html("");
+                $("#searchDialog_savedQueriesJstree").jstree({
+                    'core': {
+                        'data': treeData
+                    },
+                    "types": {
+                        "graph": {
+                            "icon": "images/graphSmall.png"
+                        },
+                        "graphAllNeighbours": {
+                            "icon": "images/graphSmall.png"
+                        },
+                        "table": {
+                            "icon": "images/tableSmall.png"
+                        },
+                        "treemap": {
+                            "icon": "images/treemapSmall.png"
+                        },
+                        "label": {
+                            "icon": "images/labelIconSmall.png"
+                        },
+                        "whereN": {
+                            "icon": "images/labelIconSmall.png"
+                        },
+                        "targetLabels": {
+                            "icon": "images/labelIcon2Small.png"
+                        },
+                    }
+                    , plugins: ["types"]
+                });
+                $("#searchDialog_savedQueriesJstree").on('loaded.jstree', function () {
+                    $("#searchDialog_savedQueriesJstree").jstree('open_all');
+                })
+                    .bind("dblclick.jstree", function (e) {
+                        var data = $("#searchDialog_savedQueriesJstree").jstree().get_selected(true);
+                        if (data[0]) {
+                            searchMenu.selectedQuery = data[0].data;
+                            searchMenu.savedQueryExecute();
+                        }
+
+                    })
+                $("#searchDialog_savedQueriesJstree").bind("click.jstree", function (e) {
+                    var data = $("#searchDialog_savedQueriesJstree").jstree().get_selected(true);
+                    if (data[0]) {
+
+                        searchMenu.selectedQuery = data[0].data;
+                    }
+
+                })
+            }
+
+            savedQueries = localStorage.getItem("savedQueries_" + subGraph);
             if (!savedQueries)
                 savedQueries = {};
             else
                 savedQueries = JSON.parse(savedQueries);
-            var names = []
-            for (var key in savedQueries) {
-                names.push(key);
+            loadToJsTree(savedQueries);
+            /*    var names = []
+               for (var key in savedQueries) {
+                   names.push(key);
 
-            }
-            names.sort();
-            common.fillSelectOptionsWithStringArray(searchDialog_savedQueries, names);
+               }
+               names.sort();
+
+             common.fillSelectOptionsWithStringArray(searchDialog_savedQueries, names);*/
         }
 
 
@@ -62,6 +167,7 @@ var searchMenu = (function () {
             if (currentPanelIndex == 1)
                 $("#searchDialog_previousPanelButton").css('visibility', 'hidden');
             $("#searchDialog_ExecuteButton").css('visibility', 'hidden');
+            $("#searchDialog_NextPanelButton").css('visibility', 'visible');
         }
 
         self.nextPanel = function () {
@@ -175,9 +281,13 @@ var searchMenu = (function () {
                 });
             }
             else if (option == 'execute') {
-                toutlesensController.setRightPanelAppearance();
-                $("#paintAccordion").accordion("option","active",1)
-                $( "#tabs-analyzePanel" ).tabs( "option", "active", 2 );//highlight
+                eventsController.stopEvent = true;
+
+                toutlesensController.setRightPanelAppearance(false);
+
+                $("#paintAccordion").accordion("option", "active", 1)
+
+                $("#tabs-analyzePanel").tabs("option", "active", 2);//highlight
 
                 if (previousAction == 'graphSomeNeighboursListLabels') {
                     self.currentAction = "graphSomeNeighbours";
@@ -199,34 +309,38 @@ var searchMenu = (function () {
                     });
                 }
 
+
             }
 
 
             if (option != 'execute')
                 previousAction = option;
 
-            toutlesensController.setRightPanelAppearance(true);
+
         }
 
         self.savedQuerySave = function () {
             //  advancedSearch.addClauseUI();
             var val = "";
             var neighboursLabels = [];
-            var neighboursLabels=[]
+            var neighboursLabels = []
             if (advancedSearch.searchClauses.length > 0)
                 val = advancedSearch.searchClauses[0].title;
             if (advancedSearch.searchClauses.length > 1)
                 val = advancedSearch.searchClauses[0].title.substring(0, 10) + "..."
+            val += ":";
             if (previousAction != "") {
-                val = previousAction.replace("SomeNeighboursListLabels","") + ":" + val
+                val = val + previousAction.replace("SomeNeighboursListLabels", "");
             }
             if (previousAction.indexOf("ListLabels") > -1) {
-
+                val += ":";
                 $('[name=advancedSearchDialog_LabelsCbx]:checked').each(function () {
                     neighboursLabels.push($(this).val());
                 });
-                for(var i=0;i<neighboursLabels.length;i++){
-                    val+="/"+neighboursLabels[i];
+                for (var i = 0; i < neighboursLabels.length; i++) {
+                    if (i > 0)
+                        val += "/"
+                    val += neighboursLabels[i].trim();
                 }
 
             }
@@ -246,8 +360,10 @@ var searchMenu = (function () {
 
                 savedQueries[name] = query;
 
-                localStorage.setItem("savedQueries", JSON.stringify(savedQueries));
-                $("#searchDialog_savedQueries").prepend("<option>" + name + "</option>")
+                localStorage.setItem("savedQueries_" + subGraph, JSON.stringify(savedQueries));
+                //  $("#searchDialog_savedQueries").prepend("<option>" + name + "</option>")
+
+                self.loadQueries();
             }
 
 
@@ -257,18 +373,26 @@ var searchMenu = (function () {
             var name = $("#searchDialog_savedQueries").val();
             if (name && name != "") {
                 delete savedQueries[name];
-                localStorage.setItem("savedQueries", JSON.stringify(savedQueries));
-                $("#searchDialog_savedQueries option").each(function () {
+                localStorage.setItem("savedQueries_" + subGraph, JSON.stringify(savedQueries));
+                self.loadQueries();
+                /*$("#searchDialog_savedQueries option").each(function () {
                     if ($(this).val() == name) {
                         $(this).remove();
                         return;
                     }
-                });
+                });*/
             }
         }
+
+        self.savedQueryDeleteAll = function () {
+            localStorage.removeItem("savedQueries_" + subGraph);
+            self.loadQueries();
+        }
+
         self.savedQueryExecute = function () {
 //$("#searchAccordion").accordion("option","active",1)
-            var name = $("#searchDialog_savedQueries").val();
+            // var name = $("#searchDialog_savedQueries").val();
+            var name = searchMenu.selectedQuery;
             var query = savedQueries[name];
             var clauses = query.clauses;
 
@@ -299,7 +423,7 @@ var searchMenu = (function () {
                 });
                 self.onSearchAction("execute");
             }
-
+            $("#searchDialog_NextPanelButton").css('visibility', 'visible');
 
         }
 

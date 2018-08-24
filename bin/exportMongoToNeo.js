@@ -38,7 +38,7 @@ var neoMappings = [];
 var distinctNames = [];
 var countNodes = 0;
 var lastImports = [];
-var neoCopyMappings=neoMappings;
+var neoCopyMappings = neoMappings;
 
 var exportMongoToNeo = {
 
@@ -278,7 +278,7 @@ var exportMongoToNeo = {
 
         //var sourceNodeMappingsStatement = "match (n) where n.subGraph=\"" + subGraph + "\" and labels(n) in [\"" + neoSourceLabel + "\",\"" + neoTargetLabel + "\"] return n.id as mongoId, id(n) as neoId, labels(n)[0] as label; "
         neoProxy.match(sourceNodeMappingsStatement, function (err, result) {
-            if(err)
+            if (err)
                 return callback(err);
             var sourceNodeMappings = [];
             var targetNodeMappings = [];
@@ -396,9 +396,10 @@ var exportMongoToNeo = {
                         return;
 
                     }
-
-                    var message = "Imported " + totalImported + "relations  with type " + relationType;
-                    socket.message(message);
+                    if (totalImported > 0) {
+                        var message = "Imported " + totalImported + "relations  with type " + relationType;
+                        socket.message(message);
+                    }
 
                     callback(null, result)
 
@@ -467,7 +468,7 @@ var exportMongoToNeo = {
                 });
             },
             function (err, done) {
-neoCopyMappings=neoMappings;
+                neoCopyMappings = neoMappings;
                 totalImported = totalImported;
                 var message = "total nodes importedtotal :" + (totalImported);
 
@@ -490,8 +491,8 @@ neoCopyMappings=neoMappings;
                callback(e)
            }
            neoMappings = JSON.parse("" + neoMappings);*/
-        var neoMappings=neoCopyMappings;
-        if(!neoMappings)
+        var neoMappings = neoCopyMappings;
+        if (!neoMappings)
             return callback("Nodes have to be imported first in the same server session")
 
         var path = "/db/data/batch";
@@ -568,10 +569,10 @@ neoCopyMappings=neoMappings;
 function getLoadParams(params) {
 
     var loadParams = {};
-    if (params.mongoDB.toLowerCase().indexOf(".csv") > -1) {//|| params.mongoDB.toLowerCase().indexOf(".txt") > -1) {
+    if (params.mongoDB.toLowerCase().indexOf(".csv") > -1 || params.mongoDB.toLowerCase().indexOf(".txt") > -1) {//|| params.mongoDB.toLowerCase().indexOf(".txt") > -1) {
         loadParams.type = "csv";
         loadParams.filePath = "./uploads/" + params.mongoCollection + ".json";
-        loadParams.fetchSize = 5000;
+        loadParams.fetchSize = 500;
     } else {
         loadParams = params;
         loadParams.type = "MongoDB";
@@ -618,8 +619,12 @@ function loadAndFetchDataToImport(params, importFn, _rootCallBack) {
             if (filterObj) {// filter with or
                 ok = false;
                 for (var key in filterObj) {
-                    if (rawLine[key] && rawLine[key] == filterObj[key]) ;
-                    ok = true;//or
+                    if (rawLine[key]) {
+                        var val1 = rawLine[key]
+                        var val2 = filterObj[key];
+                        ok = (val1 == val2)
+                    }
+
                 }
             }
 
@@ -637,11 +642,13 @@ function loadAndFetchDataToImport(params, importFn, _rootCallBack) {
                 importLine = rawLine;
 
             aSubset.push(importLine);
-            if (aSubset.length >= loadParams.fetchSize || i == allData.length - 1) {
+            if (aSubset.length >= loadParams.fetchSize) {
                 dataSubsets.push(aSubset);
                 aSubset = [];
             }
+
         }
+        dataSubsets.push(aSubset);
 
         async.eachSeries(dataSubsets, function (subset, _callback) {
                 var callback = _callback;

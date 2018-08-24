@@ -41,17 +41,19 @@
 
 <div id="searchAccordion">
 
-    <h3>save Queries</h3>
+    <h3><b>My queries</b></h3>
     <div style="min-height: 300px;">
 
-        <select id="searchDialog_savedQueries" size="14" style="width:270px"
-                ondblclick="searchMenu.savedQueryExecute()"></select>
+   <!--     <select id="searchDialog_savedQueries" size="14" style="width:270px"
+                ondblclick="searchMenu.savedQueryExecute()"></select>-->
+        <div id="searchDialog_savedQueriesJstree" style="height:250px"></div>
         <br>
         <button onclick="searchMenu.savedQueryDelete()">delete</button>
         <button onclick="searchMenu.savedQueryExecute()">execute</button>
+        <button onclick="searchMenu.savedQueryDeleteAll()">delete all</button>
     </div>
 
-    <h3>new Query</h3>
+    <h3><b>New query</b></h3>
     <div style="height: 450px;overflow: auto">
 
         <div class="searchPanel" style="flex-direction: column">

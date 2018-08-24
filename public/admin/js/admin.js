@@ -254,7 +254,9 @@ function onCollSelect() {
     var dbName = $("#dbSelect").val();
 
     callMongo("", {listFields: 1, dbName: dbName, collectionName: collectionName}, function (data) {
+
         data.sort();
+        data.splice(0,0,"")
         common.fillSelectOptionsWithStringArray(fieldSelect, data);
 
         /*  for (var i = 0; i < data.length; i++) {
@@ -329,7 +331,7 @@ function setMongoTargetField() {
     $("#neoTargetKey").val( $("#neoTargetField").val());
 }
 function setNeoRelAttributeField() {
-    var fieldSelect = $("#fieldSelect").val();
+    var fieldSelect = $("#fieldSelectRels").val();
     var  exportedRelFields=$("#neoRelAttributeField").val();
     if (exportedRelFields == "none" || exportedRelFields == "all")
         exportedRelFields = "";
@@ -886,10 +888,10 @@ function loadRequest(requestName, changeTab) {
 
 
             if (changeTab && requestName.startsWith("Node"))
-                $( "#accordion" ).accordion( "option", "active",1 );
+                $( "#accordion" ).accordion( "option", "active",2 );
 
             else if (changeTab && requestName.startsWith("Rel"))
-                $( "#accordion" ).accordion( "option", "active",2 );
+                $( "#accordion" ).accordion( "option", "active",3 );
 
             return;
         }
@@ -1201,8 +1203,9 @@ function showHelp(fieldName) {
 
 function setCsvImportFields(json) {
     currentCsvObject = json;
-
+json.header.splice(0,0,"")
     common.fillSelectOptionsWithStringArray(fieldSelect, json.header);
+    //common.fillSelectOptionsWithStringArray(fieldSelectRels, json.header);
 
     admin.initImportDialogSelects(json.header)
 

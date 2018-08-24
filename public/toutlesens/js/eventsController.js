@@ -1,5 +1,6 @@
 var eventsController = (function () {
         var self = {};
+        self.stopEvent=false;
         self.startSearchNodesTime = null;
 
         self.initInputEvents = function () {
@@ -73,11 +74,15 @@ var eventsController = (function () {
                 }
             });
 
-            $("#queryDiv").on('mousedown', function (e) {
+           $("#queryDiv").on('mousedown', function (e) {
+              if( self.stopEvent)
+                  return  self.stopEvent=false;
             toutlesensController.setRightPanelAppearance(true);
             })
 ;
             $("#analyzePanel").on('mousedown', function (e) {
+                if( self.stopEvent)
+                    return  self.stopEvent=false;
                 toutlesensController.setRightPanelAppearance(false);
             })
 

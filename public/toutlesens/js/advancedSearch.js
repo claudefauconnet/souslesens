@@ -159,8 +159,8 @@ var advancedSearch = (function () {
     self.addClause = function (clause) {
 
         $("#searchDialog_NextPanelButton").css('visibility', 'visible');
-        var clauseText = clause.nodeLabel + " : " + clause.where;
-        if (clauseText == " : ")
+        var clauseText = clause.nodeLabel + " ? " + clause.where;
+        if (clauseText == " ? ")
             return;
         if (clause.where == "" && self.searchClauses.length > 0)
             return;

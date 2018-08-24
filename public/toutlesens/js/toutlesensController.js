@@ -1120,6 +1120,8 @@ var toutlesensController = (function () {
             paint.initHighlight();
             filters.setLabelsOrTypes("node");
         });
+
+
     }
 
     /**

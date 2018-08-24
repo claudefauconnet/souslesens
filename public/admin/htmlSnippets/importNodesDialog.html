@@ -21,7 +21,10 @@
         <tr>
             <td align="right">Node attribute fields</td>
             <td>
-                <button class="source" onclick="addToExportedFields()">Add</button> <button onclick='$("#exportedFields").val("all")'>All</button>
+                <select  id="fieldSelect"
+                        onchange='onFieldSelect()'>
+
+                </select> <button class="source" onclick="addToExportedFields()">Add</button> <button onclick='$("#exportedFields").val("all")'>All</button>
                 <input name="nodeInput" id="exportedFields" value="none">
             </td>
 

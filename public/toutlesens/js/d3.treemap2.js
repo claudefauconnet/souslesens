@@ -1,6 +1,7 @@
 var treeMap = (function () {
     var self = {};
     var treeJson;
+    var maxTextLength=20;
 
 
     function formatNodeInfoForTspan(node) {
@@ -28,8 +29,11 @@ var treeMap = (function () {
 
         function recurse(node, treeMapNode) {
             var nodeData = formatNodeInfoForTspan(node);
+            var name=node.name;
+            if(!name)
+                name="";
             var treemapChild = {
-                key: node.name,
+                key: name,
                 neoAttrs: nodeData
             }
 
@@ -41,7 +45,7 @@ var treeMap = (function () {
                 }
 
             } else {
-                treemapChild.value = 100000;
+                treemapChild.value = 1;
 
             }
             treeMapNode.values.push(treemapChild);
@@ -49,8 +53,9 @@ var treeMap = (function () {
         }
 
         var treemapJson = {
-            key: "root",
-            values: []
+            key: "",
+            values: [],
+            parent:""
         };
         recurse(treeJson, treemapJson);
 //	console.log(JSON.stringify(treemapJson.values));
@@ -304,8 +309,8 @@ var treeMap = (function () {
                 var t = g.append("text").attr("class", "ptext").attr("dy", ".75em").style("fill","blue").text(function (d) {
 
                     var str=d.key;
-                    if(d.key.length>20)
-                        str=d.key.substring(0,20)+"...";
+                    if(d.key.length>maxTextLength)
+                        str=d.key.substring(0,maxTextLength)+"...";
                     return str;
                 });
 
@@ -409,6 +414,8 @@ var treeMap = (function () {
             }
 
             function name(d) {
+                if( !d.key)
+                    d.key=""
                 return d.parent ? name(d.parent) + " / " + d.key + " ("
                     + formatNumber(d.value) + ")" : d.key + " ("
                     + formatNumber(d.value) + ")";

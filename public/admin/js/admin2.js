@@ -108,7 +108,7 @@ self.drawVisjsGraph= function (){
             return;
         }
         else if(properties.indexOf(column)<0){
-            alert ("choose the property corresponding to the column 'id' ")
+           ;// alert ("choose the property corresponding to the column 'id' ")
         }else{
             $(targetSelect).val(column);
         }
