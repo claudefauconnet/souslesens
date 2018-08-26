@@ -28,6 +28,7 @@ var jsTreeController = (function () {
         var jsTree = $('#' + divId)
             .on("select_node.jstree",
                 function (evt, obj) {
+
                     callback(obj.node);
 
                 }).on("loaded.jstree", function (evt, obj) {
@@ -139,6 +140,7 @@ var jsTreeController = (function () {
         self.onMenuAdd = function (menuItem) {
         }
         var xx = 1;
+
     }
 
 

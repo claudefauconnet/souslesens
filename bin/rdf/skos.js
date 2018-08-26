@@ -181,7 +181,14 @@ var skos = {
 
                 }
 
-                var concepts = result["rdf:RDF"]["skos:Concept"];
+                var rdf="rdf:RDF";
+            if(!result[rdf])
+                rdf="rdf:Rdf"
+                if(!result[rdf])
+                    return callback("no RDF tag")
+
+
+                var concepts = result[rdf]["skos:Concept"];
                 var conceptsMap = {}
                 for (var i = 0; i < concepts.length; i++) {
                     var about = concepts[i]["$"]["rdf:about"];
@@ -210,7 +217,19 @@ var skos = {
                     if (concepts[i]["skos:BT"])
                         node.broader = concepts[i]["skos:BT"]
 
+
+                    node.synonyms = []
+                    var altLabels=   concepts[i]["skos:altLabel"];
+                    if(altLabels){
+                        for(var j=0;j<altLabels.length;j++){
+                            node.synonyms.push(altLabels[j]._)
+                        }
+
+                    }
+
                     conceptsMap[id] = node;
+
+
 
                 }
 
@@ -219,7 +238,7 @@ var skos = {
 
                 for (var key in conceptsMap) {
                     var concept = conceptsMap[key];
-                    var node = {text: concept.prefLabel, id: key, data: {about: concept.about}};
+                    var node = {text: concept.prefLabel, id: key, data: {about: concept.about,synonyms:concept.synonyms}};
 
                     var parents = concept.broader;
 
@@ -229,6 +248,7 @@ var skos = {
                         var parent = parent.substring(parent.lastIndexOf("/") + 1)
                         //    var parent = conceptsMap[parent];
                         node.data.parentText = conceptsMap[parent].prefLabel;
+
                         if(typeof   node.data.parentText ==="object")
                             node.data.parentText=node.data.parentText._
                         node.parent = parent;

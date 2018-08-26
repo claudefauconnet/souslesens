@@ -729,7 +729,44 @@
         }
       }
     }
-  }
+  },
+    "totalreferentiel": {
+      "mappings": {
+        "rules_total": {
+          "properties": {
+            "key": {
+              "isId":true,
+              "type": "keyword"
+            },
+            "Titre": {
+              "type": "keyword",
+              "inCSV": true,
+              "isTitle":true
+            },
+            "Texte": {
+              "type": "text"
+            },
+            "longueurTexte": {
+              "type": "integer"
+            },
+            "File": {
+              "type": "integer"
+            },
+            "pagesCount": {
+              "type": "integer"
+            },
+            "pageNumber": {
+              "type": "keyword"
+            },
+            "relativePath": {
+              "type": "text",
+              "inCSV": true
+
+            }
+          }
+        }
+      }
+    }
 }
 }
 

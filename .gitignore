@@ -61,3 +61,6 @@ config/search/elasticSchema.json
 logs/elastic.log
 *.log
 logs/elastic.log
+logs/elastic.log
+logs/classifierManager.log
+config/search/elasticSchema.json

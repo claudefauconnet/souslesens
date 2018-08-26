@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>skostree</title>
+
+
+    <script src="../../common/js/jquery/jquery.min.js"></script>
+    <script src="../../common/js/jquery/jquery-ui.min.js"></script>
+    <!-- <script src="../../common/js/jsTree/jstree.min.js"></script>-->
+    <script src="js/jstree.js"></script>
+    <script src="../../common/js/common.js"></script>
+    <script src="../../common/js/jsTreeController.js"></script>
+    <script src="./js/skosTree.js"></script>
+    <script src="./js/nlp.js"></script>
+    <link rel="stylesheet" href="../../common/js/jsTree/themes/default/style.min.css"/>
+    <link rel="stylesheet" href="//cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css">
+    <script src="//cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
+    <style>
+
+        #main {
+            left: 200px;
+            position: absolute;
+            display: inline-flex;
+        }
+
+        .thesaurusTable {
+            margin-left: 50px;
+            padding: 10px;
+            background-color: #f4f0ec;
+        }
+
+        .jsTree {
+            overflow: auto;
+            width: 300px;
+            height: 600px;
+        }
+
+        #synonymsDiv {
+            height: 100px;
+            overflow: auto;
+        }
+
+        #searchResultDiv {
+            height: 200px;
+            width: 500px;
+            overflow: auto;
+        }
+
+        #dataTable {
+            height: 200px;
+            width: 500px;
+            overflow: auto;
+        }
+
+        #coreNlpResultDiv {
+            height: 300px;
+            overflow: auto;
+        }
+
+    </style>
+    <script>
+        $(function () {
+            totalWidth = $(window).width();
+            totalHeight = $(window).height();
+            $(".jsTree").height(totalHeight - 150);
+            skosTree.loadTree('treeDiv1', 'skosInput1')
+
+        })
+
+
+    </script>
+
+
+</head>
+<body>
+<table valign="top">
+    <tr>
+        <td>
+            <table class="thesaurusTable">
+
+                <tr>
+                    <td>
+                        thesaurus<input id="skosInput1" value="totalRef" size="12">
+                        <button onclick="skosTree.loadTree('treeDiv1','skosInput1')">load</button>
+                        <br>
+                        <button onclick="skosTree.createTree($('skosInput1').val(),'treeDiv1')">create</button>
+                        <button onclick="skosTree.saveTree('treeDiv1','skosInput1')">save</button>
+                        <br>
+                        <input id="searchInput1">
+                        <button onclick="skosTree.searchTree('searchInput1')">search</button>
+                        <br>
+                        <div id="treeContainer1" class="jsTree">
+                            <div id="treeDiv1">
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+            </table>
+        </td>
+        <td valign="top">
+            <div id="synonymsDiv"></div>
+            <div><input id="searchExpression" style="width: 200px">
+                <button onclick="nlp.searchRules()">search rules</button>  <button onclick="nlp.searchRules(true)">searchPhrase rules</button>count<span id="searchResultCount"></span>
+                <button onclick="nlp.coreNlpAnalyze()">coreNlpAnalyze</button>
+            </div>
+            <div id ="elasticDataTableContainer" style="width:800px;height: 600px;overflow: auto">
+
+            </div>
+            <div id="coreNlpResultDiv"></div>
+        </td>
+    </tr>
+
+</table>
+
+</body>
+</html>

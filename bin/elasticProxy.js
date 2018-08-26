@@ -42,6 +42,7 @@ var classifierManager = require("./rdf/classifierManager.js");
 var elasticCustom = require("./elasticCustom.js");
 var fileInfos = require('./fileInfos..js');
 var socket = require('../routes/socket.js');
+var csv = require('csvtojson');
 
 
 var logger = require('logger').createLogger(path.resolve(__dirname, "../logs/elastic.log"));
@@ -410,8 +411,11 @@ var elasticProxy = {
 
         if (!queryField)
             queryField = "content"
-        else
-            queryField = "content." + queryField
+        else {
+           // queryField = "content." + queryField;
+            //???
+           ;
+        }
 
         if (format == "CSV")
             resultFields = elasticProxy.getShemasFieldNames(index, "CSV");
@@ -1379,8 +1383,65 @@ var elasticProxy = {
 
             }
         )
-    }
+    },
+    indexCsv: function (csvPath, elasticIndex, elasticType, callback) {
 
+
+        var data = "" + fs.readFileSync(csvPath);
+        var elasticFields = elasticProxy.getShemasFieldNames(elasticIndex, elasticType);
+        var jsonData = [];
+        csv({noheader: false, trim: true, delimiter: "auto"})
+            .fromString(data)
+            .on('json', function (json) {
+                jsonData.push(json);
+
+            })
+            .on('done', function () {
+                var startId = Math.round(Math.random() * 10000000);
+                var elasticPayload = [];
+                // contcat all fields values in content field
+
+                for (var i = 0; i < jsonData.length; i++) {
+                    var payload = {};
+                    var content = "";
+
+                    elasticPayload.push({index: {_index: elasticIndex, _type: elasticType, _id: "_" + (startId++)}})
+                    for (var j = 0; j < jsonData.length; j++) {
+                        var key = elasticFields[j];
+                        var value = jsonData[i][key];
+                        if (!value)
+                            continue;
+                        if (value == "0000-00-00")
+                            continue;
+
+
+                        payload[key] = value;
+
+                    }
+
+                    elasticPayload.push(payload);
+
+                }
+
+                getClient().bulk({
+                    body: elasticPayload
+                }, function (err, resp) {
+                    if (err) {
+                        console.log("ERROR " + err)
+                        //  console.log(JSON.stringify(elasticPayload, null, 2))
+                        return callback(err);
+
+                    } else {
+                        return callback(null,"done");
+                    }
+                });
+
+
+
+            });
+
+
+    }
 
     ,
     indexMongoCollection: function (mongoDB, mongoCollection, mongoQuery, elasticIndex, elasticType, callback) {
@@ -1485,11 +1546,7 @@ var elasticProxy = {
     ,
 
 
-
-
-
-
-    indexSqlTableInNewIndex:function(connection, sql, elasticIndex,settings, elasticType, callback) {
+    indexSqlTableInNewIndex: function (connection, sql, elasticIndex, settings, elasticType, callback) {
         elasticProxy.deleteIndex(elasticIndex, true, function (err, result) {
             if (err) {
 
@@ -1505,7 +1562,7 @@ var elasticProxy = {
                     if (err) {
                         return callback(err)
                     }
-                    return callback(null,result);
+                    return callback(null, result);
                 })
 
             })
@@ -1529,7 +1586,7 @@ var elasticProxy = {
             var field = elasticFields[i];
         }
         var offset = 0;
-     //   serverParams.mongoFetchSize=10;
+        //   serverParams.mongoFetchSize=10;
         async.whilst(
             function () {//test
                 return resultSize > 0;
@@ -1584,55 +1641,52 @@ var elasticProxy = {
                            }*/
 
 
+                        getClient().bulk({
+                            body: elasticPayload
+                        }, function (err, resp) {
+                            if (err) {
+                                console.log("ERROR " + err)
+                                //  console.log(JSON.stringify(elasticPayload, null, 2))
+                                return callbackWhilst(null);
 
-
-                getClient().bulk({
-                    body: elasticPayload
-                }, function (err, resp) {
-                    if (err) {
-                        console.log("ERROR " + err)
-                      //  console.log(JSON.stringify(elasticPayload, null, 2))
-                        return callbackWhilst(null);
-
-                    } else {
-                        return callbackWhilst(null);
-                    }
-                });
-
-
-
-                      /*  var options = {
-                            method: 'POST',
-                            url: baseUrl + index + "/_bulk",
-                            encoding: null,
-                           // json: elasticPayload
-                            body:JSON.stringify(elasticPayload,null,2)
-                        }
-
-                        console.log(JSON.stringify(options,null,2))
-                        request(options, function (error, response, body) {
-                            if (error) {
-
-                                console.log(JSON.stringify(elasticPayload, null, 2))
-                                return callbackWhilst(err);
-                                // return callback(file+" : "+error);
-                            }
-
-                            else {
-                                if (body.errors == true) {
-                                    for (var i = 0; i < body.items.length; i++) {
-                                        if (body.items[i].index.status != 201) {
-                                            if (body.items[i].index.error && body.items[i].index.error.caused_by)
-                                                console.log(JSON.stringify(body.items[i].index.error.caused_by))
-                                        }
-                                    }
-
-                                }
-                                console.log(" totalIndexed " + totalIndexed)
+                            } else {
                                 return callbackWhilst(null);
                             }
+                        });
 
-                        });*/
+
+                        /*  var options = {
+                              method: 'POST',
+                              url: baseUrl + index + "/_bulk",
+                              encoding: null,
+                             // json: elasticPayload
+                              body:JSON.stringify(elasticPayload,null,2)
+                          }
+
+                          console.log(JSON.stringify(options,null,2))
+                          request(options, function (error, response, body) {
+                              if (error) {
+
+                                  console.log(JSON.stringify(elasticPayload, null, 2))
+                                  return callbackWhilst(err);
+                                  // return callback(file+" : "+error);
+                              }
+
+                              else {
+                                  if (body.errors == true) {
+                                      for (var i = 0; i < body.items.length; i++) {
+                                          if (body.items[i].index.status != 201) {
+                                              if (body.items[i].index.error && body.items[i].index.error.caused_by)
+                                                  console.log(JSON.stringify(body.items[i].index.error.caused_by))
+                                          }
+                                      }
+
+                                  }
+                                  console.log(" totalIndexed " + totalIndexed)
+                                  return callbackWhilst(null);
+                              }
+
+                          });*/
 
                     }
 
@@ -1747,21 +1801,21 @@ var elasticProxy = {
             json.settings = settingsObj;
         }
         mappingsObj = elasticProxy.getIndexMappings(index)
-        if (mappingsObj &&( settingsObj && !settingsObj.mappings))
+        if (mappingsObj && (settingsObj && !settingsObj.mappings))
             json.mappings = elasticProxy.removeSchemaMappingsCustomProperties(mappingsObj).mappings;
 
         var options = {
             method: 'PUT',
             description: "init mapping on attachment content",
             url: baseUrl + index + "/",
-            json:json
+            json: json
         };
 
-        console.log(   "*************Index Mappings and settings\n"+JSON.stringify(json,null,2));
+        console.log("*************Index Mappings and settings\n" + JSON.stringify(json, null, 2));
         request(options, function (error, response, body) {
             if (error)
                 return callback(error);
-            if(body.error)
+            if (body.error)
                 return callback(body.error);
             callback(null, "index " + index + " created");
 
@@ -2216,8 +2270,8 @@ var elasticProxy = {
         var userObj = users[user];
         if (!userObj)
             return callback("no registred user :" + user);
-        if(!Array.isArray(userObj.groups))
-            userObj.groups=[userObj.groups];
+        if (!Array.isArray(userObj.groups))
+            userObj.groups = [userObj.groups];
         var output = {};
         for (var i = 0; i < userObj.groups.length; i++) {
             if (userObj.groups[i] != "ALL")
@@ -2419,5 +2473,25 @@ if (false) {
     })
 
 }
+
+
+
+if (false) {
+
+    elasticProxy.createSimpleIndex ("totalreferentiel", "BASIC",  function (err, result) {
+
+    })
+
+}
+
+if (false) {
+    elasticProxy.indexCsv ("D:\\Total\\NLP\\importRules.csv", "totalreferentiel", "rules_total",  function (err, result) {
+
+    })
+
+}
+
+
+
 
 
