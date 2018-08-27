@@ -412,9 +412,9 @@ var elasticProxy = {
         if (!queryField)
             queryField = "content"
         else {
-           // queryField = "content." + queryField;
+            // queryField = "content." + queryField;
             //???
-           ;
+            ;
         }
 
         if (format == "CSV")
@@ -539,19 +539,27 @@ var elasticProxy = {
         else
             query = getElementaryQuery(word);
 
+        var highlight = {
+            "fields": {}
+        }
+        if (false && queryField) {
+            highlight.fields[queryField] = {
+                "content": {"fragment_size": 50, "number_of_fragments": 5}
+            }
+        }
+        else
+            highlight.fields ["content"] = {"fragment_size": 50, "number_of_fragments": 5};
 
-        var payload = {
-            "from": from,
-            "size": size,
 
-            "query": query,
-            "highlight": {
-                "fields": {
-                    "content": {"fragment_size": 50, "number_of_fragments": 5}
-                }
+            var payload = {
+                "from": from,
+                "size": size,
+
+                "query": query,
+                "highlight": highlight
             }
 
-        }
+
         if (resultFields)
             payload._source = resultFields;
 
@@ -1383,7 +1391,8 @@ var elasticProxy = {
 
             }
         )
-    },
+    }
+    ,
     indexCsv: function (csvPath, elasticIndex, elasticType, callback) {
 
 
@@ -1432,10 +1441,9 @@ var elasticProxy = {
                         return callback(err);
 
                     } else {
-                        return callback(null,"done");
+                        return callback(null, "done");
                     }
                 });
-
 
 
             });
@@ -1786,7 +1794,8 @@ var elasticProxy = {
             });
         })
 
-    },
+    }
+    ,
 
     createSimpleIndex: function (index, settings, callback) {
         var settingsObj = {};
@@ -1820,7 +1829,8 @@ var elasticProxy = {
             callback(null, "index " + index + " created");
 
         })
-    },
+    }
+    ,
 
     initDocIndex: function (index, settings, callback) {
 
@@ -2249,7 +2259,8 @@ var elasticProxy = {
             }
         }
         return allFields;
-    },
+    }
+    ,
 
 
     getUserIndexes: function (user, callback) {
@@ -2475,19 +2486,18 @@ if (false) {
 }
 
 
-
 if (false) {
 
-    elasticProxy.createSimpleIndex ("totalreferentiel", "BASIC",  function (err, result) {
+    elasticProxy.createSimpleIndex("totalreferentiel", "BASIC", function (err, result) {
+        elasticProxy.indexCsv("D:\\Total\\NLP\\importRules.csv", "totalreferentiel", "rules_total", function (err, result) {
 
+        })
     })
 
 }
 
 if (false) {
-    elasticProxy.indexCsv ("D:\\Total\\NLP\\importRules.csv", "totalreferentiel", "rules_total",  function (err, result) {
 
-    })
 
 }
 

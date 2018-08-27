@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>skostree</title>
-
+    <link rel="stylesheet" media="screen" type="text/css" title="Design" href="../common/js/jquery/jquery-ui.min.css"/>
 
     <script src="../../common/js/jquery/jquery.min.js"></script>
     <script src="../../common/js/jquery/jquery-ui.min.js"></script>
@@ -48,16 +48,19 @@
         }
 
         #dataTable {
-            height: 200px;
+            height: 600px;
             width: 500px;
             overflow: auto;
         }
 
         #coreNlpResultDiv {
-            height: 300px;
+            height: 600px;
             overflow: auto;
         }
 
+        #nlpAccordion {
+            height: 650px;
+        }
     </style>
     <script>
         $(function () {
@@ -65,6 +68,7 @@
             totalHeight = $(window).height();
             $(".jsTree").height(totalHeight - 150);
             skosTree.loadTree('treeDiv1', 'skosInput1')
+            $("#nlpAccordion").accordion();
 
         })
 
@@ -99,15 +103,35 @@
             </table>
         </td>
         <td valign="top">
-            <div id="synonymsDiv"></div>
-            <div><input id="searchExpression" style="width: 200px">
-                <button onclick="nlp.searchRules()">search rules</button>  <button onclick="nlp.searchRules(true)">searchPhrase rules</button>count<span id="searchResultCount"></span>
-                <button onclick="nlp.coreNlpAnalyze()">coreNlpAnalyze</button>
-            </div>
-            <div id ="elasticDataTableContainer" style="width:800px;height: 600px;overflow: auto">
+            <div><input id="sourceSearchExpression" style="width: 200px">
+                <div><input id="targetSearchExpression" style="width: 200px">
+                <button onclick="nlp.searchRules()">search rules</button>
+                <button onclick="nlp.searchRules(true)">searchPhrase rules</button>
+                count<span id="searchResultCount"></span>
 
             </div>
-            <div id="coreNlpResultDiv"></div>
+            <div id="nlpAccordion">
+                <h3>Rules</h3>
+<div>
+    NLP analyze<select onchange="nlp.coreNlpAnalyze($(this).val())" size="3">
+    <option></option>
+    <option>self</option>
+    <option>thesaurus</option>
+
+</select>
+                <div id="elasticDataTableContainer" style="width:800px;height: 600px;overflow: auto"></div>
+</div>
+                <h3>Relations</h3>
+                <div>
+                    <button onclick="nlp.exportToNeo4j()">exportToNeo4j</button>
+                    <div id="coreNlpResultDiv"></div>
+                </div>
+                <h3>Synonyms</h3>
+
+                <div id="synonymsDiv"></div>
+
+
+            </div>
         </td>
     </tr>
 

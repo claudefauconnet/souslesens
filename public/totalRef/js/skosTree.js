@@ -44,7 +44,7 @@ var skosTree = (function () {
                     self.currentNodeData=node.data
                     self.currentNodeData.id=node.id;
                     self.currentNodeData.text=node.text;
-                    $("#searchExpression").val(node.text);
+                    $("#sourceSearchExpression").val(node.text);
                  //   $("#" + treeDivId).jstree("select_node", "ul > li:first");
                     var selectedNode = $("#" + treeDivId).jstree("get_selected");
                     $("#" + treeDivId).jstree("open_node", selectedNode, false, true);
@@ -119,6 +119,7 @@ var skosTree = (function () {
         }
         text += "</ul>";
         $("#synonymsDiv").html(text);
+        $("#nlpAccordion").accordion( "option", "active",2 );
     }
 
 

@@ -735,8 +735,9 @@ var Schema = (function () {
                 for (var label in dataModel.labels) {
                     labels[label] = {icon: "default.png"};
                     if (Gparams && Gparams.palette) {
-                        labels[label].color = Gparams.palette[k % Gparams.palette.length];
-                        k++;
+                        var index=(k++) % Gparams.palette.length;
+                        labels[label].color = Gparams.palette[index];
+
 
                     }
                     if (!properties[label])

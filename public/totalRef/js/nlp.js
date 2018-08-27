@@ -1,7 +1,48 @@
+/*
+CC Coordinating conjunction
+CD Cardinal number
+DT Determiner
+EX Existential there
+FW Foreign word
+IN Preposition or subordinating conjunction
+JJ Adjective
+JJR Adjective, comparative
+JJS Adjective, superlative
+LS List item marker
+MD Modal
+NN Noun, singular or mass
+NNS Noun, plural
+NNP Proper noun, singular
+NNPS Proper noun, plural
+PDT Predeterminer
+POS Possessive ending
+PRP Personal pronoun
+PRP$ Possessive pronoun
+RB Adverb
+RBR Adverb, comparative
+RBS Adverb, superlative
+RP Particle
+SYM Symbol
+TO to
+UH Interjection
+VB Verb, base form
+VBD Verb, past tense
+VBG Verb, gerund or present participle
+VBN Verb, past participle
+VBP Verb, non­3rd person singular present
+VBZ Verb, 3rd person singular present
+WDT Wh­determiner
+WP Wh­pronoun
+WP$ Possessive wh­pronoun
+WRB Wh­adverb
+
+*/
 var nlp = (function () {
+
         var self = {};
         var currentRule = null;
         self.elasticDatatable = null;
+        self.currentRelations = null;
         self.elasticParams = {
             size: 5000,
             index: "totalreferentiel",
@@ -12,23 +53,32 @@ var nlp = (function () {
             url: "http://corenlp.run"
         }
 
+        self.httpParams = {
+            url: "../../../http"
+        }
+
 
         self.searchRules = function (phrase) {
-            if (skosTree.currentNodeData == null)
-                return
+
             //var concept = skosTree.currentNodeData.text;
-            var concept = $("#searchExpression").val();
-            var synonyms = skosTree.currentNodeData.synonyms;
+            var sourceConcept = $("#sourceSearchExpression").val();
+            var targetConcept = $("#targetSearchExpression").val();
+            if (sourceConcept == null || sourceConcept == "")
+                return
+            var synonyms = [];//skosTree.currentNodeData.synonyms;
             var mainWord = null;
-            var andWords = null;
+            var andWords = [];
             var slop = null;
             if (phrase) {
-                slop = concept.split(" ").length + 1
-                mainWord = concept;
+                slop = sourceConcept.split(" ").length + 1
+                mainWord = sourceConcept;
             } else {
-                var andWords = concept.split(" ");
-                var mainWord = andWords[0];
+                andWords = sourceConcept.split(" ");
+                mainWord = andWords[0];
                 andWords.splice(0, 1);
+            }
+            if (targetConcept && targetConcept.length > 0) {
+                andWords = andWords.concat(targetConcept.split(" "));
             }
 
 
@@ -80,7 +130,7 @@ var nlp = (function () {
                     }
 
                     self.elasticDatatable = self.initDataTable(dataSet);
-
+                    $("#nlpAccordion").accordion("option", "active", 0);
 
                 }
                 , error: function (err) {
@@ -93,8 +143,8 @@ var nlp = (function () {
         }
 
         self.initDataTable = function (dataSet) {
-            var html = "<table id=\"dataTable\" class=\"display\" style=\"width:100%;font-size: 10px\"></table>";
-            $("#elasticDataTableContainer").html(html);
+            var html = "<table id=\"dataTable\" class=\"display\" style=\"width:100%;height:500px;font-size: 10px\"></table>";
+            $("#elasticDataTableContainer").height(650).html(html);
             var table = $('#dataTable').DataTable({
                 columns: [
                     {title: "key", width: "100px"},
@@ -112,12 +162,12 @@ var nlp = (function () {
         }
 
 
-        self.coreNlpAnalyze = function () {
+        self.coreNlpAnalyze = function (processing) {
             var allRulesRelations = {};
-            if (!self.currentRule)
-                return;
-            var text = self.currentRule[1];
+
+
             var rules = self.elasticDatatable.rows('.selected').data();
+            var countRulesDone = 0;
             for (var i = 0; i < rules.length; i++) {
                 var text = rules[i][1];
                 var key = rules[i][0];
@@ -129,14 +179,44 @@ var nlp = (function () {
                     url: self.coreNlpParams.url + "?" + queryString,
                     data: payload,
                     dataType: "text",
-                    async: false,
+                    //async: false,
                     success: function (data, textStatus, jqXHR) {
                         var json = JSON.parse(data);
-                        var relations = self.processCoreNlpResult(allRulesRelations, key, json, function (relations) {
 
-                        });
+                        var tokens = self.parseCoreNlpJson(json);
 
 
+                        if ((countRulesDone++) == rules.length - 1) {
+                            //concepts present in thesaurus
+                            var concept = $("#sourceSearchExpression").val().toLowerCase();
+                            if (processing == "thesaurus") {
+
+                                self.processCoreNlpResultThesaurus(allRulesRelations, key, concept, tokens, function (relations) {
+
+                                    var str = (JSON.stringify(allRulesRelations, null, 2));
+                                    $("#coreNlpResultDiv").html(str.replace(/\n/g, "<br>"));
+                                    $("#nlpAccordion").accordion("option", "active", 1);
+                                    self.currentRelations = allRulesRelations;
+
+
+                                });
+
+                            }
+                            //nouns, verbs and numValues in the selected fragments
+                            else if (processing == "self") {
+                                self.processCoreNlpResultSelectedFragments(allRulesRelations, key, concept, tokens, function (relations) {
+                                    var str = (JSON.stringify(allRulesRelations, null, 2));
+                                    $("#coreNlpResultDiv").html(str.replace(/\n/g, "<br>"));
+                                    $("#nlpAccordion").accordion("option", "active", 1);
+                                    self.currentRelations = allRulesRelations;
+
+
+                                });
+
+                            }
+
+
+                        }
                     }
                     , error: function (err) {
                         console.log(err.responseText)
@@ -146,48 +226,116 @@ var nlp = (function () {
 
                 });
             }
-            console.log(JSON.stringify(allRulesRelations, null, 2))
 
 
         }
-
-        self.processCoreNlpResult = function (relations, ruleKey, json, callback) {
-
+        self.parseCoreNlpJson = function (json) {
             var sentences = json.sentences;
             var nouns = [];
+            var numValues = [];
+            var verbs = [];
             for (var i = 0; i < sentences.length; i++) {
                 var tokens = sentences[i].tokens
                 for (var j = 0; j < tokens.length; j++) {
-                    if (tokens[j].pos.indexOf("NN") == 0) {
-                        nouns.push(tokens[j])
+
+                    if (j < tokens.length - 1 && tokens[j].pos == ("CD") && tokens[j + 1].pos.indexOf("NN") == 0) {
+                        numValues.push({word:(tokens[j].word + " " + tokens[j + 1].word),pos:"CD",index:tokens[j].index})
                     }
+
+                    else if (tokens[j].pos == ("MD") && (j < tokens.length - 1 && tokens[j + 1].pos.indexOf("V") == 0))
+                        verbs.push({word:(tokens[j].word + " " + tokens[j + 1].word),pos:"CD",index:tokens[j].index})
+
+                    else if (tokens[j].pos == ("MD") && (j < tokens.length - 2 && tokens[j + 2].pos.indexOf("V") == 0))
+                        verbs.push({word:(tokens[j].word + " " + tokens[j + 1].word + " " + tokens[j + 2].word),pos:"CD",index:tokens[j].index})
+
+
+                    if (tokens[j].pos.indexOf("NN") == 0) {
+                        if (tokens[j].word.length > 2)
+                            nouns.push(tokens[j])
+                    }
+
+
 
                 }
 
-
             }
 
-            var text = "<ul>"
-            for (var i = 0; i < nouns.length; i++) {
 
-                text += "<li>" + nouns[i].word + "</li>"
-            }
-            text += "</li>"
-
-            $("#coreNlpResultDiv").html(text);
-
-            var treeData = skosTree.data;
-
-
-            var concept = $("#searchExpression").val();
-            var relations = self.getCloseConceptsInDoc(relations, ruleKey, concept, nouns, 10, treeData);
-            callback(relations);
-
+            return {nouns: nouns, verbs: verbs, numValues: numValues};
         }
 
-
-        self.getCloseConceptsInDoc = function (relations, ruleKey, ruleConcept, nouns, distance, treeData) {
+        self.processCoreNlpResultSelectedFragments = function (relations, ruleKey, ruleConcept, tokens, callback) {
             var conceptOffset = 0;
+            var nouns = tokens.nouns
+            var numValues = tokens.numValues;
+            for (var i = 0; i < nouns.length; i++) {
+
+                nouns[i].word = nouns[i].word.toLowerCase();
+                var nounWord = nouns[i].word
+                if (ruleConcept.indexOf(nounWord) > -1) {
+                    if (conceptOffset == 0)
+                        conceptOffset = nouns[i].index;
+                    else {//average of each noun
+                        conceptOffset += nouns[i].index;
+                        conceptOffset = conceptOffset / 2
+                    }
+                }
+
+            }
+            for (var i = 0; i < numValues.length; i++) {
+                var numValue = numValues[i];
+                var numValueWord = numValues[i].word;
+                if (!relations[numValueWord]) {
+                    relations[numValueWord] = {count: 0, start: ruleConcept, occurences: [],}
+                }
+                relations[numValueWord].count += 1;
+                relations[numValueWord].occurences.push({
+                    name: numValueWord,
+                    type: "numValue",
+                    distance: Math.abs(conceptOffset - numValue.index),
+                    verbs: tokens.verbs,
+
+                })
+
+            }
+
+
+            for (var i = 0; i < nouns.length; i++) {
+                var nounObj = nouns[i];
+                var nounWord = nouns[i].word
+                if (ruleConcept.indexOf(nounWord) < 0) {
+                    if (!relations[nounWord]) {
+                        relations[nounWord] = {count: 0, start: ruleConcept, occurences: [],}
+                    }
+                    relations[nounWord].count += 1;
+                    relations[nounWord].occurences.push({
+                        name: nounWord,
+                        type: "noun",
+                        distance: Math.abs(conceptOffset - nounObj.index),
+                        verbs: tokens.verbs,
+
+                    })
+
+                }
+            }
+
+            return  callback(relations);
+
+
+        },
+            self.processCoreNlpResultThesaurus = function (relations, ruleKey, ruleConcept, tokens, callback) {
+
+                var treeData = skosTree.data;
+
+                var relations = self.getCloseConceptsInDoc(relations, ruleKey, concept, tokens, 10, treeData);
+                callback(relations);
+
+            }
+
+
+        self.getCloseConceptsInDoc = function (relations, ruleKey, ruleConcept, tokens, distance, treeData) {
+            var conceptOffset = 0;
+            var nouns = tokens.nouns
             for (var i = 0; i < nouns.length; i++) {
 
                 nouns[i].word = nouns[i].word.toLowerCase();
@@ -222,7 +370,9 @@ var nlp = (function () {
                                 name: treeConcept,
                                 id: id,
                                 ruleKey: ruleKey,
-                                distance:Math.abs(conceptOffset-nounObj.index)
+                                distance: Math.abs(conceptOffset - nounObj.index),
+                                verbs: tokens.verbs,
+                                numValues: tokens.numValues
                             })
                         }
 
@@ -232,9 +382,73 @@ var nlp = (function () {
 
             }
             return relations;
-            //  console.log(JSON.stringify(relations, null, 2))
+
 
         }
+        self.exportToNeo4j = function () {
+            var names=[];
+            if (!self.currentRelations)
+                return;
+            deleteGraph = true;
+
+            var statements = [];
+
+            var sourceNodeName = $("#sourceSearchExpression").val();
+            if (deleteGraph)
+                statements.push({statement: "match(n)where n.subGraph=\"totalRef\" detach delete n"});
+            statements.push({statement: "create (n:conceptSource { name: \"" + sourceNodeName + "\",subGraph:\"totalRef\"})"});
+
+            for (var key in self.currentRelations) {
+
+                var relation = self.currentRelations[key];
+                for (var i = 0; i < relation.occurences.length; i++) {
+                    var targetNodeName = relation.occurences[i].name;
+                    if (names.indexOf(targetNodeName) > -1) {
+                        continue;
+                    }
+                    names.push(targetNodeName);
+                    var type = "concept";
+                    if (relation.occurences[i].type)
+                        type = relation.occurences[i].type;
+
+                    statements.push({statement: "create (n:" + type + " { name: \"" + targetNodeName + "\",subGraph:\"totalRef\"})"});
+
+
+
+                statements.push({statement: "match (n:conceptSource { name: \"" + sourceNodeName + "\"}), (m:" + type + " { name: \"" + targetNodeName + "\"}) create (n)-[:inSameRule]->(m)"});
+            }
+            }
+            //  console.log(JSON.stringify(payload,null,2));
+            var path = "/db/data/transaction/commit";
+
+            var payload = {
+                post: 1,
+                body: {statements: statements},
+                path: path,
+                url: 'http://neo4j:souslesens@127.0.0.1:7474',
+
+
+            }
+
+            $.ajax({
+                type: "POST",
+                url: self.httpParams.url,
+                data: payload,
+                dataType: "application/json",
+                //async: false,
+                success: function (data, textStatus, jqXHR) {
+
+
+                }
+                , error: function (err) {
+                    console.log(err.responseText)
+
+                    return (err);
+                }
+
+            });
+        }
+
 
         return self;
 

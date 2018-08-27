@@ -260,6 +260,10 @@ router.post(serverParams.routesRootUrl + '/http', function (req, response) {
         httpProxy.get(req.body.get, function (error, result) {
             processResponse(response, error, result)
         });
+    if (req.body && req.body.post)
+        httpProxy.post(req.body.url,req.body.port,req.body.path,req.body.body, function (error, result) {
+            processResponse(response, error, result)
+        });
 });
 
 router.post(serverParams.routesRootUrl + '/rdf', function (req, response) {
