@@ -13,9 +13,11 @@
     <script src="../../common/js/jsTreeController.js"></script>
     <script src="./js/skosTree.js"></script>
     <script src="./js/nlp.js"></script>
+    <script src="./js/coreNlp.js"></script>
     <link rel="stylesheet" href="../../common/js/jsTree/themes/default/style.min.css"/>
     <link rel="stylesheet" href="//cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css">
     <script src="//cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
+ <script src="./js/async.js"></script>
     <style>
 
         #main {
@@ -48,31 +50,33 @@
         }
 
         #dataTable {
-            height: 600px;
+            height: 500px;
             width: 500px;
             overflow: auto;
         }
 
         #coreNlpResultDiv {
-            height: 600px;
+            height: 500px;
             overflow: auto;
         }
 
         #nlpAccordion {
-            height: 650px;
+            height: 550px;
         }
     </style>
     <script>
+
         $(function () {
             totalWidth = $(window).width();
             totalHeight = $(window).height();
             $(".jsTree").height(totalHeight - 150);
-            skosTree.loadTree('treeDiv1', 'skosInput1')
+            skosTree.loadTree('treeDiv1', 'skosInput1');
             $("#nlpAccordion").accordion();
 
-        })
 
 
+
+        });
     </script>
 
 
@@ -103,22 +107,32 @@
             </table>
         </td>
         <td valign="top">
-            <div><input id="sourceSearchExpression" style="width: 200px">
+            <div><input id="sourceSearchExpression" style="width: 200px" value="surge ms">
                 <div><input id="targetSearchExpression" style="width: 200px">
-                <button onclick="nlp.searchRules()">search rules</button>
-                <button onclick="nlp.searchRules(true)">searchPhrase rules</button>
+                <button onclick="nlp.searchRulesToDataTable()">search rules</button>
+                <button onclick="nlp.searchRulesToDataTable(null,true)">searchPhrase rules</button>
                 count<span id="searchResultCount"></span>
+                    NLP analyze<select onchange="nlp.analyzeDataTableRules($(this).val());$(this).val('')">
+                        <option></option>
+                        <option>openie</option>
+                        <option>self</option>
+                        <option>thesaurus</option>
+
+                    </select>
 
             </div>
             <div id="nlpAccordion">
+                <h3>Question</h3>
+                <div id="questionDiv">
+                    Question <input id="QuestionInput" size="70" value="What is the class balancing of a fan"> <button onclick="nlp.analyzeQuestion($('#QuestionInput').val())">Analyze</button>
+                    Question words <input id="QuestionWordsInput" size="70" > <button onclick="nlp.searchQuestionRules()">Search Rules</button>
+
+
+                </div>
+
                 <h3>Rules</h3>
 <div>
-    NLP analyze<select onchange="nlp.coreNlpAnalyze($(this).val())" size="3">
-    <option></option>
-    <option>self</option>
-    <option>thesaurus</option>
 
-</select>
                 <div id="elasticDataTableContainer" style="width:800px;height: 600px;overflow: auto"></div>
 </div>
                 <h3>Relations</h3>

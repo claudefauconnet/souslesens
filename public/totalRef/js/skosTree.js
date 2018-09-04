@@ -119,7 +119,7 @@ var skosTree = (function () {
         }
         text += "</ul>";
         $("#synonymsDiv").html(text);
-        $("#nlpAccordion").accordion( "option", "active",2 );
+        $("#nlpAccordion").accordion( "option", "active",3 );
     }
 
 

@@ -4,6 +4,8 @@ var searchMenu = (function () {
         var currentPanelIndex = 1;
         self.currentAction = null;
         self.selectedQuery = null;
+        self.pathQuery=null;
+
         var previousAction = "";
         self.init = function (schema) {
             currentPanelIndex = 1;
@@ -244,7 +246,22 @@ var searchMenu = (function () {
                 })
 
             }
+            else if (option == 'path') {
 
+                   advancedSearch.searchNodes('matchObject', null, function (err, result) {
+
+                       self.pathQuery = {sourceQuery:result};
+                       previousAction="pathSourceSearchCriteria"
+                         //  self.currentAction.name = "pathTargetSearchCriteria";
+                           self.activatePanel("searchCriteriaDiv");
+                           $("#searchDialog_previousPanelButton").css('visibility', 'hidden');
+                           $("#searchDialog_ExecuteButton").css('visibility', 'visible');
+
+
+                       })
+
+
+            }
 
             else if (option == 'graphNodes') {
                 advancedSearch.searchNodes('matchStr', null, self.graphNodesOnly);
@@ -283,11 +300,25 @@ var searchMenu = (function () {
             else if (option == 'execute') {
                 eventsController.stopEvent = true;
 
+
                 toutlesensController.setRightPanelAppearance(false);
 
                 $("#paintAccordion").accordion("option", "active", 1)
 
                 $("#tabs-analyzePanel").tabs("option", "active", 2);//highlight
+
+
+                if (previousAction == 'path') {
+                    advancedSearch.searchNodes('matchObject', null, function (err, result) {
+                        self.pathQuery.targetQuery = {sourceQuery:result};
+                       var  transitivityLevel = Schema.getLabelsDistance(self.pathQuery.sourceQuery.nodeLabel, self.pathQuery.targetQuery.label);
+                        if (!transitivityLevel)
+                            transitivityLevel = 1;
+
+                    })
+
+                }
+
 
                 if (previousAction == 'graphSomeNeighboursListLabels') {
                     self.currentAction = "graphSomeNeighbours";
