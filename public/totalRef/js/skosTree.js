@@ -56,6 +56,7 @@ var skosTree = (function () {
     }
     self.saveTree = function (DivId, thesaurusInput) {
         var treeData = $("#" + DivId).jstree()._model.data;
+//console.log(JSON.stringify(treeData,null,2))
         var ontology = $("#" + thesaurusInput).val();
         var payload = {
             saveTreeToSkos: 1,

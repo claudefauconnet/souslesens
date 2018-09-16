@@ -119,7 +119,8 @@ var advancedSearch = (function () {
         // self.setPermittedLabelsCbxs(value);
         $("#searchDialog_valueInput").val("");
         $('#searchDialog_valueInput').focus();
-        $("#searchDialog_NextPanelButton").css('visibility', 'visible');
+        if(searchMenu.previousAction!="path")
+            $("#searchDialog_NextPanelButton").css('visibility', 'visible');
         self.clearClauses();
         if (searchDialog_propertySelect) ;
         filters.initProperty(null, value, searchDialog_propertySelect);
@@ -225,6 +226,19 @@ var advancedSearch = (function () {
     }
 
 
+
+
+    self.matchStrToObject=function (str){
+
+        var array= (/.*n:(.*)\)  WHERE   (.*) RETURN n/).exec(str);
+        return {
+            nodeLabel: array[1], where: array[2]};
+
+
+    }
+
+
+
     self.searchNodesWithClauses = function (options, callback) {
         var clauses = self.getMultiCriteriaClauses();
         var whereStr = clauses.where;
@@ -308,6 +322,8 @@ var advancedSearch = (function () {
         if (!_options)
             _options = {}
 
+        _options.resultType = resultType;
+
 
         $("#waitImg").css("visibility", "visible")
 
@@ -326,7 +342,7 @@ var advancedSearch = (function () {
             self.filterLabelWhere = " labels(m) in " + str + " ";
 
         }
-        if (resultType != "matchSearchClause" && self.searchClauses.length > 0) {// multiple clauses
+        if ( resultType != "matchObject" &&resultType != "matchSearchClause" && self.searchClauses.length > 0) {// multiple clauses
 
             return self.searchNodesWithClauses(_options, callback);
         }
@@ -826,7 +842,7 @@ var advancedSearch = (function () {
 
      * @param query
      */
-    self.graphNodesAndDirectRelations = function (err, query,callback) {
+    self.graphNodesAndDirectRelations = function (err, query, callback) {
 
         if (err)
             return console.log(err);
@@ -873,7 +889,7 @@ var advancedSearch = (function () {
 
 
     }
-    
+
 
     self.graphNodesOnly = function (err, query) {
         if (err)

@@ -40,6 +40,7 @@ WRB Wh­adverb
 var coreNlp = (function () {
     var self = {};
 
+    var stopNouns=["title"]
     self.coreNlpParams = {
         url: "http://corenlp.run"
     }
@@ -59,27 +60,33 @@ var coreNlp = (function () {
     self.openieTriples = null;
 
 
+
     self.analyzeTexts = function (conceptName, texts, processing, callback) {
 
         if (processing == "")
             return;
 
 
-            self.currentTokens = null;
+        self.currentTokens = null;
         self.openieTriples = null;
 
         if (processing == "tokens")
-        self.currentTokens = [];
+            self.currentTokens = [];
         if (processing == "openie")
-        self.openieTriples = [];
+            self.openieTriples = [];
 
         var allRulesRelations = {};
         async.eachSeries(texts, function (textObj, callbackEachText) {
 
             var words = textObj[0];
             var text = textObj[2];
-            var sentences=text.split(".")
-            var key = textObj[1];
+if(!text || text.length==0 || !text.split) {
+    console.log("null text id :"+textObj[1])
+   return callbackEachText();
+}
+
+            var sentences = text.split(".")
+            var id = textObj[1];
             var queryString = "";
             if (processing == "openie")
                 queryString = encodeURIComponent("properties={\"annotators\":\"tokenize,ssplit,lemma,pos,openie\",\"outputFormat\":\"json\"}");
@@ -93,34 +100,51 @@ var coreNlp = (function () {
                     dataType: "text",
                     //async: false,
                     success: function (data, textStatus, jqXHR) {
-
+//data=data.replace(//g)
                         try {
+                            data=data.replace(/\0/g, '')
                             var json = JSON.parse(data);
                         } catch (e) {
+                            console.log(text);
+                            //console.log(data);
                             console.log(e);
-                            callbackEachText();
+                            var message=e.message
+                            var pos=message.indexOf("position")+9;
+                            pos=message.substring(pos,pos+5)
+                            pos=parseInt(pos);;
+                            console.log(pos);
+                            console.log(data.substring(pos,pos+1));
+                            if(pos>-1){
+                                for(var i=0;i<5;i++){
+                                    console.log("---"+data.charCodeAt(pos+9+i))
+                                }
+                            }
+                           return  callbackEachText();
                         }
 
 
                         if (processing == "openie") {
                             var triples = self.parseCoreNlpOpenieJson(json);
-                            triples = {concept: conceptName, key: key, triples: triples}
+                            triples = {concept: conceptName, id: id, triples: triples}
                             self.openieTriples.push(triples);
 
 
                         }
                         else {
-                            var tokens = self.parseCoreNlpJson(json);
-                            tokens = {concept: conceptName, key: key, tokens: tokens, sentences: sentences}
-                            if (processing == "tokens") {
-                                self.currentTokens.push( tokens);
+                            if(json) {
+
+                                var tokens = self.parseCoreNlpJson(json);
+                                tokens = {concept: conceptName, id: id, tokens: tokens, sentences: sentences}
+                                if (processing == "tokens") {
+                                    self.currentTokens.push(tokens);
 
 
+                                }
                             }
                             //concepts present in thesaurus
                             /*   else if (processing == "thesaurus") {
 
-                                   self.processCoreNlpResultThesaurus(allRulesRelations, key, conceptName, tokens, function (relations) {
+                                   self.processCoreNlpResultThesaurus(allRulesRelations, id, conceptName, tokens, function (relations) {
 
                                        var str = (JSON.stringify(allRulesRelations, null, 2));
                                        $("#coreNlpResultDiv").html(str.replace(/\n/g, "<br>"));
@@ -197,39 +221,58 @@ var coreNlp = (function () {
         var nouns = [];
         var numValues = [];
         var verbs = [];
-        var sentenceObjs=[];
+        var sentenceObjs = [];
         for (var i = 0; i < sentences.length; i++) {
-            sentenceObjs.push({index:i})
+            sentenceObjs.push({index: i})
             var tokens = sentences[i].tokens
             for (var j = 0; j < tokens.length; j++) {
 
                 if (j < tokens.length - 1 && tokens[j].pos == ("CD") && tokens[j + 1].pos.indexOf("NN") == 0) {
-                    numValues.push({
-                        word: (tokens[j].word + " " + tokens[j + 1].word),
-                        pos: "CD",
-                        index: tokens[j].index,
-                        sentence:i
-                    })
+                   var matches=tokens[j].word.match(/\./g)
+                    if(matches && matches.length>1)
+                        continue;
+
+                    if (tokens[j + 1].word.length < 4) {
+                        numValues.push({
+
+                            word: (tokens[j].word + " " + tokens[j + 1].word),
+                            pos: "CD",
+                            index: tokens[j].index,
+                            sentence: i
+                        })
+                    }
 
 
                 }
 
+                /*  if (tokens[j].pos.indexOf("CD") == 0) {
+                          tokens[j].sentence=i;
+                      numValues.push(tokens[j])
+                  }*/
+
                 else if (tokens[j].pos == ("MD") && (j < tokens.length - 1 && tokens[j + 1].pos.indexOf("V") == 0))
-                    verbs.push({word: (tokens[j].word + " " + tokens[j + 1].word), pos: "CD", index: tokens[j].index, sentence:i})
+                    verbs.push({
+                        word: (tokens[j].word + " " + tokens[j + 1].word),
+                        pos: "CD",
+                        index: tokens[j].index,
+                        sentence: i
+                    })
 
                 else if (tokens[j].pos == ("MD") && (j < tokens.length - 2 && tokens[j + 2].pos.indexOf("V") == 0))
                     verbs.push({
                         word: (tokens[j].word + " " + tokens[j + 1].word + " " + tokens[j + 2].word),
                         pos: "CD",
                         index: tokens[j].index,
-                        sentence:i
+                        sentence: i
                     })
 
 
                 if (tokens[j].pos.indexOf("NN") == 0) {
-                    if (tokens[j].word.length > 2)
-                        tokens[j].sentence=i;
+                    if (stopNouns.indexOf(tokens[j].word.toLowerCase()) < 0) {
+                        if (tokens[j].word.length > 2)
+                            tokens[j].sentence = i;
                         nouns.push(tokens[j])
+                    }
                 }
 
 
@@ -238,7 +281,7 @@ var coreNlp = (function () {
         }
 
 
-        return {nouns: nouns, verbs: verbs, numValues: numValues,sentences:sentenceObjs};
+        return {nouns: nouns, verbs: verbs, numValues: numValues, sentences: sentenceObjs};
     }
 
     self.processCoreNlpResultSelectedFragments = function (relations, ruleKey, ruleConcept, tokens, callback) {

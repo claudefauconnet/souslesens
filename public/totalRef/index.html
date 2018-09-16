@@ -109,8 +109,11 @@
         <td valign="top">
             <div><input id="sourceSearchExpression" style="width: 200px" value="surge ms">
                 <div><input id="targetSearchExpression" style="width: 200px">
+                    <button onclick="nlp.analyseAllRules()">analyzeAllRules</button>
                 <button onclick="nlp.searchRulesToDataTable()">search rules</button>
+
                 <button onclick="nlp.searchRulesToDataTable(null,true)">searchPhrase rules</button>
+
                 count<span id="searchResultCount"></span>
                     NLP analyze<select onchange="nlp.analyzeDataTableRules($(this).val());$(this).val('')">
                         <option></option>
@@ -119,13 +122,14 @@
                         <option>thesaurus</option>
 
                     </select>
+                   All table <input type="checkbox" checked="checked" id="selectAllTable">
 
             </div>
             <div id="nlpAccordion">
                 <h3>Question</h3>
                 <div id="questionDiv">
-                    Question <input id="QuestionInput" size="70" value="What is the class balancing of a fan"> <button onclick="nlp.analyzeQuestion($('#QuestionInput').val())">Analyze</button>
-                    Question words <input id="QuestionWordsInput" size="70" > <button onclick="nlp.searchQuestionRules()">Search Rules</button>
+                    Question <input id="QuestionInput" size="70" value="What is the speed balancing of a fan"> <button onclick="nlp.analyzeQuestion($('#QuestionInput').val())">Analyze</button>
+                    Question words <input id="QuestionWordsInput" size="70" > <button onclick="nlp.searchQuestionRules(true)">Search Rules</button>
 
 
                 </div>

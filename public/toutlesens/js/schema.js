@@ -475,6 +475,8 @@ var Schema = (function () {
         self.getLabelsDistance = function (startNode, endNode) {
             if(!startNode || !endNode || startNode.length==0 || endNode.length==0)
                 return null;
+            if(startNode == endNode)
+                return 2;
             var relations = self.schema.relations;
             var nodesChildren = {};
 
@@ -504,22 +506,37 @@ var Schema = (function () {
 
             var nodesSerie = []
 
-
+            var childrenDone={};
             //premier noeud
             nodesSerie.push({name: startNode, isVisited: true, level: 0})
 
             var distance;
-            var i = 0;
-            while (nodesSerie.length > 0 && (i++) < 1000) {
+            var iterations = 0;
+            while (nodesSerie.length > 0 && (iterations++) < 1000) {
 
                 var node = nodesSerie[nodesSerie.length - 1];//take the last Node
+                childrenDone[node.name]=[]
                 nodesSerie.splice(nodesSerie.length - 1, 1)//remove the last node;
 
                 for (var i = 0; i < nodesChildren[node.name].length; i++) {// for each related node
                     var child = nodesChildren[node.name][i];
-                    if (child.name == node.name)
-                        nodesSerie.push({name: child.name, isVisited: true, level: node.level + 1})
+
+                    if( childrenDone[node.name].indexOf(child.name)<0)
+                        childrenDone[node.name].push(child.name);
+
+                    if(  childrenDone[child.name] && childrenDone[child.name].indexOf(node.name)>-1)// dans ce cas on remonte au parent et on tourne en rond
                     continue;
+
+
+
+                    if(child.name=="sentence"){
+                        var xx=1
+                    }
+                    if (child.name == node.name){
+                        nodesSerie.push({name: child.name, isVisited: true, level: node.level + 1})
+                    }
+
+
 
                     if (!child.isVisited) {
                         nodesSerie.push({name: child.name, isVisited: true, level: node.level + 1})

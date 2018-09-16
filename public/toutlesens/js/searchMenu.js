@@ -4,7 +4,8 @@ var searchMenu = (function () {
         var currentPanelIndex = 1;
         self.currentAction = null;
         self.selectedQuery = null;
-        self.pathQuery=null;
+        self.pathQuery = null;
+        self.previousAction;
 
         var previousAction = "";
         self.init = function (schema) {
@@ -66,8 +67,7 @@ var searchMenu = (function () {
 
                         if (allPaths.indexOf(path) < 0) {
                             allPaths.push(path);
-                            var text=levels[j];
-
+                            var text = levels[j];
 
 
                             treeData.push({text: text, id: levels[j], type: type, data: key, parent: parent})
@@ -246,19 +246,19 @@ var searchMenu = (function () {
                 })
 
             }
-            else if (option == 'path') {
+            else if (option == 'path' || option == 'pathDirect') {
 
-                   advancedSearch.searchNodes('matchObject', null, function (err, result) {
+                advancedSearch.searchNodes('matchStr', null, function (err, result) {
+                    var matchObj = advancedSearch.matchStrToObject(result);
+                    self.pathQuery = {sourceQuery: matchObj};
+                    previousAction = "pathSourceSearchCriteria"
+                    //  self.currentAction.name = "pathTargetSearchCriteria";
+                    self.activatePanel("searchCriteriaDiv");
+                    $("#searchDialog_previousPanelButton").css('visibility', 'hidden');
+                    $("#searchDialog_ExecuteButton").css('visibility', 'visible');
 
-                       self.pathQuery = {sourceQuery:result};
-                       previousAction="pathSourceSearchCriteria"
-                         //  self.currentAction.name = "pathTargetSearchCriteria";
-                           self.activatePanel("searchCriteriaDiv");
-                           $("#searchDialog_previousPanelButton").css('visibility', 'hidden');
-                           $("#searchDialog_ExecuteButton").css('visibility', 'visible');
 
-
-                       })
+                })
 
 
             }
@@ -308,14 +308,37 @@ var searchMenu = (function () {
                 $("#tabs-analyzePanel").tabs("option", "active", 2);//highlight
 
 
-                if (previousAction == 'path') {
+                if (previousAction == 'path' || previousAction == 'pathDirect') {
                     advancedSearch.searchNodes('matchObject', null, function (err, result) {
-                        self.pathQuery.targetQuery = {sourceQuery:result};
-                       var  transitivityLevel = Schema.getLabelsDistance(self.pathQuery.sourceQuery.nodeLabel, self.pathQuery.targetQuery.label);
+                        self.pathQuery.targetQuery = result;
+                        var transitivityLevel = Schema.getLabelsDistance(self.pathQuery.sourceQuery.nodeLabel, self.pathQuery.targetQuery.nodeLabel);
                         if (!transitivityLevel)
                             transitivityLevel = 1;
+                        toutlesensData.matchStatement = "(n:" + self.pathQuery.sourceQuery.nodeLabel + ")-[r*" + transitivityLevel + "]-(m:" + self.pathQuery.targetQuery.nodeLabel + ")";
+                        var where = self.pathQuery.sourceQuery.where;
+                        if (self.pathQuery.targetQuery.where != "") {
+
+                            if (where != "")
+                                where += " and ";
+                            where += self.pathQuery.targetQuery.where.replace(/n\./, "m.");
+                        }
+                        toutlesensData.whereFilter = where;
+                        var options = {};
+                        if(previousAction == 'pathDirect')
+                            options.clusterIntermediateNodes = true;
+                        toutlesensController.generateGraph(null, options, function (err, data) {
+                            if (err)
+                                return err;
+
+
+                        })
+
+
+                        self.previousAction = null;
+                        $("#searchDialog_PreviousPanelButton").css('visibility', 'visible');
 
                     })
+
 
                 }
 
@@ -344,8 +367,10 @@ var searchMenu = (function () {
             }
 
 
-            if (option != 'execute')
+            if (option != 'execute') {
                 previousAction = option;
+                self.previousAction = previousAction;
+            }
 
 
         }
