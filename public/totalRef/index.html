@@ -14,6 +14,7 @@
     <script src="./js/skosTree.js"></script>
     <script src="./js/nlp.js"></script>
     <script src="./js/coreNlp.js"></script>
+    <script src="./js/neo4j.js"></script>
     <link rel="stylesheet" href="../../common/js/jsTree/themes/default/style.min.css"/>
     <link rel="stylesheet" href="//cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css">
     <script src="//cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
@@ -110,6 +111,7 @@
             <div><input id="sourceSearchExpression" style="width: 200px" value="surge ms">
                 <div><input id="targetSearchExpression" style="width: 200px">
                     <button onclick="nlp.analyseAllRules()">analyzeAllRules</button>
+
                 <button onclick="nlp.searchRulesToDataTable()">search rules</button>
 
                 <button onclick="nlp.searchRulesToDataTable(null,true)">searchPhrase rules</button>
@@ -128,9 +130,16 @@
             <div id="nlpAccordion">
                 <h3>Question</h3>
                 <div id="questionDiv">
-                    Question <input id="QuestionInput" size="70" value="What is the speed balancing of a fan"> <button onclick="nlp.analyzeQuestion($('#QuestionInput').val())">Analyze</button>
-                    Question words <input id="QuestionWordsInput" size="70" > <button onclick="nlp.searchQuestionRules(true)">Search Rules</button>
+                    Question <input id="QuestionInput" size="70" value="What is the maximum response time of an anti-surge system"> <button onclick="nlp.analyzeQuestion($('#QuestionInput').val())">Analyze</button>
+                    Question words <input id="QuestionWordsInput" size="70" >
+                    <!--<button onclick="nlp.searchQuestionRules(true)">Search Rules</button>-->
 
+                    <button onclick="neo4jProxy.queryQuestionWordsRanked()">searchQuestionRules</button>
+                    <button onclick="neo4jProxy.getThesaurusNouns()">getThesaurusNouns</button>
+
+
+<div id="neo4jResponseDiv">
+</div>
 
                 </div>
 
@@ -141,7 +150,7 @@
 </div>
                 <h3>Relations</h3>
                 <div>
-                    <button onclick="nlp.exportToNeo4j()">exportToNeo4j</button>
+                    <button onclick="neo4jProxy.exportToNeo4j()">exportToNeo4j</button>
                     <div id="coreNlpResultDiv"></div>
                 </div>
                 <h3>Synonyms</h3>

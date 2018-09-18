@@ -5,7 +5,7 @@ var nlp = (function () {
         self.maxRules = 10;
         self.elasticDatatable = null;
         self.currentQuestionWordsAssociations = []
-
+        var treeData;
 
         self.elasticParams = {
             size: 5000,
@@ -20,6 +20,42 @@ var nlp = (function () {
         }
 
 
+        self.combination = function (arr) {
+
+            var i, j, temp
+            var result = []
+            var arrLen = arr.length
+            var power = Math.pow
+            var combinations = power(2, arrLen)
+
+            // Time & Space Complexity O (n * 2^n)
+
+            for (i = 0; i < combinations; i++) {
+                temp = ''
+
+                for (j = 0; j < arrLen; j++) {
+                    // & is bitwise AND
+                    if ((i & power(2, j))) {
+                        temp += arr[j]+","
+                    }
+                }
+                result.push(temp)
+            }
+            var result2=[];
+
+            result.forEach(function(str){
+                var result3=str.split(",");
+                if(result3[result3.length-1]=="")
+                    result3.splice(result3.length-1,1);
+                result2.push(result3);
+            })
+
+
+
+            return result2;
+        }
+
+
         self.analyzeQuestion = function (question) {
             self.currentQuestionWordsAssociations = []
             var texts = [["", "question", question]]
@@ -31,35 +67,47 @@ var nlp = (function () {
                 var str = "";
                 var associations = [];
 
-                //cration of associations of words (combinations)
+
                 var nouns = result[0].tokens.nouns;
-                nouns.forEach(function (noun) {
-                    var word = noun.word;
-                    if (associations.indexOf(word) < 0) {
-                        associations.push([word])
-                    }
+
+                var nounWords = [];
+                for (var i = 0; i < nouns.length; i++) {
+                    nounWords.push(nouns[i].word)
+                }
+                associations = self.combination(nounWords);
 
 
-                    nouns.forEach(function (token2) {
-                        var word = token2.word;
-                        var notExistAssoc = null;
-                        associations.forEach(function (association) {
 
-                            if (association.indexOf(word) < 0) {
-                                // console.log(JSON.stringify(association))
-                                notExistAssoc = association;
 
-                            }
-                            else
-                                notExistAssoc = null;
-                        })
-                        if (notExistAssoc) {
-                            var newAssociation = notExistAssoc.slice(0);
-                            newAssociation.push(word)
-                            associations.push(newAssociation)
-                        }
-                    })
-                })
+                /*   //cration of associations of words (combinations)
+                   var nouns = result[0].tokens.nouns;
+                   nouns.forEach(function (noun) {
+                       var word = noun.word;
+                       if (associations.indexOf(word) < 0) {
+                           associations.push([word])
+                       }
+
+
+                       nouns.forEach(function (token2) {
+                           var word = token2.word;
+                           var notExistAssoc = null;
+                           associations.forEach(function (association) {
+
+                               if (association.indexOf(word) < 0) {
+                                   // console.log(JSON.stringify(association))
+                                   notExistAssoc = association;
+
+                               }
+                               else
+                                   notExistAssoc = null;
+                           })
+                           if (notExistAssoc) {
+                               var newAssociation = notExistAssoc.slice(0);
+                               newAssociation.push(word)
+                               associations.push(newAssociation)
+                           }
+                       })
+                   })*/
 
                 associations.sort(function (a, b) {
                     if (a.length > b.length)
@@ -73,7 +121,7 @@ var nlp = (function () {
 
 //dedoublonage ordre different
 
-                associations.forEach(function (association, index) {
+            /*    associations.forEach(function (association, index) {
                     var str = association.toString()
                     var count = 0;
                     associations.forEach(function (association2) {
@@ -94,13 +142,13 @@ var nlp = (function () {
                     if (true || association.length > 1)
                         associations2.push(association);
 
-                })
+                })*/
 
 
-                self.currentQuestionWordsAssociations = associations2;
+                self.currentQuestionWordsAssociations = associations;
 
 
-                $("#QuestionWordsInput").val(associations2[0].toString());
+                $("#QuestionWordsInput").val(associations[0].toString());
                 $("#nlpAccordion").accordion("option", "active", 0);
 
             })
@@ -174,7 +222,10 @@ var nlp = (function () {
             })
 
         }
-        self.getWordInThesaurus = function (treeData, word) {
+        self.getWordInThesaurus = function (word) {
+            if (!treeData)
+                treeData = $("#treeDiv1").jstree()._model.data;
+
             if (word.charAt(word.length - 1) == 's')
                 word = word.substring(0, word.length - 1)
             //  console.log(word)
@@ -183,17 +234,17 @@ var nlp = (function () {
                 var treeConcept = treeData[key].text;
                 if (treeConcept) {
                     if (treeConcept.toLowerCase() == word.toLowerCase()) {
-                        concepts.push(treeData[key]);
+                        concepts.push(key);
                     }
-                    if (treeConcept.synonyms) {
-                        treeConcept.synonyms.forEach(function (synonym) {
+
+                    treeData[key].data.synonyms.forEach(function (synonym) {
 
                             if (synonyms.toLowerCase() == word.toLowerCase()) {
-                                concepts.push(treeData[key]);
+                                concepts.push(key);
                             }
                         })
                     }
-                }
+
 
 
             }
@@ -223,7 +274,7 @@ var nlp = (function () {
                 payload.options.queryField = queryField;
             }
             $("#dataTable").html("");
-            var treeData = $("#treeDiv1").jstree()._model.data;
+
 //search all rules
             $.ajax({
                 type: "POST",
@@ -231,36 +282,36 @@ var nlp = (function () {
                 data: payload,
                 dataType: "json",
                 success: function (data, textStatus, jqXHR) {
+                    var iterations = 0;
                     async.eachSeries(data.docs, function (doc, callbackEachDoc) {
                             // forEach rules extract nouns
+
+                            if (false && iterations++ > 5)
+                                return callbackEachDoc();
+
+                            if (doc.id == "7081")
+                                var xxx = 3;
                             coreNlp.analyzeTexts("all", [["", "", doc.Texte]], "tokens", function (err, analyze) {
 
                                 // forEach word search if exist thesaurus term
                                 if (analyze && analyze.length > 0) {
                                     var nouns = analyze[0].tokens.nouns
+                                    var inThesaurus = 0;
                                     nouns.forEach(function (noun) {
+                                        var concepts = self.getWordInThesaurus(noun.word);
+                                        if (concepts.length > 0)
+                                            inThesaurus++;
 
 
-                                        var concepts = self.getWordInThesaurus(treeData, noun.word);
-                                        if (concepts.length > 0) {
-
-                                            //console.log(JSON.stringify(concept.text));
-
-
-                                            /*  var tokens = {
-                                                  concept: "??",
-                                                  id: doc.id,
-                                                  tokens: analyze,
-                                                  sentences: doc.Texte.split(".")
-                                              }*/
-                                            allTokens.push(analyze[0]);
-
-                                        }
                                     })
+                                    if (inThesaurus > 0)
+                                        allTokens.push({doc: doc, tokens: analyze[0]});
+                                    else
+                                        console.log("no word in thesaurus " + doc.id)
 
                                 }
 
-                                callbackEachDoc();
+                                return callbackEachDoc();
                             })
 
                         }, function (err) {
@@ -277,9 +328,9 @@ var nlp = (function () {
                             })
                             groups.push(currentGroup);
                             async.eachSeries(groups, function (group, callback) {
-                                coreNlp.currentTokens = group;
-                                nlp.exportToNeo4j(false,function(err,result){
-                                    if(err)
+
+                                neo4jProxy.exportToNeo4j(group, function (err, result) {
+                                    if (err)
                                         console.log(err);
                                     callback();
                                 });
@@ -466,149 +517,6 @@ var nlp = (function () {
             return relations;
 
 
-        }
-        self.exportToNeo4j = function (deleteGraph,callback) {
-            var names = [];
-
-            if (!coreNlp.currentRelations && !coreNlp.openieTriples && !coreNlp.currentTokens)
-                return;
-
-
-
-            var statements = [];
-            var sourceNodeName = $("#sourceSearchExpression").val();
-            if (deleteGraph)
-                statements.push({statement: "match(n)where n.subGraph=\"totalRef\" detach delete n"});
-
-
-            if (coreNlp.openieTriples) {
-
-                for (var i = 0; i < coreNlp.openieTriples.length; i++) {
-                    var tripleObj = coreNlp.openieTriples[i];
-                    if (i == 0) {
-                        statements.push({statement: "MERGE (n:conceptSource { name: \"" + tripleObj.concept + "\",subGraph:\"totalRef\"})"});
-                        statements.push({statement: "MERGE (n:docFragment { name: \"" + tripleObj.id + "\",subGraph:\"totalRef\"})"});
-                        statements.push({statement: "match (n:conceptSource { name: \"" + tripleObj.concept + "\"}), (m:docFragment{ name: \"" + tripleObj.id + "\"}) create (n)-[:inDocFragment]->(m)"});
-                    }
-
-
-                    for (var j = 0; j < tripleObj.triples.length; j++) {
-                        var triple = tripleObj.triples[j];
-                        var relation = triple.relation.replace(/ /g, "_");
-                        relation = relation.replace(/[^A-Za-z0-9]/g, "_");
-                        //    console.log(relation)
-                        var objectType = "object_" + triple.object.type;
-                        statements.push({statement: "MERGE  (n:subject { name: \"" + triple.subject + "\",subGraph:\"totalRef\"})"});
-                        statements.push({statement: "MERGE  (n:" + objectType + " { name: \"" + triple.object.name + "\",subGraph:\"totalRef\"})"});
-                        statements.push({statement: "match (n:subject { name: \"" + triple.subject + "\"}), (m:" + objectType + "{ name: \"" + triple.object.name + "\"}) create (n)-[:" + relation + "]->(m)"});
-
-                        statements.push({statement: "match (n:docFragment { name: \"" + tripleObj.id + "\"}), (m:subject{ name: \"" + triple.subject + "\"}) create (n)-[:hasSubject]->(m)"});
-
-                    }
-                }
-
-
-            }
-            if (coreNlp.currentTokens) {
-
-                for (var i = 0; i < coreNlp.currentTokens.length; i++) {
-                    var tokenObj = coreNlp.currentTokens[i];
-                    if (true || i == 0) {
-                        statements.push({statement: "MERGE (n:conceptSource { name: \"" + tokenObj.concept + "\",subGraph:\"totalRef\"})"});
-                        statements.push({statement: "MERGE (n:docFragment { name: \"" + tokenObj.id + "\",subGraph:\"totalRef\"})"});
-                        statements.push({statement: "match (n:conceptSource { name: \"" + tokenObj.concept + "\"}), (m:docFragment{ name: \"" + tokenObj.id + "\"}) create (n)-[:inDocFragment]->(m)"});
-                    }
-                    if (tokenObj.tokens.sentences) {
-                        for (var j = 0; j < tokenObj.tokens.sentences.length; j++) {
-                            var sentence = tokenObj.tokens.sentences[j];
-                            var sentenceId = tokenObj.id + "_" + sentence.index;
-                            var sentenceText = tokenObj.sentences[sentence.index]
-                            statements.push({statement: "create  (n:sentence { name: \"" + sentence.index + "\",uid:\"" + sentenceId + "\",text:\"" + sentenceText + "\",subGraph:\"totalRef\"})"});
-
-                            statements.push({statement: "match (n:docFragment { name: \"" + tokenObj.id + "\"}), (m:sentence{ uid:\"" + sentenceId + "\"}) create (n)-[:composedOf]->(m)"});
-
-                        }
-
-
-                        for (var j = 0; j < tokenObj.tokens.nouns.length; j++) {
-                            var noun = tokenObj.tokens.nouns[j];
-                            var sentenceId = tokenObj.id + "_" + noun.sentence;
-                            statements.push({statement: "MERGE  (n:noun { name: \"" + noun.word + "\",subGraph:\"totalRef\"})"});
-
-                            statements.push({statement: "match (n:sentence { uid: \"" + sentenceId + "\"}), (m:noun{ name: \"" + noun.word + "\"}) create (n)-[:hasNoun]->(m)"});
-
-                        }
-                        for (var j = 0; j < tokenObj.tokens.numValues.length; j++) {
-                            var num = tokenObj.tokens.numValues[j];
-                            var sentenceId = tokenObj.id + "_" + num.sentence;
-                            statements.push({statement: "MERGE  (n:numValue { name: \"" + num.word + "\",subGraph:\"totalRef\"})"});
-
-                            statements.push({statement: "match (n:sentence { uid: \"" + sentenceId + "\"}), (m:numValue{ name: \"" + num.word + "\"}) create (n)-[:hasValue]->(m)"});
-
-                        }
-                    }
-
-                }
-
-
-            }
-            else if (coreNlp.currentRelations) {
-
-
-                statements.push({statement: "MERGE  (n:conceptSource { name: \"" + sourceNodeName + "\",subGraph:\"totalRef\"})"});
-
-                for (var id in coreNlp.currentRelations) {
-
-                    var relation = coreNlp.currentRelations[id];
-                    for (var i = 0; i < relation.occurences.length; i++) {
-                        var targetNodeName = relation.occurences[i].name;
-                        if (names.indexOf(targetNodeName) > -1) {
-                            continue;
-                        }
-                        names.push(targetNodeName);
-                        var type = "concept";
-                        if (relation.occurences[i].type)
-                            type = relation.occurences[i].type;
-
-                        statements.push({statement: "MERGE  (n:" + type + " { name: \"" + targetNodeName + "\",subGraph:\"totalRef\"})"});
-
-
-                        statements.push({statement: "match (n:conceptSource { name: \"" + sourceNodeName + "\"}), (m:" + type + " { name: \"" + targetNodeName + "\"}) create (n)-[:inSameRule]->(m)"});
-                    }
-                }
-            }
-            var str = JSON.stringify(statements, null, 2)
-            console.log(str);
-            $("#coreNlpResultDiv").html(str.replace(/\n/g, "<br>"))
-            var path = "/db/data/transaction/commit";
-
-            var payload = {
-                post: 1,
-                body: {statements: statements},
-                path: path,
-                url: 'http://neo4j:souslesens@127.0.0.1:7474',
-
-
-            }
-
-            $.ajax({
-                type: "POST",
-                url: self.httpParams.url,
-                data: payload,
-                dataType: "application/json",
-                //async: false,
-                success: function (data, textStatus, jqXHR) {
-                   return  callback(null, data.length)
-
-                }
-                , error: function (err) {
-                    console.log(err.responseText)
-                   return  callback(err);
-
-
-                }
-
-            });
         }
 
 

@@ -221,6 +221,7 @@ if(!text || text.length==0 || !text.split) {
         var nouns = [];
         var numValues = [];
         var verbs = [];
+        var others=[];
         var sentenceObjs = [];
         for (var i = 0; i < sentences.length; i++) {
             sentenceObjs.push({index: i})
@@ -274,6 +275,22 @@ if(!text || text.length==0 || !text.split) {
                         nouns.push(tokens[j])
                     }
                 }
+//CF anti-surge
+              //  if (tokens[j].pos.indexOf("JJ") == 0 && tokens[j].word.indexOf("-")>0) {
+                if (tokens[j].pos.indexOf("JJ") == 0) {
+                    if (stopNouns.indexOf(tokens[j].word.toLowerCase()) < 0) {
+                        if (tokens[j].word.length > 2)
+                            tokens[j].sentence = i;
+                        nouns.push(tokens[j])
+                    }
+                }
+                else{
+                    if (stopNouns.indexOf(tokens[j].word.toLowerCase()) < 0) {
+                        if (tokens[j].word.length > 2)
+                            tokens[j].sentence = i;
+                        others.push(tokens[j])
+                    }
+                }
 
 
             }
@@ -281,7 +298,7 @@ if(!text || text.length==0 || !text.split) {
         }
 
 
-        return {nouns: nouns, verbs: verbs, numValues: numValues, sentences: sentenceObjs};
+        return {nouns: nouns, verbs: verbs, numValues: numValues,others:others, sentences: sentenceObjs};
     }
 
     self.processCoreNlpResultSelectedFragments = function (relations, ruleKey, ruleConcept, tokens, callback) {
