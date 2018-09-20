@@ -15,6 +15,8 @@
     <script src="./js/nlp.js"></script>
     <script src="./js/coreNlp.js"></script>
     <script src="./js/neo4j.js"></script>
+    <script src="./js/elastic.js"></script>
+
     <link rel="stylesheet" href="../../common/js/jsTree/themes/default/style.min.css"/>
     <link rel="stylesheet" href="//cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css">
     <script src="//cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
@@ -109,8 +111,10 @@
         </td>
         <td valign="top">
             <div><input id="sourceSearchExpression" style="width: 200px" value="surge ms">
+
+
                 <div><input id="targetSearchExpression" style="width: 200px">
-                    <button onclick="nlp.analyseAllRules()">analyzeAllRules</button>
+
 
                 <button onclick="nlp.searchRulesToDataTable()">search rules</button>
 
@@ -130,12 +134,14 @@
             <div id="nlpAccordion">
                 <h3>Question</h3>
                 <div id="questionDiv">
-                    Question <input id="QuestionInput" size="70" value="What is the maximum response time of an anti-surge system"> <button onclick="nlp.analyzeQuestion($('#QuestionInput').val())">Analyze</button>
-                    Question words <input id="QuestionWordsInput" size="70" >
+              Question <input id="QuestionInput" size="70" value="What is the maximum response time of an anti-surge system"> <button onclick="nlp.analyzeQuestion($('#QuestionInput').val())">Analyze question</button>
+                 <!--   <br>Question words <input id="QuestionWordsInput" size="70" >-->
+                    <br>Question translation <div id="QuestionConceptsInput"></div>
                     <!--<button onclick="nlp.searchQuestionRules(true)">Search Rules</button>-->
-
+                    <br><br>
                     <button onclick="neo4jProxy.queryQuestionWordsRanked()">searchQuestionRules</button>
-                    <button onclick="neo4jProxy.getThesaurusNouns()">getThesaurusNouns</button>
+                    <button onclick="neo4jProxy.queryQuestionConceptsRanked()">queryQuestionConceptsRanked</button>
+
 
 
 <div id="neo4jResponseDiv">
@@ -148,9 +154,28 @@
 
                 <div id="elasticDataTableContainer" style="width:800px;height: 600px;overflow: auto"></div>
 </div>
-                <h3>Relations</h3>
+                <h3>Build</h3>
                 <div>
-                    <button onclick="neo4jProxy.exportToNeo4j()">exportToNeo4j</button>
+                    <table>
+                        <tr>
+                            <td><button onclick="elasticProxy.createCorpusGraph(true)">createCorpusGraph</button></td>
+                        </tr>
+                        <tr>
+                            <td>  <button onclick="neo4jProxy.createNeoConcepts(false)">createNeoConceptsFromNeoNouns</button></td>
+                        </tr>
+                        <tr>
+                            <td><button onclick="elasticProxy.createNeoConcepts()">createNeoConceptsFromElastic</button></td>
+                        </tr>
+                        <tr>
+                            <td> <button onclick="neo4jProxy.buildConceptsGraph()">buildConceptsGraph</button></td>
+                        </tr>
+
+
+                    </table>
+
+
+
+
                     <div id="coreNlpResultDiv"></div>
                 </div>
                 <h3>Synonyms</h3>

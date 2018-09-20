@@ -15,11 +15,6 @@ var nlp = (function () {
         }
 
 
-        self.httpParams = {
-            url: "../../../http"
-        }
-
-
         self.combination = function (arr) {
 
             var i, j, temp
@@ -36,20 +31,19 @@ var nlp = (function () {
                 for (j = 0; j < arrLen; j++) {
                     // & is bitwise AND
                     if ((i & power(2, j))) {
-                        temp += arr[j]+","
+                        temp += arr[j] + ","
                     }
                 }
                 result.push(temp)
             }
-            var result2=[];
+            var result2 = [];
 
-            result.forEach(function(str){
-                var result3=str.split(",");
-                if(result3[result3.length-1]=="")
-                    result3.splice(result3.length-1,1);
+            result.forEach(function (str) {
+                var result3 = str.split(",");
+                if (result3[result3.length - 1] == "")
+                    result3.splice(result3.length - 1, 1);
                 result2.push(result3);
             })
-
 
 
             return result2;
@@ -57,9 +51,11 @@ var nlp = (function () {
 
 
         self.analyzeQuestion = function (question) {
+            $("#neo4jResponseDiv").html("")
+
             self.currentQuestionWordsAssociations = []
             var texts = [["", "question", question]]
-            var conceptName = $("#sourceSearchExpression").val().toLowerCase();
+            var conceptName = $("#QuestionInput").val().toLowerCase();
             coreNlp.analyzeTexts(conceptName, texts, "tokens", function (err, result) {
                 if (err) {
                     return console.log(err);
@@ -74,88 +70,75 @@ var nlp = (function () {
                 for (var i = 0; i < nouns.length; i++) {
                     nounWords.push(nouns[i].word)
                 }
-                associations = self.combination(nounWords);
 
 
+                var str = "<table>";
+                nounWords.forEach(function (word, index) {
+                    str += "<tr><td>" + word + "<td><td>";
+                    var concepts = self.getWordConcepts(word)
+                    if (concepts.concepts.length > 0) {
 
+                        str += "<select class='questionWord concept' style='color :green;font-weight: bold'><option>" + word + "</option><option></option></select>";
+                    }
+                    else if (concepts.pseudoConcepts.length > 0) {
 
-                /*   //cration of associations of words (combinations)
-                   var nouns = result[0].tokens.nouns;
-                   nouns.forEach(function (noun) {
-                       var word = noun.word;
-                       if (associations.indexOf(word) < 0) {
-                           associations.push([word])
-                       }
-
-
-                       nouns.forEach(function (token2) {
-                           var word = token2.word;
-                           var notExistAssoc = null;
-                           associations.forEach(function (association) {
-
-                               if (association.indexOf(word) < 0) {
-                                   // console.log(JSON.stringify(association))
-                                   notExistAssoc = association;
-
-                               }
-                               else
-                                   notExistAssoc = null;
-                           })
-                           if (notExistAssoc) {
-                               var newAssociation = notExistAssoc.slice(0);
-                               newAssociation.push(word)
-                               associations.push(newAssociation)
-                           }
-                       })
-                   })*/
-
-                associations.sort(function (a, b) {
-                    if (a.length > b.length)
-                        return -1;
-                    if (a.length < b.length)
-                        return 1;
-                    return 0;
-
-
-                })
-
-//dedoublonage ordre different
-
-            /*    associations.forEach(function (association, index) {
-                    var str = association.toString()
-                    var count = 0;
-                    associations.forEach(function (association2) {
-                        association2.forEach(function (word) {
-                            if (str.indexOf(word) > -1)
-                                count += 1;
+                        var options = "<option>" + "" + "</option><option>" + word + "</option>";
+                        concepts.pseudoConcepts.forEach(function (concept) {
+                            options += "<option>" + concept.name + "</option>"
                         })
-                        if (count == association.length && association.length > 1)
-                            associations.splice(index, 1)
-                    })
+                        str += "<select class='questionWord concept' style='color :blue;font-weight: bold'>" + options + "</select>";
+                    }
+                    else {
+                        str += "<input class='questionWord word' value='" + word + "'/>";
+                    }
+                    str += "</td></tr>"
+
                 })
+                str += "</table>";
 
-                //  suppression des occurences d'un seul mot'
-
-
-                var associations2 = []
-                associations.forEach(function (association, index) {
-                    if (true || association.length > 1)
-                        associations2.push(association);
-
-                })*/
+                $("#QuestionConceptsInput").html(str);
 
 
-                self.currentQuestionWordsAssociations = associations;
-
-
-                $("#QuestionWordsInput").val(associations[0].toString());
+                //  $("#QuestionWordsInput").val(associations[0].toString());
                 $("#nlpAccordion").accordion("option", "active", 0);
 
             })
         }
 
+        self.getWordsCombinations = function () {
+            var concepts = [];
+            var words = [];
+            var inputs = $('#QuestionConceptsInput').find(".questionWord").each(function (input) {
+                var value = $(this).val();
+                var isConcept= ($(this).attr('class').indexOf("concept")>-1);
+                if(value!="") {
+                    if(isConcept)
+                    concepts.push(value)
+                    else
+                        words.push(value)
+                }
+
+            })
+
+
+            associations = self.combination(concepts);
+
+
+            associations.sort(function (a, b) {
+                if (a.length > b.length)
+                    return -1;
+                if (a.length < b.length)
+                    return 1;
+                return 0;
+
+
+            })
+            self.currentQuestionWordsAssociations = associations;
+        }
+
 
         self.searchQuestionRules = function (nonSingleWord) {
+            self.getWordsCombinations();
             var rules = [];
             var questionWords = $("#QuestionWordsInput").val();
             async.eachSeries(self.currentQuestionWordsAssociations, function (association, callbackEach) {
@@ -222,7 +205,9 @@ var nlp = (function () {
             })
 
         }
-        self.getWordInThesaurus = function (word) {
+
+
+        self.getWordConcepts = function (word) {
             if (!treeData)
                 treeData = $("#treeDiv1").jstree()._model.data;
 
@@ -230,129 +215,39 @@ var nlp = (function () {
                 word = word.substring(0, word.length - 1)
             //  console.log(word)
             var concepts = [];
+            var pseudoConcepts = [];
             for (var key in treeData) {
+                var conceptName = key.substring(8);
                 var treeConcept = treeData[key].text;
+
                 if (treeConcept) {
                     if (treeConcept.toLowerCase() == word.toLowerCase()) {
-                        concepts.push(key);
+                        concepts.push({name: conceptName, type: "concept"});
+                    }
+                    else if (treeConcept.toLowerCase().indexOf(word.toLowerCase()) > -1) {
+                        pseudoConcepts.push({name: conceptName, type: "concept"})
                     }
 
                     treeData[key].data.synonyms.forEach(function (synonym) {
 
-                            if (synonyms.toLowerCase() == word.toLowerCase()) {
-                                concepts.push(key);
-                            }
-                        })
-                    }
-
-
-
-            }
-            return concepts;
-
-
-        }
-        self.analyseAllRules = function () {
-
-            var allTokens = [];
-            var payload = {
-                findDocuments: 1,
-                options: {
-                    from: 0,
-                    size: self.elasticParams.size,
-                    indexName: self.elasticParams.index,
-                    word: "*",
-                    booleanSearchMode: "and",
-                    andWords: [],
-
-                }
-            };
-
-
-            var queryField = self.elasticParams.queryField
-            if (queryField != "") {
-                payload.options.queryField = queryField;
-            }
-            $("#dataTable").html("");
-
-//search all rules
-            $.ajax({
-                type: "POST",
-                url: self.elasticParams.elasticUrl,
-                data: payload,
-                dataType: "json",
-                success: function (data, textStatus, jqXHR) {
-                    var iterations = 0;
-                    async.eachSeries(data.docs, function (doc, callbackEachDoc) {
-                            // forEach rules extract nouns
-
-                            if (false && iterations++ > 5)
-                                return callbackEachDoc();
-
-                            if (doc.id == "7081")
-                                var xxx = 3;
-                            coreNlp.analyzeTexts("all", [["", "", doc.Texte]], "tokens", function (err, analyze) {
-
-                                // forEach word search if exist thesaurus term
-                                if (analyze && analyze.length > 0) {
-                                    var nouns = analyze[0].tokens.nouns
-                                    var inThesaurus = 0;
-                                    nouns.forEach(function (noun) {
-                                        var concepts = self.getWordInThesaurus(noun.word);
-                                        if (concepts.length > 0)
-                                            inThesaurus++;
-
-
-                                    })
-                                    if (inThesaurus > 0)
-                                        allTokens.push({doc: doc, tokens: analyze[0]});
-                                    else
-                                        console.log("no word in thesaurus " + doc.id)
-
-                                }
-
-                                return callbackEachDoc();
-                            })
-
-                        }, function (err) {
-
-                            var groups = [];
-                            currentGroup = [];
-                            allTokens.forEach(function (token) {
-                                currentGroup.push(token)
-                                if (currentGroup.length > 100) {
-                                    groups.push(currentGroup);
-                                    currentGroup = [];
-                                }
-
-                            })
-                            groups.push(currentGroup);
-                            async.eachSeries(groups, function (group, callback) {
-
-                                neo4jProxy.exportToNeo4j(group, function (err, result) {
-                                    if (err)
-                                        console.log(err);
-                                    callback();
-                                });
-
-                            })
-
-
+                        if (synonym.toLowerCase() == word.toLowerCase()) {
+                            concepts.push({name: conceptName, type: "synonym"});
                         }
-                    )
+                        else if (synonym.toLowerCase().indexOf(word.toLowerCase()) > -1) {
+
+                            pseudoConcepts.push({name: conceptName, type: "synonym"});
+                        }
+                    })
 
 
                 }
-                , error: function (err) {
-                    console.log(err.responseText)
-                    return callback(err)
+            }
+            return {concepts: concepts, pseudoConcepts: pseudoConcepts};
 
-
-                    return (err);
-                }
-
-            });
         }
+
+
+
 
 
         self.searchRules = function (words, phrase, callback) {
@@ -517,6 +412,33 @@ var nlp = (function () {
             return relations;
 
 
+        }
+
+        self.printResponses = function (allResponses) {
+            var str = "<ul>";
+
+            allResponses.forEach(function (line) {
+                if (true || line.responses.length > 0) {
+                    str += "<li>"
+                    str += "<div style='color:blue;font-weight:bold' > words found : " + line.words.toString() + " score : " + line.score + "</div>"
+                    str += "<ul>";
+                    line.responses.forEach(function (response) {
+                        var fragment = response.f.properties;
+                        var paragraph = response.p.properties;
+                        var file = response.F.properties;
+
+                        str += "<li>"
+
+                        str += "<B>" + file.name + "  " + file.title + "  <i>" + paragraph.name + "</i></B><br>"
+                        str += fragment.text
+                        str += "<li>"
+                    })
+                    str += "</ul>"
+                    str += "</li>"
+                }
+            })
+            str += "<ul>";
+            $("#neo4jResponseDiv").html(str);
         }
 
 

@@ -119,7 +119,7 @@ var advancedSearch = (function () {
         // self.setPermittedLabelsCbxs(value);
         $("#searchDialog_valueInput").val("");
         $('#searchDialog_valueInput').focus();
-        if(searchMenu.previousAction!="path")
+        //if(searchMenu.previousAction!="path" || pathSourceSearchCriteria)
             $("#searchDialog_NextPanelButton").css('visibility', 'visible');
         self.clearClauses();
         if (searchDialog_propertySelect) ;

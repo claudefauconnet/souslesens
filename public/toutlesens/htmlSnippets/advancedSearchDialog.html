@@ -69,7 +69,7 @@
                 <input type="hidden" id="searchDialog_ObjectTypeInput" value="node">
 
                 <select id="searchDialog_NodeLabelInput"
-                        onchange="advancedSearch.onChangeObjectName($(this).val())"></select>
+                        onclick="advancedSearch.onChangeObjectName($(this).val())"></select>
                 <br>
                 Property
 
@@ -118,7 +118,6 @@
                     <option value='graphSomeNeighboursListLabels'>graph some neighbours...</option>
                     <option value='graphAllNeighbours'>graph all neighbours</option>
                     <option value='path'>Path</option>
-                    <option value='pathDirect'>Path direct</option>
                     <option value='tagCloud'>tag Cloud</option>
                     <option value='tableNodes'>table</option>
                     <option value='treeNodes'>list nodes</option>
@@ -141,6 +140,38 @@
             </div>
 
         </div>
+        <div id="searchDialog_pathParamsDiv" style="visibility: hidden;overflow: hidden " class="searchPanel">
+            <table>
+                <tr>
+                    <td>
+                       <span id="searchDialog_pathSpan"></span>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                       <button onclick="searchMenu.addLabelToPath()">add label to path</button>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                       distance<input id="searchDialog_pathDistanceInput" size="2">
+
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        collapse Graph<input type="checkbox" id="searchDialog_CollapseGraphCbx" >
+
+                    </td>
+                </tr>
+            </table>
+
+
+
+        </div>
+
         <div id="searchNavDiv">
             <div style="background-color: #eee; border-style: solid; border-width: thin;margin-bottom: 20px">
                 <button onclick="advancedSearch.addClauseUI()" id="searchCriteriaAddButton">+

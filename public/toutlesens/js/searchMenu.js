@@ -173,15 +173,29 @@ var searchMenu = (function () {
         }
 
         self.nextPanel = function () {
-            if (currentPanelIndex == 1)
-                advancedSearch.addClauseUI();
-            currentPanelIndex += 1;
+            if(self.previousAction=="path"){
+                advancedSearch.searchNodes('matchObject', null, function (err, result) {
+                    self.pathQuery.targetQuery = result;
+                    var relationDistance = Schema.getLabelsDistance(self.pathQuery.sourceQuery.nodeLabel, self.pathQuery.targetQuery.nodeLabel);
+                    if (!relationDistance)
+                        relationDistance = 1;
+                    previousAction == "executePath"
+                    $("#searchDialog_pathDistanceInput").val(relationDistance);
+                    self.activatePanel("searchDialog_pathParamsDiv");
+                    $("#searchDialog_ExecuteButton").css('visibility', 'visible');
+                    $("#searchDialog_NextPanelButton").css('visibility', 'hidden');
+                });
+
+            }
+                else {
+                if (currentPanelIndex == 1)
+                    advancedSearch.addClauseUI();
+                currentPanelIndex += 1;
+
 
 
             self.showCurrentPanel();
-            var xx = $("#searchDialog_previousPanelButton");
-
-
+            }
             $("#searchDialog_previousPanelButton").css('visibility', 'visible');
         }
         self.showCurrentPanel = function () {
@@ -246,7 +260,7 @@ var searchMenu = (function () {
                 })
 
             }
-            else if (option == 'path' || option == 'pathDirect') {
+            else if (option == 'path' ) {
 
                 advancedSearch.searchNodes('matchStr', null, function (err, result) {
                     var matchObj = advancedSearch.matchStrToObject(result);
@@ -255,7 +269,7 @@ var searchMenu = (function () {
                     //  self.currentAction.name = "pathTargetSearchCriteria";
                     self.activatePanel("searchCriteriaDiv");
                     $("#searchDialog_previousPanelButton").css('visibility', 'hidden');
-                    $("#searchDialog_ExecuteButton").css('visibility', 'visible');
+                  //  $("#searchDialog_ExecuteButton").css('visibility', 'visible');
 
 
                 })
@@ -308,13 +322,10 @@ var searchMenu = (function () {
                 $("#tabs-analyzePanel").tabs("option", "active", 2);//highlight
 
 
-                if (previousAction == 'path' || previousAction == 'pathDirect') {
-                    advancedSearch.searchNodes('matchObject', null, function (err, result) {
-                        self.pathQuery.targetQuery = result;
-                        var transitivityLevel = Schema.getLabelsDistance(self.pathQuery.sourceQuery.nodeLabel, self.pathQuery.targetQuery.nodeLabel);
-                        if (!transitivityLevel)
-                            transitivityLevel = 1;
-                        toutlesensData.matchStatement = "(n:" + self.pathQuery.sourceQuery.nodeLabel + ")-[r*" + transitivityLevel + "]-(m:" + self.pathQuery.targetQuery.nodeLabel + ")";
+                if (previousAction == 'path' ) {
+                    var relationDistance=parseInt($("#searchDialog_pathDistanceInput").val());
+                    var collapseGraph=$("#searchDialog_CollapseGraphCbx").prop("checked");
+                        toutlesensData.matchStatement = "(n:" + self.pathQuery.sourceQuery.nodeLabel + ")-[r*" + relationDistance + "]-(m:" + self.pathQuery.targetQuery.nodeLabel + ")";
                         var where = self.pathQuery.sourceQuery.where;
                         if (self.pathQuery.targetQuery.where != "") {
 
@@ -324,14 +335,14 @@ var searchMenu = (function () {
                         }
                         toutlesensData.whereFilter = where;
                         var options = {};
-                        if(previousAction == 'pathDirect')
+                        if(collapseGraph )
                             options.clusterIntermediateNodes = true;
                         toutlesensController.generateGraph(null, options, function (err, data) {
                             if (err)
                                 return err;
 
 
-                        })
+
 
 
                         self.previousAction = null;
@@ -480,6 +491,10 @@ var searchMenu = (function () {
                 self.onSearchAction("execute");
             }
             $("#searchDialog_NextPanelButton").css('visibility', 'visible');
+
+        }
+
+        self.addLabelToPath=function(){
 
         }
 

@@ -48,7 +48,7 @@ var skosTree = (function () {
                  //   $("#" + treeDivId).jstree("select_node", "ul > li:first");
                     var selectedNode = $("#" + treeDivId).jstree("get_selected");
                     $("#" + treeDivId).jstree("open_node", selectedNode, false, true);
-                    self.showSynonyms(node.data.synonyms)
+                    self.showSynonyms(node.text,node.data.synonyms)
 
                 })
             }
@@ -113,8 +113,9 @@ var skosTree = (function () {
 
     }
 
-    self.showSynonyms = function (synonyms) {
-        var text = "<ul>"
+    self.showSynonyms = function (concept,synonyms) {
+        var text = "<B>"+concept+"</B>"
+        text += "<ul>"
         for (var i = 0; i < synonyms.length; i++) {
             text += "<li>" + synonyms[i] + "</li>"
         }
