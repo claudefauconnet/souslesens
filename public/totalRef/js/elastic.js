@@ -57,7 +57,7 @@ var elasticProxy = (function () {
                                 var nouns = analyze[0].tokens.nouns
                                 var inThesaurus = 0;
                                 nouns.forEach(function (noun) {
-                                    var concepts = nlp.getWordConcepts(noun.word).concepts;
+                                    var concepts = nlp.getWordConceptsInThesaurus(noun.word).concepts;
                                     if (concepts.length > 0)
                                         inThesaurus++;
 

@@ -100,14 +100,18 @@ var neo4jProxy = (function () {
 
         self.queryQuestionConceptsSimple = function (words, callback) {
 
+            var match;
             words.forEach(function (word, index) {
+                var array = word.split("_");
+                var type = (array[0] == "C") ? "concept" : "noun";
+                word = array[1];
 
                 if (index == 0) {
-                    match = " match(n:concept)-[r2]-(f:fragment) where n.name=\"" + word + "\" "
+                    match = " match(n:" + type + ")-[r2]-(f:fragment) where n.name=\"" + word + "\" "
 
                 }
                 else {
-                    match += " WITH f match (f)-[r]-(m:concept) where m.name=\"" + word + "\""
+                    match += " WITH f match (f)-[r]-(m:" + type + ") where m.name=\"" + word + "\""
 
 
                 }
@@ -152,7 +156,7 @@ var neo4jProxy = (function () {
 
                     var score = 0;
                     words.forEach(function (word) {
-                        score += nlp.getWordConcepts(word).concepts.length
+                        score += nlp.getWordConceptsInThesaurus(word).concepts.length
                     })
 
                     score += words.length
@@ -321,8 +325,8 @@ var neo4jProxy = (function () {
                             var word = line.name;
                             var id = line.id;
 
-                            var concepts = nlp.getWordConcepts(word).concepts;
-                            var pseudoConcepts = nlp.getWordConcepts(word).pseudoConcepts;
+                            var concepts = nlp.getWordConceptsInThesaurus(word).concepts;
+                            var pseudoConcepts = nlp.getWordConceptsInThesaurus(word).pseudoConcepts;
                             if (createNodes) {
 
                                 concepts.forEach(function (concept) {
@@ -390,8 +394,8 @@ var neo4jProxy = (function () {
                             var word = line.name;
                             var id = line.id;
 
-                            var concepts = nlp.getWordConcepts(word).concepts;
-                            var pseudoConcepts = nlp.getWordConcepts(word).pseudoConcepts;
+                            var concepts = nlp.getWordConceptsInThesaurus(word).concepts;
+                            var pseudoConcepts = nlp.getWordConceptsInThesaurus(word).pseudoConcepts;
                             if (createNodes) {
 
                                 concepts.forEach(function (concept) {
@@ -527,7 +531,7 @@ var neo4jProxy = (function () {
 
             function execute(group) {
                 var str = JSON.stringify(group, null, 2);
-             //   console.log(str);
+                //   console.log(str);
                 var path = "/db/data/transaction/commit";
 
                 var payload = {

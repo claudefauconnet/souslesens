@@ -75,14 +75,14 @@ var nlp = (function () {
                 var str = "<table>";
                 nounWords.forEach(function (word, index) {
                     str += "<tr><td>" + word + "<td><td>";
-                    var concepts = self.getWordConcepts(word)
+                    var concepts = self.getWordConceptsInThesaurus(word)
                     if (concepts.concepts.length > 0) {
 
                         str += "<select class='questionWord concept' style='color :green;font-weight: bold'><option>" + word + "</option><option></option></select>";
                     }
                     else if (concepts.pseudoConcepts.length > 0) {
 
-                        var options = "<option>" + "" + "</option><option>" + word + "</option>";
+                        var options = "<option>" + "" + "</option><option>" + "!" + word + "</option>";
                         concepts.pseudoConcepts.forEach(function (concept) {
                             options += "<option>" + concept.name + "</option>"
                         })
@@ -107,15 +107,19 @@ var nlp = (function () {
 
         self.getWordsCombinations = function () {
             var concepts = [];
-            var words = [];
+
             var inputs = $('#QuestionConceptsInput').find(".questionWord").each(function (input) {
                 var value = $(this).val();
-                var isConcept= ($(this).attr('class').indexOf("concept")>-1);
-                if(value!="") {
-                    if(isConcept)
-                    concepts.push(value)
+                var isConcept = ($(this).attr('class').indexOf("concept") > -1);
+                if (value.indexOf("!") == 0) {
+                    value = value.substring(1);
+                    isConcept = false;
+                }
+                if (value != "") {
+                    if (isConcept)
+                        concepts.push("C_" + value)
                     else
-                        words.push(value)
+                        concepts.push("N_" + value)
                 }
 
             })
@@ -207,7 +211,7 @@ var nlp = (function () {
         }
 
 
-        self.getWordConcepts = function (word) {
+        self.getWordConceptsInThesaurus = function (word) {
             if (!treeData)
                 treeData = $("#treeDiv1").jstree()._model.data;
 
@@ -216,6 +220,8 @@ var nlp = (function () {
             //  console.log(word)
             var concepts = [];
             var pseudoConcepts = [];
+            var uniqueConcepts = [];
+            var uniquePseudoConcepts = [];
             for (var key in treeData) {
                 var conceptName = key.substring(8);
                 var treeConcept = treeData[key].text;
@@ -231,11 +237,17 @@ var nlp = (function () {
                     treeData[key].data.synonyms.forEach(function (synonym) {
 
                         if (synonym.toLowerCase() == word.toLowerCase()) {
-                            concepts.push({name: conceptName, type: "synonym"});
+                            if (uniqueConcepts.indexOf(conceptName) < 0) {
+                                uniqueConcepts.push(conceptName)
+                                concepts.push({name: conceptName, type: "synonym"});
+                            }
                         }
                         else if (synonym.toLowerCase().indexOf(word.toLowerCase()) > -1) {
+                            if (uniquePseudoConcepts.indexOf(conceptName) < 0) {
+                                uniquePseudoConcepts.push(conceptName)
+                                pseudoConcepts.push({name: conceptName, type: "synonym"});
+                            }
 
-                            pseudoConcepts.push({name: conceptName, type: "synonym"});
                         }
                     })
 
@@ -245,9 +257,6 @@ var nlp = (function () {
             return {concepts: concepts, pseudoConcepts: pseudoConcepts};
 
         }
-
-
-
 
 
         self.searchRules = function (words, phrase, callback) {
