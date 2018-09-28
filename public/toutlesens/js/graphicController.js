@@ -21,10 +21,10 @@ var graphicController = (function () {
                 from: 0
             }
             toutlesensData.searchNodesWithOption(options, function (err, result) {
-                infoGenericDisplay.loadSearchResultIntree(err, result);
+                treeController.loadSearchResultIntree(err, result);
                 setTimeout(function () {
                     toutlesensController.setRightPanelAppearance(true);
-                    infoGenericDisplay.expandAll("treeContainer");
+                    treeController.expandAll("treeContainer");
                     $("#dialog").dialog("close");
                 }, 500)
 

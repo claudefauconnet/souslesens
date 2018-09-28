@@ -75,12 +75,12 @@ var advancedSearch = (function () {
             str += " <button id=\"advancedSearchDialog_searchAndGraphButton\"  onclick=\"advancedSearch.searchNodes('matchStr',null,advancedSearch.graphNodesAndDirectRelations);$('#dialog').dialog('close')\">Neighbours</button>&nbsp;";
             str += " <button id=\"advancedSearchDialog_searchAndGraphButton\"  onclick=\"advancedSearch.graphOnly();$('#dialog').dialog('close')\">Only</button>&nbsp;";
             str += "<br><b></b>"
-            str += " <button id=\"advancedSearchDialog_searchButton\" onclick=\"advancedSearch.searchNodes('matchStr',null,infoGenericDisplay.loadSearchResultIntree);$('#dialog').dialog('close'); $('#findTabs').tabs({active:0});\">List</button>";
+            str += " <button id=\"advancedSearchDialog_searchButton\" onclick=\"advancedSearch.searchNodes('matchStr',null,treeController.loadSearchResultIntree);$('#dialog').dialog('close'); $('#findTabs').tabs({active:0});\">List</button>";
         }
 
 
         else {
-            str += "<select id='advancedSearchAction'   onchange='searchMenu.onSearchAction($(this).val())'><option value=''>Choose...</option><option value='listNodes'>list nodes</option><option value='graphNodes'>graph nodes</option><option value='graphAllNeighbours'>graph all neigbours</option><option value='graphSomeNeighbours'>graph some neigbours...</option><option value='graphSimilars'>graph similars </option></select>";
+            str += "<select id='advancedSearchAction'   onchange='searchMenu.onSearchAction($(this).val())'><option value=''>Choose...</option><option value='listNodes'>list nodes</option><option value='graphNodes'>graph nodes</option><option value='graphNeighbours'>graph all neigbours</option><option value='graphSomeNeighbours'>graph some neigbours...</option><option value='graphSimilars'>graph similars </option></select>";
         }
 
 
@@ -117,10 +117,11 @@ var advancedSearch = (function () {
 
     self.onChangeObjectName = function (value) {
         // self.setPermittedLabelsCbxs(value);
-        $("#searchDialog_valueInput").val("");
+        $("#searchDialog_NodeLabelInput").val(value);
+        $("#searchDialog_valueInput").val();
         $('#searchDialog_valueInput').focus();
         //if(searchMenu.previousAction!="path" || pathSourceSearchCriteria)
-            $("#searchDialog_NextPanelButton").css('visibility', 'visible');
+        $("#searchDialog_NextPanelButton").css('visibility', 'visible');
         self.clearClauses();
         if (searchDialog_propertySelect) ;
         filters.initProperty(null, value, searchDialog_propertySelect);
@@ -131,10 +132,20 @@ var advancedSearch = (function () {
         var labels = Schema.getPermittedLabels(label, true, true);
         for (var i = 0; i < labels.length; i++) {
             var label2 = labels[i];//.replace(/^-/,"");
-            labelsCxbs += "<tr><td><input type='checkbox'  name='advancedSearchDialog_LabelsCbx' value='" + label2 + "'></td><td>" + label2 + "</td></tr>"
+            labelsCxbs += "<tr><td><input type='checkbox' class='advancedSearchDialog_LabelsCbx' name='advancedSearchDialog_LabelsCbx' value='" + label2 + "'></td><td>" + label2 + "</td></tr>"
         }
         labelsCxbs += "</table>";
-        $("#" + selectId).html(labelsCxbs);
+        $("#" + selectId).html(labelsCxbs).promise().done(function () {
+
+            $(".advancedSearchDialog_LabelsCbx").bind("click", function (cbx) {// uncheck all cbx if a cbx is changed
+                var state = $(this).attr("checked");
+                $("#graphNeighboursAllOptionsCbx").prop("checked", false);
+
+
+            })
+            //your callback logic / code here
+        });
+        ;
     }
 
     self.addClauseUI = function (operator) {
@@ -226,17 +237,15 @@ var advancedSearch = (function () {
     }
 
 
+    self.matchStrToObject = function (str) {
 
-
-    self.matchStrToObject=function (str){
-
-        var array= (/.*n:(.*)\)  WHERE   (.*) RETURN n/).exec(str);
+        var array = (/.*n:(.*)\)  WHERE   (.*) RETURN n/).exec(str);
         return {
-            nodeLabel: array[1], where: array[2]};
+            nodeLabel: array[1], where: array[2]
+        };
 
 
     }
-
 
 
     self.searchNodesWithClauses = function (options, callback) {
@@ -338,11 +347,14 @@ var advancedSearch = (function () {
             }
             str += "]";
             if (toutlesensData.whereFilter.length > 0)
-                toutlesensData.whereFilter += " and "
+                toutlesensData.whereFilter += " and ";
+
+            toutlesensData.whereFilter += str;
+
             self.filterLabelWhere = " labels(m) in " + str + " ";
 
         }
-        if ( resultType != "matchObject" &&resultType != "matchSearchClause" && self.searchClauses.length > 0) {// multiple clauses
+        if (resultType != "matchObject" && resultType != "matchSearchClause" && self.searchClauses.length > 0) {// multiple clauses
 
             return self.searchNodesWithClauses(_options, callback);
         }
@@ -351,7 +363,7 @@ var advancedSearch = (function () {
         currentObject.id = null;
 
         var searchObj = {};
-        self.filterLabelWhere = "";
+        //    self.filterLabelWhere = "";
         var options = {};
 
 
@@ -366,7 +378,7 @@ var advancedSearch = (function () {
 
 
         /*  var selectedLabels = [];
-          $('[name=advancedSearchDialog_LabelsCbx]:checked').each(function () {
+          $('.advancedSearchDialog_LabelsCbx:checked').each(function () {
               selectedLabels.push($(this).val());
           });
 
@@ -409,10 +421,10 @@ var advancedSearch = (function () {
                     if (callback) {
                         return callback(err, result);
                     }
-                    infoGenericDisplay.loadSearchResultIntree(err, result);
+                    treeController.loadSearchResultIntree(err, result);
                     setTimeout(function () {
                         toutlesensController.setRightPanelAppearance(true);
-                        infoGenericDisplay.expandAll("treeContainer");
+                        treeController.expandAll("treeContainer");
                         $("#dialog").dialog("close");
                     }, 500)
 
@@ -449,12 +461,12 @@ var advancedSearch = (function () {
                                   if (callback) {
                                       return callback(data);
                                   }
-                                  infoGenericDisplay.loadTreeFromNeoResult("#", data);
+                                  treeController.loadTreeFromNeoResult("#", data);
                               }
                               setTimeout(function () {
 
                                   toutlesensController.setRightPanelAppearance(true);
-                                  infoGenericDisplay.expandAll("treeContainer");
+                                  treeController.expandAll("treeContainer");
                               }, 500)
 
                           })
@@ -479,10 +491,10 @@ var advancedSearch = (function () {
                 if (callback) {
                     return callback(err, result);
                 }
-                infoGenericDisplay.loadSearchResultIntree(err, result);
+                treeController.loadSearchResultIntree(err, result);
                 setTimeout(function () {
                     toutlesensController.setRightPanelAppearance(true);
-                    infoGenericDisplay.expandAll("treeContainer");
+                    treeController.expandAll("treeContainer");
                 }, 500)
                 $("#dialog").dialog("close");
 
@@ -648,7 +660,7 @@ var advancedSearch = (function () {
     }
     self.similarsDialogExecRefine = function () {
         var similarityTypes = [];
-        $('[name=advancedSearchDialog_LabelsCbx]:checked').each(function () {
+        $('.advancedSearchDialog_LabelsCbx:checked').each(function () {
             similarityTypes.push($(this).val());
         });
         self.searchSimilars(currentObject, similarityTypes);

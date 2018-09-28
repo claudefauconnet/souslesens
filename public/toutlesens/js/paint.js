@@ -142,7 +142,7 @@ var paint = (function () {
 
             function getData() {
                 var data = []
-                if (searchMenu.currentAction.indexOf("graph") > -1) {
+                if (true || searchMenu.currentAction.indexOf("graph") > -1) {
                     $("#paint_unClusterButton").css("visibility", "visible");
                     $("#paint_clusterButton").css("visibility", "visible");
                     self.unClusterByClass();
@@ -178,6 +178,7 @@ var paint = (function () {
 
             if (data.length == 0)
                 return;
+            var allGraphNodes = visjsGraph.nodes.get();
             if (property == "" && self.currentBIproperty) {
 
 
@@ -185,7 +186,7 @@ var paint = (function () {
                 $("#paint_unClusterButton").css("visibility", "hidden");
                 $("#paint_clusterButton").css("visibility", "hidden");
                 var targetNodes = [];
-                var allGraphNodes = visjsGraph.nodes.get();
+
                 for (var i = 0; i < allGraphNodes.length; i++) {
                     targetNodes.push({
                         id: "" + allGraphNodes[i].id,

@@ -173,14 +173,16 @@ var toutlesensController = (function () {
 
 
             if (data.length == 0) {
-                if (callback) {
-                    return callback(err, data);
-                }
+
                 self.setGraphMessage("No  result");
                 $("#waitImg").css("visibility", "hidden");
                 $("#tabs-analyzePanel").tabs("enable", 0);
                 self.dispatchAction('nodeInfos');
                 self.setRightPanelAppearance(false);
+
+                if (callback) {
+                   callback(err, data);
+                }
                 return;
             }
 
@@ -260,6 +262,10 @@ var toutlesensController = (function () {
                 //  options.showRelationsType = false,
                 options.smooth = true;
             }
+            if(json.length==0){
+                $("#waitImg").css("visibility","hidden")
+                $("#graphDiv").html( "< span class ='graphMessage'>No Results</span>")
+            }
             if (!json)
                 json = connectors.neoResultsToVisjs(toutlesensData.cachedResultArray, options);
             else
@@ -308,7 +314,7 @@ var toutlesensController = (function () {
     /**
      *
      *
-     * from nodeDiv in index.html process autocompletion to dispaly a tree (infoGenericDisplay) with all nodes that match word input regex
+     * from nodeDiv in index.html process autocompletion to dispaly a tree (treeController) with all nodes that match word input regex
      * autocompletion params are  Gparams.searchInputKeyDelay and Gparams.searchInputMinLength
      *
      *
@@ -366,7 +372,7 @@ var toutlesensController = (function () {
                     else {
                         $("#searchResultMessage").html(data.length + " nodes found");
                     }
-                    return infoGenericDisplay.loadTreeFromNeoResult("treeContainer", data, function (jsTree) {
+                    return treeController.loadTreeFromNeoResult("treeContainer", data, function (jsTree) {
                         var xx = jsTree;
                         setTimeout(function () {
 
@@ -385,8 +391,8 @@ var toutlesensController = (function () {
                                                 var xx = key;
                                                 var yy = properties[key]
                                                 //  console.log(xx+"-"+yy);
-                                                //$("#"+infoGenericDisplay.jsTreeDivId).jstree().create_node(id ,  { "id" : (id+"_"+key), "text" : ("<span class='jstreeWordProp'">+xx+":"+yy+"</span>")}, "last", function(){
-                                                $("#" + infoGenericDisplay.jsTreeDivId).jstree().create_node(id, {
+                                                //$("#"+treeController.jsTreeDivId).jstree().create_node(id ,  { "id" : (id+"_"+key), "text" : ("<span class='jstreeWordProp'">+xx+":"+yy+"</span>")}, "last", function(){
+                                                $("#" + treeController.jsTreeDivId).jstree().create_node(id, {
                                                     "id": (id + "_" + key),
                                                     "text": (xx + ":" + yy),
                                                     "type": "prop"
@@ -400,7 +406,7 @@ var toutlesensController = (function () {
                                 }
 
                             });
-                            $("#" + infoGenericDisplay.jsTreeDivId).jstree("open_all");
+                            $("#" + treeController.jsTreeDivId).jstree("open_all");
                         }, 1000)
                     });
                 }, error: function (err) {
@@ -415,7 +421,7 @@ var toutlesensController = (function () {
         setTimeout(function () {
             $("#searchResultMessage").html("click on tree...")
             self.setRightPanelAppearance(true);
-            infoGenericDisplay.expandAll("treeContainer");
+            treeController.expandAll("treeContainer");
         }, 500)
 
     }
@@ -715,10 +721,10 @@ var toutlesensController = (function () {
                 $("#dialog").load("htmlSnippets/nodeForm.html", function () {
 
                     var attrObject = Schema.schema.properties[label];
-                    infoGenericDisplay.selectedNodeData = currentObject;
-                    infoGenericDisplay.selectedNodeData.neoId = currentObject.id
-                    infoGenericDisplay.setAttributesValue(label, attrObject, currentObject.neoAttrs);
-                    infoGenericDisplay.drawAttributes(attrObject, "nodeFormDiv");
+                    treeController.selectedNodeData = currentObject;
+                    treeController.selectedNodeData.neoId = currentObject.id
+                    treeController.setAttributesValue(label, attrObject, currentObject.neoAttrs);
+                    treeController.drawAttributes(attrObject, "nodeFormDiv");
                     // self.setRightPanelAppearance();
 
                 })
@@ -728,7 +734,7 @@ var toutlesensController = (function () {
 
 
         } else if (action == "deleteRelation") {
-            infoGenericDisplay.deleteRelationById(currentObject.neoId, function (err, result) {
+            treeController.deleteRelationById(currentObject.neoId, function (err, result) {
                 if (err) {
                     return console.log(err);
                 }
@@ -786,9 +792,9 @@ var toutlesensController = (function () {
                 Schema.save(subGraph);
                 self.initLabels(nodeFormLabelSelect);
                 var attrObject = Schema.schema.properties[newLabel];
-                infoGenericDisplay.selectedNodeData = null;
-                infoGenericDisplay.setAttributesValue(newLabel, attrObject, {});
-                infoGenericDisplay.drawAttributes(attrObject, "nodeFormDiv");
+                treeController.selectedNodeData = null;
+                treeController.setAttributesValue(newLabel, attrObject, {});
+                treeController.drawAttributes(attrObject, "nodeFormDiv");
             }
         }
 
@@ -1055,7 +1061,7 @@ var toutlesensController = (function () {
 
         if (Gparams.readOnly == false) {
             $("#infosHeaderDiv").css("visibility", "visible");
-            infoGenericDisplay.userRole = "write";
+            treeController.userRole = "write";
             cards.userRole = "write";
 
 
@@ -1067,7 +1073,7 @@ var toutlesensController = (function () {
         else {
             tabsanalyzePanelDisabledOptions.push(3);
             $("#infosHeaderDiv").css("visibility", "hidden");
-            infoGenericDisplay.userRole = "read"
+            treeController.userRole = "read"
             cards.userRole = "read";
         }
 
@@ -1110,7 +1116,7 @@ var toutlesensController = (function () {
 
         $(".graphDisplayed").css("visibility", "hidden");
 
-        if (infoGenericDisplay.userRole != "write")
+        if (treeController.userRole != "write")
             $(".canModify").css("visibility", "hidden");
 
         filters.setLabelsOrTypes("node");

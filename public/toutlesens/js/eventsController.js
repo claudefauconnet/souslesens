@@ -57,7 +57,7 @@ var eventsController = (function () {
                     if (e.keyCode != 13)
                         return;
                 }
-                toutlesensController.searchNodesUI('matchStr', null, null, infoGenericDisplay.loadSearchResultIntree);
+                toutlesensController.searchNodesUI('matchStr', null, null, treeController.loadSearchResultIntree);
 
             });
 

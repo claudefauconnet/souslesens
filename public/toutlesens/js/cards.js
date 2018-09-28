@@ -207,14 +207,14 @@ var cards = (function () {
         // self.initFilters()
         var matchStr = "match (n) where ID(n)=" + neoId + " return n ";
         var payload = {match: matchStr};
-        infoGenericDisplay.callAPIproxy(payload, "retrieve", function (error, data) {
+        treeController.callAPIproxy(payload, "retrieve", function (error, data) {
             var node = data[0].n.properties;
             var label = data[0].n.labels[0];
             node.label = label;
             var attrObject = Schema.schema.properties[label];
-            infoGenericDisplay.userRole = (self.write == 1 ? "write" : "read");
-            infoGenericDisplay.setAttributesValue(label, attrObject, node);
-            infoGenericDisplay.drawAttributes(attrObject, "nodeInfosDiv");
+            treeController.userRole = (self.write == 1 ? "write" : "read");
+            treeController.setAttributesValue(label, attrObject, node);
+            treeController.drawAttributes(attrObject, "nodeInfosDiv");
 
 
             var html = $("#nodeInfosDiv").html();
@@ -233,10 +233,10 @@ var cards = (function () {
     }
 
     self.save = function () {
-        infoGenericDisplay.saveNode();
+        treeController.saveNode();
     }
     self.delete = function () {
-        infoGenericDisplay.deleteNode();
+        treeController.deleteNode();
     }
     self.add = function () {
         var permittedRelations = Schema.getPermittedRelations(self.currentNodes[neoId].label);
@@ -244,7 +244,7 @@ var cards = (function () {
     }
 
     self.drawCards = function (label, id, displayMode, newNodes) {
-      //  infoGenericDisplay.userRole = self.wr
+      //  treeController.userRole = self.wr
         self.init();
         if (label)
             self.currentLabel = label;

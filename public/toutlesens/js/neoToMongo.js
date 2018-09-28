@@ -32,8 +32,8 @@ var neoToMongo = (function () {
     var mongoDBPreffix = "";
 
     self.callMongo = function (neoParams, operation, callback) {
-        self.subGraph = infoGenericDisplay.subGraph;
-        self.dbName = self.formatNamesForMongo(infoGenericDisplay.subGraph);
+        self.subGraph = treeController.subGraph;
+        self.dbName = self.formatNamesForMongo(treeController.subGraph);
         var mongoPayload = null;
 
         if (operation == "retrieve") {
@@ -260,8 +260,8 @@ var neoToMongo = (function () {
     self.syncObjNeoToMongo = function (operation, obj, setObj, callback) {
 
 
-        var subGraph = infoGenericDisplay.subGraph;
-        var dbName = mongoDBPreffix + infoGenericDisplay.subGraph;
+        var subGraph = treeController.subGraph;
+        var dbName = mongoDBPreffix + treeController.subGraph;
         var label = obj.label;
 
         var mongoCollectionMappings = Schema.schema.mongoCollectionMapping;
@@ -320,8 +320,8 @@ var neoToMongo = (function () {
 
     }
     self.syncRelNeoToMongo = function (operation, payload, data, callback) {
-        var subGraph = infoGenericDisplay.subGraph;
-        var dbName = mongoDBPreffix + infoGenericDisplay.subGraph;
+        var subGraph = treeController.subGraph;
+        var dbName = mongoDBPreffix + treeController.subGraph;
 
         var relations = Schema.getRelations(payload.relation.startLabel, payload.relation.endLabel);
         if (relations.length == 0)
@@ -460,8 +460,8 @@ var neoToMongo = (function () {
 
     self.syncNeoToMongoALL = function () {
 
-        var subGraph = infoGenericDisplay.subGraph;
-        var dbName = mongoDBPreffix + infoGenericDisplay.subGraph;
+        var subGraph = treeController.subGraph;
+        var dbName = mongoDBPreffix + treeController.subGraph;
 
         if (true) {
             var properties = Schema.schema.properties;

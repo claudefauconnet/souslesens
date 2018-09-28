@@ -1422,7 +1422,7 @@ var toutlesensData = (function () {
             }
 
 
-            infoGenericDisplay.callAPIproxy(payload, "createRelation", function (err, result) {
+            treeController.callAPIproxy(payload, "createRelation", function (err, result) {
                 if (err) {
                     $("#message").html(err);
                     return;

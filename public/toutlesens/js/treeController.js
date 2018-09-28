@@ -24,7 +24,7 @@
  * SOFTWARE.
  *
  ******************************************************************************/
-var infoGenericDisplay = (function () {
+var treeController = (function () {
     var self = {};
 
     self.Neo4jStorage = true;
@@ -109,7 +109,7 @@ var infoGenericDisplay = (function () {
     }
 
 
-    self.loadTree = function (label, parentId, _matchStr, treeId) {
+    self.loadTree = function (label, parentId, _matchStr, treeId,expandOnLoad) {
 
         var matchStr = "";
         ids = {};
@@ -188,7 +188,10 @@ var infoGenericDisplay = (function () {
                 .on('refresh_node.jstree', function (e, data) {
                     $(".jstree-themeicon").css("background-size", self.iconSize);
                 })
-
+                .on('loaded.jstree', function() {
+                    if(expandOnLoad)
+                        jsTree.jstree('open_all');
+                })
 
                 .jstree({
                         'core': {
@@ -297,6 +300,8 @@ var infoGenericDisplay = (function () {
             .on('refresh_node.jstree', function (e, data) {
                 $(".jstree-themeicon").css("background-size", self.iconSize);
             })
+
+
 
 
             .jstree({
@@ -517,8 +522,8 @@ var infoGenericDisplay = (function () {
                 return;
             }
 
-            var createRelationDialogStr = "new node with label " + currentMenuData.relation.endLabel + " <br><input id='newNodeName'><button onclick='infoGenericDisplay.createNodeAndRelation()'>Create</button><br>OR<br>" +
-                " choose in existing nodes <br><select size='10' id='newRelationNodeSelect' onchange='infoGenericDisplay.createRelation(this)'></select><br><button onclick='infoGenericDisplay.cancelAddRelation()'>cancel</button>";
+            var createRelationDialogStr = "new node with label " + currentMenuData.relation.endLabel + " <br><input id='newNodeName'><button onclick='treeController.createNodeAndRelation()'>Create</button><br>OR<br>" +
+                " choose in existing nodes <br><select size='10' id='newRelationNodeSelect' onchange='treeController.createRelation(this)'></select><br><button onclick='treeController.cancelAddRelation()'>cancel</button>";
             self.setEntityDiv(createRelationDialogStr);
             var options = [{id: "", name: ""}];
             for (var i = 0; i < result.length; i++) {
@@ -1393,7 +1398,7 @@ for( var i=0;i<self.currentNodesSelection.length;i++){
 
 
     self.loadSearchResultIntree = (function (err, matchStr) {
-        self.loadTree(null, null, matchStr);
+        self.loadTree(null, null, matchStr,null, true);
 
     });
 
@@ -1431,7 +1436,7 @@ for( var i=0;i<self.currentNodesSelection.length;i++){
 
 incrementChanges = function (input, type) {
     if (type && type == "relation")
-        infoGenericDisplay.currentRelationChanges.push({id: input.id, value: input.value})
+        treeController.currentRelationChanges.push({id: input.id, value: input.value})
     else
-        infoGenericDisplay.currentNodeChanges.push({id: input.id, value: input.value})
+        treeController.currentNodeChanges.push({id: input.id, value: input.value})
 }
