@@ -37,6 +37,7 @@
     "pug": "^2.0.0-beta10",
     "serve-favicon": "^2.4.4",
     "socket.io": "^1.7.4",
+    "unzip": "^0.1.11",
     "xml2js": "^0.4.19",
     "xmlbuilder": "^9.0.4",
     "xmldom": "latest"

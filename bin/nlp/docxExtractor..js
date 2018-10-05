@@ -97,7 +97,10 @@ var extractTable = function (tblElt) {
 
 
                 }*/
-            cell.text = extractRunText(cells[y]);
+            cell.text = extractRunText
+
+
+            (cells[y]);
         }
 
 
@@ -323,8 +326,13 @@ var generateJson = function (xmlStr) {
     return json2;
 }
 
-
-var parseTOC = function (xmlStr) {
+/**
+ *
+ * if not returnFlatJson returns a tree
+ * returnFlatJson return a map of chapters with tocIds as keys
+ *
+ **/
+var parseTOC = function (xmlStr,returnFlatJson) {
     var tocArray = []
     var doc = new dom().parseFromString(xmlStr);
     var elements = doc.documentElement.getElementsByTagName("w:hyperlink");
@@ -373,19 +381,34 @@ var parseTOC = function (xmlStr) {
         }
         var key2 = key.substring(0, p);
         var parent = tocMap[key2];
-        if (parent)
+        if (parent) {
+            tocMap[key].parentAnchor=parent.anchor
             tocMap[key].parent = parent;
-        else
+        }
+        else {
+
             tocMap[key].parent = "#";
+        }
 
     }
+
+    if(returnFlatJson){
+        var tocMap2={}
+        for (var key in tocMap) {
+            tocMap2[tocMap[key].anchor]=tocMap[key];
+        }
+
+
+        return tocMap2;
+    }
+
 //build tree
     var tocStruct = [];
 
     function recurseParent(obj) {
         while (obj && obj.parent != "#") {
             obj.parent.children.push(obj);
-
+            obj.parentKey = obj.parent;
             recurseParent(obj.parent);
             obj.parent = "#";
         }
@@ -496,8 +519,130 @@ var getAllElementsByTagNameDepth = function (element, tagName) {
 }
 
 
-var filePath = "D:\\Total\\NLP\\document.xml";
-if (true) {
+var arrayToCsv = function (linkedContentJson) {
+
+
+}
+
+
+var contentToCsv = function (contentJson,tocJson) {
+
+    var contentMap={};
+    contentJson.forEach(function(line){
+            if(line.tocId)
+        contentMap[line.tocId]=line;
+    })
+
+    var colsep = "\t";
+    var lineSep = "\n";
+
+    function recurseParentChapter(str, chapter) {
+
+
+        var tocObj=tocJson[chapter["tocId"]];
+        if(tocObj){
+           var  rootStr=  str+tocObj.key + colsep + tocObj.title + colsep;
+            if(tocObj.parentAnchor && tocObj.parentAnchor!="_" ){
+              parentChapter=contentMap[tocObj.parentAnchor]
+             str+= recurseParentChapter(str, parentChapter);
+            }
+
+        }
+
+        return str;
+
+
+    }
+
+
+    var csvHeader = "DocTitle" + colsep + "" + lineSep
+    var csvBody = ""
+    var rootStr = contentJson.docTitle
+
+
+    contentJson.forEach(function (chapter) {
+        var lineStr = recurseParentChapter("", chapter);
+
+         var repeatedStr=chapter.title + colsep;
+        if (chapter && chapter.paragraphs) {
+            chapter.paragraphs.forEach(function (paragraph) {
+                lineStr += repeatedStr + paragraph.text + lineSep;
+            })
+        }
+        lineStr = lineStr.replace(/\t\-/g, "");
+        lineStr = lineStr.replace(/undefined/g, "");
+
+        csvBody += rootStr + colsep + lineStr + lineSep;
+
+
+    })
+    return csvHeader + csvBody;
+
+
+}
+
+
+
+var extractXmlFilesFromDocXDir=function(dir){
+    try{
+    var unzip=require("unzip");
+    dir=path.resolve(dir)
+    var docxFiles=fs.readdirSync(dir)
+    docxFiles.forEach(function(docPath){
+        var docPath=path.resolve(dir+"/"+docPath);
+     if(docPath.indexOf(".docx")>-1) {
+         fs.createReadStream(docPath)
+             .pipe(unzip.Parse())
+             .on('entry', function (entry) {
+                 var fileName = entry.path;
+                 var type = entry.type; // 'Directory' or 'File'
+                 var size = entry.size;
+                 var documentXmlDirPath=dir+"/documents";
+                 if (!fs.existsSync(documentXmlDirPath)) {
+                     fs.mkdir(documentXmlDirPath);
+                 }
+
+                 if (entry.path === "word/document.xml") {
+                     var docName=docPath.substring(docPath.lastIndexOf(path.sep)+1,docPath.lastIndexOf("."));
+                     var unzippedWordDirPath = path.resolve(documentXmlDirPath + "/" +docName+".xml");
+                  //   console.log(unzippedWordDirPath);
+                     entry.pipe(fs.createWriteStream(unzippedWordDirPath));
+                 } else {
+                     entry.autodrain();
+                 }
+
+
+             });
+     }
+
+
+
+       // var unzippedDocxDir=
+
+    })
+
+
+    }
+    catch(e){
+       console.log(e);
+        }
+
+}
+
+
+
+if(true) {
+    processDir("D:\\Total\\docs\\GM MEC Word\\documents");
+
+
+
+
+    if(false) {
+    extractXmlFilesFromDocXDir("D:\\Total\\docs\\GM MEC Word");
+
+}
+if (false) {
+    var filePath = "D:\\Total\\NLP\\document.xml";
     var data = "" + fs.readFileSync(filePath);
     var cleanXml = data;// data.replace(/>/gm, ">\n");
 
@@ -510,8 +655,11 @@ if (true) {
     //  console.log("******************************************************************");
 
     var linkedContentJson = linkContentJsonToToc(toc, contentJson);
-    console.log(JSON.stringify(linkedContentJson, null, 2))
+    //  console.log(JSON.stringify(linkedContentJson, null, 2))
 
+    var toc = parseTOC(cleanXml,true);
+    var csv = contentToCsv(contentJson,toc);
+    console.log(csv);
     // var tablesJson = extractTables(cleanXml)
 }
 

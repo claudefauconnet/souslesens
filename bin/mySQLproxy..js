@@ -1,6 +1,6 @@
 var mysql = require('mysql');
 //var nodeMaria = require('node-mariadb');
-var elasticProxy = require('./elasticProxy.js');
+
 
 
 
