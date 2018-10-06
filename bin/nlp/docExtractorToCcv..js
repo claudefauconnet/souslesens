@@ -93,8 +93,41 @@ var str="";
 
     },
 
+    jsonContentsToCsv:function(dir){
 
-    contentToCsv: function (contentJson, tocJson) {
+        var xmlPaths = fs.readdirSync(dir)
+        var jsonTables = [];
+        var allTables = [];
+        var str="";
+        xmlPaths.forEach(function (xmlPath) {
+            var filePath = path.resolve(dir + "/" + xmlPath);
+            var xmlStr = "" + fs.readFileSync(filePath);
+           var jsonContent=docxExtractor.extractContentJson(xmlStr);
+           var toc=docxExtractor.extractTOC(xmlStr);
+
+
+            jsonContent.forEach(function (chapter){
+                var rooTxt=chapter.title+"\t";
+                chapter.paragraphs.forEach(function (paragraph){
+                    if(paragraph)
+                    str+=rooTxt+paragraph.text+"\n"
+
+                })
+
+            })
+
+        })
+        console.log(str)
+    },
+
+
+
+
+
+
+
+
+    contentToCsvXXXX: function (contentJson, tocJson) {
 
         var contentMap = {};
         contentJson.forEach(function (line) {
@@ -154,8 +187,12 @@ var str="";
 module.exports = docExtractorToCcv;
 
 
-if (true) {
-    var dir = "D:\\Total\\docs\\GM MEC Word\\documents"
+var dir = "D:\\Total\\docs\\GM MEC Word\\documents\\test"
+if( true){
+    docExtractorToCcv.jsonContentsToCsv(dir);
+}
+if (false) {
+
     docExtractorToCcv.allParagraphArray2X(dir, "html");
 
 }

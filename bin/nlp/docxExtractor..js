@@ -8,9 +8,6 @@ var path = require('path');
 var dom = require('xmldom').DOMParser
 
 
-
-
-
 // utilitary functions
 
 var extractRunText = function (run) {
@@ -55,33 +52,64 @@ var getAllElementsByTagNameDepth = function (element, tagName) {
 
 }
 
+var getPstyles = function () {
+    var styles = body.getElementsByTagName("w:pStyle");
+    for (var j = 0; j < styles.length; j++) {
+        var attrs = styles[j].attributes;
+        for (var k = 0; k < attrs.length; k++) {
+            var value = attrs[k].value
+            if (docxExtactor.stylesArray.indexOf(value) < 0)
+                docxExtactor.stylesArray.push(value)
+        }
+    }
+    console.log(docxExtactor.stylesArray);
+
+}
+
+var getDocPstylesOffsets = function (body) {
+    var stylesArray = [];
+    var pPrs = body.getElementsByTagName("w:pPr");
+
+    for (var i = 0; i < pPrs.length; i++) {
+        var styleObj = {offset: pPrs[i].columnNumber};
+
+        var styles = pPrs[i].getElementsByTagName("w:pStyle");
+        for (var j = 0; j < styles.length; j++) {
+            var styleValue = styles[j].getAttribute("w:val");
+            var htmlStyle = docxExtactor.pStyles[styleValue];
+            if (!htmlStyle) {
+                console.log("!!!style not  in pStylesMap " + styleValue);
+                // htmlStyle=styleValue
+            }
+            else {
+                styleObj.style = htmlStyle;
+                stylesArray.push(styleObj);
+            }
+        }
+    }
+    return stylesArray;
+
+}
 
 
+var docxExtactor = {
+
+    pStyles: {
+        RfrentielTexte1avecpuces: "ul",
+        Paragraphedeliste: "ol",
+        Titre1: "h1",
+        Titre2: "h2",
+        Titre3: "h4",
+        Titre2: "h4",
+        TM1: "p",
+        TM2: "p",
 
 
+    },
 
 
+    stylesArray: [],
 
-
-
-
-
-
-
-
-
-
-
-
-
-var docxExtactor= {
-
-    
-
-
-
-
-    
 
 // p parents =w:tc,w:body
 // r parents=w:p,w:ins,w:hyperlink,w:del;
@@ -93,6 +121,154 @@ var docxExtactor= {
 
 
     extractContentJson: function (xmlStr) {
+
+      /******************  internal functions*******************************/
+      function aggregateTables() {
+          jsonTables.forEach(function (table, indexTable) {
+              var offset = table.startOffset;
+              var found = false
+              json.forEach(function (paragraph, index) {
+                  if (offset > paragraph.startOffset && offset <= paragraph.endOffset) {
+                      jsonTables[indexTable].inParagraph = true;
+                      if (!json[index].tableIndices)
+                          json[index].tableIndices = [];
+                      json[index].tableIndices.push(indexTable);
+                      found = true;
+                  }
+
+              })
+              if (found == false) {
+                  if (!json.globalTables)
+                      json.globalTables = [];
+                  json.globalTables.push("table-#" + indexTable)
+              }
+          })
+          return json;
+
+      }
+
+
+
+
+        //***************************  gestion des styles******************************
+        function setStyles(json) {
+            var previousParagraphStyle = null;
+            var json2 = [];
+            json.forEach(function (paragraph, index) {
+
+
+                var paragraphStyle = null;//get paragraph Style by offsets
+                stylesArray.some(function (style) {
+                    if (paragraph.startOffset < style.offset && paragraph.endOffset > style.offset) {
+                        paragraphStyle = style.style;
+
+                        return true;
+                    }
+                    return false;
+
+                })
+
+                if (paragraph.text == "" && paragraph.title == "" && !paragraph.tableIndices)
+                    return;
+
+                if (paragraphStyle) {
+                    if (paragraphStyle == "ul" || paragraphStyle == "ol") {
+                        var beginListStr = ""
+                        if (previousParagraphStyle != "ul" && previousParagraphStyle != "ol")
+                            beginListStr = "<" + paragraphStyle + ">"
+                        paragraph.text = beginListStr + "<li>" + paragraph.text + "</li>"
+
+
+                    }
+                    else if (paragraphStyle.indexOf("h") == 0) {
+                        paragraph.title = "<" + paragraphStyle + ">" + paragraph.title + "</" + paragraphStyle + ">"
+                    }
+
+                }
+                if ((previousParagraphStyle == "ul" || previousParagraphStyle == "ol") && paragraphStyle != previousParagraphStyle) {// close ul or li
+                    json2[json2.length - 1].text += "</" + previousParagraphStyle + ">";
+                }
+                previousParagraphStyle = paragraphStyle;
+
+
+                // on ajoute le texte des puces "ul" ou "ol"  au précédent paragraphe
+                if ( (paragraphStyle == "ul" || paragraphStyle == "ol"))  {
+                    json2[json2.length - 1].text += paragraph.text;
+
+                }else {
+                    json2.push(paragraph);
+                }
+
+
+
+
+
+
+
+
+
+            })
+
+
+            return json2;
+
+        }
+
+
+        function aggregateParagraphs(json) {
+            var json2 = [{paragraphs: [], title: "noChapter"}];
+            var currentParagraph = null;
+
+
+            json.forEach(function (paragraph, index) {
+
+
+                if (!paragraph.tocId && !currentParagraph && paragraph.text != "") {// pas dans TOC
+                    json2[0].paragraphs.push({text: paragraph.text})
+                }
+                else if (paragraph.tocId) {
+                    // if(paragraph.text=="" && paragraph.title=="")
+                    // return;
+                    currentParagraph = {tocId: paragraph.tocId, title: paragraph.title, paragraphs: [],};
+                    currentParagraph.paragraphs.push(obj);
+
+                    if (paragraph.tableIndices)
+                        currentParagraph.tableIndices = paragraph.tableIndices
+
+
+                    if (paragraph.text != "") {
+                        currentParagraph.paragraphs.push({text:paragraph.text});
+
+                    }
+
+                    json2.push(currentParagraph)
+
+                }
+                else if (!paragraph.tocId) {
+                    var obj = {}
+
+                    if (paragraph.text.trim() != "")
+                        obj.text = paragraph.text
+                    if (paragraph.tableIndices)
+                        paragraph.tableIndices = paragraph.tableIndices
+                    if (currentParagraph)
+                        currentParagraph.paragraphs.push(obj);
+                }
+
+
+            })
+
+            return json2;
+
+
+        }
+
+        /******************  end internal functions*******************************/
+
+
+
+
+
         var json = [];
         var bodyStr = "";
         var currentTocId = "";
@@ -100,6 +276,8 @@ var docxExtactor= {
         var doc = new dom().parseFromString(xmlStr);
         var body = doc.documentElement.getElementsByTagName("w:body")[0];
 
+        //<w:pStyle w:val="Titre2"/>
+        var stylesArray = getDocPstylesOffsets(body);
 
         var tables = body.getElementsByTagName("w:tbl");
         for (var j = 0; j < tables.length; j++) {
@@ -116,6 +294,7 @@ var docxExtactor= {
 
         var runStr;
         for (var i = 0; i < paragraphs.length; i++) {
+
 
             if (paragraphs[i].parentNode.tagName == "w:tc")
                 continue;
@@ -169,15 +348,6 @@ var docxExtactor= {
 
                 }
 
-                if (runStr && runStr.indexOf("GS") == 0) {
-                    var xx = 3
-                    log = true;
-                }
-
-                /*   if(log)
-                       console.log(runStr);*/
-
-
                 if (obj.status == "bookmark") {
                     obj.title += runStr;
                 }
@@ -196,91 +366,21 @@ var docxExtactor= {
 
         }
 
-        function aggregateTables() {
-            jsonTables.forEach(function (table, indexTable) {
-                var offset = table.startOffset;
-                var found = false
-                json.forEach(function (paragraph, index) {
-                    if (offset > paragraph.startOffset && offset <= paragraph.endOffset) {
-                        jsonTables[indexTable].inParagraph = true;
-                        if (!json[index].tableIndices)
-                            json[index].tableIndices = [];
-                        json[index].tableIndices.push(indexTable);
-                        found = true;
-                    }
-
-                })
-                if (found == false) {
-                    if (!json.globalTables)
-                        json.globalTables = [];
-                    json.globalTables.push("table-#" + indexTable)
-                }
-            })
-            return json;
-
-        }
-
-        json = aggregateTables(json)
 
 
-        function aggregateParagraphs(json) {
-            var json2 = [{noChapter: []}];
-            var currentParagraph = null;
-
-            json.forEach(function (paragraph, index) {
-
-                if (paragraph.text == "" && paragraph.title == "" && !paragraph.tableIndices)
-                    return;
-
-                if (!paragraph.tocId && !currentParagraph) {// pas dans TOC
-                    json2[0].noChapter.push(paragraph.text)
-                }
-                else if (paragraph.tocId) {
-                    // if(paragraph.text=="" && paragraph.title=="")
-                    // return;
-                    currentParagraph = {tocId: paragraph.tocId, title: paragraph.title, paragraphs: [],};
-                    currentParagraph.paragraphs.push(obj);
-
-                    if (paragraph.tableIndices)
-                        currentParagraph.tableIndices = paragraph.tableIndices
-
-
-                    if (paragraph.text != "") {
-                        currentParagraph.paragraphs.push(paragraph.text);
-
-                    }
-
-                    json2.push(currentParagraph)
-
-                }
-                else if (!paragraph.tocId) {
-                    var obj = {}
-
-                    if (paragraph.text.trim() != "")
-                        obj.text = paragraph.text
-                    if (paragraph.tableIndices)
-                        paragraph.tableIndices = paragraph.tableIndices
-
-                    currentParagraph.paragraphs.push(obj);
-                }
-
-
-            })
-
-            return json2;
-
-
-        }
-
+        json = aggregateTables(json);
         var json2 = json
-
+        json = setStyles(json);
+       // console.log(JSON.stringify(json2,null,2))
         var json2 = aggregateParagraphs(json)
-
+       // console.log("********************************************")
+      //  console.log(JSON.stringify(json2,null,2))
         json2.forEach(function (chapter) {
-            if (chapter.title && chapter.tableIndices) {
+            if (chapter.tableIndices) {
                 chapter.tableIndices.forEach(function (tableIndice, index) {
-                    jsonTables[tableIndice].paragraphTitle = chapter.title;
-                    jsonTables[tableIndice].tocId = chapter.tocId;
+                    /*  jsonTables[tableIndice].paragraphTitle = chapter.title;
+                      jsonTables[tableIndice].tocId = chapter.tocId;*/
+                    jsonTables[tableIndice][0].tocId = chapter.tocId;
                 })
 
             }
@@ -292,7 +392,16 @@ var docxExtactor= {
         return json2;
     },
 
-    extractTable : function (tblElt) {
+
+
+
+
+
+
+
+
+
+    extractTable: function (tblElt) {
         var json = [];
 
         var table = {rows: []};
@@ -316,8 +425,8 @@ var docxExtactor= {
                             if (node && node.data)
                                 str += node.data;
                         }
-    
-    
+
+
                     }*/
                 cell.text = extractRunText
 
@@ -338,7 +447,7 @@ var docxExtactor= {
      * returnFlatJson return a map of chapters with tocIds as keys
      *
      **/
-    extractTOC : function (xmlStr, returnFlatJson) {
+    extractTOC: function (xmlStr, returnFlatJson) {
         var tocArray = []
         var doc = new dom().parseFromString(xmlStr);
         var elements = doc.documentElement.getElementsByTagName("w:hyperlink");
@@ -438,7 +547,7 @@ var docxExtactor= {
 
     },
 
-    linkContentJsonToToc : function (toc, content) {
+    linkContentJsonToToc: function (toc, content) {
 
 
         var contentMap = {}
@@ -482,12 +591,7 @@ var docxExtactor= {
     },
 
 
-   
-
-  
-
-
-   extractXmlFilesFromDocXDir : function (dir, callback) {
+    extractXmlFilesFromDocXDir: function (dir, callback) {
         try {
             var unzip = require("unzip");
             dir = path.resolve(dir)
@@ -544,8 +648,8 @@ var docxExtactor= {
         contentJson.tables.forEach(function (table) {
             if (true || table.tocId)
                 paragraphJsonTables.push(table)
-           /* if (table.inParagraph)
-                ;// paragraphJsonTables.push(table)*/
+            /* if (table.inParagraph)
+                 ;// paragraphJsonTables.push(table)*/
 
 
         })
@@ -554,18 +658,13 @@ var docxExtactor= {
     },
 
 
-
 }
 
-module.exports=docxExtactor;
-
-
-
-
+module.exports = docxExtactor;
 
 
 if (false) {
-   docxExtactor.extractXmlFilesFromDocXDir("D:\\Total\\docs\\GM MEC Word");
+    docxExtactor.extractXmlFilesFromDocXDir("D:\\Total\\docs\\GM MEC Word");
 
 }
 if (false) {
