@@ -23,13 +23,15 @@ var docExtractorToCcv = {
         var jsonTables = [];
         var allTables = [];
         xmlPaths.forEach(function (xmlPath) {
+            if (xmlPath.indexOf(".xml") < 0)
+                return;
             var filePath = path.resolve(dir + "/" + xmlPath);
             var xmlStr = "" + fs.readFileSync(filePath);
             var doc = new dom().parseFromString(xmlStr);
-            var tables = docxExtractor.getTablesinParagraphs(xmlStr)
+            var tables = docxExtractor.getTablesinParagraphs(doc)
             allTables.push({doc: xmlPath, tables: tables})
         })
-var str="";
+        var str = "";
         if (format == "html") {
             str = "<html>";
             str += "<style>body{font-family:Verdana;font-size:12px} td{background-color :#a9b7d1;}</style>"
@@ -37,18 +39,18 @@ var str="";
         allTables.forEach(function (docTables) {
 
             str += docTables.doc + "********************************************************************\n";
-            docTables.tables.forEach(function (table0, index) {
-                table0.forEach(function (table) {
+            docTables.tables.forEach(function (table, index) {
 
-                    str += docTables.doc + "------------------table" + index + "-----------------\n"
-                    if (format == "html")
-                        str += docExtractorToCcv.jsonTableToHtml(table) + "\n";
-                    else
-                        str += docExtractorToCcv.jsonTableToCsv(table) + "\n";
 
-                   // str += docTables.doc + "------------------end table" + index + "-----------------\n\n"
-                })
+                str += docTables.doc + "------------------table" + index + "-----------------\n"
+                if (format == "html")
+                    str += docExtractorToCcv.jsonTableToHtml(table) + "\n";
+                else
+                    str += docExtractorToCcv.jsonTableToCsv(table) + "\n";
+
+                // str += docTables.doc + "------------------end table" + index + "-----------------\n\n"
             })
+
 
         })
         if (format == "html") {
@@ -93,38 +95,128 @@ var str="";
 
     },
 
-    jsonContentsToCsv:function(dir){
+    jsonContentsToCsv: function (dir) {
+        var setChaptersParents = function (toc, jsonContent) {
+
+            var aggregregateTocAncestors = function (str, tocLine) {
+                if (tocLine) {
+                    var sep = "";
+                    if (str != "")
+                        sep = " / ";
+                    str = tocLine.key + "" + tocLine.title + sep + str;
+                    if (tocLine.parentAnchor && tocLine.parentAnchor != "#") {
+                        str = aggregregateTocAncestors(str, toc[tocLine.parentAnchor]);
+                    }
+                }
+                return str;
+            }
+            jsonContent.forEach(function (chapter, indexChapter) {
+                jsonContent[indexChapter].parents = ""
+                var tocLine = toc[chapter.tocId];
+                if (tocLine) {
+                    var ancestors = aggregregateTocAncestors("", tocLine)
+                    jsonContent[indexChapter].parent = ancestors
+                }
+            })
+
+
+        }
+        var setPurposeAndScope = function (tables) {
+            var str = "";
+            if (tables.length > 0 && tables[0].rows[0]) {
+                var cell0 = tables[0].rows[0][0].text;
+                var cell1 = tables[0].rows[1][0].text;
+                var index = cell0.indexOf("Purpose:");
+                if (index == 0)
+                    str += cell0.substring(index + "Purpose:".length);
+                str += "\t";
+                index = cell1.indexOf("Scope of application:");
+                if (index == 0)
+                    str += cell1.substring(index + "Scope of application:".length);
+                str += "\t";
+
+            }
+            return str;
+        }
+
+        //add lines of table text to jscontent after each line containing tables
+        var addTablesToChapters = function (jsonContent) {
+            jsonContent.forEach(function (chapter, index) {
+                if (chapter.tableIndices) {
+                    chapter.tableIndices.forEach(function (tableIndice) {
+                        var table = jsonContent.tables[tableIndice];
+                        if (table) {
+                            var tableText = docExtractorToCcv.jsonTableToHtml(table)
+                            jsonContent[index].paragraphs.push({text: tableText})
+                        }
+
+
+                    })
+                }
+
+            })
+            return jsonContent;
+
+
+        }
+
+        // le titre est dans la dernière ligne du tableau du fichier header1.xml
+        var extractDocTitle = function (headerTables) {
+            var docTitle = ""
+            if (headerTables.length > 0) {
+                var titleTable = headerTables[headerTables.length - 1];
+                var lastRow = titleTable.rows[titleTable.rows.length - 1][0];
+                docTitle = lastRow.text;
+            }
+            return docTitle;
+        }
+
 
         var xmlPaths = fs.readdirSync(dir)
         var jsonTables = [];
         var allTables = [];
-        var str="";
+        var str = "";
         xmlPaths.forEach(function (xmlPath) {
-            var filePath = path.resolve(dir + "/" + xmlPath);
-            var xmlStr = "" + fs.readFileSync(filePath);
-           var jsonContent=docxExtractor.extractContentJson(xmlStr);
-           var toc=docxExtractor.extractTOC(xmlStr);
+                if (xmlPath.indexOf(".xml") < 0)
+                    return;
+                if (xmlPath.indexOf("_header.xml") > -1)
+                    return;
 
+                var filePath = path.resolve(dir + "/" + xmlPath);
+                if (fs.lstatSync(filePath).isDirectory())
+                    return;
+                var xmlStr = "" + fs.readFileSync(filePath);
 
-            jsonContent.forEach(function (chapter){
-                var rooTxt=chapter.title+"\t";
-                chapter.paragraphs.forEach(function (paragraph){
-                    if(paragraph)
-                    str+=rooTxt+paragraph.text+"\n"
+                console.log("---------"+filePath);
+                var doc = new dom().parseFromString(xmlStr);
+                var headerTables = docxExtractor.extractHeaderJson(filePath.replace(".xml", "_header.xml"))
+
+                var jsonContent = docxExtractor.extractContentJson(doc);
+                jsonContent = addTablesToChapters(jsonContent);
+                var toc = docxExtractor.extractTOC(doc, true);
+                setChaptersParents(toc, jsonContent);
+
+                var purposeAndScope = setPurposeAndScope(jsonContent.tables);
+
+                var fileName = xmlPath.substring(0, xmlPath.lastIndexOf("."))
+                var docTitle = extractDocTitle(headerTables);
+                jsonContent.forEach(function (chapter) {
+                    var rooTxt = fileName + "\t" + docTitle + "\t" + purposeAndScope + "\t" + chapter.parent + "\t" + chapter.title + "\t";
+                    chapter.paragraphs.forEach(function (paragraph) {
+                        if (paragraph && paragraph.text) {
+
+                            str += rooTxt + paragraph.text + "\n"
+                        }
+
+                    })
 
                 })
 
-            })
-
-        })
-        console.log(str)
+            }
+        )
+        //  console.log(str)
+        fs.writeFileSync(dir + "/allDocsContent.csv", str)
     },
-
-
-
-
-
-
 
 
     contentToCsvXXXX: function (contentJson, tocJson) {
@@ -150,8 +242,6 @@ var str="";
                 }
 
             }
-
-            return str;
 
 
         }
@@ -188,7 +278,8 @@ module.exports = docExtractorToCcv;
 
 
 var dir = "D:\\Total\\docs\\GM MEC Word\\documents\\test"
-if( true){
+dir = "D:\\Total\\docs\\GM MEC Word\\documents"
+if (true) {
     docExtractorToCcv.jsonContentsToCsv(dir);
 }
 if (false) {
