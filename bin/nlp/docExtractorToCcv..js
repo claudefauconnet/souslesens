@@ -16,14 +16,24 @@ var docExtractorToCcv = {
      *
      *
      */
-    allParagraphArray2X: function (dir, format) {
+    allParagraphArray2X: function (dir, format, sortByColsNumber) {
 
-// build json tables
+        function getTableColsNumber(tableJson) {
+            var ncols=0;
+            tableJson.rows.forEach(function (row, indexRow) {
+                ncols=Math.max(row.length,ncols);
+
+            })
+            return ncols;
+        }
+
         var xmlPaths = fs.readdirSync(dir)
         var jsonTables = [];
         var allTables = [];
         xmlPaths.forEach(function (xmlPath) {
             if (xmlPath.indexOf(".xml") < 0)
+                return;
+            if (xmlPath.indexOf("_header.xml") > -1)
                 return;
             var filePath = path.resolve(dir + "/" + xmlPath);
             var xmlStr = "" + fs.readFileSync(filePath);
@@ -31,35 +41,60 @@ var docExtractorToCcv = {
             var tables = docxExtractor.getTablesinParagraphs(doc)
             allTables.push({doc: xmlPath, tables: tables})
         })
+
+
+        var strArray = [];
+
+        allTables.forEach(function (docTables) {
+            docTables.tables.forEach(function (table, index) {
+                var str=""
+                if (format == "html")
+                    str += docExtractorToCcv.jsonTableToHtml(table) + "\n";
+                else
+                    str += docExtractorToCcv.jsonTableToCsv(table) + "\n";
+                var obj = {content: str,doc:docTables.doc}
+                if (sortByColsNumber) {
+                    obj.colsNumber = getTableColsNumber(table);
+                }
+                strArray.push(obj);
+
+            })
+        })
+
+        if (sortByColsNumber) {
+           strArray= strArray.sort(function (a, b) {
+                if (a.colsNumber > b.colsNumber)
+                    return 1;
+                if (a.colsNumber < b.colsNumber)
+                    return -1;
+                return 0;
+            })
+
+        }
         var str = "";
         if (format == "html") {
             str = "<html>";
             str += "<style>body{font-family:Verdana;font-size:12px} td{background-color :#a9b7d1;}</style>"
         }
-        allTables.forEach(function (docTables) {
 
-            str += docTables.doc + "********************************************************************\n";
-            docTables.tables.forEach(function (table, index) {
+        strArray.forEach(function (line,index) {
+            console.log(line.colsNumber);
+            str +=  "------------------colsNumber : " + line.colsNumber+ "-----------------\n"
+            str += line.doc + "********************************************************************\n";
+            str += line.content+"\n";
 
-
-                str += docTables.doc + "------------------table" + index + "-----------------\n"
-                if (format == "html")
-                    str += docExtractorToCcv.jsonTableToHtml(table) + "\n";
-                else
-                    str += docExtractorToCcv.jsonTableToCsv(table) + "\n";
-
-                // str += docTables.doc + "------------------end table" + index + "-----------------\n\n"
-            })
-
+         //   console.log(line.colsNumber+ "  "+line.content)
 
         })
+
+
         if (format == "html") {
             str += "</html>"
             str = str.replace(/\n/gm, "<br>\n")
         }
-        console.log(str)
+      //  console.log(str)
         //  console.log(JSON.stringify(allParagraphJsonTables, null, 2))
-
+        fs.writeFileSync(dir + "/allTablesOrdered.csv", str)
     },
 
     jsonTableToCsv: function (tableJson) {
@@ -116,6 +151,12 @@ var docExtractorToCcv = {
                 if (tocLine) {
                     var ancestors = aggregregateTocAncestors("", tocLine)
                     jsonContent[indexChapter].parent = ancestors
+                    jsonContent[indexChapter].key = tocLine.key
+                }else{// cas des sous sous chapitres non dans TOC ( voir GM 317) 4.3.1
+                   if(indexChapter>0) {
+                       jsonContent[indexChapter].parent = jsonContent[indexChapter - 1].parent;
+                       jsonContent[indexChapter].key = jsonContent[indexChapter - 1].key;
+                   }
                 }
             })
 
@@ -171,11 +212,11 @@ var docExtractorToCcv = {
             return docTitle;
         }
 
-
+        var str = "id\tFile\tdocTitle\tpurpose\tscope\t\tparentChapters\tChapterKey\tChapter\tparagraphOrArray\n";
         var xmlPaths = fs.readdirSync(dir)
         var jsonTables = [];
         var allTables = [];
-        var str = "";
+
         xmlPaths.forEach(function (xmlPath) {
                 if (xmlPath.indexOf(".xml") < 0)
                     return;
@@ -187,25 +228,32 @@ var docExtractorToCcv = {
                     return;
                 var xmlStr = "" + fs.readFileSync(filePath);
 
-                console.log("---------"+filePath);
+               // console.log("---------" + filePath);
                 var doc = new dom().parseFromString(xmlStr);
                 var headerTables = docxExtractor.extractHeaderJson(filePath.replace(".xml", "_header.xml"))
 
                 var jsonContent = docxExtractor.extractContentJson(doc);
                 jsonContent = addTablesToChapters(jsonContent);
                 var toc = docxExtractor.extractTOC(doc, true);
+           //     console.log(JSON.stringify(toc,null,2))
+
                 setChaptersParents(toc, jsonContent);
 
                 var purposeAndScope = setPurposeAndScope(jsonContent.tables);
 
                 var fileName = xmlPath.substring(0, xmlPath.lastIndexOf("."))
                 var docTitle = extractDocTitle(headerTables);
-                jsonContent.forEach(function (chapter) {
-                    var rooTxt = fileName + "\t" + docTitle + "\t" + purposeAndScope + "\t" + chapter.parent + "\t" + chapter.title + "\t";
+
+                var startId=Math.round((Math.random()*100000))
+
+                jsonContent.forEach(function (chapter,index) {
+                    if(!chapter.key)
+                        chapter.key="";
+                    var rooTxt = fileName + "\t" + docTitle + "\t" + purposeAndScope + "\t" + chapter.parent + "\t" + chapter.key + "\t"+ chapter.title + "\t";;
                     chapter.paragraphs.forEach(function (paragraph) {
                         if (paragraph && paragraph.text) {
 
-                            str += rooTxt + paragraph.text + "\n"
+                            str += (startId++)+"\t"+rooTxt + paragraph.text + "\n"
                         }
 
                     })
@@ -215,7 +263,14 @@ var docExtractorToCcv = {
             }
         )
         //  console.log(str)
-        fs.writeFileSync(dir + "/allDocsContent.csv", str)
+        fs.writeFileSync(dir + "/allDocsContent2.csv", str)
+    },
+
+    readDocumentsInDir:function(dir,callback){
+
+
+
+
     },
 
 
@@ -279,11 +334,11 @@ module.exports = docExtractorToCcv;
 
 var dir = "D:\\Total\\docs\\GM MEC Word\\documents\\test"
 dir = "D:\\Total\\docs\\GM MEC Word\\documents"
-if (true) {
+if (false) {
     docExtractorToCcv.jsonContentsToCsv(dir);
 }
-if (false) {
+if (true) {
 
-    docExtractorToCcv.allParagraphArray2X(dir, "html");
+    docExtractorToCcv.allParagraphArray2X(dir, "html",true);
 
 }

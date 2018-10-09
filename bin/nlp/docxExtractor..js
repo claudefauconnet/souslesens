@@ -68,7 +68,7 @@ var getPstyles = function () {
 
 var getDocPstylesOffsets = function (body) {
     var stylesArray = [];
-    if(body) {
+    if (body) {
         var pPrs = body.getElementsByTagName("w:pPr");
 
         for (var i = 0; i < pPrs.length; i++) {
@@ -79,7 +79,7 @@ var getDocPstylesOffsets = function (body) {
                 var styleValue = styles[j].getAttribute("w:val");
                 var htmlStyle = docxExtactor.pStyles[styleValue];
                 if (!htmlStyle) {
-                    console.log("!!!style not  in pStylesMap " + styleValue);
+                   ;// console.log("!!!style not  in pStylesMap " + styleValue);
                     // htmlStyle=styleValue
                 }
                 else {
@@ -99,7 +99,8 @@ var docxExtactor = {
     pStyles: {
         RfrentielTexte1avecpuces: "ul",
         Paragraphedeliste: "ol",
-        Listepuces2:"ul2",
+        Listepuces2: "ul2",
+      //  Listepuces2: "ul",
         Titre1: "h1",
         Titre2: "h2",
         Titre3: "h4",
@@ -125,32 +126,30 @@ var docxExtactor = {
 
     extractContentJson: function (doc) {
 
-      /******************  internal functions*******************************/
-      function aggregateTables() {
-          jsonTables.forEach(function (table, indexTable) {
-              var offset = table.startOffset;
-              var found = false
-              json.forEach(function (paragraph, index) {
-                  if (offset > paragraph.startOffset && offset <= paragraph.endOffset) {
-                      jsonTables[indexTable].inParagraph = true;
-                      if (!json[index].tableIndices)
-                          json[index].tableIndices = [];
-                      json[index].tableIndices.push(indexTable);
-                      found = true;
-                  }
+        /******************  internal functions*******************************/
+        function aggregateTables() {
+            jsonTables.forEach(function (table, indexTable) {
+                var offset = table.startOffset;
+                var found = false
+                json.forEach(function (paragraph, index) {
+                    if (offset > paragraph.startOffset && offset <= paragraph.endOffset) {
+                        jsonTables[indexTable].inParagraph = true;
+                        if (!json[index].tableIndices)
+                            json[index].tableIndices = [];
+                        json[index].tableIndices.push(indexTable);
+                        found = true;
+                    }
 
-              })
-              if (found == false) {
-                  if (!json.globalTables)
-                      json.globalTables = [];
-                  json.globalTables.push("table-#" + indexTable)
-              }
-          })
-          return json;
+                })
+                if (found == false) {
+                    if (!json.globalTables)
+                        json.globalTables = [];
+                    json.globalTables.push("table-#" + indexTable)
+                }
+            })
+            return json;
 
-      }
-
-
+        }
 
 
         //***************************  gestion des styles******************************
@@ -175,12 +174,18 @@ var docxExtactor = {
                     return;
 
                 if (paragraphStyle) {
-                    if (paragraphStyle == "ul" || paragraphStyle == "ul2"  || paragraphStyle == "ol") {
+
+                    if(paragraphStyle == "ul2" ) {
+ var xx=json[index-1];
+
+                    }
+
+                    if (paragraphStyle == "ul" || paragraphStyle == "ul2" || paragraphStyle == "ol") {
                         var beginListStr = ""
-                        if (previousParagraphStyle != "ul" && previousParagraphStyle != "ol")
+                        if (previousParagraphStyle != "ul" && previousParagraphStyle != "ol" && paragraphStyle != "ul2")
                             beginListStr = "<" + paragraphStyle + ">"
-                        if (previousParagraphStyle == "ul" && paragraphStyle== "ul2")
-                            beginListStr = "<" + paragraphStyle + ">"
+                        if (previousParagraphStyle==null || previousParagraphStyle == "ul" && paragraphStyle == "ul2")
+                            beginListStr = "<" + "ul" + ">"
                         paragraph.text = beginListStr + "<li>" + paragraph.text + "</li>"
 
 
@@ -190,10 +195,11 @@ var docxExtactor = {
                     }
 
                 }
-                if (previousParagraphStyle == "ul2"  && paragraphStyle == "ul" ) {// close ul2 or li
-                    json2[json2.length - 1].text += "</" + previousParagraphStyle + ">";
+                if (previousParagraphStyle == "ul2" && paragraphStyle == "ul") {// close ul2 or li
+                    json2[json2.length - 1].text += "</" + "ul" + ">";
                 }
-                if ((previousParagraphStyle == "ul"  || paragraphStyle == "ul2" || previousParagraphStyle == "ol") && paragraphStyle != previousParagraphStyle) {// close ul or li
+                if (previousParagraphStyle !=null && (previousParagraphStyle == "ul" || paragraphStyle == "ul2" || previousParagraphStyle == "ol") && paragraphStyle != previousParagraphStyle) {// close ul or li
+
                     json2[json2.length - 1].text += "</" + previousParagraphStyle + ">";
                 }
 
@@ -201,27 +207,22 @@ var docxExtactor = {
                 previousParagraphStyle = paragraphStyle;
 
 
+
                 // on ajoute le texte des puces "ul" ou "ol"  au précédent paragraphe
-                if ( (paragraphStyle == "ul"  || paragraphStyle == "ul2" ||  paragraphStyle == "ol"))  {
+                if ((paragraphStyle == "ul" || paragraphStyle == "ul2" || paragraphStyle == "ol")) {
+
                     json2[json2.length - 1].text += paragraph.text;
-                    if(   paragraph.tableIndices){
-                       paragraph.tableIndices.forEach(function(tableIndice){
-                           if(!json2[json2.length - 1].tableIndices)
-                               json2[json2.length - 1].tableIndices=[]
+                    if (paragraph.tableIndices) {
+                        paragraph.tableIndices.forEach(function (tableIndice) {
+                            if (!json2[json2.length - 1].tableIndices)
+                                json2[json2.length - 1].tableIndices = []
                             json2[json2.length - 1].tableIndices.push(tableIndice);
                         })
                     }
 
-                }else {
+                } else {
                     json2.push(paragraph);
                 }
-
-
-
-
-
-
-
 
 
             })
@@ -254,7 +255,7 @@ var docxExtactor = {
 
 
                     if (paragraph.text != "") {
-                        currentParagraph.paragraphs.push({text:paragraph.text});
+                        currentParagraph.paragraphs.push({text: paragraph.text});
 
                     }
 
@@ -296,7 +297,7 @@ var docxExtactor = {
         //<w:pStyle w:val="Titre2"/>
         var stylesArray = getDocPstylesOffsets(body);
 
-    var tables = body.getElementsByTagName("w:tbl");
+        var tables = body.getElementsByTagName("w:tbl");
 
         for (var j = 0; j < tables.length; j++) {
             var jsonTable = docxExtactor.extractTable(tables[j])
@@ -385,19 +386,18 @@ var docxExtactor = {
         }
 
 
-
         json = aggregateTables(json);
-      // console.log(JSON.stringify(json,null,2))
+        // console.log(JSON.stringify(json,null,2))
         var json2 = json
         json = setStyles(json);
-       // console.log(JSON.stringify(json2,null,2))
+        // console.log(JSON.stringify(json2,null,2))
         var json2 = aggregateParagraphs(json)
-       // console.log("********************************************")
-      //  console.log(JSON.stringify(json2,null,2))
+        // console.log("********************************************")
+        //  console.log(JSON.stringify(json2,null,2))
         json2.forEach(function (chapter) {
             if (chapter.tableIndices) {
                 chapter.tableIndices.forEach(function (tableIndice, index) {
-                   jsonTables[tableIndice].paragraphTitle = chapter.title;
+                    jsonTables[tableIndice].paragraphTitle = chapter.title;
                     jsonTables[tableIndice].tocId = chapter.tocId;
                 })
 
@@ -411,41 +411,36 @@ var docxExtactor = {
     },
 
     extractHeaderJson: function (filePath) {
-        var headerTables=[]
+        var headerTables = []
         var xmlStr = "" + fs.readFileSync(filePath);
         var doc = new dom().parseFromString(xmlStr);
-        var headerTablesElts= doc.documentElement.getElementsByTagName("w:tbl");
-        if(headerTablesElts) {
+        var headerTablesElts = doc.documentElement.getElementsByTagName("w:tbl");
+        if (headerTablesElts) {
             for (var j = 0; j < headerTablesElts.length; j++) {
                 headerTables.push(docxExtactor.extractTable(headerTablesElts[j]))
             }
         }
 
-return headerTables
+        return headerTables
     },
 
     extractDocTables: function (doc) {
-        var jsonTables=[];
+        var jsonTables = [];
         var body = doc.documentElement.getElementsByTagName("w:body")[0];
         var tables = body.getElementsByTagName("w:tbl");
 
 
-            for (var j = 0; j < tables.length; j++) {
-               jsonTables.push(extractTable(tables[j])) ;
+        for (var j = 0; j < tables.length; j++) {
+            jsonTables.push(extractTable(tables[j]));
         }
-        return  jsonTables;
+        return jsonTables;
     },
-
-
-
-
 
 
     extractTable: function (tblElt) {
 
 
         var table = {rows: []};
-
 
 
         var columns = tblElt.getElementsByTagName("w:tr");
@@ -488,6 +483,22 @@ return headerTables
      *
      **/
     extractTOC: function (doc, returnFlatJson) {
+
+
+        function extractTocKey(tocText) {
+            if(tocText.indexOf("4.3")>-1){
+                var xx=2
+            }
+            var regex = /(\d+\.?)/g
+            var array;
+            var key = "";
+            while (array = regex.exec(tocText)) {
+                key += array[0];
+            }
+            return key;
+        }
+
+
         var tocArray = []
         var elements = doc.documentElement.getElementsByTagName("w:hyperlink");
         for (var i = 0; i < elements.length; i++) {
@@ -519,21 +530,28 @@ return headerTables
 
         var tocMap = {}
         tocArray.forEach(function (obj, index) {
-            var p = obj.text.indexOf(" ");
-            var key = "#" + obj.text.substring(0, p).trim();
-            var title = obj.text.substring(p + 1);
+            var key = extractTocKey(obj.text)
+            var title = obj.text.substring(key.length);
+          var key = "#" +key;
+            if(key.charAt(key.length-1)!="."){//exemple     1 -	Reference documents
+                key+=".";
+            }
+
+
             var obj2 = {title: title, key: "" + key, children: [], anchor: obj.anchor};
             tocMap[key] = obj2;
         })
 
+
+
 //set parents
         for (var key in tocMap) {
-            var p = key.lastIndexOf(".")
+            var p = key.substring(0,key.length-1).lastIndexOf(".")
             if (p < 0) {
                 tocMap[key].parent = "#";
                 continue;
             }
-            var key2 = key.substring(0, p);
+            var key2 = key.substring(0, p+1);
             var parent = tocMap[key2];
             if (parent) {
                 tocMap[key].parentAnchor = parent.anchor
@@ -631,7 +649,11 @@ return headerTables
 
 
     extractXmlFilesFromDocXDir: function (dir, callback) {
+
+
         try {
+
+
             var unzip = require("unzip");
             dir = path.resolve(dir)
             var docxFiles = fs.readdirSync(dir)
@@ -641,32 +663,46 @@ return headerTables
                     fs.createReadStream(docPath)
                         .pipe(unzip.Parse())
                         .on('entry', function (entry) {
+                            function isWithHeader2(docName) {
+                                var docsWitherHeader2 = [110, 112, 318, 677, 686, 900];
+                                var yes = false
+                                docsWitherHeader2.forEach(function (number) {
+                                    if (docName.indexOf("_" + number + "_") > -1) {
+                                        yes = true;
+                                    }
+                                })
+                                return yes;
+                            }
+
                             var fileName = entry.path;
                             var type = entry.type; // 'Directory' or 'File'
                             var size = entry.size;
+                            var docName = docPath.substring(docPath.lastIndexOf(path.sep) + 1, docPath.lastIndexOf("."));
+                            var isWithHeader2 = isWithHeader2(docName);
                             var documentXmlDirPath = dir + "/documents";
                             if (!fs.existsSync(documentXmlDirPath)) {
                                 fs.mkdir(documentXmlDirPath);
                             }
 
                             if (entry.path === "word/document.xml") {
-                                var docName = docPath.substring(docPath.lastIndexOf(path.sep) + 1, docPath.lastIndexOf("."));
                                 var unzippedWordDirPath = path.resolve(documentXmlDirPath + "/" + docName + ".xml");
-                                //   console.log(unzippedWordDirPath);
                                 entry.pipe(fs.createWriteStream(unzippedWordDirPath));
                             }
-                            if (entry.path === "word/header1.xml") {
-                                var docName = docPath.substring(docPath.lastIndexOf(path.sep) + 1, docPath.lastIndexOf("."));
+                            else if (!isWithHeader2 && entry.path === "word/header1.xml") {
                                 var unzippedWordDirPath = path.resolve(documentXmlDirPath + "/" + docName + "_header.xml");
-                                //   console.log(unzippedWordDirPath);
                                 entry.pipe(fs.createWriteStream(unzippedWordDirPath));
-                            }else {
+                            }
+                            else if (isWithHeader2 && entry.path === "word/header2.xml") {
+                                var unzippedWordDirPath = path.resolve(documentXmlDirPath + "/" + docName + "_header.xml");
+                                entry.pipe(fs.createWriteStream(unzippedWordDirPath));
+                            }
+                            else {
                                 entry.autodrain();
                             }
 
 
-                        }) .on('error', function (error) {
-                            console.log(error+"  "+docPath)
+                        }).on('error', function (error) {
+                        console.log(error + "  " + docPath)
 
                     })
 
@@ -713,7 +749,7 @@ return headerTables
 module.exports = docxExtactor;
 
 
-if (true) {
+if (false) {
     docxExtactor.extractXmlFilesFromDocXDir("D:\\Total\\docs\\GM MEC Word");
 
 }
