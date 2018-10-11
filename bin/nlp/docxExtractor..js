@@ -10,9 +10,52 @@ var dom = require('xmldom').DOMParser
 
 // utilitary functions
 
-var extractRunText = function (run) {
+var extractRunText = function (run, docRels) {
     var runStr = "";
-    var texts = run.getElementsByTagName("w:t")
+
+
+    var textStr = ""
+  /* for (var i = 0; i < run.childNodes.length; i++) {
+        var child = run.childNodes[i];
+        if (child.tagName == "w:t") {
+            var textStr = ""
+            for (var l = 0; l < child.childNodes.length; l++) {
+                var textChild = child.childNodes[l]
+                if (textChild.data && textChild.data != "")
+                    textStr += textChild.data;
+            }
+            runStr += textStr.replace(/\n/g, "");
+
+        } else if (child.tagName == "a:blip") {
+            runStr += extractImage(run, docRels)
+        }
+
+    }*/
+     var texts = run.getElementsByTagName("w:t")
+
+      for (var k = 0; k < texts.length; k++) {
+          var textStr = ""
+          for (var l = 0; l < texts[k].childNodes.length; l++) {
+              var textChild = texts[k].childNodes[l]
+              if (textChild.data && textChild.data != "")
+                  textStr += textChild.data;
+          }
+          runStr += textStr.replace(/\n/g, "");
+
+
+      }
+
+    var images = run.getElementsByTagName("pic:pic")
+    for (var k = 0; k < images.length; k++) {
+        runStr += "{{image:"+extractImage(images[k],docRels)+"}}"
+    }
+    return runStr;
+
+}
+// provisoire
+var extractMathFormula = function (mathRun) {
+    var runStr = "";
+    var texts = mathRun.getElementsByTagName("m:t")
 
     for (var k = 0; k < texts.length; k++) {
         var textStr = ""
@@ -22,12 +65,30 @@ var extractRunText = function (run) {
                 textStr += textChild.data;
         }
         runStr += textStr.replace(/\n/g, "");
-//console.log(runStr)
+
 
     }
     return runStr;
+}
+
+var extractImage = function (imageRun, docRels) {
+    if (!docRels)
+        return "";
+    var urlPrefix = "./"
+    var imgName = "";
+    var images = imageRun.getElementsByTagName("a:blip")
+
+    for (var k = 0; k < images.length; k++) {
+        var id = images[k].getAttribute("r:embed");
+        if (docRels[id])
+          imgName=docRels[id].target
+
+    }
+    return imgName;
+
 
 }
+
 
 var getAllElementsByTagNameDepth = function (element, tagName) {
     function recurse(element, tagName, result) {
@@ -79,7 +140,7 @@ var getDocPstylesOffsets = function (body) {
                 var styleValue = styles[j].getAttribute("w:val");
                 var htmlStyle = docxExtactor.pStyles[styleValue];
                 if (!htmlStyle) {
-                   ;// console.log("!!!style not  in pStylesMap " + styleValue);
+                    //                console.log("!!!style not  in pStylesMap " + styleValue);
                     // htmlStyle=styleValue
                 }
                 else {
@@ -100,7 +161,8 @@ var docxExtactor = {
         RfrentielTexte1avecpuces: "ul",
         Paragraphedeliste: "ol",
         Listepuces2: "ul2",
-      //  Listepuces2: "ul",
+        RfrentielTexte2: "ul2",
+        //  Listepuces2: "ul",
         Titre1: "h1",
         Titre2: "h2",
         Titre3: "h4",
@@ -124,7 +186,7 @@ var docxExtactor = {
 // w:tbl parents=w:body
 
 
-    extractContentJson: function (doc) {
+    extractContentJson: function (doc, docRels) {
 
         /******************  internal functions*******************************/
         function aggregateTables() {
@@ -175,8 +237,16 @@ var docxExtactor = {
 
                 if (paragraphStyle) {
 
-                    if(paragraphStyle == "ul2" ) {
- var xx=json[index-1];
+                    if (paragraphStyle == "ul2") {
+                        var xx = json[index - 1];
+
+                    }
+                    if (paragraphStyle == "ul") {
+                        var xx = json[index - 1];
+
+                    }
+                    if (paragraph.text.indexOf("Stock") > -1) {
+                        var xx = json[index - 1];
 
                     }
 
@@ -184,7 +254,7 @@ var docxExtactor = {
                         var beginListStr = ""
                         if (previousParagraphStyle != "ul" && previousParagraphStyle != "ol" && paragraphStyle != "ul2")
                             beginListStr = "<" + paragraphStyle + ">"
-                        if (previousParagraphStyle==null || previousParagraphStyle == "ul" && paragraphStyle == "ul2")
+                        if ((previousParagraphStyle == null || previousParagraphStyle == "ul") && paragraphStyle == "ul2")
                             beginListStr = "<" + "ul" + ">"
                         paragraph.text = beginListStr + "<li>" + paragraph.text + "</li>"
 
@@ -198,14 +268,14 @@ var docxExtactor = {
                 if (previousParagraphStyle == "ul2" && paragraphStyle == "ul") {// close ul2 or li
                     json2[json2.length - 1].text += "</" + "ul" + ">";
                 }
-                if (previousParagraphStyle !=null && (previousParagraphStyle == "ul" || paragraphStyle == "ul2" || previousParagraphStyle == "ol") && paragraphStyle != previousParagraphStyle) {// close ul or li
+                if (previousParagraphStyle != null && (previousParagraphStyle == "ul" || paragraphStyle == "ul2" || previousParagraphStyle == "ol") && paragraphStyle != previousParagraphStyle) {// close ul or li
 
                     json2[json2.length - 1].text += "</" + previousParagraphStyle + ">";
                 }
 
 
-                previousParagraphStyle = paragraphStyle;
-
+                if (paragraphStyle)
+                    previousParagraphStyle = paragraphStyle;
 
 
                 // on ajoute le texte des puces "ul" ou "ol"  au précédent paragraphe
@@ -244,7 +314,7 @@ var docxExtactor = {
                 if (!paragraph.tocId && !currentParagraph && paragraph.text != "") {// pas dans TOC
                     json2[0].paragraphs.push({text: paragraph.text})
                 }
-                else if (paragraph.tocId) {
+                else if (paragraph.tocId) {//chapitre
                     // if(paragraph.text=="" && paragraph.title=="")
                     // return;
                     currentParagraph = {tocId: paragraph.tocId, title: paragraph.title, paragraphs: [],};
@@ -262,15 +332,24 @@ var docxExtactor = {
                     json2.push(currentParagraph)
 
                 }
-                else if (!paragraph.tocId) {
+                else if (!paragraph.tocId) {//paragraphe simple
                     var obj = {}
 
                     if (paragraph.text.trim() != "")
                         obj.text = paragraph.text
-                    if (paragraph.tableIndices)
-                        paragraph.tableIndices = paragraph.tableIndices
-                    if (currentParagraph)
+
+                    if (currentParagraph) {
                         currentParagraph.paragraphs.push(obj);
+                        if (paragraph.tableIndices) {
+                            if (!currentParagraph.tableIndices)
+                                currentParagraph.tableIndices = [];
+                            paragraph.tableIndices.forEach(function (indice) {
+                                currentParagraph.tableIndices.push(indice);
+                            })
+
+
+                        }
+                    }
                 }
 
 
@@ -282,7 +361,6 @@ var docxExtactor = {
         }
 
         /******************  end internal functions*******************************/
-
 
 
 
@@ -356,16 +434,18 @@ var docxExtactor = {
 
                     var runs = child.getElementsByTagName("w:r")
                     for (var k = 0; k < runs.length; k++) {
-                        runStr += extractRunText(runs[k])
+                        runStr += extractRunText(runs[k], docRels)
 
 
                     }
                 }
-                if (child.tagName == "w:r") {
-                    runStr = extractRunText(child)
-
-
+                if (child.tagName == "m:oMath") {//math formulas
+                    runStr = extractMathFormula(child);
                 }
+                if (child.tagName == "w:r") {
+                    runStr = extractRunText(child, docRels);
+                }
+
 
                 if (obj.status == "bookmark") {
                     obj.title += runStr;
@@ -387,7 +467,7 @@ var docxExtactor = {
 
 
         json = aggregateTables(json);
-        // console.log(JSON.stringify(json,null,2))
+        //  console.log(JSON.stringify(json, null, 2))
         var json2 = json
         json = setStyles(json);
         // console.log(JSON.stringify(json2,null,2))
@@ -424,6 +504,28 @@ var docxExtactor = {
         return headerTables
     },
 
+    getRelsMap: function (filePath, types) {
+
+        var docRels = {};//id and relative url
+
+        var xmlStr = "" + fs.readFileSync(filePath);
+        var doc = new dom().parseFromString(xmlStr);
+        var relations = doc.documentElement.getElementsByTagName("Relationship");
+        for (var i = 0; i < relations.length; i++) {
+            var obj = {
+                id: relations[i].getAttribute("Id"),
+                target: relations[i].getAttribute("Target"),
+                type: relations[i].getAttribute("Type")
+            }
+            obj.type = obj.type.substring(obj.type.lastIndexOf("/") + 1)
+            if (!types || types.indexOf(type))
+                docRels[obj.id] = obj;
+        }
+        return docRels;
+
+
+    }
+    ,
     extractDocTables: function (doc) {
         var jsonTables = [];
         var body = doc.documentElement.getElementsByTagName("w:body")[0];
@@ -452,21 +554,7 @@ var docxExtactor = {
             for (var y = 0; y < cells.length; y++) {
                 var cell = {};
                 row.push(cell);
-                /*    var str = "";
-                    var texts = getAllElementsByTagNameDepth(cells[y], "w:t");
-                    for (var z = 0; z < texts.length; z++) {
-                        for (var w = 0; w < texts[z].childNodes.length; w++) {
-                            var node = texts[z].childNodes[w];
-                            if (node && node.data)
-                                str += node.data;
-                        }
-
-
-                    }*/
-                cell.text = extractRunText
-
-
-                (cells[y]);
+                cell.text = extractRunText(cells[y]);
             }
 
 
@@ -486,8 +574,8 @@ var docxExtactor = {
 
 
         function extractTocKey(tocText) {
-            if(tocText.indexOf("4.3")>-1){
-                var xx=2
+            if (tocText.indexOf("4.3") > -1) {
+                var xx = 2
             }
             var regex = /(\d+\.?)/g
             var array;
@@ -532,9 +620,9 @@ var docxExtactor = {
         tocArray.forEach(function (obj, index) {
             var key = extractTocKey(obj.text)
             var title = obj.text.substring(key.length);
-          var key = "#" +key;
-            if(key.charAt(key.length-1)!="."){//exemple     1 -	Reference documents
-                key+=".";
+            var key = "#" + key;
+            if (key.charAt(key.length - 1) != ".") {//exemple     1 -	Reference documents
+                key += ".";
             }
 
 
@@ -543,15 +631,14 @@ var docxExtactor = {
         })
 
 
-
 //set parents
         for (var key in tocMap) {
-            var p = key.substring(0,key.length-1).lastIndexOf(".")
+            var p = key.substring(0, key.length - 1).lastIndexOf(".")
             if (p < 0) {
                 tocMap[key].parent = "#";
                 continue;
             }
-            var key2 = key.substring(0, p+1);
+            var key2 = key.substring(0, p + 1);
             var parent = tocMap[key2];
             if (parent) {
                 tocMap[key].parentAnchor = parent.anchor
@@ -679,9 +766,13 @@ var docxExtactor = {
                             var size = entry.size;
                             var docName = docPath.substring(docPath.lastIndexOf(path.sep) + 1, docPath.lastIndexOf("."));
                             var isWithHeader2 = isWithHeader2(docName);
-                            var documentXmlDirPath = dir + "/documents";
+                            var documentXmlDirPath = dir + "/documents/";
                             if (!fs.existsSync(documentXmlDirPath)) {
                                 fs.mkdir(documentXmlDirPath);
+                            }
+                            var documentXmlMediaDirPath = dir + "/documents/media";
+                            if (!fs.existsSync(documentXmlMediaDirPath)) {
+                                fs.mkdir(documentXmlMediaDirPath);
                             }
 
                             if (entry.path === "word/document.xml") {
@@ -696,6 +787,18 @@ var docxExtactor = {
                                 var unzippedWordDirPath = path.resolve(documentXmlDirPath + "/" + docName + "_header.xml");
                                 entry.pipe(fs.createWriteStream(unzippedWordDirPath));
                             }
+                            else if (entry.path === "word/_rels/document.xml.rels") {
+                                var unzippedWordDirPath = path.resolve(documentXmlDirPath + "/" + docName + "_rels.xml");
+                                entry.pipe(fs.createWriteStream(unzippedWordDirPath));
+                            }
+                            else if (entry.path.indexOf("word/media") > -1) {
+                                var docMediaDir = documentXmlMediaDirPath + "/" + docName;
+                                if (!fs.existsSync(docMediaDir))
+                                    fs.mkdirSync(docMediaDir);
+                                var name = entry.path.substring(entry.path.lastIndexOf("/") + 1)
+                                var mediaPath = path.resolve(docMediaDir + "/" + name);
+                                entry.pipe(fs.createWriteStream(mediaPath));
+                            }
                             else {
                                 entry.autodrain();
                             }
@@ -704,14 +807,8 @@ var docxExtactor = {
                         }).on('error', function (error) {
                         console.log(error + "  " + docPath)
 
-                    })
-
-                    ;
+                    });
                 }
-
-
-                // var unzippedDocxDir=
-
             })
             console.log("DONE");
 
@@ -747,7 +844,6 @@ var docxExtactor = {
 }
 
 module.exports = docxExtactor;
-
 
 if (false) {
     docxExtactor.extractXmlFilesFromDocXDir("D:\\Total\\docs\\GM MEC Word");
