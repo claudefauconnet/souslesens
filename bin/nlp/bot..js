@@ -216,12 +216,13 @@ var bot = {
                 "imageSize": "medium",
                 "images": []
             }
-
+            //return imageSet;
          //   text="{{image:media/image10.emf}}"
 
             var imageArray;
-          while((imageArray = /{{image:(.*)}}/.exec(text))!=null){
-
+         // while((imageArray = /{{image:(.*)}}/.exec(text))!=null){
+            imageArray = /{{image:(.*)}}/.exec(text);
+            if(imageArray!=null){
           var url = imageArray[1].replace("media/", bot.config.imagesServerUrl+""+fileName + "/" );
 
               imageSet.images.push( {
@@ -252,7 +253,7 @@ var bot = {
 
         var imageSet = extractImages(sourceJson.paragraph.text,sourceJson.fileName);
         if(imageSet.images.length>0){
-            body[0].items[2].text =imageSet;
+            body[0].items[2]=imageSet;
         }
         else{
             body[0].items.splice(2, 1);// images
