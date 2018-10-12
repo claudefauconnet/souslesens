@@ -746,7 +746,7 @@ var docxExtactor = {
             var docxFiles = fs.readdirSync(dir)
             docxFiles.forEach(function (docPath) {
                 var docPath = path.resolve(dir + "/" + docPath);
-                if (docPath.indexOf(".docx") > -1) {
+                if (docPath.indexOf(".docx") > -1  || docPath.indexOf(".docm") > -1) {
                     fs.createReadStream(docPath)
                         .pipe(unzip.Parse())
                         .on('entry', function (entry) {
@@ -846,7 +846,7 @@ var docxExtactor = {
 module.exports = docxExtactor;
 
 if (false) {
-    docxExtactor.extractXmlFilesFromDocXDir("D:\\Total\\docs\\GM MEC Word");
+    docxExtactor.extractXmlFilesFromDocXDir("D:\\Total\\docs\\GS MEC Word");
 
 }
 if (false) {

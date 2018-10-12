@@ -226,6 +226,7 @@ var docExtractorToCsv = {
         }
 
         var str = "id\tFile\tdocTitle\tpurpose\tscope\t\tparentChapters\tChapterKey\tChapter\thtmlText\tbotText\n";
+        var botStr=""
         var xmlPaths = fs.readdirSync(dir)
         var jsonTables = [];
         var allTables = [];
@@ -263,6 +264,7 @@ var docExtractorToCsv = {
 
                 var startId = Math.round((Math.random() * 100000))
                 var botObj = bot.getTemplate();
+
                 jsonContent.forEach(function (chapter, index) {
                     if (!chapter.key)
                         chapter.key = "";
@@ -285,8 +287,10 @@ var docExtractorToCsv = {
                                 chapter: chapter,
                                 paragraph: paragraph
                             }
-                            var botText = bot.addParagraph(botObj, botSourceObj);
+                            var botText = bot.getBotJsonText( botSourceObj);
+                            botStr+= botText+"\n";
                            // console.log(botText + "\n");
+
                             str += (startId++) + "\t" + rooTxt + paragraphText + "\t" + botText + "\n";
 
                         }
@@ -301,6 +305,7 @@ var docExtractorToCsv = {
         //  console.log(str)
         fs.writeFileSync(dir + "/allDocsContent2.html", str)
         fs.writeFileSync(dir + "/allDocsContent2.csv", str)
+        fs.writeFileSync(dir + "/bot.Content.json", botStr)
     },
 
     readDocumentsInDir: function (dir, callback) {
@@ -369,6 +374,7 @@ module.exports = docExtractorToCsv;
 
 var dir = "D:\\Total\\docs\\GM MEC Word\\documents\\test"
 //dir = "D:\\Total\\docs\\GM MEC Word\\documents"
+//dir = "D:\\Total\\docs\\GS MEC Word\\documents"
 if (true) {
     docExtractorToCsv.jsonContentsToCsv(dir);
 }
