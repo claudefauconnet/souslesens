@@ -300,7 +300,7 @@ var docxExtactor = {
             //si pas de run et pas de formule c'est un saut de ligne qui délimite un paragraphe
             if(paragraphs[i].getElementsByTagName("w:r").length==0 && paragraphs[i].getElementsByTagName("m:oMath").length==0 ){
 
-                json.push({paragraphIndex:i,isLineBreak:true})
+                json.push({paragraphIndex:i,isLineBreak:true,parentTocId:currentTocId})
                 continue;
             }
 
@@ -376,13 +376,13 @@ var docxExtactor = {
             }
 
         }
-
-       var json=docxParagraphAggregator.groupParagraphs(json)
+        json = setParagraphTablesContent(json, jsonTables)
+       json=docxParagraphAggregator.groupParagraphs(json)
         console.log(JSON.stringify(json,null,2))
 
 
         json = setStyles(json);
-        json = setParagraphTablesContent(json, jsonTables)
+
         //on a récupéré toutes les données des paragraphes avant de procéder à l'aggregation des paragraphes dans les chapitres
      //   var json = docxParagraphAggregator.aggregateParagraphs(json);
 
@@ -441,7 +441,33 @@ var docxExtactor = {
 
     }
     ,
+    extractTable: function (tblElt) {
+
+
+    var table = {rows: []};
+
+
+    var columns = tblElt.getElementsByTagName("w:tr");
+    for (var k = 0; k < columns.length; k++) {
+        var row = [];
+        table.rows.push(row)
+        var cells = columns[k].getElementsByTagName("w:tc");
+
+        for (var y = 0; y < cells.length; y++) {
+           var  cell = extractRunText(cells[y]);
+            row.push(cell);
+
+        }
+
+
+    }
+    return table;
+    // console.log(JSON.stringify(json,null,2))
+},
     extractDocTables: function (doc) {
+
+
+
         var jsonTables = [];
         var body = doc.documentElement.getElementsByTagName("w:body")[0];
         var tables = body.getElementsByTagName("w:tbl");
@@ -454,29 +480,6 @@ var docxExtactor = {
     },
 
 
-    extractTable: function (tblElt) {
-
-
-        var table = {rows: []};
-
-
-        var columns = tblElt.getElementsByTagName("w:tr");
-        for (var k = 0; k < columns.length; k++) {
-            var row = [];
-            table.rows.push(row)
-            var cells = columns[k].getElementsByTagName("w:tc");
-
-            for (var y = 0; y < cells.length; y++) {
-                var cell = {};
-                row.push(cell);
-                cell.text = extractRunText(cells[y]);
-            }
-
-
-        }
-        return table;
-        // console.log(JSON.stringify(json,null,2))
-    },
 
 
     /**

@@ -183,36 +183,7 @@ var docExtractorToCsv = {
             return str;
         }
 
-        //add lines of table text to jscontent after each line containing tables
-        var addTablesToChapters = function (jsonContent) {
-            jsonContent.forEach(function (chapter, index) {
-                if (chapter.tableIndices) {
-                    chapter.tableIndices.forEach(function (tableIndice) {
-                        var table = jsonContent.tables[tableIndice];
-                        if (table) {
-                            var tableText = docExtractorToCsv.jsonTableToHtml(table)
-                            jsonContent[index].paragraphs.push({text: tableText})
-                        }
 
-
-                    })
-                }
-
-                /*  chapter.forEach(function (paragraph, index) {
-                var table = jsonContent.tables[tableIndice];
-                   if (table) {
-                       var tableText = docExtractorToCsv.jsonTableToHtml(table)
-                       jsonContent[index].paragraphs.push({text: tableText})
-                   }
-
-                }*/
-
-            })
-
-            return jsonContent;
-
-
-        }
 
         // le titre est dans la dernière ligne du tableau du fichier header1.xml
         var extractDocTitle = function (headerTables) {
