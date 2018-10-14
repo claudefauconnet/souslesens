@@ -48,8 +48,9 @@ var docxParagraphAggregator = {
                 line.forEach(function (cell, indexCell) {
                     lineObj.values[colNames[indexCell]] = cell;
                 })
-                var text = "{" + JSON.stringify(lineObj) + "}"
-                paragraphs.push({text: text, parentTocId: tocId})
+
+              //  var text = "{" + lineObj + "}"
+                paragraphs.push(JSON.stringify({text: lineObj, parentTocId: tocId}))
             })
             return paragraphs;
         }
@@ -68,7 +69,7 @@ var docxParagraphAggregator = {
 
             })
             var text = JSON.stringify(tableObj)
-            paragraphs.push( "{" +{text: text, parentTocId: tocId}+ "}")
+            paragraphs.push("{" + {text: text, parentTocId: tocId} + "}")
             return paragraphs;
         }
 
@@ -95,10 +96,10 @@ var docxParagraphAggregator = {
      * @param tocId
      */
 
-    setBulletsParagraphs: function (currentGroupedParagraph,bulletparagraphs, split, tocId) {
+    setBulletsParagraphs: function (currentGroupedParagraph, bulletparagraphs, split, tocId) {
 
 
-return currentGroupedParagraph
+        return currentGroupedParagraph
 
     },
 
@@ -161,10 +162,10 @@ return currentGroupedParagraph
             };
         }
 
-        function isBulletParagraph(paragraph){
-            if( !paragraph.style)
+        function isBulletParagraph(paragraph) {
+            if (!paragraph.style)
                 return false;
-           return ["ol","ul","ul2"].indexOf(paragraph.style)>-1;
+            return ["ol", "ul", "ul2"].indexOf(paragraph.style) > -1;
         }
 
 
@@ -211,7 +212,7 @@ return currentGroupedParagraph
                     } else if (isBulletCurrentParagraph) {
                         currentBulletParagraphs.push(paragraph)
                     }
-                   else {
+                    else {
                         if (currentGroupedParagraph.text.length > 0)
                             currentGroupedParagraph.text += intraParagraphSeparator;
                         currentGroupedParagraph.text += paragraph.text;
@@ -224,33 +225,50 @@ return currentGroupedParagraph
                     }
 
                     // process all bulletparagraphs a la fin des paragraphe bullets ou à la fin du chapitre
-            if (currentBulletParagraphs.length > 0  && (!isBulletCurrentParagraph || indexParagraph==jsonParagraphs.length-1  || !isBulletParagraph(jsonParagraphs[indexParagraph+1]))) {
+                    if (currentBulletParagraphs.length > 0 && (!isBulletCurrentParagraph || indexParagraph == jsonParagraphs.length - 1 || !isBulletParagraph(jsonParagraphs[indexParagraph + 1]))) {
                         // on split les bullets si elles sont en tête de chapitre sinon on les aggrege au paragraphe courant
                         var split = currentChapter.paragraphs.length == 0;
-                var bulletArray=[]
-                currentBulletParagraphs.forEach(function (bulletsParagraph) {
-                    if (split) {
-                        if (currentGroupedParagraph) {
-                            currentChapter.paragraphs.push(bulletsParagraph)
+                        var bulletArray = []
+                        currentBulletParagraphs.forEach(function (bulletsParagraph) {
+                            if (split) {
+                                if (currentGroupedParagraph) {
+                                    currentChapter.paragraphs.push(bulletsParagraph)
+                                }
+                                currentGroupedParagraph = getNewGroupedParagraph(paragraph.style);
+                                if (currentGroupedParagraph.text.length > 0)
+                                    currentGroupedParagraph.text += intraParagraphSeparator;
+                                currentGroupedParagraph.text += bulletsParagraph.text;
+                                currentGroupedParagraph.parentTocId = currentChapter.tocId;
+
+                            } else {//on les aggrege au paragraphe courant
+                                bulletArray.push({type: paragraph.style, text: bulletsParagraph.text})
+
+                            }
+
+
+                        })
+                        if (bulletArray.length > 0) {
+                            if (currentGroupedParagraph.text.length > 0)
+                                currentGroupedParagraph.text += intraParagraphSeparator;
+                            var bulletText = "";
+
+                            if (!currentGroupedParagraph.bullets) {
+                                currentGroupedParagraph.bullets = [];
+                                var offset = currentGroupedParagraph.text.length
+                                bulletArray.forEach(function (bullet) {
+                                    currentGroupedParagraph.bullets.push({
+                                        type: bullet.type,
+                                        offset: offset,
+                                        text: bullet.text
+                                    })
+                                    offset += bullet.text.length;
+                                    //   bulletText = "!!" + JSON.stringify(bullet) + "!!"
+                                })
+                            }
+var xx= currentGroupedParagraph.text;
+
+                          //  currentGroupedParagraph.text += bulletText;//"{"+JSON.stringify(bulletArray)+"}";
                         }
-                        currentGroupedParagraph = getNewGroupedParagraph(paragraph.style);
-                        if (currentGroupedParagraph.text.length > 0)
-                            currentGroupedParagraph.text += intraParagraphSeparator;
-                        currentGroupedParagraph.text += bulletsParagraph.text;
-                        currentGroupedParagraph.parentTocId = currentChapter.tocId;
-
-                    } else {//on les aggrege au paragraphe courant
-                        bulletArray.push({type:paragraph.style,text: bulletsParagraph.text})
-
-                    }
-
-
-                })
-                if( bulletArray.length>0){
-                    if (currentGroupedParagraph.text.length > 0)
-                        currentGroupedParagraph.text += intraParagraphSeparator;
-                    currentGroupedParagraph.text +="{"+JSON.stringify(bulletArray)+"}";
-                }
                     }
 
 

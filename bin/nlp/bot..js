@@ -95,33 +95,67 @@ var bot = {
 
 
         function getEmbeddedJsons(text) {
-            var jsons = [];
+            var bullets = [];
 
-            var regex = /[^{^}]{(.*)}/gm;
+         var regex = /[^{^}]{(.*)}/gm;
+          var regex = /!!(.*)!!/gm;
+
             var array = [];
-            while ((array =regex.exec(text)) != null) {
-                if (array.length >0) {
+            while ((array = regex.exec(text)) != null) {
+                if (array.length > 0) {
                     var jsonStr = array[1];
-                    console.log(jsonStr);
-                    jsons.push({start: 0, end: xx, json: JSON.parse(jsonStr)})
+                  //  console.log(jsonStr)
+                    try {
+                        var jsonArray = JSON.parse(jsonStr);
+
+                    if (jsonArray.forEach) {
+
+                        jsonArray.forEach(function (line) {
+                            bullets.push({start: array.index, json: line})
+                        })
+                    }
+                    }catch(e){
+                        console.log(text)
+                        console.log(e);
+                    }
+
                 }
             }
-            return jsons;
+            return bullets;
         }
 
-        function formatBullets(text) {
-            var bulletJsons = getEmbeddedJsons(text)
+        function formatBullets(paragraph) {
+        //    var bullets = getEmbeddedJsons(paragraph.text)
+            var bullets=paragraph.bullets;
+            if (!bullets || bullets.length == 0) {
+                return paragraph.text;
+            }
 
 
-            //format bullets
-            /*
-            {[{"type":"ol","text":"Rotors, which have exhibited high vibrations as they pass through their critical speed."},{"type":"ol","text":"Rotors, which accelerates slowly through their critical speed during operation."},{"type":"ol","text":"Rotors which are running on or near their critical speed."},{"type":"ol","text":"Rotors, which are very sensitive to unbalance."},{"type":"ol","text":"Rotors for equipment in extremely critical service."},{"type":"ol","text":"Rotors going to inaccessible locations, such as offshore."},{"type":"ol","text":"Very long and flexible rotors."},{"type":"ol","text":"Places where a critical rotor cannot be run in its intended casing prior to installation."}]}
-             */
+            var bulletsText = "";
+            var bulletPrefix = "- ";
+            if (paragraph.style = "ol") {
+                bulletPrefix = "- ";
+            }
+            var start = 0;
+            bullets.forEach(function (bullet, index) {
+                if (index == 0)
+                    start = bullet.offset;
+                bulletsText += bulletPrefix + bullet.text + "\n";
+            })
 
-            //format tables
-
+            return paragraph.text.substring(0, start) + bulletsText + paragraph.text.substring(start + 1)
 
         }
+
+
+        //format bullets
+        /*
+        {[{"type":"ol","text":"Rotors, which have exhibited high vibrations as they pass through their critical speed."},{"type":"ol","text":"Rotors, which accelerates slowly through their critical speed during operation."},{"type":"ol","text":"Rotors which are running on or near their critical speed."},{"type":"ol","text":"Rotors, which are very sensitive to unbalance."},{"type":"ol","text":"Rotors for equipment in extremely critical service."},{"type":"ol","text":"Rotors going to inaccessible locations, such as offshore."},{"type":"ol","text":"Very long and flexible rotors."},{"type":"ol","text":"Places where a critical rotor cannot be run in its intended casing prior to installation."}]}
+         */
+
+        //format tables
+
 
         function formatTables(text) {
 
@@ -136,13 +170,14 @@ var bot = {
         }
 
         body[0].items[0].text = removeHtmlTags(sourceJson.chapter.title);
+console.log(sourceJson.paragraph.text)
+if(sourceJson.paragraph.text.indexOf("The correction planes are between bearings")>-1)
+    var xxx=3;
+        sourceJson.paragraph.text = formatBullets(sourceJson.paragraph);
+       // sourceJson.paragraph.text = formatTables(sourceJson.paragraph);
 
-        var text = sourceJson.paragraph.text;
-        text = text.replace(/<br>/gm, "\n")
-        text = formatBullets(text);
-        text = formatTables(text);
-
-        body[0].items[1].text = text;
+        sourceJson.paragraph.text = sourceJson.paragraph.text.replace(/<br>/gm, "\n")
+        body[0].items[1].text = sourceJson.paragraph.text;
 
 
         var docTitleObj = {
