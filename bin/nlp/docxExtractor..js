@@ -48,7 +48,7 @@ var extractRunText = function (run, docRels) {
 
     var images = run.getElementsByTagName("pic:pic")
     for (var k = 0; k < images.length; k++) {
-        runStr += "{{image:" + extractImage(images[k], docRels) + "}}"
+        runStr += "{{\"image\":\"" + extractImage(images[k], docRels) + "\"}}"
     }
     return runStr;
 
@@ -377,27 +377,9 @@ var docxExtactor = {
 
         }
         json = setParagraphTablesContent(json, jsonTables)
-       json=docxParagraphAggregator.groupParagraphs(json)
-        console.log(JSON.stringify(json,null,2))
-
-
         json = setStyles(json);
-
-        //on a récupéré toutes les données des paragraphes avant de procéder à l'aggregation des paragraphes dans les chapitres
-     //   var json = docxParagraphAggregator.aggregateParagraphs(json);
-
-
-        // console.log("********************************************")
-
-        /*  json.forEach(function (chapter) {
-              if (chapter.tableIndices) {
-                  chapter.tableIndices.forEach(function (tableIndice, index) {
-                      jsonTables[tableIndice].paragraphTitle = chapter.title;
-                      jsonTables[tableIndice].tocId = chapter.tocId;
-                  })
-
-              }
-          })*/
+       json=docxParagraphAggregator.groupParagraphs(json)
+   //     console.log(JSON.stringify(json,null,2))
 
 
         json.tables = jsonTables

@@ -1,86 +1,5 @@
 var intraParagraphSeparator = "<br>"
 var docxParagraphAggregator = {
-    /**
-     *
-     * copie le contenu du paragraphe( text +[tableau] dans le parapgrphe précédent et le supprime
-     *
-     * @param json
-     * @param index
-     * @param withArray   is true aggrege aussi les tableaux du paragraphe
-     */
-
-    aggregateToPreviousParapagraph: function (json, index, withArray) {
-        if (json.length > index || index == 0)
-            return console.log("!!!!!!error  aggregateToPreviousParapagraph : index > json.length or index==0")
-        if (!json[index - 1].text)
-            json[index - 1].text = "";
-        json[index - 1].text += json[index].text;
-        if (withArray) {
-            if (json[index - 1].tableIndices) {
-                json[index - 1].tableIndices = [];
-            }
-            json[index].tableIndices.forEach(function (tableIndice) {
-                json[index - 1].push(tableIndice)
-            })
-
-        }
-        return json
-
-
-    },
-
-
-    /**
-     *
-     *
-     * pour chaque tableau
-     *
-     * si le paragraphe du  tableau contient un texte en plus du tableau on insère le tableau après le texte
-     * si le paragraphe du  tableau ne contient pas de texte et le nombre de colonnes est <3 on considere le tableau comme tableau cosmétique et on l'écalte en plusieurs paragraphes
-     *
-     *
-     *
-     *
-     *
-     *
-     * @param jsonParagraphs
-     * @param jsonTables
-     * @returns {*}
-     */
-
-
-
-
-
-
-
-
-    aggregateTables: function (jsonParagraphs, jsonTables) {
-
-        //add lines of table text to jscontent after each line containing tables
-        var addTablesToChapters = function (jsonContent) {
-            jsonContent.forEach(function (chapter, index) {
-                if (chapter.tableIndices) {
-                    chapter.tableIndices.forEach(function (tableIndice) {
-                        var table = jsonContent.tables[tableIndice];
-                        if (table) {
-                            var tableText = docExtractorToCsv.jsonTableToHtml(table)
-                            jsonContent[index].paragraphs.push({text: tableText})
-                        }
-
-
-                    })
-                }
-
-            })
-
-            return jsonContent;
-
-
-        }
-
-
-    },
 
 
     /**
@@ -93,7 +12,7 @@ var docxParagraphAggregator = {
      * @param table
      * @return an array of formated paragraphs
      */
-    getTableParagraph: function (table, split, tocId) {
+    getTableParagraphs: function (table, split, tocId) {
 
         function shouldSplitTable() {
             var maxAvgCellLengthTosplitTable = 20
@@ -148,8 +67,8 @@ var docxParagraphAggregator = {
                 tableObj.rows.push(lineObj)
 
             })
-            var text = "{" + JSON.stringify(tableObj) + "}"
-            paragraphs.push({text: text, parentTocId: tocId})
+            var text = JSON.stringify(tableObj)
+            paragraphs.push( "{" +{text: text, parentTocId: tocId}+ "}")
             return paragraphs;
         }
 
@@ -163,16 +82,75 @@ var docxParagraphAggregator = {
             return formatTable();
 
     },
+    /**
+     *
+     *
+     *    pour les paragraphes bullet points (puces)
+     *   - si le paragraphe contient  du  texte avant les bullet points  on groupe tous du les bullet points dans le meme groupedParagraphs
+     *   -sinon on les sépare en creant un groupedParagraphs par bulletpoint paragraph
+     *
+     *
+     * @param paragraph
+     * @param split
+     * @param tocId
+     */
+
+    setBulletsParagraphs: function (currentGroupedParagraph,bulletparagraphs, split, tocId) {
+
+
+return currentGroupedParagraph
+
+    },
+
+
+    /**
+     *
+     *Groupe les paragraphes à l'intérieur des chapitres dans des groupedParagraphs
+     *
+     * un chapitre est un paragraphe qui a un attribut tocId
+     *
+     * entre deux chaptitres on groupe dans le meme groupedParagraph les paragraphes en les séparant par un <br> sauf si le paragraphe courant a un attribut linBreak=true,
+     * dans ce cas on commence un nouveau  groupedParagraphs au sein du chapitre
+     *
+     *
+     * pour les paragraphes bullet points (puces)
+     *   - si le chapitre contient  du  texte avant les bullet points  on groupe tous du les bullet points dans le meme groupedParagraphs
+     *   -sinon on les sépare en creant un groupedParagraphs par bulletpoint paragraph
+     *
+     *
+     *
+     *
+     * pour chaque tableau  associé à un paragrphe:
+     *  - si le paragraphe auquel est rattaché le tableau contient un texte en plus du tableau on insère le tableau après le texte dans le meme groupedParagraphs
+     *  - si le paragraphe du  tableau ne contient pas de texte et le nombre de colonnes est <3 on considere le tableau comme tableau cosmétique et on l'écalte en plusieurs paragraphes
+     *
+     *
+     *
+     *
+     *
+     *
+     * @param jsonParagraphs
+     * @param jsonTables
+     * @returns {*}
+     */
+
 
     groupParagraphs: function (jsonParagraphs) {
-        function getNewGroupedParagraph() {
-            return {
+        var currentBulletParagraphs = [];
+
+        function getNewGroupedParagraph(style) {
+            currentBulletParagraphs = []
+            var obj = {
                 "text": "",
                 "paragraphIndexes": [],
                 "startOffset": 0,
                 "endOffset": 0,
                 "parentTocId": ""
+
             };
+            if (style)
+                obj.style = style;
+            return obj;
         }
 
         function getNewChapter() {
@@ -183,44 +161,60 @@ var docxParagraphAggregator = {
             };
         }
 
+        function isBulletParagraph(paragraph){
+            if( !paragraph.style)
+                return false;
+           return ["ol","ul","ul2"].indexOf(paragraph.style)>-1;
+        }
+
 
         var groupedJson = []
         var currentChapter;
+
         var currentGroupedParagraph = getNewGroupedParagraph();
-        jsonParagraphs.forEach(function (paragraph, index) {
-            if (index == 71) {
+        jsonParagraphs.forEach(function (paragraph, indexParagraph) {
+            var isBulletCurrentParagraph = isBulletParagraph(paragraph);
+
+            if (indexParagraph == 71) {
                 xx = 2
                 console.log(currentChapter.title)
             }
 
-            if (index == 0) {
+            if (indexParagraph == 0) {
                 currentChapter = getNewChapter();
                 currentChapter.title = "noChapter";
                 currentChapter.tocId = "0";
                 groupedJson.push(currentChapter);
             }
-            else if (paragraph.tocId) {
+            else if (paragraph.tocId) {// paragraph is a chapter
                 currentChapter.paragraphs.push(currentGroupedParagraph)
 
                 currentChapter = getNewChapter();
-                currentGroupedParagraph = getNewGroupedParagraph()
+                currentGroupedParagraph = getNewGroupedParagraph(paragraph.style)
                 currentChapter.title = paragraph.title;
                 currentChapter.tocId = paragraph.tocId;
                 groupedJson.push(currentChapter);
             }
             else {
+
                 if (paragraph.parentTocId == currentChapter.tocId || currentChapter.tocId == "0") {
 
-
-                    if (paragraph.isLineBreak) {// si pas de line break on aggrège les paragraphes en un seul sinon on ajoute un paragraphe
+                    // si pas de line break on aggrège les paragraphes en un seul sinon on ajoute un paragraphe
+                    if (paragraph.isLineBreak) {
                         if (currentGroupedParagraph) {
                             currentChapter.paragraphs.push(currentGroupedParagraph)
                         }
-                        currentGroupedParagraph = getNewGroupedParagraph()
+                        currentGroupedParagraph = getNewGroupedParagraph(paragraph.style);
 
 
-                    } else {
-                        currentGroupedParagraph.text += intraParagraphSeparator + paragraph.text;
+                        // si bulletPoints accumule bulletparagraphs
+                    } else if (isBulletCurrentParagraph) {
+                        currentBulletParagraphs.push(paragraph)
+                    }
+                   else {
+                        if (currentGroupedParagraph.text.length > 0)
+                            currentGroupedParagraph.text += intraParagraphSeparator;
+                        currentGroupedParagraph.text += paragraph.text;
                         currentGroupedParagraph.paragraphIndexes.push(paragraph.paragraphIndex)
                         if (currentGroupedParagraph.startOffset == 0)
                             currentGroupedParagraph.startOffset = paragraph.startOffset;
@@ -228,13 +222,46 @@ var docxParagraphAggregator = {
                         currentGroupedParagraph.parentTocId = paragraph.parentTocId;
 
                     }
+
+                    // process all bulletparagraphs a la fin des paragraphe bullets ou à la fin du chapitre
+            if (currentBulletParagraphs.length > 0  && (!isBulletCurrentParagraph || indexParagraph==jsonParagraphs.length-1  || !isBulletParagraph(jsonParagraphs[indexParagraph+1]))) {
+                        // on split les bullets si elles sont en tête de chapitre sinon on les aggrege au paragraphe courant
+                        var split = currentChapter.paragraphs.length == 0;
+                var bulletArray=[]
+                currentBulletParagraphs.forEach(function (bulletsParagraph) {
+                    if (split) {
+                        if (currentGroupedParagraph) {
+                            currentChapter.paragraphs.push(bulletsParagraph)
+                        }
+                        currentGroupedParagraph = getNewGroupedParagraph(paragraph.style);
+                        if (currentGroupedParagraph.text.length > 0)
+                            currentGroupedParagraph.text += intraParagraphSeparator;
+                        currentGroupedParagraph.text += bulletsParagraph.text;
+                        currentGroupedParagraph.parentTocId = currentChapter.tocId;
+
+                    } else {//on les aggrege au paragraphe courant
+                        bulletArray.push({type:paragraph.style,text: bulletsParagraph.text})
+
+                    }
+
+
+                })
+                if( bulletArray.length>0){
+                    if (currentGroupedParagraph.text.length > 0)
+                        currentGroupedParagraph.text += intraParagraphSeparator;
+                    currentGroupedParagraph.text +="{"+JSON.stringify(bulletArray)+"}";
+                }
+                    }
+
+
+                    //gestion des tables
                     if (paragraph.tables && paragraph.tables.length > 0) {
                         paragraph.tables.forEach(function (table) {
 
-                            // si le chapitre n'a pas de paragraphe au dessus du tableau, le tableau est décomposé en lignes le cas écheant (voir description function getTableParagraph
+                            // si le chapitre n'a pas de paragraphe au dessus du tableau, le tableau est décomposé en lignes le cas écheant (voir description function getTableParagraphs
                             // chaque ligne sera considéree comme un paragraphe
                             var split = (currentChapter.paragraphs.length == 0)
-                            var tablesParagraphs = docxParagraphAggregator.getTableParagraph(table, split, currentChapter.tocId);
+                            var tablesParagraphs = docxParagraphAggregator.getTableParagraphs(table, split, currentChapter.tocId);
                             if (tablesParagraphs) {
                                 tablesParagraphs.forEach(function (tableParagraph) {
                                     if (split) {
@@ -242,7 +269,9 @@ var docxParagraphAggregator = {
                                             currentChapter.paragraphs.push(currentGroupedParagraph)
                                         }
                                         currentGroupedParagraph = getNewGroupedParagraph();
-                                        currentGroupedParagraph.text += intraParagraphSeparator +tableParagraph.text;
+                                        if (currentGroupedParagraph.text.length > 0)
+                                            currentGroupedParagraph.text += intraParagraphSeparator;
+                                        currentGroupedParagraph.text += tableParagraph.text;
                                         currentGroupedParagraph.parentTocId = currentChapter.tocId;
 
                                     } else {

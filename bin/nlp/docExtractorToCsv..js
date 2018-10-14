@@ -168,8 +168,8 @@ var docExtractorToCsv = {
         var setPurposeAndScope = function (tables) {
             var str = "";
             if (tables.length > 0 && tables[0].rows[0]) {
-                var cell0 = tables[0].rows[0][0].text;
-                var cell1 = tables[0].rows[1][0].text;
+                var cell0 = tables[0].rows[0][0];
+                var cell1 = tables[0].rows[1][0];
                 var index = cell0.indexOf("Purpose:");
                 if (index == 0)
                     str += cell0.substring(index + "Purpose:".length);
@@ -201,7 +201,7 @@ var docExtractorToCsv = {
         var xmlPaths = fs.readdirSync(dir)
         var jsonTables = [];
         var allTables = [];
-
+        var botObjs = [];
         xmlPaths.forEach(function (xmlPath) {
                 if (xmlPath.indexOf(".xml") < 0)
                     return;
@@ -222,7 +222,7 @@ var docExtractorToCsv = {
 
 
                 var jsonContent = docxExtractor.extractContentJson(doc, docRels);
-                jsonContent = addTablesToChapters(jsonContent);
+              //  jsonContent = addTablesToChapters(jsonContent);
                 var toc = docxExtractor.extractTOC(doc, true);
                 //     console.log(JSON.stringify(toc,null,2))
 
@@ -234,7 +234,7 @@ var docExtractorToCsv = {
                 var docTitle = extractDocTitle(headerTables);
 
                 var startId = Math.round((Math.random() * 100000))
-                var botObj = bot.getTemplate();
+
 
                 jsonContent.forEach(function (chapter, index) {
                     if (!chapter.key)
@@ -245,12 +245,6 @@ var docExtractorToCsv = {
                         if (paragraph && paragraph.text) {
                             var paragraphText = paragraph.text;
 
-                            var imageArray = /{{image:(.*)}}/.exec(paragraphText);
-                            if (imageArray) {
-                                var src = imageArray[1].replace("media/", dir + "/media/" + fileName + "/");
-                                src = path.resolve(src);
-                                paragraphText = "<img src='" + src + "'/>"
-                            }
 
                             var botSourceObj = {
                                 fileName: fileName,
@@ -258,8 +252,18 @@ var docExtractorToCsv = {
                                 chapter: chapter,
                                 paragraph: paragraph
                             }
-                            var botText = bot.getBotJsonText( botSourceObj);
-                            botStr+= botText+"\n";
+                            var botObj = bot.getBotJsonText( botSourceObj);
+                            botObjs.push(botObj)
+                          //  botStr+= botText+"\n";
+
+                            var imageArray = /{{image:(.*)}}/.exec(paragraphText);
+                            if (imageArray) {
+                                var src = imageArray[1].replace("media/", dir + "/media/" + fileName + "/");
+                                src = path.resolve(src);
+                                paragraphText = "<img src='" + src + "'/>"
+                            }
+
+var botText=JSON.stringify(botObj);
                            // console.log(botText + "\n");
 
                             str += (startId++) + "\t" + rooTxt + paragraphText + "\t" + botText + "\n";
@@ -276,7 +280,7 @@ var docExtractorToCsv = {
         //  console.log(str)
         fs.writeFileSync(dir + "/allDocsContent2.html", str)
         fs.writeFileSync(dir + "/allDocsContent2.csv", str)
-        fs.writeFileSync(dir + "/bot.Content.json", botStr)
+        fs.writeFileSync(dir + "/botContent.json", JSON.stringify(botObjs,null,2))
     },
 
     readDocumentsInDir: function (dir, callback) {
