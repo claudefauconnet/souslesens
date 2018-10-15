@@ -75,7 +75,7 @@ var bot = {
         function extractImages(text, fileName) {
             var imageSet = {
                 "type": "ImageSet",
-                "imageSize": "medium",
+                "imageSize": "large",
                 "images": []
             }
             //return imageSet;
@@ -85,8 +85,8 @@ var bot = {
             // while((imageArray = /{{image:(.*)}}/.exec(text))!=null){
             imageArray = /{{"image":(.*)}}/.exec(text);
             if (imageArray != null) {
-                var url = imageArray[1].replace("media/", bot.config.imagesServerUrl + "" + fileName + "/");
-
+                var url = imageArray[1].replace("media/", bot.config.imagesServerUrl + "" + fileName +"/");
+                url=url.replace(/"/gm,"")
                 imageSet.images.push({
                     "type": "Image",
                     "url": url
@@ -228,6 +228,15 @@ var bot = {
             jsonArray.splice(colsLength,jsonArray.length-colsLength);
             return jsonArray;
         }
+
+
+
+
+
+
+
+
+
 
         body[0].items[0].text = removeHtmlTags(sourceJson.chapter.title);
 
