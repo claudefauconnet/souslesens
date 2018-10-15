@@ -210,7 +210,6 @@ if(indexParagraph==19)
             else {
 
                 if (paragraph.parentTocId == currentChapter.tocId || currentChapter.tocId == "0") {
-//console.log(paragraph.text)
                     // si pas de line break on aggrège les paragraphes en un seul sinon on ajoute un paragraphe
                     if (paragraph.isLineBreak) {
                         if (currentGroupedParagraph) {
@@ -237,7 +236,7 @@ if(indexParagraph==19)
                     }
 
                     // process all bulletparagraphs a la fin des paragraphe bullets ou à la fin du chapitre
-                    if (currentBulletParagraphs.length > 0 && (!isBulletCurrentParagraph || indexParagraph == jsonParagraphs.length - 1 || !isBulletParagraph(jsonParagraphs[indexParagraph + 1]))) {
+                    if ( currentBulletParagraphs.length > 0 && (!isBulletCurrentParagraph || indexParagraph == jsonParagraphs.length - 1 || !isBulletParagraph(jsonParagraphs[indexParagraph + 1]))) {
                         // on split les bullets si elles sont en tête de chapitre sinon on les aggrege au paragraphe courant
                        var split =currentChapter.paragraphs.length == 0;
                         var bulletArray = []
@@ -274,23 +273,22 @@ if(indexParagraph==19)
                                         text: bullet.text
                                     })
                                     offset += bullet.text.length;
-                                    //   bulletText = "!!" + JSON.stringify(bullet) + "!!"
                                 })
                             }
 
 
-                            //  currentGroupedParagraph.text += bulletText;//"{"+JSON.stringify(bulletArray)+"}";
+
                         }
                     }
 
 
                     //gestion des tables
-                    if (false && paragraph.tables && paragraph.tables.length > 0) {
+                    if ( paragraph.tables && paragraph.tables.length > 0) {
                         paragraph.tables.forEach(function (table) {
 
                             // si le chapitre n'a pas de paragraphe au dessus du tableau, le tableau est décomposé en lignes le cas écheant (voir description function getTableParagraphs
                             // chaque ligne sera considéree comme un paragraphe
-                            var split = false//(currentChapter.paragraphs.length == 0)
+                         var split =(currentChapter.paragraphs.length == 0);
                             var tablesParagraphs = docxParagraphAggregator.getTableParagraphs(paragraph, table, split, currentChapter.tocId);
                             if (tablesParagraphs) {
                                 tablesParagraphs.forEach(function (tableParagraph) {

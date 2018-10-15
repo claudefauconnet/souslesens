@@ -83,7 +83,7 @@ var bot = {
 
             var imageArray;
             // while((imageArray = /{{image:(.*)}}/.exec(text))!=null){
-            imageArray = /{{image:(.*)}}/.exec(text);
+            imageArray = /{{"image":(.*)}}/.exec(text);
             if (imageArray != null) {
                 var url = imageArray[1].replace("media/", bot.config.imagesServerUrl + "" + fileName + "/");
 
@@ -159,7 +159,20 @@ var bot = {
 
 
         function getTableJson(table) {
-
+            function rotateClockwise(matrix) {
+                var a = matrix;
+                var n=a.length;
+                for (var i=0; i<n/2; i++) {
+                    for (var j=i; j<n-i-1; j++) {
+                        var tmp=a[i][j];
+                        a[i][j]=a[n-j-1][i];
+                        a[n-j-1][i]=a[n-i-1][n-j-1];
+                        a[n-i-1][n-j-1]=a[j][n-i-1];
+                        a[j][n-i-1]=tmp;
+                    }
+                }
+                return a;
+            }
 
             function rotateCounterClockwise(matrix) {
                 var a = matrix;
@@ -181,8 +194,10 @@ var bot = {
             var columns = [];
             var cellsMatrix = []
             //setMatrix
+            var colsLength=0
             table.rows.forEach(function (row, indexRow) {
                 row.forEach(function (cell, indexCell) {
+                    colsLength=indexCell+1
                     if (indexCell == 0)
                         cellsMatrix.push([])
                     //   console.log(indexRow+"  "+indexCell+"  "+cellsMatrix.length+"  "+cellsMatrix[indexRow].length)
@@ -193,6 +208,7 @@ var bot = {
                     }
 
                 })
+
             })
             //rotate
             cellsMatrix = rotateCounterClockwise(cellsMatrix);
@@ -207,6 +223,9 @@ var bot = {
                     obj.items.push({type: "TextBlock", text: rowCell});
                 })
             })
+
+            var jsonArray = jsonArray.reverse();
+            jsonArray.splice(colsLength,jsonArray.length-colsLength);
             return jsonArray;
         }
 
@@ -245,6 +264,14 @@ var bot = {
             })
         }
 
+        var imageSet = extractImages(sourceJson.paragraph.text, sourceJson.fileName);
+
+
+        if (imageSet.images.length > 0) {
+            sourceJson.paragraph.text=sourceJson.paragraph.text.replace(/{{"image":.*}}/gm,"")
+            body[0].items[3] = imageSet;
+        }
+
         sourceJson.paragraph.text = formatBullets(sourceJson.paragraph);
         sourceJson.paragraph.text = sourceJson.paragraph.text.replace(/<br>/gm, "\n");
         console.log(sourceJson.paragraph.text)
@@ -259,11 +286,7 @@ var bot = {
 
 
 
-        var imageSet = extractImages(sourceJson.paragraph.text, sourceJson.fileName);
-        if (imageSet.images.length > 0) {
-            body[0].items[3] = imageSet;
-        }
-        else {
+        if (imageSet.images.length ==0) {
             body[0].items.splice(3, 1);// images
         }
 
