@@ -28,6 +28,10 @@ var bot = {
                         "color": "accent",
                         "maxlines": 4
                     },
+                    {
+                        "type": "ColumnSet",
+                        "columns": []
+                    },
 
                     {
                         "type": "ImageSet",
@@ -97,24 +101,24 @@ var bot = {
         function getEmbeddedJsons(text) {
             var bullets = [];
 
-         var regex = /[^{^}]{(.*)}/gm;
-          var regex = /!!(.*)!!/gm;
+            var regex = /[^{^}]{(.*)}/gm;
+            var regex = /!!(.*)!!/gm;
 
             var array = [];
             while ((array = regex.exec(text)) != null) {
                 if (array.length > 0) {
                     var jsonStr = array[1];
-                  //  console.log(jsonStr)
+                    //  console.log(jsonStr)
                     try {
                         var jsonArray = JSON.parse(jsonStr);
 
-                    if (jsonArray.forEach) {
+                        if (jsonArray.forEach) {
 
-                        jsonArray.forEach(function (line) {
-                            bullets.push({start: array.index, json: line})
-                        })
-                    }
-                    }catch(e){
+                            jsonArray.forEach(function (line) {
+                                bullets.push({start: array.index, json: line})
+                            })
+                        }
+                    } catch (e) {
                         console.log(text)
                         console.log(e);
                     }
@@ -125,8 +129,13 @@ var bot = {
         }
 
         function formatBullets(paragraph) {
-        //    var bullets = getEmbeddedJsons(paragraph.text)
-            var bullets=paragraph.bullets;
+            //    var bullets = getEmbeddedJsons(paragraph.text)
+
+
+            if( paragraph.isSplitBullet){
+                return "- "+paragraph.text+"\n"
+            }
+            var bullets = paragraph.bullets;
             if (!bullets || bullets.length == 0) {
                 return paragraph.text;
             }
@@ -149,50 +158,113 @@ var bot = {
         }
 
 
-        //format bullets
-        /*
-        {[{"type":"ol","text":"Rotors, which have exhibited high vibrations as they pass through their critical speed."},{"type":"ol","text":"Rotors, which accelerates slowly through their critical speed during operation."},{"type":"ol","text":"Rotors which are running on or near their critical speed."},{"type":"ol","text":"Rotors, which are very sensitive to unbalance."},{"type":"ol","text":"Rotors for equipment in extremely critical service."},{"type":"ol","text":"Rotors going to inaccessible locations, such as offshore."},{"type":"ol","text":"Very long and flexible rotors."},{"type":"ol","text":"Places where a critical rotor cannot be run in its intended casing prior to installation."}]}
-         */
-
-        //format tables
+        function getTableJson(table) {
 
 
-        function formatTables(text) {
+            function rotateCounterClockwise(matrix) {
+                var a = matrix;
+                var n = a.length;
+                for (var i = 0; i < n / 2; i++) {
+                    for (var j = i; j < n - i - 1; j++) {
+                        var tmp = a[i][j];
+                        a[i][j] = a[j][n - i - 1];
+                        a[j][n - i - 1] = a[n - i - 1][n - j - 1];
+                        a[n - i - 1][n - j - 1] = a[n - j - 1][i];
+                        a[n - j - 1][i] = tmp;
+                    }
+                }
+                return a;
+            }
 
-            //format bullets
-            /*
-            {[{"type":"ol","text":"Rotors, which have exhibited high vibrations as they pass through their critical speed."},{"type":"ol","text":"Rotors, which accelerates slowly through their critical speed during operation."},{"type":"ol","text":"Rotors which are running on or near their critical speed."},{"type":"ol","text":"Rotors, which are very sensitive to unbalance."},{"type":"ol","text":"Rotors for equipment in extremely critical service."},{"type":"ol","text":"Rotors going to inaccessible locations, such as offshore."},{"type":"ol","text":"Very long and flexible rotors."},{"type":"ol","text":"Places where a critical rotor cannot be run in its intended casing prior to installation."}]}
-             */
+            var jsonArray = [];
 
-            //format tables
+            var columns = [];
+            var cellsMatrix = []
+            //setMatrix
+            table.rows.forEach(function (row, indexRow) {
+                row.forEach(function (cell, indexCell) {
+                    if (indexCell == 0)
+                        cellsMatrix.push([])
+                    //   console.log(indexRow+"  "+indexCell+"  "+cellsMatrix.length+"  "+cellsMatrix[indexRow].length)
+                    try {
+                        cellsMatrix[indexRow].push(cell);
+                    }catch (e){
+                        var xx=table;
+                    }
 
-
+                })
+            })
+            //rotate
+            cellsMatrix = rotateCounterClockwise(cellsMatrix);
+            //build bot json
+            cellsMatrix.forEach(function (col, indexCol) {
+                var obj = {
+                    "type": "Column",
+                    "items": []
+                }
+                jsonArray.push(obj);
+                col.forEach(function (rowCell, indexRow) {
+                    obj.items.push({type: "TextBlock", text: rowCell});
+                })
+            })
+            return jsonArray;
         }
 
         body[0].items[0].text = removeHtmlTags(sourceJson.chapter.title);
-console.log(sourceJson.paragraph.text)
-if(sourceJson.paragraph.text.indexOf("The correction planes are between bearings")>-1)
-    var xxx=3;
-        sourceJson.paragraph.text = formatBullets(sourceJson.paragraph);
-       // sourceJson.paragraph.text = formatTables(sourceJson.paragraph);
 
-        sourceJson.paragraph.text = sourceJson.paragraph.text.replace(/<br>/gm, "\n")
+
+
+
+        if (sourceJson.paragraph.tables) {
+            sourceJson.paragraph.tables.forEach(function (table) {
+
+                if (table.type == "table") {
+                    var tableJson = getTableJson(table);
+                    if (tableJson && tableJson.length > 0) {
+                        body[0].items[2].columns = tableJson;
+
+                    }
+
+                }
+                else if (table.type == "splitTable") {
+
+                    table.values.forEach(function (obj) {
+                        var fact = {}
+                        for(var key in obj) {
+                            fact.title = key;
+                            fact.value = obj[key];
+                        }
+
+                        body[0].items[4].facts.push(fact);
+                    })
+
+                }
+             //   console.log(JSON.stringify(body[0].items[4],null,2))
+            //    var xx=1
+
+            })
+        }
+
+        sourceJson.paragraph.text = formatBullets(sourceJson.paragraph);
+        sourceJson.paragraph.text = sourceJson.paragraph.text.replace(/<br>/gm, "\n");
+        console.log(sourceJson.paragraph.text)
         body[0].items[1].text = sourceJson.paragraph.text;
 
 
         var docTitleObj = {
             "title": "Document :",
-            "value": sourceJson.docTitle
+            "value": sourceJson.fileName+"  "+sourceJson.docTitle
         }
-        body[0].items[3].facts.splice(0, 0, docTitleObj);
+        body[0].items[4].facts.splice(0, 0, docTitleObj);
+
 
 
         var imageSet = extractImages(sourceJson.paragraph.text, sourceJson.fileName);
         if (imageSet.images.length > 0) {
-            body[0].items[2] = imageSet;
+            body[0].items[3] = imageSet;
         }
         else {
-            body[0].items.splice(2, 1);// images
+            body[0].items.splice(3, 1);// images
         }
 
 

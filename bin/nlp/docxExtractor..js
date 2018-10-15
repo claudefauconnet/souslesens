@@ -200,7 +200,7 @@ var docxExtactor = {
                     if (!jsonParagraphs[index].tables)
                         jsonParagraphs[index].tables = [];
 
-                    if (offset > paragraph.startOffset && offset <= paragraph.endOffset) {
+                    if (offset > paragraph.startOffset && offset < paragraph.endOffset) {
                         jsonParagraphs[index].tables.push(table);
                         found = true;
                     }
@@ -286,8 +286,6 @@ var docxExtactor = {
         var paragraphs = body.getElementsByTagName("w:p")
 
 
-
-
         var runStr;
         for (var i = 0; i < paragraphs.length; i++) {
 
@@ -295,12 +293,12 @@ var docxExtactor = {
             if (paragraphs[i].parentNode.tagName == "w:tc")// cellule de tableau
                 continue;
 
-            var obj = {status: "normal", title: "", text: "",paragraphIndex:i};
+            var obj = {status: "normal", title: "", text: "", paragraphIndex: i};
 
             //si pas de run et pas de formule c'est un saut de ligne qui délimite un paragraphe
-            if(paragraphs[i].getElementsByTagName("w:r").length==0 && paragraphs[i].getElementsByTagName("m:oMath").length==0 ){
+            if (paragraphs[i].getElementsByTagName("w:r").length == 0 && paragraphs[i].getElementsByTagName("m:oMath").length == 0) {
 
-                json.push({paragraphIndex:i,isLineBreak:true,parentTocId:currentTocId})
+                json.push({paragraphIndex: i, isLineBreak: true, parentTocId: currentTocId})
                 continue;
             }
 
@@ -310,7 +308,7 @@ var docxExtactor = {
 
                 obj.startOffset = paragraphs[i].columnNumber
                 if (i < paragraphs.length - 1)
-                    obj.endOffset = paragraphs[i + 1].columnNumber
+                    obj.endOffset = paragraphs[i + 1].columnNumber - 1
                 else
                     obj.sendOffset = 999999999;
 
@@ -365,11 +363,12 @@ var docxExtactor = {
 
             }
 
-
+            if (obj.text.indexOf("This guide") > -1)
+                var ww = 1;
 
             if (true || obj.title != "" || obj.text != "") {
-                if(!obj.tocId && currentTocId){
-                    obj.parentTocId=currentTocId
+                if (!obj.tocId && currentTocId) {
+                    obj.parentTocId = currentTocId
                 }
                 delete obj.status
                 json.push(obj);
@@ -378,8 +377,12 @@ var docxExtactor = {
         }
         json = setParagraphTablesContent(json, jsonTables)
         json = setStyles(json);
-       json=docxParagraphAggregator.groupParagraphs(json)
-   //     console.log(JSON.stringify(json,null,2))
+        var toc = docxExtactor.extractTOC(doc, true);
+        //     console.log(JSON.stringify(toc,null,2))
+        docxExtactor.checkParagraphAndTocConsistency(toc, json);
+        docxExtactor.setParagraphsParents(toc, json);
+        json = docxParagraphAggregator.groupParagraphs(json)
+        //     console.log(JSON.stringify(json,null,2))
 
 
         json.tables = jsonTables
@@ -399,6 +402,43 @@ var docxExtactor = {
         }
 
         return headerTables
+    },
+
+    setParagraphsParents: function (toc, jsonContent) {
+        if (Object.keys(toc).length == 0) {
+            console.log("TOC is old Model  !!! not processed")
+
+            return jsonContent;
+        }
+
+        var aggregregateTocAncestors = function (str, tocLine) {
+            if (tocLine) {
+                var sep = "";
+                if (str != "")
+                    sep = " / ";
+                str = tocLine.key + "" + tocLine.title + sep + str;
+                if (tocLine.parentAnchor && tocLine.parentAnchor != "#") {
+                    str = aggregregateTocAncestors(str, toc[tocLine.parentAnchor]);
+                }
+            }
+            return str;
+        }
+        jsonContent.forEach(function (chapter, indexChapter) {
+            jsonContent[indexChapter].parents = ""
+            var tocLine = toc[chapter.tocId];
+            if (tocLine) {
+                var ancestors = aggregregateTocAncestors("", tocLine)
+                jsonContent[indexChapter].parent = ancestors
+                jsonContent[indexChapter].key = tocLine.key
+            } else {// cas des sous sous chapitres non dans TOC ( voir GM 317) 4.3.1
+                if (indexChapter > 0) {
+                    jsonContent[indexChapter].parent = jsonContent[indexChapter - 1].parent;
+                    jsonContent[indexChapter].key = jsonContent[indexChapter - 1].key;
+                }
+            }
+        })
+
+
     },
 
     getRelsMap: function (filePath, types) {
@@ -426,28 +466,27 @@ var docxExtactor = {
     extractTable: function (tblElt) {
 
 
-    var table = {rows: []};
+        var table = {rows: []};
 
 
-    var columns = tblElt.getElementsByTagName("w:tr");
-    for (var k = 0; k < columns.length; k++) {
-        var row = [];
-        table.rows.push(row)
-        var cells = columns[k].getElementsByTagName("w:tc");
+        var columns = tblElt.getElementsByTagName("w:tr");
+        for (var k = 0; k < columns.length; k++) {
+            var row = [];
+            table.rows.push(row)
+            var cells = columns[k].getElementsByTagName("w:tc");
 
-        for (var y = 0; y < cells.length; y++) {
-           var  cell = extractRunText(cells[y]);
-            row.push(cell);
+            for (var y = 0; y < cells.length; y++) {
+                var cell = extractRunText(cells[y]);
+                row.push(cell);
+
+            }
+
 
         }
-
-
-    }
-    return table;
-    // console.log(JSON.stringify(json,null,2))
-},
+        return table;
+        // console.log(JSON.stringify(json,null,2))
+    },
     extractDocTables: function (doc) {
-
 
 
         var jsonTables = [];
@@ -460,8 +499,6 @@ var docxExtactor = {
         }
         return jsonTables;
     },
-
-
 
 
     /**
@@ -489,6 +526,11 @@ var docxExtactor = {
 
         var tocArray = []
         var elements = doc.documentElement.getElementsByTagName("w:hyperlink");
+
+        if (elements.length == 0) {
+            console.log("TOC is old Model  !!! not processed")
+        }
+
         for (var i = 0; i < elements.length; i++) {
             var element = elements[i];
             var obj = {text: ""};
@@ -589,6 +631,33 @@ var docxExtactor = {
         return tocStruct;
 
 
+    },
+
+
+    /***
+     *
+     *   corrige les erreurs de bookmark en enlevant le tocId dans les paragraphes qui ne sont pas dans la TOC (voir GM 318.xml line 4612)
+     *
+     * @param toc
+     * @param jsonContent
+     */
+    checkParagraphAndTocConsistency: function (toc, jsonContent) {
+        if (Object.keys(toc).length == 0) {
+            console.log("TOC is old Model  !!! not processed")
+
+            return jsonContent;
+        }
+        jsonContent.forEach(function (line, index) {
+            if (line.tocId && !toc[line.tocId]) {
+                jsonContent[index].tocId = null;
+                if (index > 0)
+                    if (jsonContent[index - 1].parentTocId)
+                        jsonContent[index].parentTocId = jsonContent[index - 1].parentTocId;
+                    else
+                        jsonContent[index].parentTocId = jsonContent[index - 1].tocId
+            }
+            return jsonContent;
+        })
     },
 
     linkContentJsonToToc: function (toc, content) {

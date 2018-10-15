@@ -134,37 +134,10 @@ var docExtractorToCsv = {
     },
 
     jsonContentsToCsv: function (dir) {
-        var setChaptersParents = function (toc, jsonContent) {
-
-            var aggregregateTocAncestors = function (str, tocLine) {
-                if (tocLine) {
-                    var sep = "";
-                    if (str != "")
-                        sep = " / ";
-                    str = tocLine.key + "" + tocLine.title + sep + str;
-                    if (tocLine.parentAnchor && tocLine.parentAnchor != "#") {
-                        str = aggregregateTocAncestors(str, toc[tocLine.parentAnchor]);
-                    }
-                }
-                return str;
-            }
-            jsonContent.forEach(function (chapter, indexChapter) {
-                jsonContent[indexChapter].parents = ""
-                var tocLine = toc[chapter.tocId];
-                if (tocLine) {
-                    var ancestors = aggregregateTocAncestors("", tocLine)
-                    jsonContent[indexChapter].parent = ancestors
-                    jsonContent[indexChapter].key = tocLine.key
-                } else {// cas des sous sous chapitres non dans TOC ( voir GM 317) 4.3.1
-                    if (indexChapter > 0) {
-                        jsonContent[indexChapter].parent = jsonContent[indexChapter - 1].parent;
-                        jsonContent[indexChapter].key = jsonContent[indexChapter - 1].key;
-                    }
-                }
-            })
 
 
-        }
+
+
         var setPurposeAndScope = function (tables) {
             var str = "";
             if (tables.length > 0 && tables[0].rows[0]) {
@@ -191,7 +164,7 @@ var docExtractorToCsv = {
             if (headerTables.length > 0) {
                 var titleTable = headerTables[headerTables.length - 1];
                 var lastRow = titleTable.rows[titleTable.rows.length - 1][0];
-                docTitle = lastRow.text;
+                docTitle = lastRow;
             }
             return docTitle;
         }
@@ -223,16 +196,14 @@ var docExtractorToCsv = {
 
                 var jsonContent = docxExtractor.extractContentJson(doc, docRels);
               //  jsonContent = addTablesToChapters(jsonContent);
-                var toc = docxExtractor.extractTOC(doc, true);
-                //     console.log(JSON.stringify(toc,null,2))
 
-                setChaptersParents(toc, jsonContent);
+
 
                 var purposeAndScope = setPurposeAndScope(jsonContent.tables);
 
                 var fileName = xmlPath.substring(0, xmlPath.lastIndexOf("."))
                 var docTitle = extractDocTitle(headerTables);
-
+//console.log("processing " +fileName)
                 var startId = Math.round((Math.random() * 100000))
 
 
@@ -254,6 +225,7 @@ var docExtractorToCsv = {
                             }
                             var botObj = bot.getBotJsonText( botSourceObj);
                             botObjs.push(botObj)
+                            var botText=JSON.stringify(botObj)
                           //  botStr+= botText+"\n";
 
                             var imageArray = /{{image:(.*)}}/.exec(paragraphText);
@@ -263,7 +235,7 @@ var docExtractorToCsv = {
                                 paragraphText = "<img src='" + src + "'/>"
                             }
 
-var botText=JSON.stringify(botObj);
+
                            // console.log(botText + "\n");
 
                             str += (startId++) + "\t" + rooTxt + paragraphText + "\t" + botText + "\n";
