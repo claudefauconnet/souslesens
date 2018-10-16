@@ -6,7 +6,9 @@ var formatToHtml = {
     format: function (sourceJson) {
 
         function getTableJson(table) {
-            var html = "<table style='border-style: solid;border-width: 1px;border-color: #0000cc'>";
+            var html = "<table>;// style='border-style: solid;border-width: 1px;border-color: #0000cc'>";
+          if( !table.rows)
+              return "";
             table.rows.forEach(function (row, indexRow) {
                 html += "<tr>";
                 row.forEach(function (cell, indexCell) {
@@ -20,8 +22,18 @@ var formatToHtml = {
             return html;
         }
 
-        function extractImages(text, fileName) {
-         var html=""
+        function extractImages(images, fileName) {
+            var html=""
+            images.forEach(function(image){
+                var url = image.replace("media/", config.imagesServerUrl + "" + fileName +"/");
+
+                html+="<img src='"+url+"' >";
+
+            })
+
+
+
+       /*  var html=""
             var imageArray;
             // while((imageArray = /{{image:(.*)}}/.exec(text))!=null){
             imageArray = /{{"image":(.*)}}/g.exec(text);
@@ -30,7 +42,7 @@ var formatToHtml = {
                 url=url.replace(/"/gm,"")
              html+="<img src='"+url+"' >";
 
-            }
+            }*/
             return html;
         }
 
@@ -96,8 +108,8 @@ var formatToHtml = {
 
 
         //images
-        var htmlImages = extractImages(sourceJson.paragraph.text, sourceJson.fileName);
-        sourceJson.paragraph.text =sourceJson.paragraph.text .replace(/{{"image":.*}}/gm,"");
+        var htmlImages = extractImages(sourceJson.paragraph.images, sourceJson.fileName);
+      //  sourceJson.paragraph.text =sourceJson.paragraph.text .replace(/{{"image":.*}}/gm,"");
 
         //bullets
 

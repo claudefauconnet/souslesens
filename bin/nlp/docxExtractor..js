@@ -46,10 +46,12 @@ var extractRunText = function (run, docRels) {
 
     }
 
-    var images = run.getElementsByTagName("pic:pic")
+  /*  var images = run.getElementsByTagName("pic:pic");
+    var imageSrcs=[]
     for (var k = 0; k < images.length; k++) {
-        runStr += "{{\"image\":\"" + extractImage(images[k], docRels) + "\"}}"
-    }
+       // runStr += "{{\"image\":\"" + extractImage(images[k], docRels) + "\"}}"
+        imageSrcs.push(extractImage(images[k], docRels))
+    }*/
     return runStr;
 
 }
@@ -81,6 +83,7 @@ var extractImage = function (imageRun, docRels) {
 
     for (var k = 0; k < images.length; k++) {
         var id = images[k].getAttribute("r:embed");
+        console.log(id)
         if (docRels[id])
             imgName = docRels[id].target
 
@@ -88,6 +91,10 @@ var extractImage = function (imageRun, docRels) {
     return imgName;
 
 
+}
+
+var extractPagesNumbers=function(){
+//<w:br w:type="page"/>
 }
 
 
@@ -141,7 +148,7 @@ var getDocPstylesOffsets = function (body) {
                 var styleValue = styles[j].getAttribute("w:val");
                 var htmlStyle = docxExtactor.pStyles[styleValue];
                 if (!htmlStyle) {
-                    //                console.log("!!!style not  in pStylesMap " + styleValue);
+                                console.log("!!!style not  in pStylesMap " + styleValue);
                     // htmlStyle=styleValue
                 }
                 else {
@@ -167,7 +174,7 @@ var docxExtactor = {
         Titre1: "h1",
         Titre2: "h2",
         Titre3: "h4",
-        Titre2: "h4",
+        Titre4: "h4",
         TM1: "p",
         TM2: "p",
 
@@ -242,7 +249,7 @@ var docxExtactor = {
                 if (paragraphStyle) {
 
                     if (paragraphStyle.indexOf("h") == 0) {
-                        paragraph.title = "<" + paragraphStyle + ">" + paragraph.title + "</" + paragraphStyle + ">"
+                        paragraph.title = paragraph.title//"<" + paragraphStyle + ">" + paragraph.title + "</" + paragraphStyle + ">"
                     }
                 }
 
@@ -256,6 +263,18 @@ var docxExtactor = {
 
         }
 
+
+        function setImages(obj,run){
+            var images = run.getElementsByTagName("pic:pic");
+
+
+            var imageSrcs=[]
+            for (var k = 0; k < images.length; k++) {
+                // runStr += "{{\"image\":\"" + extractImage(images[k], docRels) + "\"}}"
+                obj.images.push(extractImage(images[k], docRels))
+            }
+
+        }
 
         /******************  end internal functions*******************************/
 
@@ -293,7 +312,7 @@ var docxExtactor = {
             if (paragraphs[i].parentNode.tagName == "w:tc")// cellule de tableau
                 continue;
 
-            var obj = {status: "normal", title: "", text: "", paragraphIndex: i};
+            var obj = {status: "normal", title: "", text: "", paragraphIndex: i,images:[]};
 
             //si pas de run et pas de formule c'est un saut de ligne qui délimite un paragraphe
             if (paragraphs[i].getElementsByTagName("w:r").length == 0 && paragraphs[i].getElementsByTagName("m:oMath").length == 0) {
@@ -304,7 +323,9 @@ var docxExtactor = {
 
             for (var j = 0; j < paragraphs[i].childNodes.length; j++) {
                 var child = paragraphs[i].childNodes[j];
+                setImages(obj,child)
 
+              //  var imgElts=(paragraphs[i].getElementsByTagName("w:r").
 
                 obj.startOffset = paragraphs[i].columnNumber
                 if (i < paragraphs.length - 1)
@@ -341,6 +362,7 @@ var docxExtactor = {
                     var runs = child.getElementsByTagName("w:r")
                     for (var k = 0; k < runs.length; k++) {
                         runStr += extractRunText(runs[k], docRels)
+                       // setImages(obj,runs[k])
 
 
                     }
@@ -350,6 +372,7 @@ var docxExtactor = {
                 }
                 if (child.tagName == "w:r") {
                     runStr = extractRunText(child, docRels);
+                   // setImages(obj,child)
                 }
 
 
@@ -384,10 +407,10 @@ var docxExtactor = {
         }catch(e){
            throw(e);
         }
-        docxExtactor.setParagraphsParents(toc, json);
+
         json = docxParagraphAggregator.groupParagraphs(json)
         //     console.log(JSON.stringify(json,null,2))
-
+        docxExtactor.setParagraphsParents(toc, json);
 
         json.tables = jsonTables
 
@@ -646,12 +669,12 @@ var docxExtactor = {
      * @param jsonContent
      */
     checkParagraphAndTocConsistency: function (toc, jsonContent) {
-        if (Object.keys(toc).length == 0) {
+       /* if (Object.keys(toc).length == 0) {
             throw "Unbable to parese TOC !";
             console.log("TOC is old Model  !!! not processed")
 
             return jsonContent;
-        }
+        }*/
         jsonContent.forEach(function (line, index) {
             if (line.tocId && !toc[line.tocId]) {
                 jsonContent[index].tocId = null;

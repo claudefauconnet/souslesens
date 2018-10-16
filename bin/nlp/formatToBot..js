@@ -69,28 +69,24 @@ var formatToBot = {
             return text;
         }
 
-        function extractImages(text, fileName) {
+        function extractImages(images, fileName) {
             var imageSet = {
                 "type": "ImageSet",
                 "imageSize": "large",
                 "images": []
             }
-            //return imageSet;
-            //   text="{{image:media/image10.emf}}"
 
-            var imageArray;
-            // while((imageArray = /{{image:(.*)}}/.exec(text))!=null){
-            imageArray = /{{"image":(.*)}}/g.exec(text);
-            if (imageArray != null) {
-                var url = imageArray[1].replace("media/", config.imagesServerUrl + "" + fileName +"/");
-                url=url.replace(/"/gm,"")
+
+                images.forEach(function(image,index){
+                    var url = image.replace("media/", config.imagesServerUrl + "" + fileName +"/");
+
                 imageSet.images.push({
                     "type": "Image",
                     "url": url
                 });
 
 
-            }
+            })
             return imageSet;
         }
 
@@ -228,7 +224,7 @@ var formatToBot = {
 
 
         //images
-        var imageSet = extractImages(sourceJson.paragraph.text, sourceJson.fileName);
+        var imageSet = extractImages(sourceJson.paragraph.images, sourceJson.fileName);
         if (imageSet.images.length > 0) {
             sourceJson.paragraph.text=sourceJson.paragraph.text.replace(/{{"image":.*}}/gm,"")
             body[0].items[3] = imageSet;
@@ -248,6 +244,11 @@ var formatToBot = {
             "title": "Document :",
             "value": sourceJson.fileName+"  "+sourceJson.docTitle
         }
+        var parentObj = {
+            "title": "parent/key :",
+            "value": sourceJson.chapter.parent + " " + sourceJson.chapter.key
+        }
+        body[0].items[4].facts.splice(0, 0, parentObj);
         body[0].items[4].facts.splice(0, 0, docTitleObj);
 
 

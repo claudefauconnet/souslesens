@@ -8,6 +8,7 @@ var dom = require('xmldom').DOMParser
 var docxExtractor = require("./docxExtractor..js");
 var formatToBot = require("./formatToBot..js");
 var formatToHtml = require("./formatToHtml..js");
+var formatToColumns = require("./formatToColumns..js");
 var config=require("./config..js");
 var docExtractorToCsv = {
 
@@ -151,7 +152,7 @@ var docExtractorToCsv = {
                 index = cell1.indexOf("Scope of application:");
                 if (index == 0)
                     str += cell1.substring(index + "Scope of application:".length);
-                str += "\t";
+
 
             }
             return str;
@@ -168,15 +169,30 @@ var docExtractorToCsv = {
             }
             return docTitle;
         }
+        function removeHtmlTags(text) {
+            var regex = /<([^>^\/]*)>(.*)(<[^>^]*>)/;
+            var array = regex.exec(text)
 
-        var str = "id\tFile\tdocTitle\tpurpose\tscope\t\tparentChapters\tChapterKey\tChapter\thtmlText\tbotText\n";
+            if (array && array.length == 4) {
+                return array[2];
+            }
+            return text;
+        }
+
+        var str = "id\tFile\tdocTitle\tpurpose\tscope\tparentChapters\tChapterKey\tChapter\thtmlText\tbotText";
+        str+="\ttitle\ttext\ttable\tdocTitle\timage"
+        str+="\n";
         var botStr = ""
         var xmlPaths = fs.readdirSync(dir)
         var jsonTables = [];
         var allTables = [];
         var botObjs = [];
         var  htmlTexts="";
+        var columnTexts="title\ttext\ttable\tdocTitle\timage\n";
+
         xmlPaths.forEach(function (xmlPath) {
+
+
             if (xmlPath.indexOf(".xml") < 0)
                 return;
             if (xmlPath.indexOf("_header.xml") > -1)
@@ -206,14 +222,21 @@ var docExtractorToCsv = {
                 var startId = Math.round((Math.random() * 100000))
 
 
+
                 jsonContent.forEach(function (chapter, index) {
+
                     if (!chapter.key)
                         chapter.key = "";
+                    chapter.title=removeHtmlTags(chapter.title);
+                    // "id\tFile\tdocTitle\tpurpose\tscope\tparentChapters\tChapterKey\tChapter\thtmlText\tbotText\n";
                     var rooTxt = fileName + "\t" + docTitle + "\t" + purposeAndScope + "\t" + chapter.parent + "\t" + chapter.key + "\t" + chapter.title + "\t";
                     ;
                     chapter.paragraphs.forEach(function (paragraph) {
-                        if (paragraph && paragraph.text) {
+                        if (paragraph ) {
                             var paragraphText = paragraph.text;
+
+if(paragraph.images.length>0)
+    var xx=1
 
 
                             var botSourceObj = {
@@ -222,17 +245,27 @@ var docExtractorToCsv = {
                                 chapter: chapter,
                                 paragraph: paragraph
                             }
+                            //clone before use
+                            var  htmlSourceObj= JSON.parse(JSON.stringify(botSourceObj));
+                            var  columnsSourceObj= JSON.parse(JSON.stringify(botSourceObj));
+
+
                             var botObj = formatToBot.format(botSourceObj);
                             botObjs.push(botObj)
                             var botText = JSON.stringify(botObj)
-                            var htmlText = formatToHtml.format(botSourceObj);
+                            var htmlText = formatToHtml.format(htmlSourceObj);
                             htmlTexts+=htmlText
+
+                            var columnText = formatToColumns.format(columnsSourceObj);
+                            columnTexts+=columnText+"\n";
+
+
 
 
 
                             // console.log(botText + "\n");
 
-                            str += (startId++) + "\t" + rooTxt + htmlText + "\t" + botText + "\n";
+                            str += (startId++) + "\t" + rooTxt + htmlText + "\t" + botText + "\t"+columnText+"\n";
 
                         }
 
@@ -241,8 +274,9 @@ var docExtractorToCsv = {
 
                 })
             } catch (e) {
-                str += "ERROR processing " + fileName + " : " + e + "\n";
-                botObjs.push({ERROR: " processing " + fileName + " : " + e})
+                console.log(e);
+           //     str += "ERROR processing " + fileName + " : " + e + "\n";
+            //    botObjs.push({ERROR: " processing " + fileName + " : " + e})
             }
 
         });
@@ -250,6 +284,8 @@ var docExtractorToCsv = {
         fs.writeFileSync(dir + "/allDocsContent2.html", htmlTexts)
         fs.writeFileSync(dir + "/allDocsContent2.csv", str)
         fs.writeFileSync(dir + "/botContent.json", JSON.stringify(botObjs, null, 2))
+        fs.writeFileSync(dir + "/allColumns.csv", columnTexts)
+
     },
 
     readDocumentsInDir: function (dir, callback) {
@@ -264,7 +300,7 @@ module.exports = docExtractorToCsv;
 
 
 var dir = "D:\\Total\\docs\\GM MEC Word\\documents\\test"
-dir = "D:\\Total\\docs\\GM MEC Word\\documents"
+//dir = "D:\\Total\\docs\\GM MEC Word\\documents"
 //dir = "D:\\Total\\docs\\GS MEC Word\\documents"
 if (true) {
     docExtractorToCsv.jsonContentsToCsv(dir);

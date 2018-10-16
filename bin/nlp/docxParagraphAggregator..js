@@ -148,6 +148,22 @@ var docxParagraphAggregator = {
     groupParagraphs: function (jsonParagraphs) {
         var currentBulletParagraphs = [];
 
+       var chapterLevelMap={
+           "1":[],
+           "2":[],
+           "3":[],
+           "4":[]
+
+
+       }
+       function registerChapterLevelMap(chapterIndex, style){
+           var level=style.substring(1);
+           chapterLevelMap[level].push(chapterIndex);
+
+       }
+
+
+
         function getNewGroupedParagraph(style) {
             currentBulletParagraphs = []
             var obj = {
@@ -156,7 +172,8 @@ var docxParagraphAggregator = {
                 "startOffset": 0,
                 "endOffset": 0,
                 "parentTocId": "",
-                "tables": []
+                "tables": [],
+                "images": []
 
             };
             if (style)
@@ -186,30 +203,41 @@ var docxParagraphAggregator = {
 
 
 
-
+///console.log(JSON.stringify(jsonParagraphs,null,2))
         jsonParagraphs.forEach(function (paragraph, indexParagraph) {
             var isBulletCurrentParagraph = isBulletParagraph(paragraph);
 
-if(indexParagraph==19)
-    var xx=1
+
+
+
+
             if (indexParagraph == 0) {
                 currentChapter = getNewChapter();
                 currentChapter.title = "noChapter";
                 currentChapter.tocId = "0";
                 groupedJson.push(currentChapter);
             }
-            else if (paragraph.tocId) {// paragraph is a chapter
-                currentChapter.paragraphs.push(currentGroupedParagraph)
 
+            else if (paragraph.style && paragraph.style.indexOf("h")==0){//titre de chapitre) {/
+         //   else if (paragraph.tocId   && paragraph.style &&paragraph.style.indexOf("h")==0){//titre de chapitre) {// paragraph is a chapter
+                currentChapter.paragraphs.push(currentGroupedParagraph)
+                currentChapter.level=paragraph.style;
+                registerChapterLevelMap(groupedJson.length,paragraph.style)
                 currentChapter = getNewChapter();
                 currentGroupedParagraph = getNewGroupedParagraph(paragraph.style)
                 currentChapter.title = paragraph.title;
+               if(currentChapter.title=="")// cas de paragraphes sans titre (h4)
+                   currentChapter.title = "--";
+               if(paragraph.text && paragraph.text.length>0)
+                   currentGroupedParagraph.text += paragraph.text;
                 currentChapter.tocId = paragraph.tocId;
                 groupedJson.push(currentChapter);
             }
             else {
 
-                if (paragraph.parentTocId == currentChapter.tocId || currentChapter.tocId == "0") {
+
+
+                if (true || paragraph.parentTocId == currentChapter.tocId || currentChapter.tocId == "0") {
                     // si pas de line break on aggrège les paragraphes en un seul sinon on ajoute un paragraphe
                     if (paragraph.isLineBreak) {
                         if (currentGroupedParagraph) {
@@ -232,13 +260,17 @@ if(indexParagraph==19)
                             currentGroupedParagraph.startOffset = paragraph.startOffset;
                         currentGroupedParagraph.endOffset = paragraph.endOffset;
                         currentGroupedParagraph.parentTocId = paragraph.parentTocId;
+                        paragraph.images.forEach(function(image){
+                            currentGroupedParagraph.images.push(image);
+                        })
+
 
                     }
 
                     // process all bulletparagraphs a la fin des paragraphe bullets ou à la fin du chapitre
                     if ( currentBulletParagraphs.length > 0 && (!isBulletCurrentParagraph || indexParagraph == jsonParagraphs.length - 1 || !isBulletParagraph(jsonParagraphs[indexParagraph + 1]))) {
                         // on split les bullets si elles sont en tête de chapitre sinon on les aggrege au paragraphe courant
-                       var split =currentChapter.paragraphs.length == 0;
+                       var split=false;// =currentChapter.paragraphs.length == 0;
                         var bulletArray = []
                         currentBulletParagraphs.forEach(function (bulletsParagraph) {
                             if (split) {
@@ -250,6 +282,9 @@ if(indexParagraph==19)
                                     currentGroupedParagraph.text += intraParagraphSeparator;
                                 currentGroupedParagraph.text += bulletsParagraph.text;
                                 currentGroupedParagraph.parentTocId = currentChapter.tocId;
+                                paragraph.images.forEach(function(image){
+                                    currentGroupedParagraph.images.push(image);
+                                })
 
                             } else {//on les aggrege au paragraphe courant
                                 bulletArray.push({type: paragraph.style, text: bulletsParagraph.text})
@@ -298,6 +333,10 @@ if(indexParagraph==19)
                                             currentChapter.paragraphs.push(currentGroupedParagraph)
                                         }
                                         currentGroupedParagraph = getNewGroupedParagraph();
+
+                                        paragraph.images.forEach(function(image){
+                                            currentGroupedParagraph.images.push(image);
+                                        })
 
                                         /*   if (currentGroupedParagraph.text.length > 0)
                                                currentGroupedParagraph.text += intraParagraphSeparator;
