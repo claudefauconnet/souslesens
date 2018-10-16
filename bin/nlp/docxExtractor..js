@@ -379,7 +379,11 @@ var docxExtactor = {
         json = setStyles(json);
         var toc = docxExtactor.extractTOC(doc, true);
         //     console.log(JSON.stringify(toc,null,2))
-        docxExtactor.checkParagraphAndTocConsistency(toc, json);
+        try {
+            docxExtactor.checkParagraphAndTocConsistency(toc, json);
+        }catch(e){
+           throw(e);
+        }
         docxExtactor.setParagraphsParents(toc, json);
         json = docxParagraphAggregator.groupParagraphs(json)
         //     console.log(JSON.stringify(json,null,2))
@@ -643,6 +647,7 @@ var docxExtactor = {
      */
     checkParagraphAndTocConsistency: function (toc, jsonContent) {
         if (Object.keys(toc).length == 0) {
+            throw "Unbable to parese TOC !";
             console.log("TOC is old Model  !!! not processed")
 
             return jsonContent;

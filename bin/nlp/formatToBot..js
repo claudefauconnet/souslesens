@@ -1,11 +1,8 @@
-var bot = {
-    config: {
-        imagesServerUrl: "http://vps254642.ovh.net/scoreparts/media/"
-
-    },
+var config=require("./config..js");
+var formatToBot = {
 
 
-    getBotJsonText: function (sourceJson) {
+    format: function (sourceJson) {
 
         var body = [
 
@@ -83,9 +80,9 @@ var bot = {
 
             var imageArray;
             // while((imageArray = /{{image:(.*)}}/.exec(text))!=null){
-            imageArray = /{{"image":(.*)}}/.exec(text);
+            imageArray = /{{"image":(.*)}}/g.exec(text);
             if (imageArray != null) {
-                var url = imageArray[1].replace("media/", bot.config.imagesServerUrl + "" + fileName +"/");
+                var url = imageArray[1].replace("media/", config.imagesServerUrl + "" + fileName +"/");
                 url=url.replace(/"/gm,"")
                 imageSet.images.push({
                     "type": "Image",
@@ -97,36 +94,6 @@ var bot = {
             return imageSet;
         }
 
-
-        function getEmbeddedJsons(text) {
-            var bullets = [];
-
-            var regex = /[^{^}]{(.*)}/gm;
-            var regex = /!!(.*)!!/gm;
-
-            var array = [];
-            while ((array = regex.exec(text)) != null) {
-                if (array.length > 0) {
-                    var jsonStr = array[1];
-                    //  console.log(jsonStr)
-                    try {
-                        var jsonArray = JSON.parse(jsonStr);
-
-                        if (jsonArray.forEach) {
-
-                            jsonArray.forEach(function (line) {
-                                bullets.push({start: array.index, json: line})
-                            })
-                        }
-                    } catch (e) {
-                        console.log(text)
-                        console.log(e);
-                    }
-
-                }
-            }
-            return bullets;
-        }
 
         function formatBullets(paragraph) {
             //    var bullets = getEmbeddedJsons(paragraph.text)
@@ -173,7 +140,6 @@ var bot = {
                 }
                 return a;
             }
-
             function rotateCounterClockwise(matrix) {
                 var a = matrix;
                 var n = a.length;
@@ -188,9 +154,7 @@ var bot = {
                 }
                 return a;
             }
-
             var jsonArray = [];
-
             var columns = [];
             var cellsMatrix = []
             //setMatrix
@@ -212,7 +176,7 @@ var bot = {
             })
             //rotate
             cellsMatrix = rotateCounterClockwise(cellsMatrix);
-            //build bot json
+            //build formatToBot json
             cellsMatrix.forEach(function (col, indexCol) {
                 var obj = {
                     "type": "Column",
@@ -232,25 +196,19 @@ var bot = {
 
 
 
+ /* *************************end internal functions****************************/
 
-
-
-
-
-
+        //titre
         body[0].items[0].text = removeHtmlTags(sourceJson.chapter.title);
 
 
-
-
+        //tables
         if (sourceJson.paragraph.tables) {
             sourceJson.paragraph.tables.forEach(function (table) {
-
                 if (table.type == "table") {
                     var tableJson = getTableJson(table);
                     if (tableJson && tableJson.length > 0) {
                         body[0].items[2].columns = tableJson;
-
                     }
 
                 }
@@ -262,31 +220,30 @@ var bot = {
                             fact.title = key;
                             fact.value = obj[key];
                         }
-
                         body[0].items[4].facts.push(fact);
                     })
-
                 }
-             //   console.log(JSON.stringify(body[0].items[4],null,2))
-            //    var xx=1
-
             })
         }
 
+
+        //images
         var imageSet = extractImages(sourceJson.paragraph.text, sourceJson.fileName);
-
-
         if (imageSet.images.length > 0) {
             sourceJson.paragraph.text=sourceJson.paragraph.text.replace(/{{"image":.*}}/gm,"")
             body[0].items[3] = imageSet;
         }
 
+
+
+        //bullets
         sourceJson.paragraph.text = formatBullets(sourceJson.paragraph);
         sourceJson.paragraph.text = sourceJson.paragraph.text.replace(/<br>/gm, "\n");
-        console.log(sourceJson.paragraph.text)
         body[0].items[1].text = sourceJson.paragraph.text;
 
 
+
+        //facts
         var docTitleObj = {
             "title": "Document :",
             "value": sourceJson.fileName+"  "+sourceJson.docTitle
@@ -295,19 +252,17 @@ var bot = {
 
 
 
+
+
         if (imageSet.images.length ==0) {
             body[0].items.splice(3, 1);// images
         }
 
 
-        return body;//JSON.stringify(body);
+        return body;
     }
 
 
 }
 
-
-//bot.htmlToBotObj("<h1>Reference documents</h1>")
-
-
-module.exports = bot;
+module.exports = formatToBot;

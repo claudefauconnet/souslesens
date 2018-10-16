@@ -6,10 +6,13 @@ var path = require('path');
 var dom = require('xmldom').DOMParser
 
 var docxExtractor = require("./docxExtractor..js");
-var bot = require("./bot..js");
-
-
+var formatToBot = require("./formatToBot..js");
+var formatToHtml = require("./formatToHtml..js");
+var config=require("./config..js");
 var docExtractorToCsv = {
+
+
+
 
     /**
      *
@@ -116,26 +119,24 @@ var docExtractorToCsv = {
     },
 
 
-    jsonTableToHtml: function (tableJson) {
-        var str = "<table border='1'>";
-        tableJson.rows.forEach(function (row, indexRow) {
-            str += "<tr>";
-            row.forEach(function (cell, indexCell) {
-                if (true || indexCell > 0)
-                    str += "<td>";
-                str += cell.text
-                str += "</td>";
-            })
-            str += "</tr>";
-        })
-        str += "</table>"
-        return str;
+    /* jsonTableToHtml: function (tableJson) {
+         var str = "<table border='1'>";
+         tableJson.rows.forEach(function (row, indexRow) {
+             str += "<tr>";
+             row.forEach(function (cell, indexCell) {
+                 if (true || indexCell > 0)
+                     str += "<td>";
+                 str += cell.text
+                 str += "</td>";
+             })
+             str += "</tr>";
+         })
+         str += "</table>"
+         return str;
 
-    },
+     },*/
 
     jsonContentsToCsv: function (dir) {
-
-
 
 
         var setPurposeAndScope = function (tables) {
@@ -157,7 +158,6 @@ var docExtractorToCsv = {
         }
 
 
-
         // le titre est dans la dernière ligne du tableau du fichier header1.xml
         var extractDocTitle = function (headerTables) {
             var docTitle = ""
@@ -170,40 +170,39 @@ var docExtractorToCsv = {
         }
 
         var str = "id\tFile\tdocTitle\tpurpose\tscope\t\tparentChapters\tChapterKey\tChapter\thtmlText\tbotText\n";
-        var botStr=""
+        var botStr = ""
         var xmlPaths = fs.readdirSync(dir)
         var jsonTables = [];
         var allTables = [];
         var botObjs = [];
+        var  htmlTexts="";
         xmlPaths.forEach(function (xmlPath) {
-                if (xmlPath.indexOf(".xml") < 0)
-                    return;
-                if (xmlPath.indexOf("_header.xml") > -1)
-                    return;
-                if (xmlPath.indexOf("_rels.xml") > -1)
-                    return;
+            if (xmlPath.indexOf(".xml") < 0)
+                return;
+            if (xmlPath.indexOf("_header.xml") > -1)
+                return;
+            if (xmlPath.indexOf("_rels.xml") > -1)
+                return;
 
-                var filePath = path.resolve(dir + "/" + xmlPath);
-                if (fs.lstatSync(filePath).isDirectory())
-                    return;
-                var xmlStr = "" + fs.readFileSync(filePath);
+            var filePath = path.resolve(dir + "/" + xmlPath);
+            if (fs.lstatSync(filePath).isDirectory())
+                return;
+            var xmlStr = "" + fs.readFileSync(filePath);
 
-                // console.log("---------" + filePath);
-                var doc = new dom().parseFromString(xmlStr);
-                var headerTables = docxExtractor.extractHeaderJson(filePath.replace(".xml", "_header.xml"))
-                var docRels = docxExtractor.getRelsMap(filePath.replace(".xml", "_rels.xml"));
-
-
+            // console.log("---------" + filePath);
+            var doc = new dom().parseFromString(xmlStr);
+            var headerTables = docxExtractor.extractHeaderJson(filePath.replace(".xml", "_header.xml"))
+            var docRels = docxExtractor.getRelsMap(filePath.replace(".xml", "_rels.xml"));
+            var fileName = xmlPath.substring(0, xmlPath.lastIndexOf("."))
+            try {
                 var jsonContent = docxExtractor.extractContentJson(doc, docRels);
-              //  jsonContent = addTablesToChapters(jsonContent);
-
+                //  jsonContent = addTablesToChapters(jsonContent);
 
 
                 var purposeAndScope = setPurposeAndScope(jsonContent.tables);
 
-                var fileName = xmlPath.substring(0, xmlPath.lastIndexOf("."))
+
                 var docTitle = extractDocTitle(headerTables);
-//console.log("processing " +fileName)
                 var startId = Math.round((Math.random() * 100000))
 
 
@@ -223,22 +222,17 @@ var docExtractorToCsv = {
                                 chapter: chapter,
                                 paragraph: paragraph
                             }
-                            var botObj = bot.getBotJsonText( botSourceObj);
+                            var botObj = formatToBot.format(botSourceObj);
                             botObjs.push(botObj)
-                            var botText=JSON.stringify(botObj)
-                          //  botStr+= botText+"\n";
-
-                            var imageArray = /{{image:(.*)}}/.exec(paragraphText);
-                            if (imageArray) {
-                                var src = imageArray[1].replace("media/", dir + "/media/" + fileName + "/");
-                                src = path.resolve(src);
-                                paragraphText = "<img src='" + src + "'/>"
-                            }
+                            var botText = JSON.stringify(botObj)
+                            var htmlText = formatToHtml.format(botSourceObj);
+                            htmlTexts+=htmlText
 
 
-                           // console.log(botText + "\n");
 
-                            str += (startId++) + "\t" + rooTxt + paragraphText + "\t" + botText + "\n";
+                            // console.log(botText + "\n");
+
+                            str += (startId++) + "\t" + rooTxt + htmlText + "\t" + botText + "\n";
 
                         }
 
@@ -246,13 +240,16 @@ var docExtractorToCsv = {
 
 
                 })
-
+            } catch (e) {
+                str += "ERROR processing " + fileName + " : " + e + "\n";
+                botObjs.push({ERROR: " processing " + fileName + " : " + e})
             }
-        )
+
+        });
         //  console.log(str)
-        fs.writeFileSync(dir + "/allDocsContent2.html", str)
+        fs.writeFileSync(dir + "/allDocsContent2.html", htmlTexts)
         fs.writeFileSync(dir + "/allDocsContent2.csv", str)
-        fs.writeFileSync(dir + "/botContent.json", JSON.stringify(botObjs,null,2))
+        fs.writeFileSync(dir + "/botContent.json", JSON.stringify(botObjs, null, 2))
     },
 
     readDocumentsInDir: function (dir, callback) {
@@ -261,59 +258,6 @@ var docExtractorToCsv = {
     },
 
 
-    contentToCsvXXXX: function (contentJson, tocJson) {
-
-        var contentMap = {};
-        contentJson.forEach(function (line) {
-            if (line.tocId)
-                contentMap[line.tocId] = line;
-        })
-
-        var colsep = "\t";
-        var lineSep = "\n";
-
-        function recurseParentChapter(str, chapter) {
-
-
-            var tocObj = tocJson[chapter["tocId"]];
-            if (tocObj) {
-                var rootStr = str + tocObj.key + colsep + tocObj.title + colsep;
-                if (tocObj.parentAnchor && tocObj.parentAnchor != "_") {
-                    parentChapter = contentMap[tocObj.parentAnchor]
-                    str += recurseParentChapter(str, parentChapter);
-                }
-
-            }
-
-
-        }
-
-
-        var csvHeader = "DocTitle" + colsep + "" + lineSep
-        var csvBody = ""
-        var rootStr = contentJson.docTitle
-
-
-        contentJson.forEach(function (chapter) {
-            var lineStr = recurseParentChapter("", chapter);
-
-            var repeatedStr = chapter.title + colsep;
-            if (chapter && chapter.paragraphs) {
-                chapter.paragraphs.forEach(function (paragraph) {
-                    lineStr += repeatedStr + paragraph.text + lineSep;
-                })
-            }
-            lineStr = lineStr.replace(/\t\-/g, "");
-            lineStr = lineStr.replace(/undefined/g, "");
-
-            csvBody += rootStr + colsep + lineStr + lineSep;
-
-
-        })
-        return csvHeader + csvBody;
-
-
-    }
 }
 
 module.exports = docExtractorToCsv;
