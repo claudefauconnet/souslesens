@@ -83,7 +83,7 @@ var extractImage = function (imageRun, docRels) {
 
     for (var k = 0; k < images.length; k++) {
         var id = images[k].getAttribute("r:embed");
-        console.log(id)
+      //  console.log(id)
         if (docRels[id])
             imgName = docRels[id].target
 
