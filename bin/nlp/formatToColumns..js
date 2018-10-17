@@ -6,21 +6,41 @@ var formatToColumns = {
     format: function (sourceJson) {
 
         function getTableJson(table) {
-            var line = "<table>;// style='border-style: solid;border-width: 1px;border-color: #0000cc'>";
-            if( !table.rows)
-                return "";
-            table.rows.forEach(function (row, indexRow) {
-                line += "<tr>";
-                row.forEach(function (cell, indexCell) {
-                    line += "<td>";
-                    line += cell;
-                    line += "</td>";
-                })
-                line += "<tr>";
-            })
-            line += "</table>";
+            var html = "<table>";
 
-            return line;
+            if (table.values) {
+                table.values.forEach(function (value, indexRow) {
+                    html += "<tr>";
+
+                    html += "<td>";
+                    var i = 0;
+                    for (var key in value) {
+                        if ((i++) > 0)
+                            html += "|"
+                        html += key + ":" + value[key]
+
+                    }
+
+                    html += "</td>";
+
+                    html += "<tr>";
+                })
+            }
+
+            if (table.rows) {
+
+                table.rows.forEach(function (row, indexRow) {
+                    html += "<tr>";
+                    row.forEach(function (cell, indexCell) {
+                        html += "<td>";
+                        html += cell;
+                        html += "</td>";
+                    })
+                    html += "<tr>";
+                })
+            }
+            html += "</table>";
+            return html;
         }
 
         function extractImages(images, fileName) {

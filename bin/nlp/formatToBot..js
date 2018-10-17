@@ -1,4 +1,4 @@
-var config=require("./config..js");
+var config = require("./config..js");
 var formatToBot = {
 
 
@@ -77,8 +77,8 @@ var formatToBot = {
             }
 
 
-                images.forEach(function(image,index){
-                    var url = image.replace("media/", config.imagesServerUrl + "" + fileName +"/");
+            images.forEach(function (image, index) {
+                var url = image.replace("media/", config.imagesServerUrl + "" + fileName + "/");
 
                 imageSet.images.push({
                     "type": "Image",
@@ -95,8 +95,8 @@ var formatToBot = {
             //    var bullets = getEmbeddedJsons(paragraph.text)
 
 
-            if( paragraph.isSplitBullet){
-                return "- "+paragraph.text+"\n"
+            if (paragraph.isSplitBullet) {
+                return "- " + paragraph.text + "\n"
             }
             var bullets = paragraph.bullets;
             if (!bullets || bullets.length == 0) {
@@ -115,8 +115,10 @@ var formatToBot = {
                     start = bullet.offset;
                 bulletsText += bulletPrefix + bullet.text + "\n";
             })
-
-            return paragraph.text.substring(0, start) + bulletsText + paragraph.text.substring(start + 1)
+            if (start == 0)
+                return bulletsText + paragraph.text.substring(start);
+            else
+                return paragraph.text.substring(0, start-1) + bulletsText + paragraph.text.substring(start)
 
         }
 
@@ -124,18 +126,19 @@ var formatToBot = {
         function getTableJson(table) {
             function rotateClockwise(matrix) {
                 var a = matrix;
-                var n=a.length;
-                for (var i=0; i<n/2; i++) {
-                    for (var j=i; j<n-i-1; j++) {
-                        var tmp=a[i][j];
-                        a[i][j]=a[n-j-1][i];
-                        a[n-j-1][i]=a[n-i-1][n-j-1];
-                        a[n-i-1][n-j-1]=a[j][n-i-1];
-                        a[j][n-i-1]=tmp;
+                var n = a.length;
+                for (var i = 0; i < n / 2; i++) {
+                    for (var j = i; j < n - i - 1; j++) {
+                        var tmp = a[i][j];
+                        a[i][j] = a[n - j - 1][i];
+                        a[n - j - 1][i] = a[n - i - 1][n - j - 1];
+                        a[n - i - 1][n - j - 1] = a[j][n - i - 1];
+                        a[j][n - i - 1] = tmp;
                     }
                 }
                 return a;
             }
+
             function rotateCounterClockwise(matrix) {
                 var a = matrix;
                 var n = a.length;
@@ -150,21 +153,22 @@ var formatToBot = {
                 }
                 return a;
             }
+
             var jsonArray = [];
             var columns = [];
             var cellsMatrix = []
             //setMatrix
-            var colsLength=0
+            var colsLength = 0
             table.rows.forEach(function (row, indexRow) {
                 row.forEach(function (cell, indexCell) {
-                    colsLength=indexCell+1
+                    colsLength = indexCell + 1
                     if (indexCell == 0)
                         cellsMatrix.push([])
                     //   console.log(indexRow+"  "+indexCell+"  "+cellsMatrix.length+"  "+cellsMatrix[indexRow].length)
                     try {
                         cellsMatrix[indexRow].push(cell);
-                    }catch (e){
-                        var xx=table;
+                    } catch (e) {
+                        var xx = table;
                     }
 
                 })
@@ -185,14 +189,12 @@ var formatToBot = {
             })
 
             var jsonArray = jsonArray.reverse();
-            jsonArray.splice(colsLength,jsonArray.length-colsLength);
+            jsonArray.splice(colsLength, jsonArray.length - colsLength);
             return jsonArray;
         }
 
 
-
-
- /* *************************end internal functions****************************/
+        /* *************************end internal functions****************************/
 
         //titre
         body[0].items[0].text = removeHtmlTags(sourceJson.chapter.title);
@@ -212,7 +214,7 @@ var formatToBot = {
 
                     table.values.forEach(function (obj) {
                         var fact = {}
-                        for(var key in obj) {
+                        for (var key in obj) {
                             fact.title = key;
                             fact.value = obj[key];
                         }
@@ -226,10 +228,9 @@ var formatToBot = {
         //images
         var imageSet = extractImages(sourceJson.paragraph.images, sourceJson.fileName);
         if (imageSet.images.length > 0) {
-            sourceJson.paragraph.text=sourceJson.paragraph.text.replace(/{{"image":.*}}/gm,"")
+            sourceJson.paragraph.text = sourceJson.paragraph.text.replace(/{{"image":.*}}/gm, "")
             body[0].items[3] = imageSet;
         }
-
 
 
         //bullets
@@ -238,24 +239,20 @@ var formatToBot = {
         body[0].items[1].text = sourceJson.paragraph.text;
 
 
-
         //facts
         var docTitleObj = {
             "title": "Document :",
-            "value": sourceJson.fileName+"  "+sourceJson.docTitle
+            "value": sourceJson.fileName + "  " + sourceJson.docTitle
         }
         var parentObj = {
-            "title": "parent/key :",
-            "value": sourceJson.chapter.parent + " " + sourceJson.chapter.key
+            "title": "parent/§ :",
+            "value": sourceJson.chapter.parent + " / " + sourceJson.chapter.tocNumber
         }
         body[0].items[4].facts.splice(0, 0, parentObj);
         body[0].items[4].facts.splice(0, 0, docTitleObj);
 
 
-
-
-
-        if (imageSet.images.length ==0) {
+        if (imageSet.images.length == 0) {
             body[0].items.splice(3, 1);// images
         }
 

@@ -229,7 +229,7 @@ var docExtractorToCsv = {
                         chapter.key = "";
                     chapter.title=removeHtmlTags(chapter.title);
                     // "id\tFile\tdocTitle\tpurpose\tscope\tparentChapters\tChapterKey\tChapter\thtmlText\tbotText\n";
-                    var rooTxt = fileName + "\t" + docTitle + "\t" + purposeAndScope + "\t" + chapter.parent + "\t" + chapter.key + "\t" + chapter.title + "\t";
+                    var rooTxt = fileName + "\t" + docTitle + "\t" + purposeAndScope + "\t" + chapter.parent + "\t" + chapter.tocNumber + "\t" + chapter.title + "\t";
                     ;
                     chapter.paragraphs.forEach(function (paragraph) {
                         if (paragraph ) {
