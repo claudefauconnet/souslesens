@@ -13,27 +13,8 @@ var docxParagraphAggregator = require("../nlp/docxParagraphAggregator..js")
 
 var extractRunText = function (run, docRels) {
     var runStr = "";
-
-
     var textStr = ""
-    /* for (var i = 0; i < run.childNodes.length; i++) {
-          var child = run.childNodes[i];
-          if (child.tagName == "w:t") {
-              var textStr = ""
-              for (var l = 0; l < child.childNodes.length; l++) {
-                  var textChild = child.childNodes[l]
-                  if (textChild.data && textChild.data != "")
-                      textStr += textChild.data;
-              }
-              runStr += textStr.replace(/\n/g, "");
-
-          } else if (child.tagName == "a:blip") {
-              runStr += extractImage(run, docRels)
-          }
-
-      }*/
     var texts = run.getElementsByTagName("w:t")
-
     for (var k = 0; k < texts.length; k++) {
         var textStr = ""
         for (var l = 0; l < texts[k].childNodes.length; l++) {
@@ -42,19 +23,11 @@ var extractRunText = function (run, docRels) {
                 textStr += textChild.data;
         }
         runStr += textStr.replace(/\n/g, "");
-
-
     }
-
-    /*  var images = run.getElementsByTagName("pic:pic");
-      var imageSrcs=[]
-      for (var k = 0; k < images.length; k++) {
-         // runStr += "{{\"image\":\"" + extractImage(images[k], docRels) + "\"}}"
-          imageSrcs.push(extractImage(images[k], docRels))
-      }*/
     return runStr;
-
 }
+
+
 // provisoire
 var extractMathFormula = function (mathRun) {
     var runStr = "";
@@ -106,17 +79,19 @@ var convertImagesToPng = function (dirPath) {
     //  outputPrefix = path.resolve(outputPrefix.replace(/data[\/\\]pdf/g, scoreSplitter.rawImagesDir));
     /*       var cmd = "java -jar " +jarPath+" "+ pdfPath;
        //    var cmd = "java -jar " + jarPath + " PDFToImage -outputPrefix " + outputPrefix + " -imageType  png " + pdfPath*/
-    console.log("EXECUTING " + cmd)
-    exec(cmd, function (err, stdout, stderr) {
-        if (err) {
-            console.log(stderr);
-            return callback(err);
-        }
-
-        return console.log("DONE " + cmd)
-
-
-    })
+    console.log( cmd)
+    try {
+        exec(cmd, function (err, stdout, stderr) {
+            if (err) {
+                console.log(stderr);
+                return console.log(stderr)
+            }
+            return console.log("DONE " + cmd);
+        })
+    }
+    catch(e){
+        console.log(e);
+    }
 }
 
 var extractPagesNumbers = function () {
@@ -139,12 +114,8 @@ var getAllElementsByTagNameDepth = function (element, tagName) {
             recurse(element.childNodes[i], tagName, result)
         }
         return result;
-
-
     }
-
     return recurse(element, tagName, [])
-
 }
 
 var getPstyles = function () {
@@ -158,14 +129,12 @@ var getPstyles = function () {
         }
     }
     console.log(docxExtactor.stylesArray);
-
 }
 
 var getDocPstylesOffsets = function (body) {
     var stylesArray = [];
     if (body) {
         var pPrs = body.getElementsByTagName("w:pPr");
-
         for (var i = 0; i < pPrs.length; i++) {
             var styleObj = {offset: pPrs[i].columnNumber};
 
@@ -187,7 +156,6 @@ var getDocPstylesOffsets = function (body) {
     return stylesArray;
 
 }
-
 
 var docxExtactor = {
 
@@ -225,7 +193,6 @@ var docxExtactor = {
         /******************  internal functions*******************************/
 
         function setParagraphTablesContent(jsonParagraphs, jsonTables) {
-
             jsonTables.forEach(function (table, indexTable) {
                 var offset = table.startOffset;
                 var found = false
@@ -237,7 +204,6 @@ var docxExtactor = {
                         jsonParagraphs[index].tables.push(table);
                         found = true;
                     }
-
                 })
                 if (found == false) {
                     if (!jsonParagraphs.globalTables)
@@ -246,62 +212,44 @@ var docxExtactor = {
                 }
             })
             return jsonParagraphs;
-
-
         }
 
         //***************************  gestion des styles******************************
         function setStyles(json) {
-
             var json2 = [];
             json.forEach(function (paragraph, index) {
-
-
                 var paragraphStyle = null;//get paragraph Style by offsets
                 stylesArray.some(function (style) {
                     if (paragraph.startOffset < style.offset && paragraph.endOffset > style.offset) {
                         paragraphStyle = style.style;
                         paragraph.style = style.style;
-
                         return true;
                     }
                     return false;
-
                 })
-
                 if (paragraph.text == "" && paragraph.title == "" && !paragraph.tableIndices)
                     return;
-
                 if (paragraphStyle) {
 
                     if (paragraphStyle.indexOf("h") == 0) {
                         paragraph.title = paragraph.title//"<" + paragraphStyle + ">" + paragraph.title + "</" + paragraphStyle + ">"
                     }
                 }
-
-
                 json2.push(paragraph)
 
             })
-
-
             return json2;
-
         }
 
 
         function setImages(obj, run) {
             var images = run.getElementsByTagName("pic:pic");
-
-
             var imageSrcs = []
             for (var k = 0; k < images.length; k++) {
                 // runStr += "{{\"image\":\"" + extractImage(images[k], docRels) + "\"}}"
                 obj.images.push(extractImage(images[k], docRels))
             }
-
         }
-
         /******************  end internal functions*******************************/
 
 
@@ -312,29 +260,26 @@ var docxExtactor = {
         var currentTocId = "";
         var jsonTables = [];
 
-        var body = doc.documentElement.getElementsByTagName("w:body")[0];
+        var body = doc.documentElement.getElementsByTagName("w:body")[0]
 
-        //<w:pStyle w:val="Titre2"/>
+
+
         var stylesArray = getDocPstylesOffsets(body);
 
+        //extraction des tables
         var tables = body.getElementsByTagName("w:tbl");
-
         for (var j = 0; j < tables.length; j++) {
             var jsonTable = docxExtactor.extractTable(tables[j])
-            jsonTable.startOffset = tables[j].columnNumber
-
+            jsonTable.startOffset = tables[j].columnNumber;
             jsonTables.push(jsonTable)
-
         }
 
-
+        //extraction des paragrphes
         var paragraphs = body.getElementsByTagName("w:p")
         var runStr;
 
         for (var i = 0; i < paragraphs.length; i++) {
             var paragraph = paragraphs[i];
-
-
             if(paragraph.parentNode.tagName=="w:tc")
                 continue;
             var obj = {status: "normal", title: "", text: "", paragraphIndex: i, images: []};
@@ -343,7 +288,6 @@ var docxExtactor = {
                 obj.endOffset = paragraphs[i + 1].columnNumber - 1
             else
                 obj.sendOffset = 999999999;
-
 
             var texts = paragraph.getElementsByTagName("w:r");
             var styleElts = paragraph.getElementsByTagName("w:pStyle");
@@ -367,107 +311,9 @@ var docxExtactor = {
                 json.push({paragraphIndex: i, isLineBreak: true, parentTocId: currentTocId})
                 continue;
             }
+
             setImages(obj, paragraph);
 
-
-            //  var imgElts=(paragraphs[i].getElementsByTagName("w:r").
-
-
-            if (false) {
-                if (paragraphs[i].parentNode.tagName == "w:tc")// cellule de tableau
-                    continue;
-
-                var obj = {status: "normal", title: "", text: "", paragraphIndex: i, images: []};
-
-                //si pas de run et pas de formule c'est un saut de ligne qui délimite un paragraphe
-                if (paragraphs[i].getElementsByTagName("w:r").length == 0 && paragraphs[i].getElementsByTagName("m:oMath").length == 0) {
-
-                    json.push({paragraphIndex: i, isLineBreak: true, parentTocId: currentTocId})
-                    continue;
-                }
-
-                for (var j = 0; j < paragraphs[i].childNodes.length; j++) {
-                    var child = paragraphs[i].childNodes[j];
-                    setImages(obj, child)
-
-                    //  var imgElts=(paragraphs[i].getElementsByTagName("w:r").
-
-                    obj.startOffset = paragraphs[i].columnNumber
-                    if (i < paragraphs.length - 1)
-                        obj.endOffset = paragraphs[i + 1].columnNumber - 1
-                    else
-                        obj.sendOffset = 999999999;
-
-
-                    if (child.tagName == "w:bookmarkStart") {
-                        obj.status = "bookmark";
-
-                        var attrs = child.attributes;
-                        for (var k = 0; k < attrs.length; k++) {
-                            if (attrs[k].name && attrs[k].value) {
-                                if (attrs[k].name == "w:name")
-                                    obj.tocId = attrs[k].value
-                            }
-
-                            currentTocId = obj.tocId;
-
-
-                        }
-                    }
-
-
-                    if (child.tagName == "w:bookmarkEnd") {
-                        obj.status = "normal";
-                        obj.text = "";
-                    }
-
-                    runStr = "";
-
-                    /*  if(i==67){
-                          var runs = child.getElementsByTagName("w:r")
-
-
-                          for (var k = 0; k < runs.length; k++) {
-                              runStr += extractRunText(runs[k], docRels)
-                              // setImages(obj,runs[k])
-
-
-                          }
-                          console.log(runStr)
-                      }*/
-
-                    if (child.tagName == "w:ins") {//ins revisions
-
-                        var runs = child.getElementsByTagName("w:r")
-
-
-                        for (var k = 0; k < runs.length; k++) {
-                            runStr += extractRunText(runs[k], docRels)
-                            // setImages(obj,runs[k])
-
-
-                        }
-                    }
-                    if (child.tagName == "m:oMath") {//math formulas
-                        runStr = extractMathFormula(child);
-                    }
-                    if (child.tagName == "w:r") {
-                        runStr = extractRunText(child, docRels);
-                        // setImages(obj,child)
-                    }
-
-
-                    if (obj.status == "bookmark") {
-                        obj.title += runStr;
-                    }
-                    if (obj.status == "normal") {
-                        obj.text += runStr;
-                    }
-
-
-                }
-
-            }
 
             if (true || obj.title != "" || obj.text != "") {
                 if (!obj.tocId && currentTocId) {
@@ -480,22 +326,11 @@ var docxExtactor = {
         }
 
         //   console.log(JSON.stringify(json,null,2))
-        json = setParagraphTablesContent(json, jsonTables)
-        /*   json = setStyles(json);
-           var toc = docxExtactor.extractTOC(doc, true);
-           //     console.log(JSON.stringify(toc,null,2))
-           try {
-               docxExtactor.checkParagraphAndTocConsistency(toc, json);
-           }catch(e){
-              throw(e);
-           }*/
-
-        json = docxParagraphAggregator.groupParagraphs(json)
-      //   console.log(JSON.stringify(json,null,2))
+        json = setParagraphTablesContent(json, jsonTables);
+        json = docxParagraphAggregator.groupParagraphs(json);
+        //   console.log(JSON.stringify(json,null,2))
         //   docxExtactor.setParagraphsParents(toc, json);
-
         json.tables = jsonTables
-
         return json;
     },
 
@@ -509,14 +344,12 @@ var docxExtactor = {
                 headerTables.push(docxExtactor.extractTable(headerTablesElts[j]))
             }
         }
-
         return headerTables
     },
 
     setParagraphsParents: function (toc, jsonContent) {
         if (Object.keys(toc).length == 0) {
             console.log("TOC is old Model  !!! not processed")
-
             return jsonContent;
         }
 
@@ -822,16 +655,11 @@ var docxExtactor = {
         var childDirs = fs.readdirSync(dir)
         childDirs.forEach(function (docPath) {
             var childdirPath = path.resolve(dir + "" + docPath);
-
             convertImagesToPng(childdirPath)
         })
     },
     extractXmlFilesFromDocXDir: function (dir, callback) {
-
-
         try {
-
-
             var unzip = require("unzip");
             dir = path.resolve(dir)
             var docxFiles = fs.readdirSync(dir)
@@ -851,7 +679,6 @@ var docxExtactor = {
                                 })
                                 return yes;
                             }
-
                             var fileName = entry.path;
                             var type = entry.type; // 'Directory' or 'File'
                             var size = entry.size;
@@ -893,15 +720,11 @@ var docxExtactor = {
                             else {
                                 entry.autodrain();
                             }
-
-
                         }).on('error', function (error) {
                         console.log(error + "  " + docPath)
 
                     });
                 }
-
-
             })
             console.log("DONE");
 
@@ -923,13 +746,8 @@ var docxExtactor = {
         var contentJson = docxExtactor.extractContentJson(xml);
         contentJson.tables.forEach(function (table) {
             if (true || table.tocId)
-                paragraphJsonTables.push(table)
-            /* if (table.inParagraph)
-                 ;// paragraphJsonTables.push(table)*/
-
-
+                paragraphJsonTables.push(table);
         })
-
         return paragraphJsonTables;
     },
 
@@ -939,7 +757,9 @@ var docxExtactor = {
 module.exports = docxExtactor;
 
 
-if (false) {
+
+
+if (true) {
 
     docxExtactor.convertAllImagesToPng("D:\\Total\\docs\\GM MEC Word\\documents\\test");
 }
@@ -970,4 +790,3 @@ if (false) {
     console.log(csv);
     // var tablesJson = extractTables(cleanXml)
 }
-

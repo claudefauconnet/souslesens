@@ -223,20 +223,21 @@ var docxParagraphAggregator = {
             }
 
 
-           function recurse(parentTitle,tocNumber) {
+           function recurse(parentTitle,tocNumber,recurseLevel) {
 
-               var p = tocNumber.indexOf(".");
+               var p = tocNumber.lastIndexOf(".");
                if(p>-1) {
-                   var q=p+1;
+
                    var str1 = tocNumber.substring(0, p + 1)
                    var parent = findTocNumberTitle(str1);
-                   if (parent) {
-                       parentTitle += "/" + parent;
-                       p = tocNumber.indexOf(".", q )
-                       if (p > -1) {
-                           var str2 = tocNumber.substring(0, p + 1)
-                           if (str2.length > 2)
-                               parentTitle = recurse(parentTitle, str2)
+                   if (parent ) {
+                       if(recurseLevel>0)
+                        parentTitle = parent+"/" +parentTitle ;
+                       var q = tocNumber.lastIndexOf(".", p-1 )
+                       if (q > -1 && q<tocNumber.length-1) {
+                           var str2 = tocNumber.substring(0, q + 1)
+                           if (true || str2.length > 2)
+                               parentTitle = recurse(parentTitle, str2,recurseLevel+1)
                        }
 
                    }
@@ -244,18 +245,14 @@ var docxParagraphAggregator = {
                return parentTitle;
            }
 
-
-
-
-
-
             chapters.forEach(function (chapter, indexChapter) {
                 var parentStr = ""
                 var p = 0;
                 var str = chapter.tocNumber;
                 if(str.length>4)
                     var xx=3
-                parentStr=  recurse(parentStr,chapter.tocNumber)
+
+                parentStr=  recurse(parentStr,chapter.tocNumber,0)
                 if(parentStr!=""){
                     var ww=1;
                 }
