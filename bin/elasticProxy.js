@@ -2488,8 +2488,8 @@ if (false) {
 
 if (false) {
 
-    elasticProxy.createSimpleIndex("totalreferentiel", "BASIC", function (err, result) {
-        elasticProxy.indexCsv("D:\\Total\\NLP\\importRules4.csv", "totalref2", "rules_total2", function (err, result) {
+    elasticProxy.createSimpleIndex("totalreferentiel3", "BASIC", function (err, result) {
+        elasticProxy.indexCsv("D:\\Total\\NLP\\importRules4.csv", "totalref3", "rules_total3", function (err, result) {
 
         })
     })

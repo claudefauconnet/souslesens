@@ -76,6 +76,14 @@ var formatToColumns = {
             if (!bullets || bullets.length == 0) {
                 return paragraph.text;
             }
+
+
+
+
+
+
+
+
             var bulletsText = "";
             var start = 0;
             var bulletPrefix="<"+paragraph.style+">";
@@ -83,7 +91,9 @@ var formatToColumns = {
             bullets.forEach(function (bullet, index) {
                 if (index == 0)
                     start = bullet.offset;
-                bulletsText += "<"+paragraph.style+"-li>" + bullet.text +"</"+paragraph.style+"-li>"
+                if(!bullet.style)
+                    var x=1
+                bulletsText += "<"+bullet.style+"-li>" + bullet.text +"</"+bullet.style+"-li>"
             })
 
             return paragraph.text.substring(0, start) + bulletsText + paragraph.text.substring(start + 1)
@@ -126,15 +136,24 @@ var formatToColumns = {
             })
         }
 
+if(sourceJson.chapter.title=="Definitions of terms")
+    var xx=2
+
+        if(  sourceJson.paragraph.text.indexOf("a fan is according G 6.3, a car wheel is G 60")>-1)
+            var ww=1
+
+
+        sourceJson.paragraph.text== sourceJson.paragraph.text.replace(/\n/gm,"<br>")
         sourceJson.paragraph.text= removeHtmlTags( sourceJson.paragraph.text);
-        //images
-        var cellImages = extractImages(sourceJson.paragraph.images, sourceJson.fileName);
-        sourceJson.paragraph.text =sourceJson.paragraph.text .replace(/{{"image":.*}}/gm,"");
+           //images
+         var cellImages = extractImages(sourceJson.paragraph.images, sourceJson.fileName);
+         ///  sourceJson.paragraph.text =sourceJson.paragraph.text .replace(/{{"image":.*}}/gm,"");*/
 
         //bullets
 
         sourceJson.paragraph.text = formatBullets(sourceJson.paragraph);
-        sourceJson.paragraph.text = sourceJson.paragraph.text.replace(/<br>/gm, "\n");
+
+     //   sourceJson.paragraph.text = sourceJson.paragraph.text.replace(/<br>/gm, "\n");
 
 
 

@@ -118,7 +118,7 @@ var formatToBot = {
             if (start == 0)
                 return bulletsText + paragraph.text.substring(start);
             else
-                return paragraph.text.substring(0, start-1) + bulletsText + paragraph.text.substring(start)
+                return paragraph.text.substring(0, start) + bulletsText + paragraph.text.substring(start+1)
 
         }
 

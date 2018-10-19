@@ -9,10 +9,8 @@ var docxExtractor = require("./docxExtractor..js");
 var formatToBot = require("./formatToBot..js");
 var formatToHtml = require("./formatToHtml..js");
 var formatToColumns = require("./formatToColumns..js");
-var config=require("./config..js");
+var config = require("./config..js");
 var docExtractorToCsv = {
-
-
 
 
     /**
@@ -142,19 +140,46 @@ var docExtractorToCsv = {
 
         var setPurposeAndScope = function (tables) {
             var str = "";
-            if (tables.length > 0 && tables[0].rows[0]) {
-                var cell0 = tables[0].rows[0][0];
-                var cell1 = tables[0].rows[1][0];
-                var index = cell0.indexOf("Purpose:");
-                if (index == 0)
-                    str += cell0.substring(index + "Purpose:".length);
-                str += "\t";
-                index = cell1.indexOf("Scope of application:");
-                if (index == 0)
-                    str += cell1.substring(index + "Scope of application:".length);
+
+            tables.forEach(function (table) {
+                if (table.paragraphIndex == -1) {// hors chapitre donc en tete
+                    if( table.rows[0].length==1){//modele 1
+                        var cellPurpose = table.rows[0][0];
+                        var cellScope = table.rows[1][0];
+                        var p = cellPurpose.indexOf("Purpose:");
+                        str += cellPurpose.substring(p + "Purpose:".length);
+                        str += "\t";
+                        p = cell1Txt.indexOf("Scope of application:");
+                            str += cellScope.substring(p + "Scope of application:".length);
+                    }
+                    else if(true){//modele 2
+                        var cellPurpose = table.rows[0][1];
+                        var cellScope = table.rows[1][1];
+
+                        str += cellPurpose+"\t"+cellScope;
+                    }
+                    else{
+                        console.log("Probem extracting Pupose and scope")
+                    }
 
 
-            }
+
+
+                }
+            })
+            /*  if (tables.length > 0 && tables[0].rows[0]) {
+                  var cell0 = tables[0].rows[0][0];
+                  var cell1 = tables[0].rows[1][0];
+                  var index = cell0.indexOf("Purpose:");
+                  if (index == 0)
+                      str += cell0.substring(index + "Purpose:".length);
+                  str += "\t";
+                  index = cell1.indexOf("Scope of application:");
+                  if (index == 0)
+                      str += cell1.substring(index + "Scope of application:".length);
+
+
+              }*/
             return str;
         }
 
@@ -169,6 +194,7 @@ var docExtractorToCsv = {
             }
             return docTitle;
         }
+
         function removeHtmlTags(text) {
             var regex = /<([^>^\/]*)>(.*)(<[^>^]*>)/;
             var array = regex.exec(text)
@@ -180,15 +206,15 @@ var docExtractorToCsv = {
         }
 
         var str = "id\tFile\tdocTitle\tpurpose\tscope\tparentChapters\tChapterKey\tChapter\thtmlText\tbotText";
-        str+="\ttitle\ttext\ttable\tdocTitle\timage"
-        str+="\n";
+        str += "\ttitle\ttext\ttable\tdocTitle\timage"
+        str += "\n";
         var botStr = ""
         var xmlPaths = fs.readdirSync(dir)
         var jsonTables = [];
         var allTables = [];
         var botObjs = [];
-        var  htmlTexts="";
-        var columnTexts="title\ttext\ttable\tdocTitle\timage\n";
+        var htmlTexts = "";
+        var columnTexts = "title\ttext\ttable\tdocTitle\timage\n";
 
         xmlPaths.forEach(function (xmlPath) {
 
@@ -222,21 +248,20 @@ var docExtractorToCsv = {
                 var startId = Math.round((Math.random() * 100000))
 
 
-
                 jsonContent.forEach(function (chapter, index) {
 
                     if (!chapter.key)
                         chapter.key = "";
-                    chapter.title=removeHtmlTags(chapter.title);
+                    chapter.title = removeHtmlTags(chapter.title);
                     // "id\tFile\tdocTitle\tpurpose\tscope\tparentChapters\tChapterKey\tChapter\thtmlText\tbotText\n";
                     var rooTxt = fileName + "\t" + docTitle + "\t" + purposeAndScope + "\t" + chapter.parent + "\t" + chapter.tocNumber + "\t" + chapter.title + "\t";
                     ;
                     chapter.paragraphs.forEach(function (paragraph) {
-                        if (paragraph ) {
+                        if (paragraph) {
                             var paragraphText = paragraph.text;
 
-if(paragraph.images.length>0)
-    var xx=1
+                            if (paragraph.images.length > 0)
+                                var xx = 1
 
 
                             var botSourceObj = {
@@ -246,26 +271,23 @@ if(paragraph.images.length>0)
                                 paragraph: paragraph
                             }
                             //clone before use
-                            var  htmlSourceObj= JSON.parse(JSON.stringify(botSourceObj));
-                            var  columnsSourceObj= JSON.parse(JSON.stringify(botSourceObj));
+                            var htmlSourceObj = JSON.parse(JSON.stringify(botSourceObj));
+                            var columnsSourceObj = JSON.parse(JSON.stringify(botSourceObj));
 
 
                             var botObj = formatToBot.format(botSourceObj);
                             botObjs.push(botObj)
                             var botText = JSON.stringify(botObj)
                             var htmlText = formatToHtml.format(htmlSourceObj);
-                            htmlTexts+=htmlText
+                            htmlTexts += htmlText
 
                             var columnText = formatToColumns.format(columnsSourceObj);
-                            columnTexts+=columnText+"\n";
-
-
-
+                            columnTexts += columnText + "\n";
 
 
                             // console.log(botText + "\n");
 
-                            str += (startId++) + "\t" + rooTxt + htmlText + "\t" + botText + "\t"+columnText+"\n";
+                            str += (startId++) + "\t" + rooTxt + htmlText + "\t" + botText + "\t" + columnText + "\n";
 
                         }
 
@@ -275,8 +297,8 @@ if(paragraph.images.length>0)
                 })
             } catch (e) {
                 console.log(e);
-           //     str += "ERROR processing " + fileName + " : " + e + "\n";
-            //    botObjs.push({ERROR: " processing " + fileName + " : " + e})
+                //     str += "ERROR processing " + fileName + " : " + e + "\n";
+                //    botObjs.push({ERROR: " processing " + fileName + " : " + e})
             }
 
         });
@@ -297,11 +319,11 @@ if(paragraph.images.length>0)
 }
 
 module.exports = docExtractorToCsv;
+//dir = "D:\\Total\\docs\\GM MEC Word\\documents"
 
 
 var dir = "D:\\Total\\docs\\GM MEC Word\\documents\\test"
 dir = "D:\\Total\\docs\\GM MEC Word\\documents"
-//dir = "D:\\Total\\docs\\GS MEC Word\\documents"
 if (true) {
     docExtractorToCsv.jsonContentsToCsv(dir);
 }

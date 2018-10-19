@@ -801,6 +801,43 @@
           }
         }
       }
+    },
+    //id	File	docTitle	purpose	scope	parentChapters	ChapterKey	Chapter	htmlText	botText	title	text	table	docTitle	image
+
+    "totalref3": {
+      "mappings": {
+        "rules_total3": {
+          "properties": {
+            "id": {
+              "id":true,
+              "type": "keyword"
+            },
+            "File": {
+              "type": "keyword",
+              "inCSV": true,
+              "isTitle":true
+            },
+            "docTitle": {
+              "type": "keyword",
+              "inCSV": true,
+              "isTitle":true
+            },
+            "purpose": {
+              "type": "text"
+            },
+            "scope": {
+              "type": "integer"
+            },
+            "parentChapters": {
+              "type": "integer"
+            },
+            "Title": {
+              "type": "integer"
+            }
+
+          }
+        }
+      }
     }
 }
 }

@@ -75,11 +75,8 @@ var extractImage = function (imageRun, docRels) {
 var convertImagesToPng = function (dirPath) {
 
     dirPath = path.resolve(dirPath);
-    var cmd = "cd :" + dirPath + ";d:;\"C:\\Program Files\\GraphicsMagick-1.3.27-Q16\\gm.exe\" gm mogrify -resize 250x250 -format png +profile \"*\"  *.png"
-    //  outputPrefix = path.resolve(outputPrefix.replace(/data[\/\\]pdf/g, scoreSplitter.rawImagesDir));
-    /*       var cmd = "java -jar " +jarPath+" "+ pdfPath;
-       //    var cmd = "java -jar " + jarPath + " PDFToImage -outputPrefix " + outputPrefix + " -imageType  png " + pdfPath*/
-    console.log( cmd)
+    var cmd = "cd " + dirPath + " & d: & \"C:\\Program Files\\GraphicsMagick-1.3.27-Q16\\gm.exe\" mogrify -resize 250x250 -format png +profile \"*\"  *.*"
+    console.log(cmd)
     try {
         exec(cmd, function (err, stdout, stderr) {
             if (err) {
@@ -89,10 +86,11 @@ var convertImagesToPng = function (dirPath) {
             return console.log("DONE " + cmd);
         })
     }
-    catch(e){
+    catch (e) {
         console.log(e);
     }
 }
+
 
 var extractPagesNumbers = function () {
 //<w:br w:type="page"/>
@@ -115,6 +113,7 @@ var getAllElementsByTagNameDepth = function (element, tagName) {
         }
         return result;
     }
+
     return recurse(element, tagName, [])
 }
 
@@ -167,13 +166,44 @@ var docxExtactor = {
         //  Listepuces2: "ul",
         Titre1: "h1",
         Titre2: "h2",
-        Titre3: "h4",
+        Titre3: "h3",
         Titre4: "h4",
         TM1: "p",
         TM2: "p",
+        Corpsdetexte: "?",
+        TM3: "p",
+        RfrentielTexte3: "?",
+        TitreAnnexe: "h1",
+        Listepuces: "ul",
+        Default: "?",
+        Pieddepage: "?",
+        Lgende: "?",
+        // En-tte:"?",
+        Rfrentieltexte2puce: "ul",
+        referentielTexte3: "?",
+        TitreAppendix: "h1",
+        Retraitcorpsdetexte: "?",
+        Titre5: "h5",
+        Citationintense: "?",
+        num: "?",
+        sommaire: "?",
+        TM5: "?",
+        Tabledesillu: "?",
+        TableText: "?",
+        Titre8: "h8",
+        Listenumros: "?",
+        Titre7: "h7",
+        Liste: "ul",
+        Liste2: "ul",
+        Listepuces3: "ul",
+        Titre6: "h6",
+        "En-tte": "?",
+        'Tabledesillustrations':"?"
+
 
 
     },
+
 
 
     stylesArray: [],
@@ -250,6 +280,59 @@ var docxExtactor = {
                 obj.images.push(extractImage(images[k], docRels))
             }
         }
+
+        function setTables(json, docTableCells) {
+            var currentRow = null;
+            var currentTable = null;
+            var currentTableElt = null;
+            var currentRowElt = null;
+            var tables = {};
+var i=0;
+            docTableCells.forEach(function (cellElt) {
+                var rowElt = cellElt.parentNode.parentNode;
+                var tableElt = cellElt.parentNode.parentNode.parentNode;
+                if (currentTableElt != tableElt) {
+                    currentTableElt=tableElt;
+                    if(cellElt.paragraphIndex<0)
+                        cellElt.paragraphIndex=cellElt.paragraphIndex-(i++);
+                    currentTable= {index: cellElt.paragraphIndex, rows: []}
+                    currentRow = null;
+                    tables[currentTable.index]=currentTable
+                }
+                if (currentRowElt != rowElt) {
+                    currentRowElt=rowElt;
+                    currentRow = [];
+                    currentTable.rows.push(currentRow)
+                }
+                //setImages  a faire!!!!!!!!!!!!!!!
+                var text = extractRunText(cellElt)
+                currentRow.push(text)
+
+
+            })
+var docTables=[]
+           for(var key in tables) {
+
+                var index=parseInt(key);
+               var table={paragraphIndex:index,rows:tables[index].rows}
+               docTables.push(table);
+               if (json[index]) {
+                   if(!json[index].tables)
+                       json[index].tables=[];
+                   json[index].tables.push(table);
+
+               }
+               else{
+                   console.log(key);
+               }
+           }
+           json.tables=docTables;
+           return json;
+
+
+
+        }
+
         /******************  end internal functions*******************************/
 
 
@@ -259,13 +342,12 @@ var docxExtactor = {
         var bodyStr = "";
         var currentTocId = "";
         var jsonTables = [];
-
+        var docTableCells = [];
         var body = doc.documentElement.getElementsByTagName("w:body")[0]
 
 
-
         var stylesArray = getDocPstylesOffsets(body);
-
+var previousTextIndex=-1;
         //extraction des tables
         var tables = body.getElementsByTagName("w:tbl");
         for (var j = 0; j < tables.length; j++) {
@@ -274,15 +356,22 @@ var docxExtactor = {
             jsonTables.push(jsonTable)
         }
 
-        //extraction des paragrphes
+        //extraction des paragraphes
         var paragraphs = body.getElementsByTagName("w:p")
         var runStr;
 
         for (var i = 0; i < paragraphs.length; i++) {
             var paragraph = paragraphs[i];
-            if(paragraph.parentNode.tagName=="w:tc")
+
+            //cellule de tableau
+            if (paragraph.parentNode.tagName == "w:tc") {
+                paragraph.paragraphIndex = previousTextIndex
+                docTableCells.push(paragraph);
                 continue;
+            }
+
             var obj = {status: "normal", title: "", text: "", paragraphIndex: i, images: []};
+
             obj.startOffset = paragraph.columnNumber
             if (i < paragraphs.length - 1)
                 obj.endOffset = paragraphs[i + 1].columnNumber - 1
@@ -321,16 +410,18 @@ var docxExtactor = {
                 }
                 delete obj.status
                 json.push(obj);
+                previousTextIndex=json.length-1
             }
 
         }
+        json = setTables(json, docTableCells);
 
         //   console.log(JSON.stringify(json,null,2))
-        json = setParagraphTablesContent(json, jsonTables);
+    //   json = setParagraphTablesContent(json, jsonTables);
         json = docxParagraphAggregator.groupParagraphs(json);
         //   console.log(JSON.stringify(json,null,2))
         //   docxExtactor.setParagraphsParents(toc, json);
-        json.tables = jsonTables
+      //  json.tables = jsonTables
         return json;
     },
 
@@ -650,11 +741,33 @@ var docxExtactor = {
     },
 
 
+    deleteNonPngImages: function (dir) {
+
+        dir = path.resolve(dir)
+        var docxFiles = fs.readdirSync(dir)
+        docxFiles.forEach(function (docPath) {
+            var docMediaPath = path.resolve(dir + "/" + docPath);
+            var imageFiles = fs.readdirSync(docMediaPath)
+            imageFiles.forEach(function (imageFile) {
+                if (imageFile.indexOf(".png") < 0) {
+                    try {
+                        var imagePath = path.resolve(docMediaPath + "/" + imageFile)
+                        fs.unlinkSync(imagePath)
+
+                    } catch (e) {
+                        console.log(e);
+                    }
+                }
+            })
+        })
+    },
+
+
     convertAllImagesToPng: function (dir, callback) {
         dir = path.resolve(dir + "/media");
         var childDirs = fs.readdirSync(dir)
         childDirs.forEach(function (docPath) {
-            var childdirPath = path.resolve(dir + "" + docPath);
+            var childdirPath = path.resolve(dir + "/" + docPath);
             convertImagesToPng(childdirPath)
         })
     },
@@ -679,6 +792,7 @@ var docxExtactor = {
                                 })
                                 return yes;
                             }
+
                             var fileName = entry.path;
                             var type = entry.type; // 'Directory' or 'File'
                             var size = entry.size;
@@ -757,11 +871,11 @@ var docxExtactor = {
 module.exports = docxExtactor;
 
 
+if (false) {
 
+    // docxExtactor.convertAllImagesToPng("D:\\Total\\docs\\GS MEC Word\\documents\\");
+  docxExtactor.deleteNonPngImages("D:\\Total\\docs\\GS MEC Word\\documents\\media\\");
 
-if (true) {
-
-    docxExtactor.convertAllImagesToPng("D:\\Total\\docs\\GM MEC Word\\documents\\test");
 }
 
 
