@@ -133,30 +133,60 @@ var elasticProxy = {
             }
 
         }
+
+        var contentField = null;
+        for (var key in  fields.fieldObjs) {
+            if (fields.fieldObjs[key].isSearched) {
+                if (!contentField) {
+                    contentField = {
+                        "content": {
+                            "type": "text",
+                            "index_options": "offsets",
+                            "analyzer": "ATD",
+                            "fielddata": true,
+                            "fields": {
+                                "contentKeyWords": {
+                                    "type": "keyword",
+                                    "ignore_above": 256
+                                }
+                            }
+                        }
+                    }
+
+                }
+
+            }
+
+        }
+        if (contentField)
+           fields.fieldObjs["content"] = contentField;
+        fields.push("content");
+
+
         elasticSchema._indexes[index].fields = fields;
 
     },
 
     removeSchemaMappingsCustomProperties: function (indexSchema) {
-        var customProperties = ["isTitle", "isId", "inCSV"];
+        var customProperties = ["isTitle", "isId", "inCSV", "isSearched"];
         var types = [];
-
+        var cleanedSchema = JSON.parse(JSON.stringify(indexSchema));
         for (var key in indexSchema.mappings) {
             types.push(key);
         }
 
         for (var i = 0; i < types.length; i++) {
 
-            var xx = indexSchema.mappings[types[i]];
-            for (var key in indexSchema.mappings[types[i]].properties) {
+            var xx = cleanedSchema.mappings[types[i]];
+            for (var key in cleanedSchema.mappings[types[i]].properties) {
                 for (var j = 0; j < customProperties.length; j++) {
 
-                    delete indexSchema.mappings[types[i]].properties[key][customProperties[j]];
+                    delete cleanedSchema.mappings[types[i]].properties[key][customProperties[j]];
                 }
 
             }
         }
-        return indexSchema;
+        return cleanedSchema;
     },
     getWordBlacklist: function () {
         if (!wordBlackList) {
@@ -340,6 +370,7 @@ var elasticProxy = {
             json: payload,
             url: baseUrl + index + "/_search"
         };
+
 
         request(options, function (error, response, body) {
             if (error)
@@ -551,13 +582,13 @@ var elasticProxy = {
             highlight.fields ["content"] = {"fragment_size": 50, "number_of_fragments": 5};
 
 
-            var payload = {
-                "from": from,
-                "size": size,
+        var payload = {
+            "from": from,
+            "size": size,
 
-                "query": query,
-                "highlight": highlight
-            }
+            "query": query,
+            "highlight": highlight
+        }
 
 
         if (resultFields)
@@ -1398,6 +1429,7 @@ var elasticProxy = {
 
         var data = "" + fs.readFileSync(csvPath);
         var elasticFields = elasticProxy.getShemasFieldNames(elasticIndex, elasticType);
+        var elasticFieldsMap = elasticProxy.getIndexMappings(elasticIndex, elasticType).fields.fieldObjs;
         var jsonData = [];
         csv({noheader: false, trim: true, delimiter: "auto"})
             .fromString(data)
@@ -1413,6 +1445,7 @@ var elasticProxy = {
                 for (var i = 0; i < jsonData.length; i++) {
                     var payload = {};
                     var content = "";
+                    var contentValue = ""
 
                     elasticPayload.push({index: {_index: elasticIndex, _type: elasticType, _id: "_" + (startId++)}})
                     for (var j = 0; j < jsonData.length; j++) {
@@ -1422,12 +1455,17 @@ var elasticProxy = {
                             continue;
                         if (value == "0000-00-00")
                             continue;
-
+                        if (elasticFieldsMap[key].isSearched)
+                            contentValue += ". " + value;
 
                         payload[key] = value;
+                        if (true)
+                            x = 1
 
                     }
 
+                    if (contentValue.length > 0)
+                        payload["content"]= contentValue;
                     elasticPayload.push(payload);
 
                 }
@@ -1810,6 +1848,7 @@ var elasticProxy = {
             json.settings = settingsObj;
         }
         mappingsObj = elasticProxy.getIndexMappings(index)
+
         if (mappingsObj && (settingsObj && !settingsObj.mappings))
             json.mappings = elasticProxy.removeSchemaMappingsCustomProperties(mappingsObj).mappings;
 
@@ -2489,8 +2528,8 @@ if (false) {
 if (false) {
 
     elasticProxy.createSimpleIndex("totalreferentiel3", "BASIC", function (err, result) {
-        elasticProxy.indexCsv("D:\\Total\\NLP\\importRules4.csv", "totalref3", "rules_total3", function (err, result) {
-
+        elasticProxy.indexCsv("D:\\Total\\docs\\GM MEC Word\\documents\\allDocsContent2.csv", "totalreferentiel3", "rules_total3", function (err, result) {
+            var x = 1;
         })
     })
 

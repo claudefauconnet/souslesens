@@ -1,9 +1,9 @@
 var elasticProxy = (function () {
     var self = {};
     self.elasticParams = {
-        size: 5000,
+        size: 100,
         index: "totalref2",
-        queryField: "Texte",
+        queryField: "content",
         elasticUrl: "../../../elastic"
     }
 
@@ -11,7 +11,8 @@ var elasticProxy = (function () {
 
 
     self.createCorpusGraph = function () {
-
+        var elasticIndex=$("#indexNameInput").val();
+        self.elasticParams.index=elasticIndex;
         var allTokens = [];
         var payload = {
             findDocuments: 1,
@@ -28,11 +29,11 @@ var elasticProxy = (function () {
 
 
         var queryField = self.elasticParams.queryField
-        if (queryField != "") {
+        if (false && queryField != "") {
             payload.options.queryField = queryField;
         }
         $("#dataTable").html("");
-
+console.log(JSON.stringify(payload.options))
 //search all rules
         $.ajax({
             type: "POST",
@@ -43,7 +44,7 @@ var elasticProxy = (function () {
                 var iterations = 0;
                 async.eachSeries(data.docs, function (doc, callbackEachDoc) {
                         // forEach rules extract nouns
-                        var text = doc.Texte;//+ " "+doc.Title;
+                        var text = doc.text;//+ " "+doc.Title;
                         if (false && iterations++ > 5)
                             return callbackEachDoc();
 
@@ -98,7 +99,8 @@ var elasticProxy = (function () {
         });
     }
     self.createNeoConcepts = function () {
-
+var elasticIndex=$("#indexNameInput").val();
+        self.elasticParams.index=elasticIndex;
         var treeData = $("#treeDiv1").jstree()._model.data;
 
         var keys = Object.keys(treeData);

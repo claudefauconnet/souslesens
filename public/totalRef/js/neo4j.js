@@ -454,75 +454,107 @@ var neo4jProxy = (function () {
 
             var files = {};
             //split data for each file in paragraph and text fragment
+            //id	File	docTitle	purpose	scope	parentChapters	ChapterKey	Chapter	htmlText	botText	title	text	table	docTitle	image
+
+
             docs.forEach(function (line) {
-                if (!files[line.doc.File]) {
-                    files[line.doc.File] = {title: line.doc.TitleDoc, purpose: line.doc.PurposeDoc, paragraphs: {}};
-                }
-                var paragraph = line.doc.Title;
-                if (!files[line.doc.File].paragraphs[paragraph]) {
-                    files[line.doc.File].paragraphs[paragraph] = []
-                }
-                files[line.doc.File].paragraphs[paragraph].push({
-                    text: line.doc.Texte,
-                    id: line.doc.id,
-                    tokens: line.tokens
+
+                line.doc = self.cleanFieldsForNeo(line.doc);
+
+
+
+
+                var files = {};
+                //split data for each file in paragraph and text fragment
+                //id	File	docTitle	purpose	scope	parentChapters	ChapterKey	Chapter	htmlText	botText	title	text	table	docTitle	image
+                docs.forEach(function (line) {
+
+                    line.doc = self.cleanFieldsForNeo(line.doc);
+
+                    if (!files[line.doc.File]) {
+                        files[line.doc.File] = {
+                            title: line.doc.docTitle,
+                            purpose: line.doc.purpose,
+                            scope: line.doc.scope,
+                            chapters: []
+                        };
+                    }
+
+
+                    var chapter = line.doc.chapterKey;
+                    if (!files[line.doc.File].chapters[chapter]) {
+                        files[line.doc.File].chapters[chapter] = []
+                    }
+                    files[line.doc.File].chapters[chapter].push({
+                        text: line.doc.text,
+                        id: line.doc.id,
+                        tokens: line.tokens
+                    })
+
                 })
 
+
+                for (var key in files) {
+                    var file = files[key];
+                    statements.push({statement: "MERGE  (n:file { name: \"" + key + "\",title:\"" + file.title + "\",purpose:\"" + file.PurposeDoc + "\",subGraph:\"totalRef\"})"});
+
+                    for (var key2 in file.chapters) {
+                        var chapter = file.chapters[key2];
+                        statements.push({statement: "MERGE  (n:chapter { name: \"" + key2 + "\",subGraph:\"totalRef\"})"});
+                        statements.push({statement: "match (n:file { name: \"" + key + "\"}),  (m:chapter { name: \"" + key2 + "\"}) create (n)-[:hasParagraph]->(m)"});
+                        chapter.forEach(function (paragraph) {
+                            statements.push({statement: "MERGE  (n:fragment { name: \"" + paragraph.id + "\",text:\"" + paragraph.text + "\",subGraph:\"totalRef\"})"});
+                            statements.push({statement: "match (n:paragraph { name: \"" + key2 + "\"}), (m:fragment { name: \"" + paragraph.id + "\"}) create (n)-[:hasText]->(m)"});
+
+                            var tokens = paragraph.tokens.tokens;
+
+                            tokens.nouns.forEach(function (noun) {
+
+                                if (noun.word.toLowerCase() == "surge")
+                                    var xx = 2;
+
+                                var attrs = "{startIndex: \"" + noun.characterOffsetBegin + "\",";
+                                attrs += "endIndex: \"" + noun.characterOffsetEnd + "\",";
+                                attrs += "type: \"" + noun.pos + "\",";
+                                attrs += "sentenceIndex: \"" + noun.sentence + "\"}";
+
+                                statements.push({statement: "MERGE  (n:noun { name: \"" + noun.word.toLowerCase() + "\",subGraph:\"totalRef\"})"});
+                                statements.push({statement: "match (n:fragment { name: \"" + paragraph.id + "\"}), (m:noun{ name: \"" + noun.word.toLowerCase() + "\"}) create (n)-[:hasNoun" + attrs + "]->(m)"});
+
+                            })
+
+                            tokens.numValues.forEach(function (numValue) {
+                                var attrs = "{startIndex: \"" + numValue.characterOffsetBegin + "\",";
+                                attrs += "endIndex: \"" + numValue.characterOffsetEnd + "\",";
+                                attrs += "type: \"" + numValue.pos + "\",";
+                                attrs += "sentenceIndex: \"" + numValue.sentence + "\"}";
+
+                                statements.push({statement: "MERGE  (n:numValue { name: \"" + numValue.word + "\",subGraph:\"totalRef\"})"});
+                                statements.push({statement: "match (n:fragment { name: \"" + paragraph.id + "\"}), (m:numValue { name: \"" + numValue.word + "\"}) create (n)-[:hasNumValue" + attrs + "]->(m)"});
+
+                            })
+
+                        })
+                    }
+
+
+                }
             })
 
-
-            for (var key in files) {
-                var file = files[key];
-                statements.push({statement: "MERGE  (n:file { name: \"" + key + "\",title:\"" + file.title + "\",purpose:\"" + file.PurposeDoc + "\",subGraph:\"totalRef\"})"});
-
-                for (var key2 in file.paragraphs) {
-                    var paragraph = file.paragraphs[key2];
-                    statements.push({statement: "MERGE  (n:paragraph { name: \"" + key2 + "\",subGraph:\"totalRef\"})"});
-                    statements.push({statement: "match (n:file { name: \"" + key + "\"}),  (m:paragraph { name: \"" + key2 + "\"}) create (n)-[:hasParagraph]->(m)"});
-                    paragraph.forEach(function (fragment) {
-                        statements.push({statement: "MERGE  (n:fragment { name: \"" + fragment.id + "\",text:\"" + fragment.text + "\",subGraph:\"totalRef\"})"});
-                        statements.push({statement: "match (n:paragraph { name: \"" + key2 + "\"}), (m:fragment { name: \"" + fragment.id + "\"}) create (n)-[:hasText]->(m)"});
-
-                        var tokens = fragment.tokens.tokens;
-
-                        tokens.nouns.forEach(function (noun) {
-
-                            if (noun.word.toLowerCase() == "surge")
-                                var xx = 2;
-
-                            var attrs = "{startIndex: \"" + noun.characterOffsetBegin + "\",";
-                            attrs += "endIndex: \"" + noun.characterOffsetEnd + "\",";
-                            attrs += "type: \"" + noun.pos + "\",";
-                            attrs += "sentenceIndex: \"" + noun.sentence + "\"}";
-
-                            statements.push({statement: "MERGE  (n:noun { name: \"" + noun.word.toLowerCase() + "\",subGraph:\"totalRef\"})"});
-                            statements.push({statement: "match (n:fragment { name: \"" + fragment.id + "\"}), (m:noun{ name: \"" + noun.word.toLowerCase() + "\"}) create (n)-[:hasNoun" + attrs + "]->(m)"});
-
-                        })
-
-                        tokens.numValues.forEach(function (numValue) {
-                            var attrs = "{startIndex: \"" + numValue.characterOffsetBegin + "\",";
-                            attrs += "endIndex: \"" + numValue.characterOffsetEnd + "\",";
-                            attrs += "type: \"" + numValue.pos + "\",";
-                            attrs += "sentenceIndex: \"" + numValue.sentence + "\"}";
-
-                            statements.push({statement: "MERGE  (n:numValue { name: \"" + numValue.word + "\",subGraph:\"totalRef\"})"});
-                            statements.push({statement: "match (n:fragment { name: \"" + fragment.id + "\"}), (m:numValue { name: \"" + numValue.word + "\"}) create (n)-[:hasNumValue" + attrs + "]->(m)"});
-
-                        })
-
-                    })
-                }
-
-
-            }
             self.executeStatements(statements, function (err, result) {
                 if (err)
                     return callback(err);
                 return callback(null, result);
             })
-
         }
+
+
+
+
+
+
+
+
 
 
         self.executeStatements = function (statements, callback) {
@@ -736,9 +768,49 @@ var neo4jProxy = (function () {
 
             });
         }
+        self.cleanFieldsForNeo= function (obj) {
+            var obj2 = {};
+            for (var key in obj) {
+
+                var key2 = key.replace(/-/g, "_");
+
+                key2 = key2.replace(/ /g, "_");
+                if (key2 != "") {
+                    var valueObj = obj[key];
+                    if (valueObj) {
+
+                        if (isNaN(valueObj) && valueObj.indexOf && valueObj.indexOf("http") == 0) {
+                            value = encodeURI(valueObj)
+                        } else {
+                            var value = "" + valueObj;
+                            if (isNaN(valueObj)) {
+                                value = value.replace(/[\n|\r|\t]+/g, " ");
+                                value = value.replace(/&/g, " and ");
+                                value = value.replace(/"/g, "'");
+                                value = value.replace(/,/g, "\\,");
+                                // value = value.replace(/\//g, "%2F");
+                                value = value.replace(/\\/g, "")
+                                //  value = value.replace(/:/g, "")
+                            }
+                            else if (value.indexOf(".") > -1)
+                                value = parseFloat(value)
+                            else
+                                value = parseInt(value)
+                        }
+
+                        obj2[key2] = value;
+                    }
+                }
+            }
+
+            return obj2;
+
+        }
 
 
         return self;
     }
+
+
 )
 ()
