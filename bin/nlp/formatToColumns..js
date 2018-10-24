@@ -17,7 +17,7 @@ var formatToColumns = {
                     for (var key in value) {
                         if ((i++) > 0)
                             html += "|"
-                        html += key + ":" + value[key]
+                        html += key + ":" + value[key].text
 
                     }
 
@@ -33,7 +33,7 @@ var formatToColumns = {
                     html += "<tr>";
                     row.forEach(function (cell, indexCell) {
                         html += "<td>";
-                        html += cell;
+                        html += cell.text;
                         html += "</td>";
                     })
                     html += "<tr>";
@@ -89,11 +89,10 @@ var formatToColumns = {
             var bulletPrefix="<"+paragraph.style+">";
             bulletsText+=bulletPrefix;
             bullets.forEach(function (bullet, index) {
+
                 if (index == 0)
                     start = bullet.offset;
-                if(!bullet.style)
-                    var x=1
-                bulletsText += "<"+bullet.style+"-li>" + bullet.text +"</"+bullet.style+"-li>"
+                bulletsText += "<"+bullet.type+"-li>" + bullet.text +"</"+bullet.type+"-li>"
             })
 
             return paragraph.text.substring(0, start) + bulletsText + paragraph.text.substring(start + 1)
@@ -144,7 +143,7 @@ if(sourceJson.chapter.title=="Definitions of terms")
 
 
         sourceJson.paragraph.text== sourceJson.paragraph.text.replace(/\n/gm,"<br>")
-        sourceJson.paragraph.text= removeHtmlTags( sourceJson.paragraph.text);
+     //   sourceJson.paragraph.text= removeHtmlTags( sourceJson.paragraph.text);
            //images
          var cellImages = extractImages(sourceJson.paragraph.images, sourceJson.fileName);
          ///  sourceJson.paragraph.text =sourceJson.paragraph.text .replace(/{{"image":.*}}/gm,"");*/

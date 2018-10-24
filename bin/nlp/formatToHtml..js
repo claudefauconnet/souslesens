@@ -5,7 +5,7 @@ var formatToHtml = {
 
     format: function (sourceJson) {
 
-        function getTableJson(table) {
+        function getTableJson(table,fileName) {
             var html = "<table style='border-style: solid;border-width: 1px;border-color: #0000cc'>";
 
             if (table.values) {
@@ -17,7 +17,7 @@ var formatToHtml = {
                     for (var key in value) {
                         if ((i++) > 0)
                             html += "|"
-                        html += key + ":" + value[key]
+                        html += key + ":" + value[key].text
 
                     }
 
@@ -33,7 +33,12 @@ var formatToHtml = {
                     html += "<tr>";
                     row.forEach(function (cell, indexCell) {
                         html += "<td>";
-                        html += cell;
+                        html += cell.text;
+
+                       if(cell.images)
+                               html +=extractImages(cell.images, fileName)
+
+
                         html += "</td>";
                     })
                     html += "<tr>";
@@ -54,17 +59,6 @@ var formatToHtml = {
 
             })
 
-
-            /*  var html=""
-                 var imageArray;
-                 // while((imageArray = /{{image:(.*)}}/.exec(text))!=null){
-                 imageArray = /{{"image":(.*)}}/g.exec(text);
-                 if (imageArray != null) {
-                     var url = imageArray[1].replace("media/", config.imagesServerUrl + "" + fileName +"/");
-                     url=url.replace(/"/gm,"")
-                  html+="<img src='"+url+"' >";
-
-                 }*/
             return html;
         }
 
@@ -82,12 +76,14 @@ var formatToHtml = {
             var bulletPrefix = "";
             var previousType = "";
             bullets.forEach(function (bullet, index) {
+                if(bullet.text.indexOf("Rotors, which have exhibited high vibrations")>-1)
+                    var x=1
                 if (bullet.type == "ul2") {
                     bulletPrefix = "ul";
 
                 }
                 else
-                    bulletPrefix == bullet.type;
+                    bulletPrefix = bullet.type;
 
                 if (previousType != bullet.type) {
                     if (bullet.type == "ul2")
@@ -122,7 +118,7 @@ var formatToHtml = {
         if (sourceJson.paragraph.tables) {
             sourceJson.paragraph.tables.forEach(function (table) {
                 if (table.type == "table") {
-                    htmlTables += getTableJson(table);
+                    htmlTables += getTableJson(table,sourceJson.fileName);
                 }
 
                 // on cree un tableau avec chaque ligne
@@ -138,7 +134,7 @@ var formatToHtml = {
                         json.rows.push(row)
 
                     })
-                    htmlTables += getTableJson(table);
+                    htmlTables += getTableJson(table,sourceJson.fileName);
                 }
             })
         }

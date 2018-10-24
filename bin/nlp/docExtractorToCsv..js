@@ -153,8 +153,8 @@ var docExtractorToCsv = {
                             str += cellScope.substring(p + "Scope of application:".length);
                     }
                     else if(true){//modele 2
-                        var cellPurpose = table.rows[0][1];
-                        var cellScope = table.rows[1][1];
+                        var cellPurpose = table.rows[0][1].text;
+                        var cellScope = table.rows[1][1].text;
 
                         str += cellPurpose+"\t"+cellScope;
                     }
@@ -238,10 +238,10 @@ var docExtractorToCsv = {
             var fileName = xmlPath.substring(0, xmlPath.lastIndexOf("."))
             try {
                 var jsonContent = docxExtractor.extractContentJson(doc, docRels);
-                //  jsonContent = addTablesToChapters(jsonContent);
+                // jsonContent = addTablesToChapters(jsonContent);
 
 
-                var purposeAndScope = setPurposeAndScope(jsonContent.tables);
+                var purposeAndScope =setPurposeAndScope(jsonContent.tables);
 
 
                 var docTitle = extractDocTitle(headerTables);
@@ -324,6 +324,7 @@ module.exports = docExtractorToCsv;
 
 var dir = "D:\\Total\\docs\\GM MEC Word\\documents\\test"
 dir = "D:\\Total\\docs\\GM MEC Word\\documents"
+dir = "D:\\Total\\docs\\GS MEC Word\\documents"
 if (true) {
     docExtractorToCsv.jsonContentsToCsv(dir);
 }

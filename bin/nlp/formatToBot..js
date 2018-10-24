@@ -118,7 +118,7 @@ var formatToBot = {
             if (start == 0)
                 return bulletsText + paragraph.text.substring(start);
             else
-                return paragraph.text.substring(0, start) + bulletsText + paragraph.text.substring(start+1)
+                return paragraph.text.substring(0, start)+"\n" + bulletsText + paragraph.text.substring(start+1)
 
         }
 
@@ -184,7 +184,8 @@ var formatToBot = {
                 }
                 jsonArray.push(obj);
                 col.forEach(function (rowCell, indexRow) {
-                    obj.items.push({type: "TextBlock", text: rowCell});
+                    if(rowCell && rowCell.text)
+                    obj.items.push({type: "TextBlock", text: rowCell.text});
                 })
             })
 

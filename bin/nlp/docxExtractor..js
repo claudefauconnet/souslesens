@@ -11,7 +11,7 @@ var docxParagraphAggregator = require("../nlp/docxParagraphAggregator..js")
 
 // utilitary functions
 
-var extractRunText = function (run, docRels) {
+var extractRunText = function (run) {
     var runStr = "";
     var textStr = ""
     var texts = run.getElementsByTagName("w:t")
@@ -24,6 +24,11 @@ var extractRunText = function (run, docRels) {
         }
         runStr += textStr.replace(/\n/g, "");
     }
+    var objects = run.getElementsByTagName("w:object");
+    if (objects && objects.length > 0) {
+        runStr += " [[" + objects.length + " OLE objects(formulae...)]] ";
+    }
+
     return runStr;
 }
 
@@ -198,12 +203,10 @@ var docxExtactor = {
         Listepuces3: "ul",
         Titre6: "h6",
         "En-tte": "?",
-        'Tabledesillustrations':"?"
-
+        'Tabledesillustrations': "?"
 
 
     },
-
 
 
     stylesArray: [],
@@ -277,9 +280,12 @@ var docxExtactor = {
             var imageSrcs = []
             for (var k = 0; k < images.length; k++) {
                 // runStr += "{{\"image\":\"" + extractImage(images[k], docRels) + "\"}}"
+                if(! obj.images)
+                    obj.images=[];
                 obj.images.push(extractImage(images[k], docRels))
             }
         }
+
 
         function setTables(json, docTableCells) {
             var currentRow = null;
@@ -287,50 +293,83 @@ var docxExtactor = {
             var currentTableElt = null;
             var currentRowElt = null;
             var tables = {};
-var i=0;
+            var i = 0;
             docTableCells.forEach(function (cellElt) {
                 var rowElt = cellElt.parentNode.parentNode;
                 var tableElt = cellElt.parentNode.parentNode.parentNode;
                 if (currentTableElt != tableElt) {
-                    currentTableElt=tableElt;
-                    if(cellElt.paragraphIndex<0)
-                        cellElt.paragraphIndex=cellElt.paragraphIndex-(i++);
-                    currentTable= {index: cellElt.paragraphIndex, rows: []}
+                    currentTableElt = tableElt;
+                    if (cellElt.paragraphIndex < 0)
+                        cellElt.paragraphIndex = cellElt.paragraphIndex - (i++);
+                    currentTable = {index: cellElt.paragraphIndex, rows: []}
                     currentRow = null;
-                    tables[currentTable.index]=currentTable
+                    tables[currentTable.index] = currentTable
                 }
                 if (currentRowElt != rowElt) {
-                    currentRowElt=rowElt;
+                    currentRowElt = rowElt;
                     currentRow = [];
                     currentTable.rows.push(currentRow)
                 }
                 //setImages  a faire!!!!!!!!!!!!!!!
                 var text = extractRunText(cellElt)
-                currentRow.push(text)
+
+              var obj= {text:text}
+               setImages(obj,cellElt)
+                currentRow.push(obj);
 
 
             })
-var docTables=[]
-           for(var key in tables) {
+            var docTables = []
+            for (var key in tables) {
 
-                var index=parseInt(key);
-               var table={paragraphIndex:index,rows:tables[index].rows}
-               docTables.push(table);
-               if (json[index]) {
-                   if(!json[index].tables)
-                       json[index].tables=[];
-                   json[index].tables.push(table);
+                var index = parseInt(key);
+                var table = {paragraphIndex: index, rows: tables[index].rows}
+                docTables.push(table);
+                if (json[index]) {
+                    if (!json[index].tables)
+                        json[index].tables = [];
+                    json[index].tables.push(table);
 
-               }
-               else{
-                   console.log(key);
-               }
-           }
-           json.tables=docTables;
-           return json;
+                }
+                else {
+                    console.log(key);
+                }
+            }
+            json.tables = docTables;
+            return json;
 
 
+        }
 
+//https://blogs.msdn.microsoft.com/brian_jones/2006/12/11/whats-up-with-all-those-rsids/
+        function extractCurrentVersion(paragraphs) {
+            var docVersions = {};
+            var currentVersionNumber // the most frequent
+            paragraphs.forEach(function (paragraph) {
+                if (paragraph.text && paragraph.text.indexOf("GS RC MEC 617") > -1)
+                    var xx = 1
+                if (!docVersions[paragraph.version]) {//version id frequency
+                    docVersions[paragraph.version] = 0;
+                }
+                docVersions[paragraph.version] += 1;
+            })
+
+            var maxFrequency = 0
+            for (var key in docVersions) {
+                maxFrequency = Math.max(maxFrequency, docVersions[key])
+            }
+            for (var key in docVersions) {
+                if (docVersions[key] == maxFrequency)
+                    currentVersionNumber = key;
+            }
+            console.log(JSON.stringify(docVersions, null, 2))
+            var currentVersionParagraphs = [];
+            paragraphs.forEach(function (paragraph) {
+                if (!paragraph.version || paragraph.version == currentVersionNumber) {//version id frequency
+                    currentVersionParagraphs.push(paragraph)
+                }
+            })
+            return currentVersionParagraphs;
         }
 
         /******************  end internal functions*******************************/
@@ -347,7 +386,7 @@ var docTables=[]
 
 
         var stylesArray = getDocPstylesOffsets(body);
-var previousTextIndex=-1;
+        var previousTextIndex = -1;
         //extraction des tables
         var tables = body.getElementsByTagName("w:tbl");
         for (var j = 0; j < tables.length; j++) {
@@ -369,8 +408,9 @@ var previousTextIndex=-1;
                 docTableCells.push(paragraph);
                 continue;
             }
+            var pVersionId = paragraph.getAttribute("w:rsidRPr");
+            var obj = {status: "normal", title: "", text: "", paragraphIndex: i, images: [], version: pVersionId};
 
-            var obj = {status: "normal", title: "", text: "", paragraphIndex: i, images: []};
 
             obj.startOffset = paragraph.columnNumber
             if (i < paragraphs.length - 1)
@@ -378,7 +418,8 @@ var previousTextIndex=-1;
             else
                 obj.sendOffset = 999999999;
 
-            var texts = paragraph.getElementsByTagName("w:r");
+            var runs = paragraph.getElementsByTagName("w:r");
+
             var styleElts = paragraph.getElementsByTagName("w:pStyle");
             var style = null;
             if (styleElts && styleElts.length > 0)
@@ -386,8 +427,12 @@ var previousTextIndex=-1;
             style = docxExtactor.pStyles[style];
             obj.style = style;
             var runStr = ""
-            for (var j = 0; j < texts.length; j++) {
-                runStr += extractRunText(texts[j])
+            for (var j = 0; j < runs.length; j++) {
+                var rVersionId = runs[j].getAttribute("w:rsidRPr");
+                if (true || !pVersionId || !rVersionId || rVersionId == pVersionId)
+                    runStr += extractRunText(runs[j])
+                else
+                    var old = extractRunText(runs[j])
 
             }
             if (style && style.indexOf("h") == 0)
@@ -397,33 +442,33 @@ var previousTextIndex=-1;
 
             //si pas de run et pas de formule c'est un saut de ligne qui délimite un paragraphe
             if (paragraph.getElementsByTagName("w:r").length == 0 && paragraph.getElementsByTagName("m:oMath").length == 0) {
-                json.push({paragraphIndex: i, isLineBreak: true, parentTocId: currentTocId})
+                json.push({paragraphIndex: i, isLineBreak: true, parentTocId: currentTocId, version: pVersionId})
                 continue;
             }
 
             setImages(obj, paragraph);
 
 
-            if (true || obj.title != "" || obj.text != "") {
-                if (!obj.tocId && currentTocId) {
-                    obj.parentTocId = currentTocId
-                }
-                delete obj.status
-                json.push(obj);
-                previousTextIndex=json.length-1
-            }
+            json.push(obj);
+            previousTextIndex = json.length - 1
+
 
         }
-        json = setTables(json, docTableCells);
+
+
+        var currentVersionJson = json;// extractCurrentVersion(json);
+        json = setTables(currentVersionJson, docTableCells);
 
         //   console.log(JSON.stringify(json,null,2))
-    //   json = setParagraphTablesContent(json, jsonTables);
-        json = docxParagraphAggregator.groupParagraphs(json);
+        //   json = setParagraphTablesContent(json, jsonTables);
+        //  json.tables = jsonTables
+        currentVersionJson = docxParagraphAggregator.groupParagraphs(currentVersionJson);
         //   console.log(JSON.stringify(json,null,2))
         //   docxExtactor.setParagraphsParents(toc, json);
-      //  json.tables = jsonTables
-        return json;
+
+        return currentVersionJson;
     },
+
 
     extractHeaderJson: function (filePath) {
         var headerTables = []
@@ -874,7 +919,7 @@ module.exports = docxExtactor;
 if (false) {
 
     // docxExtactor.convertAllImagesToPng("D:\\Total\\docs\\GS MEC Word\\documents\\");
-  docxExtactor.deleteNonPngImages("D:\\Total\\docs\\GS MEC Word\\documents\\media\\");
+    docxExtactor.deleteNonPngImages("D:\\Total\\docs\\GS MEC Word\\documents\\media\\");
 
 }
 

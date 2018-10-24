@@ -12,9 +12,9 @@ var docxParagraphAggregator = {
      * @param table
      * @return an array of formated paragraphs
      */
-    getTableParagraphs: function (paragraph, table, split, tocId) {
+    getTableParagraphs: function (table, split) {
 
-        function shouldSplitTable() {
+        function getColNames() {
             var maxAvgCellLengthTosplitTable = 20
             var avgFirstRowCellsLength = {sum: 0, count: 0};
             var colNames = [];
@@ -27,13 +27,9 @@ var docxParagraphAggregator = {
                     }
                 })
             })
-            if (avgFirstRowCellsLength.sum > 0) {
 
-                if ((avgFirstRowCellsLength.sum / avgFirstRowCellsLength.count) < maxAvgCellLengthTosplitTable) {
-                    return colNames;
-                }
-            }
-            return null;
+            return colNames;
+
         }
 
         function splitTableLines(colNames) {
@@ -41,17 +37,18 @@ var docxParagraphAggregator = {
             var offset = 0;
             table.rows.forEach(function (line, indexRow) {
                 if (indexRow == 0) {
-                    offset = table.startOffset - paragraph.startOffset;
-                    return;
+                   return;
                 }
-                var lineObj = {offset: offset, type: "splitTable", values: []}
+                var lineObj = {type: "splitTable", values: []}
 
                 line.forEach(function (cell, indexCell) {
-                    var key = colNames[indexCell]
-                    var obj = {};
-                    obj[key] = cell;
-                    lineObj.values.push(obj);
-                    offset += cell.length;
+                    if(colNames[indexCell]) {
+                        var key = colNames[indexCell].text
+                        var obj = {};
+                        obj[key] = cell;
+                        lineObj.values.push(obj);
+                    }
+
                 })
 
                 //  var text = "{" + lineObj + "}"
@@ -61,12 +58,8 @@ var docxParagraphAggregator = {
         }
 
         function formatTable() {
-
-
             var tableParagraphs = [];
-
             var tableObj = {type: "table", rows: []}
-
             table.rows.forEach(function (line, indexRow) {
                 var lineObj = []
                 line.forEach(function (cell, indexCell) {
@@ -75,13 +68,12 @@ var docxParagraphAggregator = {
                 tableObj.rows.push(lineObj)
 
             })
-
             tableParagraphs.push(tableObj);
             return tableParagraphs;
         }
 
         if (split) {
-            var colNames = shouldSplitTable();
+            var colNames = getColNames();
             if (colNames)
                 return splitTableLines(colNames);
             else
@@ -90,25 +82,18 @@ var docxParagraphAggregator = {
             return formatTable();
 
     },
-    /**
-     *
-     *
-     *    pour les paragraphes bullet points (puces)
-     *   - si le paragraphe contient  du  texte avant les bullet points  on groupe tous du les bullet points dans le meme groupedParagraphs
-     *   -sinon on les sépare en creant un groupedParagraphs par bulletpoint paragraph
-     *
-     *
-     * @param paragraph
-     * @param split
-     * @param tocId
-     */
-
-    setBulletsParagraphs: function (currentGroupedParagraph, bulletparagraphs, split, tocId) {
 
 
-        return currentGroupedParagraph
 
-    },
+
+
+
+
+
+
+
+
+
 
 
     /**
@@ -144,13 +129,16 @@ var docxParagraphAggregator = {
 
 
     groupParagraphs: function (jsonParagraphs) {
-        var currentBulletParagraphs = [];
+        var currentGroupedParagraph = null;
+        var chapters = {};
+        var currentGroupedParagraphIndex = 0;
+        var chapterIndexes = [];
+        var groupedJson = []
 
-        var chapterLevelMap = [[], [], [], [], [], [],[], [], [], [], [], []]
-        var chapterTiles = []
+        var chapterLevelMap = [[], [], [], [], [], [], [], [], [], [], [], []];
+          var  chapterTiles =[];
 
-
-        function registerChapterLevelMap(chapterIndex, style, title) {
+        var  registerChapterLevelMap=function (chapterIndex, style, title) {
             var level = style.substring(1);
             //  chapterLevelMap[level].push(chapterIndex);
             chapterLevelMap[level].push(chapterIndex);
@@ -160,33 +148,15 @@ var docxParagraphAggregator = {
 
 
 
-        function removeEmptyTextLines(chapters){
-            chapters.forEach(function(chapter,chapterIndex){
-             var goodParagraphs=[];
-             if(chapter.paragraphs) {
-                 chapter.paragraphs.forEach(function (paragraph) {
-                     if ((paragraph.title && paragraph.title.length > 0) || (paragraph.text && paragraph.text.length > 0) || (paragraph.images && paragraph.images.length > 0) || (paragraph.tables && paragraph.tables.length > 0) || (paragraph.bullets && paragraph.bullets.length > 0))
-                         goodParagraphs.push(paragraph);
-                     else{
-                         console.log(JSON.stringify(paragraph,null,2))
-                     }
-
-                 })
-             }
-                chapters[chapterIndex].paragraphs=goodParagraphs;
-            })
-
-        }
-
-        /***
-         *
-         * reconstitue la TOC avec les niveaux de style(h1..h4) imbriqués
-         *
-         *
-         * @param chapters
-         * @returns {*}
-         */
-        function applyChapterLevelMap(chapters) {
+            /***
+             *
+             * reconstitue la TOC avec les niveaux de style(h1..h4) imbriqués
+             *
+             *
+             * @param chapters
+             * @returns {*}
+             */
+            applyChapterLevelMap=function (chapters) {
 
             chapters.forEach(function (chapter, indexChapter) {
                 //  console.log(chapters[indexChapter].number + "  " + chapters[indexChapter].title)
@@ -223,19 +193,19 @@ var docxParagraphAggregator = {
             return chapters;
         }
 
-        setChapterParents = function (chapters) {
+        var setChapterParents=function (chapters) {
 
             function findTocNumberTitle(str) {
-                var title=null;
-                if(str==""){
+                var title = null;
+                if (str == "") {
                     return title;
                 }
                 chapters.forEach(function (chapter, indexChapter) {
                     if (chapter.tocNumber == str) {
-                        title= chapter.title;
+                        title = chapter.title;
                         //  console.log(str +"  "+title)
-                        if(title=="noChapter")
-                            title=null;
+                        if (title == "noChapter")
+                            title = null;
 
                     }
                 })
@@ -243,38 +213,38 @@ var docxParagraphAggregator = {
             }
 
 
-           function recurse(parentTitle,tocNumber,recurseLevel) {
+            function recurse(parentTitle, tocNumber, recurseLevel) {
 
-               var p = tocNumber.lastIndexOf(".");
-               if(p>-1) {
+                var p = tocNumber.lastIndexOf(".");
+                if (p > -1) {
 
-                   var str1 = tocNumber.substring(0, p + 1)
-                   var parent = findTocNumberTitle(str1);
-                   if (parent ) {
-                       if(recurseLevel>0)
-                        parentTitle = parent+"/" +parentTitle ;
-                       var q = tocNumber.lastIndexOf(".", p-1 )
-                       if (q > -1 && q<tocNumber.length-1) {
-                           var str2 = tocNumber.substring(0, q + 1)
-                           if (true || str2.length > 2)
-                               parentTitle = recurse(parentTitle, str2,recurseLevel+1)
-                       }
+                    var str1 = tocNumber.substring(0, p + 1)
+                    var parent = findTocNumberTitle(str1);
+                    if (parent) {
+                        if (recurseLevel > 0)
+                            parentTitle = parent + "/" + parentTitle;
+                        var q = tocNumber.lastIndexOf(".", p - 1)
+                        if (q > -1 && q < tocNumber.length - 1) {
+                            var str2 = tocNumber.substring(0, q + 1)
+                            if (true || str2.length > 2)
+                                parentTitle = recurse(parentTitle, str2, recurseLevel + 1)
+                        }
 
-                   }
-               }
-               return parentTitle;
-           }
+                    }
+                }
+                return parentTitle;
+            }
 
             chapters.forEach(function (chapter, indexChapter) {
                 var parentStr = ""
                 var p = 0;
                 var str = chapter.tocNumber;
-                if(str.length>4)
-                    var xx=3
+                if (str.length > 4)
+                    var xx = 3
 
-                parentStr=  recurse(parentStr,chapter.tocNumber,0)
-                if(parentStr!=""){
-                    var ww=1;
+                parentStr = recurse(parentStr, chapter.tocNumber, 0)
+                if (parentStr != "") {
+                    var ww = 1;
                 }
                 chapters[indexChapter].parent = parentStr;
             })
@@ -284,217 +254,212 @@ var docxParagraphAggregator = {
         }
 
 
-        function getNewGroupedParagraph(style) {
-            currentBulletParagraphs = []
-            var obj = {
-                "text": "",
-                "paragraphIndexes": [],
-                "startOffset": 0,
-                "endOffset": 0,
-                "parentTocId": "",
-                "tables": [],
-                "images": []
-
-            };
-            if (style)
-                obj.style = style;
-            return obj;
-        }
-
-        function getNewChapter() {
-            return {
-                "title": "",
-                "paragraphs": [],
-                "tocId": ""
-            };
-        }
-
         function isBulletParagraph(paragraph) {
             if (!paragraph.style)
                 return false;
             return ["ol", "ul", "ul2"].indexOf(paragraph.style) > -1;
         }
 
+        function closeGroupedParagraphAndSetNew(paragraphIndex) {
 
-        var groupedJson = []
-        var currentChapter;
+            var newCurrentGroupedParagraph = {
+                "text": "",
+                "tables": [],
+                "images": [],
+                startParagraphIndex: paragraphIndex + 1,
 
-        var currentGroupedParagraph = getNewGroupedParagraph();
+            };
+
+            if (paragraphIndex > 0) {// dont close  first
+
+                for (var i = 1; i < chapterIndexes.length; i++) {
+                    if (chapterIndexes[i] >= paragraphIndex) {
+                        chapters[chapterIndexes[i - 1]].paragraphs.push(currentGroupedParagraph);
+                        break;
+                    }
+                }
+            }
+            currentGroupedParagraph = newCurrentGroupedParagraph;
+
+        }
 
 
-//console.log(JSON.stringify(jsonParagraphs,null,2))
+        //**************************************************identify chapters****************************
+        jsonParagraphs.forEach(function (paragraph, indexParagraph) {
+            if (indexParagraph == 0) {
+                var chapter = {
+                    title: "noChapter",
+                    paragraphs: []
+                }
+                chapters[indexParagraph] = chapter;
+            }
+
+
+            // nouveau chapitre (style h..)
+            else if (paragraph.style && paragraph.style.indexOf("h") == 0) {
+                if (paragraph.title == "")
+                    paragraph.title = "";// cas de paragraphes sans titre (h4)
+
+                var chapter = {
+                    title: paragraph.title,
+                    paragraphs: [],
+                    level: paragraph.style
+                }
+                registerChapterLevelMap(groupedJson.length, paragraph.style, paragraph.title)
+                chapters[indexParagraph] = chapter;
+                chapterIndexes.push(indexParagraph);
+                groupedJson.push(chapter);
+            }
+        })
+
+
+
+//**************************************************set paragraphs****************************
+        var currentBulletParagraphs = [];
+
         jsonParagraphs.forEach(function (paragraph, indexParagraph) {
 
+        //    console.log("" + indexParagraph + " / " + paragraph.title + " / " + paragraph.text + " / " + paragraph.style + " / " + paragraph.version)
 
-    //    console.log("" + indexParagraph + " / " + paragraph.title + " / " + paragraph.text + " / " + paragraph.style)
 
-
-            if (indexParagraph == 37)
+        /*    if (indexParagraph == 24)
                 var x = 1
+            if (paragraph.text && paragraph.text.indexOf("Rotor and test bench status before HSB:") > -1)
+                var x = 2*/
+
+
+            if (!currentGroupedParagraph)
+                closeGroupedParagraphAndSetNew(0);
+
 
 
             var isBulletCurrentParagraph = isBulletParagraph(paragraph);
 
+            // if bullet cumulate them into currentBulletParagraphs
 
-            if (indexParagraph == 0) {
-                currentChapter = getNewChapter();
-                currentChapter.title = "noChapter";
-                currentChapter.tocId = "0";
-                groupedJson.push(currentChapter);
+
+            if (isBulletCurrentParagraph) {
+                paragraph.isBullet = true;
+                if (currentBulletParagraphs.length == 0)
+                    currentBulletParagraphs.startBulletIndex = currentGroupedParagraph.text.length
+                currentBulletParagraphs.push(paragraph);
+                return;
             }
 
-            else if (paragraph.style && paragraph.style.indexOf("h") == 0 ) {//titre de chapitre) {/
-                //   else if (paragraph.tocId   && paragraph.style &&paragraph.style.indexOf("h")==0){//titre de chapitre) {// paragraph is a chapter
-                currentChapter.paragraphs.push(currentGroupedParagraph)
-                currentChapter.level = paragraph.style;
-                registerChapterLevelMap(groupedJson.length, paragraph.style, paragraph.title)
-                currentChapter = getNewChapter();
-                currentGroupedParagraph = getNewGroupedParagraph(paragraph.style)
-                currentChapter.title = paragraph.title;
-                if (currentChapter.title == "")// cas de paragraphes sans titre (h4)
-                    currentChapter.title = "--";
-                if (paragraph.text && paragraph.text.length > 0)
-                    currentGroupedParagraph.text += paragraph.text;
-                currentChapter.tocId = paragraph.tocId;
-                groupedJson.push(currentChapter);
+            // if only one bullet set after current Text in same groupedParagraph
+            else if (currentBulletParagraphs.length == 1) {
+                currentGroupedParagraph.text += "- "+intraParagraphSeparator + currentBulletParagraphs[0].text;
+
+                currentBulletParagraphs = [];
+                currentBulletParagraphs.startBulletIndex = 0;
+                //  closeGroupedParagraphAndSetNew(indexParagraph);
             }
-            else {
+            // at the end of bullets add them to currentGroupedParagraph
+            else if (currentBulletParagraphs.length > 1) {
 
+                var bulletsArray = [];
+                var bulletTables=[]
+                currentBulletParagraphs.forEach(function (bullet) {
 
-                if (true || paragraph.parentTocId == currentChapter.tocId || currentChapter.tocId == "0") {
-                    // si pas de line break on aggrège les paragraphes en un seul sinon on ajoute un paragraphe
-
-                    // process all bulletparagraphs a la fin des paragraphe bullets ou à la fin du chapitre
-                    if (currentBulletParagraphs.length > 0 && !isBulletCurrentParagraph) {
-                        if (!isBulletCurrentParagraph || indexParagraph == jsonParagraphs.length - 1 || !isBulletParagraph(jsonParagraphs[indexParagraph + 1])) {
-
-                            /*    currentChapter.paragraphs.push(currentGroupedParagraph);
-                                currentGroupedParagraph=getNewGroupedParagraph()
-                                currentBulletParagraphs = [];*/
-
-                            // on split les bullets si elles sont en tête de chapitre sinon on les aggrege au paragraphe courant
-                            var split = false;// =currentChapter.paragraphs.length == 0;
-
-                            //   currentChapter.paragraphs.push(currentGroupedParagraph)
-                            //   currentGroupedParagraph = getNewGroupedParagraph(paragraph.style);
-                            if (currentGroupedParagraph.text.length > 0)
-                                currentGroupedParagraph.text += intraParagraphSeparator;
-                            if (!currentGroupedParagraph.bullets)
-                                currentGroupedParagraph.bullets = [];
-                            currentBulletParagraphs.forEach(function (bullet) {
-
-
-                                var offset = currentGroupedParagraph.text.length
-
-                                currentGroupedParagraph.bullets.push({
-                                    type: bullet.style,
-                                    offset: offset,
-                                    text: bullet.text
-                                })
-                                offset += bullet.text.length;
-
-
-                            })
-                            currentChapter.paragraphs.push(currentGroupedParagraph);
-                            currentGroupedParagraph=getNewGroupedParagraph();
-
-
-                            var xx = 1
-
-
-
-                        }
-                    }
-
-
-
-
-
-
-                    if (paragraph.isLineBreak) {
-                        if (currentGroupedParagraph) {
-                            currentChapter.paragraphs.push(currentGroupedParagraph)
-                        }
-                        currentGroupedParagraph = getNewGroupedParagraph(paragraph.style);
-
-
-                        // si bulletPoints accumule bulletparagraphs
-                    } else if (isBulletCurrentParagraph) {
-                        paragraph.isSplitBullet = true;
-                        currentBulletParagraphs.push(paragraph)
-                    }
-                    else {
-                        if (currentGroupedParagraph.text.length > 0)
-                            currentGroupedParagraph.text += intraParagraphSeparator;
-                        currentGroupedParagraph.text += paragraph.text;
-                        if (currentGroupedParagraph.text == "")
-                            currentGroupedParagraph.text = paragraph.title;
-                        currentGroupedParagraph.paragraphIndexes.push(paragraph.paragraphIndex)
-                        if (currentGroupedParagraph.startOffset == 0)
-                            currentGroupedParagraph.startOffset = paragraph.startOffset;
-                        currentGroupedParagraph.endOffset = paragraph.endOffset;
-                        currentGroupedParagraph.parentTocId = paragraph.parentTocId;
-                        paragraph.images.forEach(function (image) {
-                            currentGroupedParagraph.images.push(image);
-                        })
-
-
-                    }
-
-
-
-
-                    //gestion des tables
-                    if (paragraph.tables && paragraph.tables.length > 0) {
-                        paragraph.tables.forEach(function (table) {
-
-                            // si le chapitre n'a pas de paragraphe au dessus du tableau, le tableau est décomposé en lignes le cas écheant (voir description function getTableParagraphs
-                            // chaque ligne sera considéree comme un paragraphe
-                            var split = true;//(currentChapter.paragraphs.length == 0);
-                            var tablesParagraphs = docxParagraphAggregator.getTableParagraphs(paragraph, table, split, currentChapter.tocId);
+                    bulletsArray.push({
+                        type: bullet.style,
+                        offset: currentBulletParagraphs.startBulletIndex,
+                        text: bullet.text
+                    })
+                    // tables inside bullet stacked a the end of the paragraph as a real array (cannot split table inside bullet paragraph)
+                    if(bullet.tables) {
+                        bullet.tables.forEach(function (table) {
+                            var tablesParagraphs = docxParagraphAggregator.getTableParagraphs(table, false);
                             if (tablesParagraphs) {
                                 tablesParagraphs.forEach(function (tableParagraph) {
-                                    if (split) {
-                                        if (currentGroupedParagraph) {
-                                            currentGroupedParagraph.tables.push(tableParagraph)
-                                            currentChapter.paragraphs.push(currentGroupedParagraph)
-                                        }
-                                        currentGroupedParagraph = getNewGroupedParagraph();
+                                    tablesParagraphs.forEach(function (table) {
+                                        currentGroupedParagraph.tables.push(table)
 
-                                        /*   paragraph.images.forEach(function (image) {
-                                               currentGroupedParagraph.images.push(image);
-                                           })*/
-
-
-                                    } else {
-                                        tablesParagraphs.forEach(function (table) {
-                                            currentGroupedParagraph.tables.push(table)
-                                        })
-
-
-                                    }
+                                    })
 
                                 })
                             }
                         })
 
-
                     }
 
+
+                });
+
+                currentBulletParagraphs = [];
+                currentGroupedParagraph.bullets = bulletsArray;
+                currentBulletParagraphs.startBulletIndex = 0;
+
+                closeGroupedParagraphAndSetNew(indexParagraph);
+
+            }
+
+
+            //if  new chapter or last chapter close currentBulletParagraphs
+            if (chapters[indexParagraph] || indexParagraph == jsonParagraphs.length - 2) {
+                return closeGroupedParagraphAndSetNew(indexParagraph)
+
+
+            }
+
+            //else apply group paragraph rules
+
+            //if lineBreak close currentGroupedParagraph
+            else if (paragraph.isLineBreak) {
+                closeGroupedParagraphAndSetNew(indexParagraph)
+
+            }
+
+            else { // standard paragraph aggregate texts into currentGroupedParagraph
+                if (currentGroupedParagraph.text.length > 0)
+                    currentGroupedParagraph.text += intraParagraphSeparator;
+                currentGroupedParagraph.text += paragraph.text;
+                if (currentGroupedParagraph.text == "")
+                    currentGroupedParagraph.text += paragraph.title;
+
+                paragraph.images.forEach(function (image) {
+                    currentGroupedParagraph.images.push(image);
+                })
+
+
+            }
+
+            function setParagraphTables(paragraph){
+                //gestion des tables
+                if (paragraph.tables) {
+                    paragraph.tables.forEach(function (table) {
+                        var split = true;
+                        var tablesParagraphs = docxParagraphAggregator.getTableParagraphs(table, split);
+                        if (tablesParagraphs) {
+                            tablesParagraphs.forEach(function (tableParagraph) {
+                                if (split) {
+                                    currentGroupedParagraph.tables.push(tableParagraph)
+                                    closeGroupedParagraphAndSetNew(indexParagraph);
+                                } else {
+                                    tablesParagraphs.forEach(function (table) {
+                                        currentGroupedParagraph.tables.push(table)
+                                    })
+                                }
+                            })
+                        }
+
+                    })
                 }
             }
 
 
+           setParagraphTables(paragraph);
+
+
         })
-        currentChapter.paragraphs.push(currentGroupedParagraph)
-       // groupedJson.push(currentChapter);
-
-        applyChapterLevelMap(groupedJson)
-        setChapterParents(groupedJson);
-        groupedJson.tables=jsonParagraphs.tables
-      //  removeEmptyTextLines(groupedJson)
+       applyChapterLevelMap(groupedJson)
+      setChapterParents(groupedJson);
+          groupedJson.tables = jsonParagraphs.tables
+//  removeEmptyTextLines(groupedJson)
         return groupedJson;
-
     }
+
 }
+
+
 module.exports = docxParagraphAggregator
