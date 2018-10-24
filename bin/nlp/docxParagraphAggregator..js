@@ -37,12 +37,12 @@ var docxParagraphAggregator = {
             var offset = 0;
             table.rows.forEach(function (line, indexRow) {
                 if (indexRow == 0) {
-                   return;
+                    return;
                 }
                 var lineObj = {type: "splitTable", values: []}
 
                 line.forEach(function (cell, indexCell) {
-                    if(colNames[indexCell]) {
+                    if (colNames[indexCell]) {
                         var key = colNames[indexCell].text
                         var obj = {};
                         obj[key] = cell;
@@ -82,18 +82,6 @@ var docxParagraphAggregator = {
             return formatTable();
 
     },
-
-
-
-
-
-
-
-
-
-
-
-
 
 
     /**
@@ -136,9 +124,9 @@ var docxParagraphAggregator = {
         var groupedJson = []
 
         var chapterLevelMap = [[], [], [], [], [], [], [], [], [], [], [], []];
-          var  chapterTiles =[];
+        var chapterTiles = [];
 
-        var  registerChapterLevelMap=function (chapterIndex, style, title) {
+        var registerChapterLevelMap = function (chapterIndex, style, title) {
             var level = style.substring(1);
             //  chapterLevelMap[level].push(chapterIndex);
             chapterLevelMap[level].push(chapterIndex);
@@ -147,16 +135,15 @@ var docxParagraphAggregator = {
         }
 
 
-
-            /***
-             *
-             * reconstitue la TOC avec les niveaux de style(h1..h4) imbriqués
-             *
-             *
-             * @param chapters
-             * @returns {*}
-             */
-            applyChapterLevelMap=function (chapters) {
+        /***
+         *
+         * reconstitue la TOC avec les niveaux de style(h1..h4) imbriqués
+         *
+         *
+         * @param chapters
+         * @returns {*}
+         */
+        applyChapterLevelMap = function (chapters) {
 
             chapters.forEach(function (chapter, indexChapter) {
                 //  console.log(chapters[indexChapter].number + "  " + chapters[indexChapter].title)
@@ -193,7 +180,7 @@ var docxParagraphAggregator = {
             return chapters;
         }
 
-        var setChapterParents=function (chapters) {
+        var setChapterParents = function (chapters) {
 
             function findTocNumberTitle(str) {
                 var title = null;
@@ -294,9 +281,18 @@ var docxParagraphAggregator = {
                 chapters[indexParagraph] = chapter;
             }
 
-
+            var isChapter = false;
             // nouveau chapitre (style h..)
-            else if (paragraph.style && paragraph.style.indexOf("h") == 0) {
+            if (paragraph.style) {
+                if (paragraph.style.indexOf("h") == 0) {
+                    var level = parseInt(paragraph.style.substring(1))
+                    if (level < 4)
+                        isChapter = true;
+                }
+
+            }
+           if(isChapter){
+         //   else if (paragraph.style && paragraph.style.indexOf("h") == 0) {
                 if (paragraph.title == "")
                     paragraph.title = "";// cas de paragraphes sans titre (h4)
 
@@ -313,24 +309,22 @@ var docxParagraphAggregator = {
         })
 
 
-
 //**************************************************set paragraphs****************************
         var currentBulletParagraphs = [];
 
         jsonParagraphs.forEach(function (paragraph, indexParagraph) {
 
-        //    console.log("" + indexParagraph + " / " + paragraph.title + " / " + paragraph.text + " / " + paragraph.style + " / " + paragraph.version)
+     //   console.log("" + indexParagraph + " / " + paragraph.title + " / " + paragraph.text + " / " + paragraph.style + " / " + paragraph.version)
 
 
-        /*    if (indexParagraph == 24)
-                var x = 1
-            if (paragraph.text && paragraph.text.indexOf("Rotor and test bench status before HSB:") > -1)
+            /*     if (indexParagraph == 15)
+                   var x = 1
+          if (paragraph.text && paragraph.text.indexOf("Rotor and test bench status before HSB:") > -1)
                 var x = 2*/
 
 
             if (!currentGroupedParagraph)
                 closeGroupedParagraphAndSetNew(0);
-
 
 
             var isBulletCurrentParagraph = isBulletParagraph(paragraph);
@@ -348,7 +342,7 @@ var docxParagraphAggregator = {
 
             // if only one bullet set after current Text in same groupedParagraph
             else if (currentBulletParagraphs.length == 1) {
-                currentGroupedParagraph.text += "- "+intraParagraphSeparator + currentBulletParagraphs[0].text;
+                currentGroupedParagraph.text += "- " + intraParagraphSeparator + currentBulletParagraphs[0].text;
 
                 currentBulletParagraphs = [];
                 currentBulletParagraphs.startBulletIndex = 0;
@@ -358,7 +352,7 @@ var docxParagraphAggregator = {
             else if (currentBulletParagraphs.length > 1) {
 
                 var bulletsArray = [];
-                var bulletTables=[]
+                var bulletTables = []
                 currentBulletParagraphs.forEach(function (bullet) {
 
                     bulletsArray.push({
@@ -367,7 +361,7 @@ var docxParagraphAggregator = {
                         text: bullet.text
                     })
                     // tables inside bullet stacked a the end of the paragraph as a real array (cannot split table inside bullet paragraph)
-                    if(bullet.tables) {
+                    if (bullet.tables) {
                         bullet.tables.forEach(function (table) {
                             var tablesParagraphs = docxParagraphAggregator.getTableParagraphs(table, false);
                             if (tablesParagraphs) {
@@ -397,6 +391,7 @@ var docxParagraphAggregator = {
 
             //if  new chapter or last chapter close currentBulletParagraphs
             if (chapters[indexParagraph] || indexParagraph == jsonParagraphs.length - 2) {
+                setParagraphTables(paragraph);
                 return closeGroupedParagraphAndSetNew(indexParagraph)
 
 
@@ -424,7 +419,7 @@ var docxParagraphAggregator = {
 
             }
 
-            function setParagraphTables(paragraph){
+            function setParagraphTables(paragraph) {
                 //gestion des tables
                 if (paragraph.tables) {
                     paragraph.tables.forEach(function (table) {
@@ -448,13 +443,13 @@ var docxParagraphAggregator = {
             }
 
 
-           setParagraphTables(paragraph);
+            setParagraphTables(paragraph);
 
 
         })
-       applyChapterLevelMap(groupedJson)
-      setChapterParents(groupedJson);
-          groupedJson.tables = jsonParagraphs.tables
+        applyChapterLevelMap(groupedJson)
+        setChapterParents(groupedJson);
+        groupedJson.tables = jsonParagraphs.tables
 //  removeEmptyTextLines(groupedJson)
         return groupedJson;
     }

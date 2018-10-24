@@ -324,7 +324,7 @@ module.exports = docExtractorToCsv;
 
 var dir = "D:\\Total\\docs\\GM MEC Word\\documents\\test"
 dir = "D:\\Total\\docs\\GM MEC Word\\documents"
-dir = "D:\\Total\\docs\\GS MEC Word\\documents"
+//dir = "D:\\Total\\docs\\GS MEC Word\\documents"
 if (true) {
     docExtractorToCsv.jsonContentsToCsv(dir);
 }
