@@ -2,7 +2,7 @@
 
 
 
-## Souslesens is now available at https://github.com/souslesens/souslesensGraph/
+## This location is obsolete, Souslesens is now available at https://github.com/souslesens/souslesensGraph/
 
 This version is obsolete
 
