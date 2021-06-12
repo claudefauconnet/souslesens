@@ -34,7 +34,7 @@
     "node-exiftool": "^2.1.1",
     "node-kmeans": "latest",
     "node-xml-stream": "^1.0.2",
-    "pug": "^2.0.0-beta10",
+    "pug": "^3.0.1",
     "serve-favicon": "^2.4.4",
     "socket.io": "^1.7.4",
     "unzip": "^0.1.11",
