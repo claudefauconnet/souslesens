@@ -1,1 +1,0 @@
-Dir where schema are stored
